@@ -7,6 +7,7 @@ Authors@R:
 Description: Install Java JDK at the project level.
 License: MIT + file LICENSE
 Suggests: 
+    rJava,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
