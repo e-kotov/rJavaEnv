@@ -1,14 +1,10 @@
-#' Detect current platform
-#'
-#' @return A list with two elements: os and arch
-#'
-detect_platform <- function() {
+.detect_platform <- function() {
   sys_info <- Sys.info()
 
   os <- switch(sys_info["sysname"],
     "Windows" = "windows",
     "Linux" = "linux",
-    "Darwin" = "mac",
+    "Darwin" = "macos",
     stop("Unsupported platform")
   )
 
@@ -24,7 +20,7 @@ detect_platform <- function() {
   return(list(os = os, arch = arch))
 }
 
-load_java_urls <- function() {
+.load_java_urls <- function() {
   json_file <- system.file("extdata", "java_urls.json", package = "rJavaEnv")
   if (json_file == "") {
     stop("Configuration file not found")
@@ -34,8 +30,8 @@ load_java_urls <- function() {
 
 
 # Function to test all URLs in the JSON file
-test_all_urls <- function() {
-  java_urls <- load_java_urls()
+.test_all_urls <- function() {
+  java_urls <- .load_java_urls()
   results <- list()
 
   for (distribution in names(java_urls)) {
@@ -70,4 +66,35 @@ test_all_urls <- function() {
   }
 
   return(results)
+}
+
+# Unexported function to initialize Java using rJava and check Java version
+# This is intended to be called from the exported function check_java_version_rJava
+.check_java_version_rscript <- function(java_home) {
+  tryCatch(
+    {
+      Sys.setenv(JAVA_HOME = java_home)
+
+      old_path <- Sys.getenv("PATH")
+      new_path <- file.path(java_home, "bin")
+      Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
+
+      library(rJava)
+      .jinit()
+
+      # Check and save the Java version
+      java_version <- rJava::.jcall("java.lang.System", "S", "getProperty", "java.version")
+
+      # Print Java version
+      output_message <- sprintf(
+        "If you set JAVA_HOME to path: %s  rJava and other Java-based packages will use Java version: %s",
+        java_home, java_version
+      )
+
+      return(output_message)
+    },
+    error = function(e) {
+      return(paste("Error checking Java version:", e$message))
+    }
+  )
 }

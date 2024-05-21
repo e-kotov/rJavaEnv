@@ -8,8 +8,8 @@ download_java(
   version = "17",
   distribution = "Corretto",
   dest_dir = rappdirs::user_data_dir("R/java"),
-  platform = detect_platform()$os,
-  arch = detect_platform()$arch
+  platform = .detect_platform()$os,
+  arch = .detect_platform()$arch
 )
 }
 \arguments{
