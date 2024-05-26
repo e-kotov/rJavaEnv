@@ -2,7 +2,7 @@
 #'
 #' @param java_path The path to the Java distribution file.
 #' @param install_dir The directory where Java should be installed. Defaults to the current project directory.
-#'
+#' @param autoset_java_path Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.
 #' @return The path to the installed Java directory.
 #' @export
 #'
@@ -10,7 +10,10 @@
 #' \dontrun{
 #' install_java("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
 #' }
-install_java <- function(java_path, install_dir = "./") {
+install_java <- function(
+    java_path,
+    install_dir = "./",
+    autoset_java_path = TRUE) {
   # Possible values for platform, architecture, and Java versions
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
@@ -42,6 +45,9 @@ install_java <- function(java_path, install_dir = "./") {
   # Check if the target directory already exists and is not empty
   if (dir.exists(java_install_path) && length(list.files(java_install_path)) > 0) {
     message(sprintf("Java %s (%s) for %s is already installed at %s", version, filename, platform, java_install_path))
+    if (autoset_java_path) {
+      set_java_env(java_install_path)
+    }
     return(java_install_path)
   }
 
@@ -88,19 +94,43 @@ install_java <- function(java_path, install_dir = "./") {
   unlink(temp_dir, recursive = TRUE)
 
   message(sprintf("Java %s (%s) for %s installed at %s", version, filename, platform, java_install_path))
+  if (autoset_java_path) {
+    print(set_java_env(java_install_path))
+  }
   return(java_install_path)
 }
 
-
+#' Download and install and set Java in current working/project directory
+#'
+#' @inheritParams download_java
+#' @return Message indicating that Java was installed and set in the current working/project directory.
+#' @export
+#'
+#' @examples java_quick_install()
+java_quick_install <- function(
+    version = 21,
+    distribution = "Corretto",
+    platform = .detect_platform()$os,
+    arch = .detect_platform()$arch,
+    verbose = TRUE
+    ) {
+  java_distr_path <- download_java(version = version,
+                distribution = distribution,
+                platform = platform,
+                arch = arch,
+                verbose = verbose)
+  install_java(java_distr_path, autoset_java_path = TRUE)
+  return(invisible(NULL))
+}
 
 #' Check if a Java installation is valid
 #'
 #' @param java_dir
 #'
-#' @return
+#' @return TRUE if the Java installation is valid, otherwise stops with an error.
 #' @export
 #'
-#' @examples
+#' @examples check_java_installation("/path/to/java")
 check_java_installation <- function(java_dir) {
   java_bin <- file.path(java_dir, "bin", "java")
   if (file.exists(java_bin)) {
@@ -115,10 +145,13 @@ check_java_installation <- function(java_dir) {
 #'
 #' @param java_dir
 #'
-#' @return
+#' @return Java version, otherwise stops with an error.
 #' @export
 #'
 #' @examples
+#' #' \dontrun{
+#' install_java("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
+#' }
 check_java_version_at_path <- function(java_path) {
   java_bin <- file.path(java_path, "bin", "java")
   if (file.exists(java_bin)) {
