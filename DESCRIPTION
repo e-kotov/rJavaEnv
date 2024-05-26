@@ -1,10 +1,10 @@
 Package: rJavaEnv
-Title: Install Java JDK at the R Project Level
+Title: Java Environments for R Projects
 Version: 0.0.0.9000
 Authors@R: 
     person("Egor", "Kotov", , "kotov.egor@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-6690-5345"))
-Description: Install Java JDK at the project level.
+Description: Install specific version of Java runtime environment at the R project level.
 License: MIT + file LICENSE
 Suggests: 
     rJava,
@@ -15,6 +15,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports: 
     curl,
-    jsonlite,
-    rappdirs
-URL: http://www.ekotov.pro/rJavaEnv/
+    jsonlite
+URL: https://github.com/e-kotov/rJavaEnv, http://www.ekotov.pro/rJavaEnv/
+VignetteBuilder: 
+    knitr
