@@ -7,7 +7,7 @@
 download_java(
   version = "17",
   distribution = "Corretto",
-  dest_dir = rappdirs::user_data_dir("R/java"),
+  dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
   platform = .detect_platform()$os,
   arch = .detect_platform()$arch
 )
