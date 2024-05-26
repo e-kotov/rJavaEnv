@@ -9,6 +9,12 @@ check_java_installation(java_dir)
 \arguments{
 \item{java_dir}{}
 }
+\value{
+TRUE if the Java installation is valid, otherwise stops with an error.
+}
 \description{
 Check if a Java installation is valid
+}
+\examples{
+check_java_installation("/path/to/java")
 }

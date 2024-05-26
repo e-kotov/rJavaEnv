@@ -9,6 +9,9 @@ set_java_env(java_home)
 \arguments{
 \item{java_dir}{}
 }
+\value{
+Nothing. Sets the JAVA_HOME and PATH environment variables.
+}
 \description{
 Set the JAVA_HOME and PATH environment variables to a given path
 }

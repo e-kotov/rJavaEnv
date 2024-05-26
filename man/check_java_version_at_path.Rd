@@ -9,6 +9,14 @@ check_java_version_at_path(java_path)
 \arguments{
 \item{java_dir}{}
 }
+\value{
+Java version, otherwise stops with an error.
+}
 \description{
 Check installed Java ver at path
+}
+\examples{
+#' \dontrun{
+install_java("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
+}
 }
