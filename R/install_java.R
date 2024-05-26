@@ -95,7 +95,7 @@ install_java <- function(
 
   message(sprintf("Java %s (%s) for %s installed at %s", version, filename, platform, java_install_path))
   if (autoset_java_path) {
-    print(set_java_env(java_install_path))
+    set_java_env(java_install_path)
   }
   return(java_install_path)
 }
