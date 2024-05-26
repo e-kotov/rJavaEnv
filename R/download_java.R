@@ -15,7 +15,11 @@
 #' download_java(distribution = "Corretto")
 #' download_java()
 #' }
-download_java <- function(version = "17", distribution = "Corretto", dest_dir = rappdirs::user_data_dir("R/java"), platform = .detect_platform()$os, arch = .detect_platform()$arch) {
+download_java <- function(version = "17",
+                          distribution = "Corretto",
+                          dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
+                          platform = .detect_platform()$os,
+                          arch = .detect_platform()$arch) {
   java_urls <- .load_java_urls()
 
   if (!distribution %in% names(java_urls)) {
