@@ -15,32 +15,139 @@ knitr::opts_chunk$set(
 
 # rJavaEnv
 
-
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![CRAN status](https://www.r-pkg.org/badges/version/rJavaEnv)](https://CRAN.R-project.org/package=rJavaEnv)
+
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental){target="_blank"} [![CRAN status](https://www.r-pkg.org/badges/version/rJavaEnv)](https://CRAN.R-project.org/package=rJavaEnv){target="_blank"}
+
 <!-- badges: end -->
 
+The goal of `rJavaEnv` is to manage multiple Java JDK in R projects by automating the process of downloading, installing and configuring Java environments on a per-project basis. This package is inspired by the [`renv`](https://rstudio.github.io/renv/){target="_blank"} package for managing R environments in R projects.
 
-The goal of rJavaEnv is to manage multiple Java JDK in R projects by automating the process of downloading, installing and configuring Java environments on a per-project basis. This package is inspired by the [`renv`](https://rstudio.github.io/renv/) package, which is used to manage R environments in R projects.
+The idea is that you can request a specific Java Development Kit (JDK) in your project, and `rJavaEnv` will download and install the requested Java environment in a project-specific directory and set the PATH variable for when you are using this project.
+Therefore, you can have Amazon Corretto Java 21 for a project that uses [`r5r`](https://github.com/ipeaGIT/r5r){target="_blank"} package, and Adoptium Eclipse Temurin Java 8 for a project that uses [`opentripplanner`](https://github.com/ropensci/opentripplanner){target="_blank"} package.
 
-The idea is that you can request a specific Java Development Kit (JDK) in your project, and `rJavaEnv` will download and install the requested Java environment in a project-specific directory and set the PATH variable for when you are using this project. Therefore, you can have Amazon Corretto Java 21 for a project that uses [`r5r`](https://github.com/ipeaGIT/r5r) package, and Adoptium Eclipse Temurin Java 8 for a project that uses [`opentripplanner`](https://github.com/ropensci/opentripplanner) package.
-
-Actually, you do not have to have any Java installed on your machine at all. Each Java JDK 'flavour' will quietly live with all its executables in the respective project directory without contaminating your system.
+Actually, you do not have to have any Java installed on your machine at all.
+Each Java JDK 'flavour' will quietly live with all its executables in the respective project directory without contaminating your system.
 
 ## Installation
 
-You can install the development version of rJavaEnv like so:
+You can install the development version of `rJavaEnv` like so:
 
-``` r
+```{r eval=FALSE}
 devtools::install_github("e-kotov/rJavaEnv")
 ```
 
-## Example
+# Examples
 
-This is a basic example which shows you how to solve a common problem:
+## 1. Simple - install Java in current directory/project and set environment
 
-```{r example}
+This will download Java 21 distribution, install it in the current project directory, and set the Java environment to Java 8, all in one command, no hassle. Afer that, you can use Java-based R packages in your project without worrying about Java versions.
+
+```{r}
 library(rJavaEnv)
-## basic example code
+java_quick_install(version = 21)
 ```
+```{r echo=FALSE, include=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+clear_java_distributions_cache()
+unlink("./bin", recursive = TRUE)
+```
+
+
+## 2. Extended example - do things step by step
+
+This will be useful if you want to manage multiple Java environments in your project or if you want to understand the process better.
+
+
+### Download Java
+
+The distribution will be cached in the user-specific data directory.
+Let us download Java 8 and 21 from default flavour (currently, Amazon Corretto).
+The function's output is the path to the downloaded Java distribution file.
+
+```{r}
+java_8_distrib_path <- rJavaEnv::download_java(version = 8)
+java_21_distrib_path <- rJavaEnv::download_java(version = 21)
+```
+
+### Install Java
+
+Install Java 8 and 21 from the downloaded file into current project/working directory.
+The default install path is into ./bin/`platform`/`processor_architecture`/ folder in the current working/project directory, but can be customised, see docs for `rJavaEnv::install_java()`.
+The output of the function is the path to the installed Java directory. Note that by default `rJavaEnv::install_java()` sets the JAVA_HOME and PATH environment variables to the installed Java directory, but you can turn this off with the `autoset_java_path` argument.
+
+```{r}
+java_8_install_path <- rJavaEnv::install_java(java_8_distrib_path)
+java_21_install_path <- rJavaEnv::install_java(java_21_distrib_path)
+```
+
+### Check Java installation
+
+This will run a separate R process, set JAVA_HOME to the given path, and check the Java version that will be picked up if you were to use the same JAVA_HOME in the current R session.
+This does not affect the current R session.
+That is, you will be able to set the path to any Java in the current session without restarting it before you initialise Java using [`rJava`](https://github.com/s-u/rJava){target="_blank"} for the first time.
+
+```{r}
+rJavaEnv::check_java_version_rjava(java_8_install_path)
+rJavaEnv::check_java_version_rjava(java_21_install_path)
+```
+
+### Set Java Environment
+
+We have installed two Java environments in our project directory. We installed version 21 the last, so it is the default Java environment, as `rJavaEnv::install_java()` sets the JAVA_HOME and PATH environment variables to the installed Java directory by default. However, since we have not yet initialised Java using `rJava::.jinit()` or by using some other rJava-dependent package, the Java environment is not yet set in the current R session irreversibly. So we can set the desired Java environment manually. The function below sets the JAVA_HOME and PATH environment variables to the desired Java environment.
+
+```{r}
+rJavaEnv::set_java_env(java_8_install_path)
+```
+
+### Check Current Java Version
+
+Check using system commands.
+This will be relevant for packages like [`opentripplanner`](https://github.com/ropensci/opentripplanner){target="_blank"} that don't actually use rJava, but manage a Java process using system commands.
+
+```{r}
+java_path <- system("which java", intern = TRUE)
+java_version <- system("java -version 2>&1", intern = TRUE)
+
+cat("Java path:", java_path, "\n\n")
+cat("Java version:\n", paste(java_version, collapse = "\n"), "\n")
+```
+
+Finally, check the Java version using [`rJava`](https://github.com/s-u/rJava){target="_blank"}.
+This is relevant to the packages like [`r5r`](https://github.com/ipeaGIT/r5r){target="_blank"} that depend on rJava.
+
+```{r}
+rJava::.jinit(force.init = TRUE)
+rJava::.jcall("java.lang.System", "S", "getProperty", "java.version")
+```
+
+That's it! You have successfully installed and set up Java environments in your project directory. You can now use Java-based R packages in your project without worrying about Java versions.
+
+# Limitations
+
+The limitation is that if you want to switch to another Java environment, you will have to restart the current R session and set the JAVA_HOME and PATH environment variables to the desired Java environment from scratch using `rJavaEnv::set_java_env()`.
+This cannot be done dynamically within the same R session due to the way Java is initialized in R.
+
+Therefore, if you need to use R packages that depend on different Java versions within the same project, you will have to create separate R scripts for each Java environment and run them in separate R sessions.
+One effective way of doing this is to use the [`callr`](https://github.com/r-lib/callr){target="_blank"} package to run R scripts in separate R sessions.
+Another option is to use the [`targets`](https://github.com/ropensci/targets){target="_blank"} package to manage the whole project workflow, which, as a side effect, will lead to all R scripts being run in separate R sessions.
+
+# Helper functions
+
+Check the cache created by the package to store downloaded Java distributions.
+
+```{r}
+rJavaEnv::list_java_distributions_cache()
+```
+
+Remove the cache created by the package to store downloaded Java distributions.
+
+```{r}
+rJavaEnv::clear_java_distributions_cache(confirm = FALSE)
+```
+
+To remove the Java distributions already unpacked into the current working/project folder, just delete the default or user defined folder:
+
+```{r}
+unlink("./bin", recursive = TRUE)
+```
+
