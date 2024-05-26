@@ -3,12 +3,14 @@
 #' @param java_dir
 #'
 #' @export
-#' @return
+#' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
 set_java_env <- function(java_home) {
   Sys.setenv(JAVA_HOME = java_home)
   old_path <- Sys.getenv("PATH")
   new_path <- file.path(java_home, "bin")
   Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
+  message(sprintf("JAVA_HOME set to %s", java_home))
+  return(invisible(NULL))
 }
 
 #' Check Java Version with a Specified JAVA_HOME Using a Separate R Session
