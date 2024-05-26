@@ -37,6 +37,10 @@ Actually, you do not have to have any Java installed on your machine at
 all. Each Java JDK ‘flavour’ will quietly live with all its executables
 in the respective project directory without contaminating your system.
 
+**WARNING** This package is in the early stages of development and is
+not yet ready for production use. Function names, arguments, and
+behaviour may change in future versions.
+
 ## Installation
 
 You can install the development version of `rJavaEnv` like so:
@@ -56,6 +60,9 @@ project without worrying about Java versions.
 
 ``` r
 library(rJavaEnv)
+```
+
+``` r
 java_quick_install(version = 21)
 #> Detected platform: macos
 #> Detected architecture: arm64
@@ -74,7 +81,7 @@ your project or if you want to understand the process better.
 ### Download Java
 
 The distribution will be cached in the user-specific data directory. Let
-us download Java 8 and 21 from default flavour (currently, Amazon
+us download Java 8 and 22 from default flavour (currently, Amazon
 Corretto). The function’s output is the path to the downloaded Java
 distribution file.
 
@@ -88,17 +95,17 @@ java_8_distrib_path <- rJavaEnv::download_java(version = 8)
 ```
 
 ``` r
-java_21_distrib_path <- rJavaEnv::download_java(version = 21)
+java_22_distrib_path <- rJavaEnv::download_java(version = 22)
 #> Detected platform: macos
 #> Detected architecture: arm64
 #> You can change the platform and architecture by specifying the 'platform' and 'arch' arguments.
-#> Downloading Java 21 (Corretto) for macos arm64 to /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/amazon-corretto-21-aarch64-macos-jdk.tar.gz
-#> File already exists. Skipping download.
+#> Downloading Java 22 (Corretto) for macos arm64 to /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/amazon-corretto-22-aarch64-macos-jdk.tar.gz
+#> Download completed.
 ```
 
 ### Install Java
 
-Install Java 8 and 21 from the downloaded file into current
+Install Java 8 and 22 from the downloaded file into current
 project/working directory. The default install path is into
 ./bin/`platform`/`processor_architecture`/ folder in the current
 working/project directory, but can be customised, see docs for
@@ -115,9 +122,9 @@ java_8_install_path <- rJavaEnv::install_java(java_8_distrib_path)
 ```
 
 ``` r
-java_21_install_path <- rJavaEnv::install_java(java_21_distrib_path)
-#> Java 21 (amazon-corretto-21-aarch64-macos-jdk.tar.gz) for macos installed at .//bin/java/macos/aarch64/21
-#> JAVA_HOME set to .//bin/java/macos/aarch64/21
+java_22_install_path <- rJavaEnv::install_java(java_22_distrib_path)
+#> Java 22 (amazon-corretto-22-aarch64-macos-jdk.tar.gz) for macos installed at .//bin/java/macos/aarch64/22
+#> JAVA_HOME set to .//bin/java/macos/aarch64/22
 ```
 
 ### Check Java installation
@@ -136,14 +143,14 @@ rJavaEnv::check_java_version_rjava(java_8_install_path)
 ```
 
 ``` r
-rJavaEnv::check_java_version_rjava(java_21_install_path)
-#> If you set JAVA_HOME to path: .//bin/java/macos/aarch64/21  rJava and other Java-based packages will use Java version: 21.0.3
+rJavaEnv::check_java_version_rjava(java_22_install_path)
+#> If you set JAVA_HOME to path: .//bin/java/macos/aarch64/22  rJava and other Java-based packages will use Java version: 22.0.1
 ```
 
 ### Set Java Environment
 
 We have installed two Java environments in our project directory. We
-installed version 21 the last, so it is the default Java environment, as
+installed version 22 the last, so it is the default Java environment, as
 `rJavaEnv::install_java()` sets the JAVA_HOME and PATH environment
 variables to the installed Java directory by default. However, since we
 have not yet initialised Java using `rJava::.jinit()` or by using some
@@ -226,7 +233,8 @@ distributions.
 rJavaEnv::list_java_distributions_cache()
 #> Contents of the Java distributions cache folder:
 #> [1] "amazon-corretto-21-aarch64-macos-jdk.tar.gz"
-#> [2] "amazon-corretto-8-aarch64-macos-jdk.tar.gz"
+#> [2] "amazon-corretto-22-aarch64-macos-jdk.tar.gz"
+#> [3] "amazon-corretto-8-aarch64-macos-jdk.tar.gz"
 ```
 
 Remove the cache created by the package to store downloaded Java
@@ -234,7 +242,6 @@ distributions.
 
 ``` r
 rJavaEnv::clear_java_distributions_cache(confirm = FALSE)
-#> Java distributions cache cleared.
 ```
 
 To remove the Java distributions already unpacked into the current
