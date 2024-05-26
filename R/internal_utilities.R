@@ -79,8 +79,7 @@
       new_path <- file.path(java_home, "bin")
       Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 
-      library(rJava)
-      .jinit()
+      rJava::.jinit()
 
       # Check and save the Java version
       java_version <- rJava::.jcall("java.lang.System", "S", "getProperty", "java.version")
