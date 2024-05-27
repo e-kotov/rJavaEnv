@@ -1,0 +1,12 @@
+.Rproj.user
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
+.quarto
+docs
+bin
+private
+README_cache
+rjavaenv
+.Rprofile
