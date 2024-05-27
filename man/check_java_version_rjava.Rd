@@ -4,10 +4,10 @@
 \alias{check_java_version_rjava}
 \title{Check Java Version with a Specified JAVA_HOME Using a Separate R Session}
 \usage{
-check_java_version_rjava(java_home)
+check_java_version_rjava(java_home = NULL)
 }
 \arguments{
-\item{java_home}{The path to the desired JAVA_HOME.}
+\item{java_home}{The path to the desired JAVA_HOME. If NULL, uses the current JAVA_HOME environment variable.}
 }
 \value{
 A character string with the Java version.
