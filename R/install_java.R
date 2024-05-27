@@ -10,29 +10,23 @@
 #' \dontrun{
 #' install_java("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
 #' }
-install_java <- function(
-    java_path,
-    install_dir = "./",
-    autoset_java_path = TRUE) {
+# Example function that installs Java and sets up the environment
+install_java <- function(java_path, project = NULL, autoset_java_path = TRUE) {
   # Possible values for platform, architecture, and Java versions
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
   java_versions <- c("8", "11", "17", "21", "22")
 
-  # Create the default installation directory
-  install_dir <- file.path(install_dir, "bin", "java")
+  # Resolve the project path
+  project <- project %||% getwd()
 
   # Extract information from the file name
   filename <- basename(java_path)
   parts <- strsplit(gsub("\\.tar\\.gz|\\.zip", "", filename), "-")[[1]]
 
-  # Guess the version
+  # Guess the version, architecture, and platform
   version <- parts[sapply(parts, function(x) x %in% java_versions)][1]
-
-  # Guess the architecture
   arch <- parts[sapply(parts, function(x) x %in% architectures)][1]
-
-  # Guess the platform
   platform <- parts[sapply(parts, function(x) x %in% platforms)][1]
 
   if (is.na(version)) stop("Unable to detect Java version from filename.")
@@ -40,16 +34,7 @@ install_java <- function(
   if (is.na(platform)) stop("Unable to detect platform from filename.")
 
   # Create the installation path
-  java_install_path <- file.path(install_dir, platform, arch, version)
-
-  # Check if the target directory already exists and is not empty
-  if (dir.exists(java_install_path) && length(list.files(java_install_path)) > 0) {
-    message(sprintf("Java %s (%s) for %s is already installed at %s", version, filename, platform, java_install_path))
-    if (autoset_java_path) {
-      set_java_env(java_install_path)
-    }
-    return(java_install_path)
-  }
+  java_install_path <- file.path(project, "rjavaenv", platform, arch, version)
 
   # Create the directories if they don't exist
   if (!dir.exists(java_install_path)) {
@@ -93,12 +78,15 @@ install_java <- function(
   # Clean up temporary directory
   unlink(temp_dir, recursive = TRUE)
 
-  message(sprintf("Java %s (%s) for %s installed at %s", version, filename, platform, java_install_path))
+  # Write the JAVA_HOME to the .Rprofile and environment after installation
   if (autoset_java_path) {
     set_java_env(java_install_path)
   }
+
+  message(sprintf("Java %s (%s) for %s installed at %s", version, filename, platform, java_install_path))
   return(java_install_path)
 }
+
 
 #' Download and install and set Java in current working/project directory
 #'
@@ -112,51 +100,14 @@ java_quick_install <- function(
     distribution = "Corretto",
     platform = .detect_platform()$os,
     arch = .detect_platform()$arch,
-    verbose = TRUE
-    ) {
-  java_distr_path <- download_java(version = version,
-                distribution = distribution,
-                platform = platform,
-                arch = arch,
-                verbose = verbose)
+    verbose = TRUE) {
+  java_distr_path <- download_java(
+    version = version,
+    distribution = distribution,
+    platform = platform,
+    arch = arch,
+    verbose = verbose
+  )
   install_java(java_distr_path, autoset_java_path = TRUE)
   return(invisible(NULL))
-}
-
-#' Check if a Java installation is valid
-#'
-#' @param java_dir
-#'
-#' @return TRUE if the Java installation is valid, otherwise stops with an error.
-#' @export
-#'
-#' @examples check_java_installation("/path/to/java")
-check_java_installation <- function(java_dir) {
-  java_bin <- file.path(java_dir, "bin", "java")
-  if (file.exists(java_bin)) {
-    return(TRUE)
-  } else {
-    stop("Java installation is not valid.")
-  }
-}
-
-
-#' Check installed Java ver at path
-#'
-#' @param java_dir
-#'
-#' @return Java version, otherwise stops with an error.
-#' @export
-#'
-#' @examples
-#' #' \dontrun{
-#' install_java("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
-#' }
-check_java_version_at_path <- function(java_path) {
-  java_bin <- file.path(java_path, "bin", "java")
-  if (file.exists(java_bin)) {
-    system2(java_bin, args = "-version")
-  } else {
-    stop("Java installation is not valid.")
-  }
 }
