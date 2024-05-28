@@ -10,6 +10,7 @@
 
   arch <- switch(sys_info["machine"],
     "x86-64" = "x64",
+    "x86_64" = "x64",
     "i386" = "x86",
     "i686" = "x86",
     "aarch64" = "arm64",
