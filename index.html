@@ -72,7 +72,6 @@
 </div>
 <!-- badges: start -->
 
-<!-- badges: end -->
 <p>The goal of <code>rJavaEnv</code> is to manage multiple Java JDK in R projects by automating the process of downloading, installing and configuring Java environments on a per-project basis. This package is inspired by the <a href="https://rstudio.github.io/renv/" target="_blank" class="external-link"><code>renv</code></a> package for managing R environments in R projects.</p>
 <p>The idea is that you can request a specific Java Development Kit (JDK) in your project, and <code>rJavaEnv</code> will download and install the requested Java environment in a project-specific directory and set the PATH variable for when you are using this project. Therefore, you can have Amazon Corretto Java 21 for a project that uses <a href="https://github.com/ipeaGIT/r5r" target="_blank" class="external-link"><code>r5r</code></a> package, and Adoptium Eclipse Temurin Java 8 for a project that uses <a href="https://github.com/ropensci/opentripplanner" target="_blank" class="external-link"><code>opentripplanner</code></a> package.</p>
 <p>Actually, you do not have to have any Java installed on your machine at all. Each Java JDK ‘flavour’ will quietly live with all its executables in the respective project directory without contaminating your system.</p>
@@ -100,8 +99,9 @@
 <span><span class="co">#&gt; Detected architecture: arm64</span></span>
 <span><span class="co">#&gt; You can change the platform and architecture by specifying the 'platform' and 'arch' arguments.</span></span>
 <span><span class="co">#&gt; Downloading Java 21 (Corretto) for macos arm64 to /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/amazon-corretto-21-aarch64-macos-jdk.tar.gz</span></span>
-<span><span class="co">#&gt; File already exists. Skipping download.</span></span>
-<span><span class="co">#&gt; JAVA_HOME set to /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/21 from config</span></span>
+<span><span class="co">#&gt; Download completed.</span></span>
+<span><span class="co">#&gt; JAVA_HOME set to /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/21</span></span>
+<span><span class="co">#&gt; .Rprofile created with JAVA_HOME settings in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'</span></span>
 <span><span class="co">#&gt; Java 21 (amazon-corretto-21-aarch64-macos-jdk.tar.gz) for macos installed at /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/21</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -118,14 +118,14 @@
 <span><span class="co">#&gt; Detected architecture: arm64</span></span>
 <span><span class="co">#&gt; You can change the platform and architecture by specifying the 'platform' and 'arch' arguments.</span></span>
 <span><span class="co">#&gt; Downloading Java 8 (Corretto) for macos arm64 to /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/amazon-corretto-8-aarch64-macos-jdk.tar.gz</span></span>
-<span><span class="co">#&gt; File already exists. Skipping download.</span></span></code></pre></div>
+<span><span class="co">#&gt; Download completed.</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">java_22_distrib_path</span> <span class="op">&lt;-</span> <span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="reference/download_java.html">download_java</a></span><span class="op">(</span>version <span class="op">=</span> <span class="fl">22</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Detected platform: macos</span></span>
 <span><span class="co">#&gt; Detected architecture: arm64</span></span>
 <span><span class="co">#&gt; You can change the platform and architecture by specifying the 'platform' and 'arch' arguments.</span></span>
 <span><span class="co">#&gt; Downloading Java 22 (Corretto) for macos arm64 to /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/amazon-corretto-22-aarch64-macos-jdk.tar.gz</span></span>
-<span><span class="co">#&gt; File already exists. Skipping download.</span></span></code></pre></div>
+<span><span class="co">#&gt; Download completed.</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="install-java">Install Java<a class="anchor" aria-label="anchor" href="#install-java"></a>
@@ -133,11 +133,13 @@
 <p>Install Java 8 and 22 from the downloaded file into current project/working directory. The default install path is into ./rjavaenv/<code>platform</code>/<code>processor_architecture</code>/ folder in the current working/project directory, but can be customised, see docs for <code><a href="reference/install_java.html">rJavaEnv::install_java()</a></code>. The output of the function is the path to the installed Java directory. Note that by default <code><a href="reference/install_java.html">rJavaEnv::install_java()</a></code> sets the JAVA_HOME and PATH environment variables to the installed Java directory, but you can turn this off with the <code>autoset_java_path</code> argument.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">java_8_install_path</span> <span class="op">&lt;-</span> <span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="reference/install_java.html">install_java</a></span><span class="op">(</span><span class="va">java_8_distrib_path</span><span class="op">)</span></span>
-<span><span class="co">#&gt; JAVA_HOME set to /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8 from config</span></span>
+<span><span class="co">#&gt; JAVA_HOME set to /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8</span></span>
+<span><span class="co">#&gt; Set JAVA_HOME to '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8' in .Rprofile in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'</span></span>
 <span><span class="co">#&gt; Java 8 (amazon-corretto-8-aarch64-macos-jdk.tar.gz) for macos installed at /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">java_22_install_path</span> <span class="op">&lt;-</span> <span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="reference/install_java.html">install_java</a></span><span class="op">(</span><span class="va">java_22_distrib_path</span><span class="op">)</span></span>
-<span><span class="co">#&gt; JAVA_HOME set to /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/22 from config</span></span>
+<span><span class="co">#&gt; JAVA_HOME set to /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/22</span></span>
+<span><span class="co">#&gt; Set JAVA_HOME to '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/22' in .Rprofile in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'</span></span>
 <span><span class="co">#&gt; Java 22 (amazon-corretto-22-aarch64-macos-jdk.tar.gz) for macos installed at /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/22</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -147,15 +149,15 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="reference/check_java_version_rjava.html">check_java_version_rjava</a></span><span class="op">(</span><span class="va">java_8_install_path</span><span class="op">)</span></span>
 <span><span class="co">#&gt; JAVA_HOME set to /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8</span></span>
-<span><span class="co">#&gt; .Rprofile created with JAVA_HOME settings in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'</span></span>
+<span><span class="co">#&gt; Set JAVA_HOME to '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8' in .Rprofile in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'</span></span>
 <span><span class="co">#&gt; JAVA_HOME: /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8</span></span>
 <span><span class="co">#&gt; If you set JAVA_HOME to path: /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8  rJava and other Java-based packages will use Java version: 1.8.0_412</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="reference/check_java_version_rjava.html">check_java_version_rjava</a></span><span class="op">(</span><span class="va">java_22_install_path</span><span class="op">)</span></span>
 <span><span class="co">#&gt; JAVA_HOME set to /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/22</span></span>
-<span><span class="co">#&gt; Updated JAVA_HOME settings in .Rprofile in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'</span></span>
+<span><span class="co">#&gt; Set JAVA_HOME to '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/22' in .Rprofile in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'</span></span>
 <span><span class="co">#&gt; JAVA_HOME: /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/22</span></span>
-<span><span class="co">#&gt; [1] NA If you set JAVA_HOME to path: /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/22  rJava and other Java-based packages will use Java version: 22.0.1</span></span></code></pre></div>
+<span><span class="co">#&gt; If you set JAVA_HOME to path: /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/22  rJava and other Java-based packages will use Java version: 22.0.1</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="set-java-environment">Set Java Environment<a class="anchor" aria-label="anchor" href="#set-java-environment"></a>
@@ -164,7 +166,7 @@
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="reference/set_java_env.html">set_java_env</a></span><span class="op">(</span><span class="va">java_8_install_path</span><span class="op">)</span></span>
 <span><span class="co">#&gt; JAVA_HOME set to /Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8</span></span>
-<span><span class="co">#&gt; Appended JAVA_HOME settings to .Rprofile in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'</span></span></code></pre></div>
+<span><span class="co">#&gt; Set JAVA_HOME to '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/8' in .Rprofile in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="check-current-java-version">Check Current Java Version<a class="anchor" aria-label="anchor" href="#check-current-java-version"></a>
@@ -252,6 +254,7 @@
 <ul class="list-unstyled">
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" target="_blank" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://CRAN.R-project.org/package=rJavaEnv" target="_blank" class="external-link"><img src="https://www.r-pkg.org/badges/version/rJavaEnv" alt="CRAN status"></a></li>
+<li><a href="https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
 
