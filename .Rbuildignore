@@ -9,3 +9,4 @@
 ^\.github$
 ^\.Rprofile$
 ^rjavaenv$
+^private$
