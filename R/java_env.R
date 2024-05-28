@@ -50,6 +50,7 @@ set_java_env <- function(java_home, where = c("both", "session", "project")) {
     "old_path <- Sys.getenv('PATH') # rJavaEnv",
     "new_path <- file.path(Sys.getenv('JAVA_HOME'), 'bin') # rJavaEnv",
     "Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep)) # rJavaEnv",
+    "rm(old_path, new_path) # rJavaEnv",
     "# rJavaEnv end: Manage JAVA_HOME"
   )
 
