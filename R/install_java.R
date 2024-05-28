@@ -18,7 +18,7 @@ install_java <- function(java_path, project = NULL, autoset_java_path = TRUE) {
   java_versions <- c("8", "11", "17", "21", "22")
 
   # Resolve the project path
-  project <- project %||% getwd()
+  project <- ifelse(is.null(project), getwd(), project)
 
   # Extract information from the file name
   filename <- basename(java_path)

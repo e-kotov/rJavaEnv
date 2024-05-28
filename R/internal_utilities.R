@@ -1,15 +1,15 @@
 .detect_platform <- function() {
-  sys_info <- Sys.info()
+  sys_info <- tolower(Sys.info())
 
   os <- switch(sys_info["sysname"],
-    "Windows" = "windows",
-    "Linux" = "linux",
-    "Darwin" = "macos",
+    "windows" = "windows",
+    "linux" = "linux",
+    "darwin" = "macos",
     stop("Unsupported platform")
   )
 
   arch <- switch(sys_info["machine"],
-    "x86_64" = "x64",
+    "x86-64" = "x64",
     "i386" = "x86",
     "i686" = "x86",
     "aarch64" = "arm64",
