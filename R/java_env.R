@@ -7,18 +7,17 @@
 #' @param where Where to set the JAVA_HOME: "session", "project", or "both". Defaults to "both". When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.
 #' @export
 #' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
-set_java_env <- function(java_home, where = c("both", "session", "project")) {
+set_java_env <- function(java_home, where = c("both", "rsession", "project")) {
   where <- match.arg(where)
 
   if (where %in% c("session", "both")) {
-    # Set environment variables for the current session
     .set_java_paths(java_home)
-    message(sprintf("JAVA_HOME set to %s", java_home))
+    message(sprintf("Current R Session:\nJAVA_HOME set to %s", java_home))
   }
 
   if (where %in% c("project", "both")) {
-    # Update the .Rprofile in the project directory
     .set_java_home_in_rprofile(java_home)
+    message(sprintf("Current R Project/Working Directory:\nSet JAVA_HOME to '%s' in .Rprofile in '%s'", java_home, file.path(getwd(), ".Rprofile")))
   }
 
   invisible(NULL)
@@ -56,11 +55,11 @@ set_java_env <- function(java_home, where = c("both", "session", "project")) {
 
   if (file.exists(rprofile_path)) {
     cat(lines_to_add, file = rprofile_path, append = TRUE, sep = "\n")
-    message(sprintf("Set JAVA_HOME to '%s' in .Rprofile in '%s'", java_home, rprofile_path))
   } else {
     writeLines(lines_to_add, con = rprofile_path)
-    message(sprintf(".Rprofile created with JAVA_HOME settings in '%s'", rprofile_path))
   }
+
+  invisible(NULL)
 }
 
 

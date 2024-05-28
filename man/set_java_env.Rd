@@ -4,7 +4,7 @@
 \alias{set_java_env}
 \title{Set the JAVA_HOME and PATH environment variables to a given path}
 \usage{
-set_java_env(java_home, where = c("both", "session", "project"))
+set_java_env(java_home, where = c("both", "rsession", "project"))
 }
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME.}
