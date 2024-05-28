@@ -2,7 +2,7 @@ Package: rJavaEnv
 Title: Java Environments for R Projects
 Version: 0.0.0.9000
 Authors@R: 
-    person("Egor", "Kotov", , "kotov.egor@gmail.com", role = c("aut", "cre"),
+    person("Egor", "Kotov", , "kotov.egor@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-6690-5345"))
 Description: Install specific version of Java runtime environment at the R project level.
 License: MIT + file LICENSE
