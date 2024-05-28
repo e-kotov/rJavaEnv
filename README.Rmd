@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental){target="_blank"} [![CRAN status](https://www.r-pkg.org/badges/version/rJavaEnv)](https://CRAN.R-project.org/package=rJavaEnv){target="_blank"}
-
+[![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 
