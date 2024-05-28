@@ -68,6 +68,8 @@ set_java_env <- function(java_home, where = c("both", "session", "project")) {
 
 #' Unset the JAVA_HOME and PATH environment variables in the project .Rprofile
 #'
+#' @param quiet Whether to suppress messages. Defaults to FALSE.
+#'
 #' @export
 #' @return Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.
 unset_java_env <- function(quiet = FALSE) {

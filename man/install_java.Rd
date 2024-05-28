@@ -9,9 +9,9 @@ install_java(java_path, project = NULL, autoset_java_path = TRUE)
 \arguments{
 \item{java_path}{The path to the Java distribution file.}
 
-\item{autoset_java_path}{Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.}
+\item{project}{The project directory where Java should be installed. Defaults to the current working directory.}
 
-\item{install_dir}{The directory where Java should be installed. Defaults to the current project directory.}
+\item{autoset_java_path}{Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.}
 }
 \value{
 The path to the installed Java directory.

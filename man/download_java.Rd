@@ -23,6 +23,8 @@ download_java(
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
+
+\item{verbose}{Whether to print out information about the detected platform and architecture. Defaults to TRUE.}
 }
 \value{
 The path to the downloaded Java distribution file.

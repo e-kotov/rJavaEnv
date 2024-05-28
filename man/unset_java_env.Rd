@@ -6,6 +6,9 @@
 \usage{
 unset_java_env(quiet = FALSE)
 }
+\arguments{
+\item{quiet}{Whether to suppress messages. Defaults to FALSE.}
+}
 \value{
 Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.
 }

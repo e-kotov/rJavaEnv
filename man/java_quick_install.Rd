@@ -20,6 +20,8 @@ java_quick_install(
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
+
+\item{verbose}{Whether to print messages. Defaults to TRUE.}
 }
 \value{
 Message indicating that Java was installed and set in the current working/project directory.

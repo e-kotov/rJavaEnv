@@ -1,7 +1,7 @@
 #' Install Java from a distribution file
 #'
 #' @param java_path The path to the Java distribution file.
-#' @param install_dir The directory where Java should be installed. Defaults to the current project directory.
+#' @param project The project directory where Java should be installed. Defaults to the current working directory.
 #' @param autoset_java_path Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.
 #' @return The path to the installed Java directory.
 #' @export
@@ -91,6 +91,7 @@ install_java <- function(java_path, project = NULL, autoset_java_path = TRUE) {
 #' Download and install and set Java in current working/project directory
 #'
 #' @inheritParams download_java
+#' @param verbose Whether to print messages. Defaults to TRUE.
 #' @return Message indicating that Java was installed and set in the current working/project directory.
 #' @export
 #'
@@ -101,6 +102,7 @@ java_quick_install <- function(
     platform = .detect_platform()$os,
     arch = .detect_platform()$arch,
     verbose = TRUE) {
+
   java_distr_path <- download_java(
     version = version,
     distribution = distribution,
@@ -108,6 +110,7 @@ java_quick_install <- function(
     arch = arch,
     verbose = verbose
   )
+
   install_java(java_distr_path, autoset_java_path = TRUE)
   return(invisible(NULL))
 }

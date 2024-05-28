@@ -12,6 +12,10 @@ clear_java_distributions_cache(
 }
 \arguments{
 \item{cache_dir}{The cache directory to clear. Defaults to the user-specific data directory.}
+
+\item{check}{Whether to list the contents of the cache directory before clearing it. Defaults to TRUE.}
+
+\item{confirm}{Whether to ask for confirmation before clearing the cache. Defaults to TRUE.}
 }
 \value{
 A message indicating whether the cache was cleared or not.

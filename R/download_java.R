@@ -5,6 +5,7 @@
 #' @param dest_dir The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
 #' @param arch The architecture for which to download the Java distribution. Defaults to the current architecture.
+#' @param verbose Whether to print out information about the detected platform and architecture. Defaults to TRUE.
 #'
 #' @return The path to the downloaded Java distribution file.
 #' @export
@@ -82,7 +83,8 @@ list_java_distributions_cache <- function(
 #' Clear the Java distributions cache folder
 #'
 #' @param cache_dir The cache directory to clear. Defaults to the user-specific data directory.
-#'
+#' @param check Whether to list the contents of the cache directory before clearing it. Defaults to TRUE.
+#' @param confirm Whether to ask for confirmation before clearing the cache. Defaults to TRUE.
 #' @return A message indicating whether the cache was cleared or not.
 #' @export
 #'
