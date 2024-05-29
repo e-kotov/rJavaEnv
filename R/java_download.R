@@ -19,10 +19,35 @@
 java_download <- function(version = 21,
                           distribution = "Corretto",
                           dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
-                          platform = .detect_platform()$os,
-                          arch = .detect_platform()$arch,
+                          platform = rJavaEnv:::.detect_platform()$os,
+                          arch = rJavaEnv:::.detect_platform()$arch,
                           verbose = TRUE) {
-  java_urls <- .load_java_urls()
+
+  # Load java urls data -----------------------------------------------------
+
+  java_urls <- rJavaEnv:::.load_java_urls()
+
+  valid_distributions <- names(java_urls)
+  valid_platforms <- names(java_urls[[distribution]])
+  valid_architectures <- names(java_urls[[distribution]][[platform]])
+
+  # Checks function parameters ---------------------------------------------
+
+  checkmate::assert(
+    checkmate::check_integerish(version, lower = 1),
+    checkmate::check_character(version, pattern = "^[0-9]+$")
+  )
+  checkmate::assert_choice(distribution, valid_distributions)
+
+  if (!dir.exists(dest_dir)) {
+    dir.create(dest_dir, recursive = TRUE)
+  }
+  checkmate::assert_directory_exists(dest_dir, access = "rw", add = TRUE)
+
+  checkmate::assert_choice(platform, valid_platforms)
+  checkmate::assert_choice(arch, valid_architectures)
+  checkmate::assert_flag(verbose)
+
 
   # print out the detected platform and architecture
   if (verbose) {
