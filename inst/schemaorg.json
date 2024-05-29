@@ -1,0 +1,25 @@
+{
+  "@context": "https://schema.org",
+  "type": "SoftwareSourceCode",
+  "author": {
+    "id": "https://orcid.org/0000-0001-6690-5345"
+  },
+  "codeRepository": "https://github.com/e-kotov/rJavaEnv",
+  "copyrightHolder": {
+    "id": "https://orcid.org/0000-0001-6690-5345",
+    "type": "Person",
+    "email": "kotov.egor@gmail.com",
+    "familyName": "Kotov",
+    "givenName": "Egor"
+  },
+  "description": "Install specific version of Java runtime environment at the R project level.",
+  "license": "https://spdx.org/licenses/MIT",
+  "name": "rJavaEnv: Java Environments for R Projects",
+  "programmingLanguage": {
+    "type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.4.0 (2024-04-24)",
+  "version": "0.0.0.9000"
+}

@@ -1,0 +1,121 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "rJavaEnv",
+  "description": "Install specific version of Java runtime environment at the R project level.",
+  "name": "rJavaEnv: Java Environments for R Projects",
+  "relatedLink": "http://www.ekotov.pro/rJavaEnv/",
+  "codeRepository": "https://github.com/e-kotov/rJavaEnv",
+  "issueTracker": "https://github.com/e-kotov/rJavaEnv/issues",
+  "license": "https://spdx.org/licenses/MIT",
+  "version": "0.0.0.9000",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.4.0 (2024-04-24)",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Egor",
+      "familyName": "Kotov",
+      "email": "kotov.egor@gmail.com",
+      "@id": "https://orcid.org/0000-0001-6690-5345"
+    }
+  ],
+  "copyrightHolder": [
+    {
+      "@type": "Person",
+      "givenName": "Egor",
+      "familyName": "Kotov",
+      "email": "kotov.egor@gmail.com",
+      "@id": "https://orcid.org/0000-0001-6690-5345"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Egor",
+      "familyName": "Kotov",
+      "email": "kotov.egor@gmail.com",
+      "@id": "https://orcid.org/0000-0001-6690-5345"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "knitr",
+      "name": "knitr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rJava",
+      "name": "rJava",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rJava"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat",
+      "version": ">= 3.0.0",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
+    }
+  ],
+  "softwareRequirements": {
+    "1": {
+      "@type": "SoftwareApplication",
+      "identifier": "curl",
+      "name": "curl",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=curl"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
+      "identifier": "jsonlite",
+      "name": "jsonlite",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=jsonlite"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
+      "identifier": "utils",
+      "name": "utils"
+    },
+    "SystemRequirements": null
+  },
+  "fileSize": "312.614KB",
+  "releaseNotes": "https://github.com/e-kotov/rJavaEnv/blob/master/NEWS.md",
+  "readme": "https://github.com/e-kotov/rJavaEnv/blob/main/README.md",
+  "contIntegration": "https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml",
+  "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#experimental"
+}

@@ -10,3 +10,4 @@
 ^\.Rprofile$
 ^rjavaenv$
 ^private$
+^codemeta\.json$
