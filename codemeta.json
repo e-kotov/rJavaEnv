@@ -2,7 +2,7 @@
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "rJavaEnv",
-  "description": "Install specific version of Java runtime environment at the R project level.",
+  "description": "Install specific version of Java runtime environment at the R project level. The goal of rJavaEnv is to manage multiple Java JDKs in R projects by automatingthe process of downloading, installing, and configuring Java environments on a per-project basis. This package is inspired by the renv <https://rstudio.github.io/renv/> package for managing R environments in R projects. You can request a specific Java Development Kit (JDK) in your project, and rJavaEnv will download and install the requested Java environment in a project-specific directory and set the PATH and JAVA_HOME for when you are using this project. Therefore, you can have different Java versions for different projects without contaminating your system with different Java versions.",
   "name": "rJavaEnv: Java Environments for R Projects",
   "relatedLink": "http://www.ekotov.pro/rJavaEnv/",
   "codeRepository": "https://github.com/e-kotov/rJavaEnv",
@@ -84,6 +84,30 @@
   "softwareRequirements": {
     "1": {
       "@type": "SoftwareApplication",
+      "identifier": "checkmate",
+      "name": "checkmate",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=checkmate"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
+      "identifier": "cli",
+      "name": "cli",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=cli"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
       "identifier": "curl",
       "name": "curl",
       "provider": {
@@ -94,7 +118,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=curl"
     },
-    "2": {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "jsonlite",
       "name": "jsonlite",
@@ -106,14 +130,31 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=jsonlite"
     },
-    "3": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "utils",
       "name": "utils"
     },
     "SystemRequirements": null
   },
-  "fileSize": "312.614KB",
+  "fileSize": "309.804KB",
+  "citation": [
+    {
+      "@type": "SoftwareSourceCode",
+      "datePublished": "2024",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Egor",
+          "familyName": "Kotov",
+          "email": "kotov.egor@gmail.com",
+          "@id": "https://orcid.org/0000-0001-6690-5345"
+        }
+      ],
+      "name": "rJavaEnv: Java Environments for R Projects",
+      "url": "https://github.com/e-kotov/rJavaEnv"
+    }
+  ],
   "releaseNotes": "https://github.com/e-kotov/rJavaEnv/blob/master/NEWS.md",
   "readme": "https://github.com/e-kotov/rJavaEnv/blob/main/README.md",
   "contIntegration": "https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml",
