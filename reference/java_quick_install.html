@@ -18,8 +18,14 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/rJavaEnv.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -38,7 +44,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Download and install and set Java in current working/project directory</h1>
-      <small class="dont-index">Source: <a href="https://github.com/e-kotov/rJavaEnv/blob/HEAD/R/install_java.R" class="external-link"><code>R/install_java.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/e-kotov/rJavaEnv/blob/HEAD/R/java_quick_install.R" class="external-link"><code>R/java_quick_install.R</code></a></small>
       <div class="d-none name"><code>java_quick_install.Rd</code></div>
     </div>
 
@@ -51,8 +57,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">java_quick_install</span><span class="op">(</span></span>
 <span>  version <span class="op">=</span> <span class="fl">21</span>,</span>
 <span>  distribution <span class="op">=</span> <span class="st">"Corretto"</span>,</span>
-<span>  platform <span class="op">=</span> <span class="fu">.detect_platform</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">os</span>,</span>
-<span>  arch <span class="op">=</span> <span class="fu">.detect_platform</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">arch</span>,</span>
+<span>  platform <span class="op">=</span> <span class="fu">platform_detect</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">os</span>,</span>
+<span>  arch <span class="op">=</span> <span class="fu">platform_detect</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">arch</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -89,16 +95,9 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">java_quick_install</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected platform: macos</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected architecture: arm64</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> You can change the platform and architecture by specifying the 'platform' and 'arch' arguments.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading Java 21 (Corretto) for macos arm64 to /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/amazon-corretto-21-aarch64-macos-jdk.tar.gz</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> File already exists. Skipping download.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Current R Session:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> JAVA_HOME set to /private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpQF5QiU/file2c2153f3f4db/reference/rjavaenv/macos/aarch64/21</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Current R Project/Working Directory:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Set JAVA_HOME to '/private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpQF5QiU/file2c2153f3f4db/reference/rjavaenv/macos/aarch64/21' in .Rprofile in '/private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpQF5QiU/file2c2153f3f4db/reference/.Rprofile'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Java 21 (amazon-corretto-21-aarch64-macos-jdk.tar.gz) for macos installed at /private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpQF5QiU/file2c2153f3f4db/reference/rjavaenv/macos/aarch64/21</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in "lapply(text, glue_cmd, .envir = .envir)":</span> <span style="color: #BBBB00;">!</span> Could not evaluate cli `{}` expression: `platform`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error</span> in `eval(expr, envir = envir)`:</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> object 'platform' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

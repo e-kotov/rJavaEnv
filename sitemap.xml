@@ -10,54 +10,60 @@
     <loc>http://www.ekotov.pro/rJavaEnv/LICENSE.html</loc>
   </url>
   <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html</loc>
+  </url>
+  <url>
     <loc>http://www.ekotov.pro/rJavaEnv/authors.html</loc>
   </url>
   <url>
     <loc>http://www.ekotov.pro/rJavaEnv/index.html</loc>
   </url>
   <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/check_java_version_cmd.html</loc>
-  </url>
-  <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/check_java_version_rjava.html</loc>
-  </url>
-  <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/clear_java_distributions_cache.html</loc>
+    <loc>http://www.ekotov.pro/rJavaEnv/news/index.html</loc>
   </url>
   <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/dot-check_java_system2.html</loc>
   </url>
   <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/dot-set_and_check_java_home.html</loc>
-  </url>
-  <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/dot-set_java_home_in_rprofile.html</loc>
-  </url>
-  <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/dot-set_java_paths.html</loc>
-  </url>
-  <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/download_java.html</loc>
-  </url>
-  <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/index.html</loc>
   </url>
   <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/install_java.html</loc>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_cache_clear.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_cache_list.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_check_version_cmd.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_download.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_env_set.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_env_set_rprofile.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_env_set_session.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_install.html</loc>
   </url>
   <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/java_quick_install.html</loc>
   </url>
   <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/list_java_distributions_cache.html</loc>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_unset_env.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_version_check_rjava.html</loc>
   </url>
   <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/rJavaEnv-package.html</loc>
-  </url>
-  <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/set_java_env.html</loc>
-  </url>
-  <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/unset_java_env.html</loc>
   </url>
 </urlset>
