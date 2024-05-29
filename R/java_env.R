@@ -7,7 +7,7 @@
 #' @param where Where to set the JAVA_HOME: "session", "project", or "both". Defaults to "both". When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.
 #' @export
 #' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
-set_java_env <- function(java_home, where = c("both", "rsession", "project")) {
+java_set_env <- function(java_home, where = c("both", "rsession", "project")) {
   where <- match.arg(where)
 
   if (where %in% c("session", "both")) {
@@ -39,7 +39,7 @@ set_java_env <- function(java_home, where = c("both", "rsession", "project")) {
 #' @param java_home The path to the desired JAVA_HOME.
 #' @keywords internal
 .set_java_home_in_rprofile <- function(java_home) {
-  unset_java_env(quiet = TRUE)
+  java_unset_env(quiet = TRUE)
 
   project <- getwd()
   rprofile_path <- file.path(project, ".Rprofile")
@@ -72,7 +72,7 @@ set_java_env <- function(java_home, where = c("both", "rsession", "project")) {
 #'
 #' @export
 #' @return Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.
-unset_java_env <- function(quiet = FALSE) {
+java_unset_env <- function(quiet = FALSE) {
   project <- getwd()
   rprofile_path <- file.path(project, ".Rprofile")
 
@@ -179,7 +179,7 @@ check_java_version_cmd <- function(java_home = NULL) {
 .set_and_check_java_home <- function(java_home = NULL) {
   # Set JAVA_HOME and PATH if java_home is provided
   if (!is.null(java_home)) {
-    set_java_env(java_home)
+    java_set_env(java_home)
   }
 
   # Get JAVA_HOME and check if it's set

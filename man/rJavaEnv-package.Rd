@@ -15,11 +15,12 @@ Useful links:
 \itemize{
   \item \url{https://github.com/e-kotov/rJavaEnv}
   \item \url{http://www.ekotov.pro/rJavaEnv/}
+  \item Report bugs at \url{https://github.com/e-kotov/rJavaEnv/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Egor Kotov \email{kotov.egor@gmail.com} (\href{https://orcid.org/0000-0001-6690-5345}{ORCID})
+\strong{Maintainer}: Egor Kotov \email{kotov.egor@gmail.com} (\href{https://orcid.org/0000-0001-6690-5345}{ORCID}) [copyright holder]
 
 }
 \keyword{internal}

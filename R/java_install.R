@@ -8,10 +8,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' install_java("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
+#' java_install("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
 #' }
 # Example function that installs Java and sets up the environment
-install_java <- function(java_path, project = NULL, autoset_java_path = TRUE) {
+java_install <- function(java_path, project = NULL, autoset_java_path = TRUE) {
   # Possible values for platform, architecture, and Java versions
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
@@ -80,37 +80,9 @@ install_java <- function(java_path, project = NULL, autoset_java_path = TRUE) {
 
   # Write the JAVA_HOME to the .Rprofile and environment after installation
   if (autoset_java_path) {
-    set_java_env(java_install_path)
+    java_set_env(java_install_path)
   }
 
   message(sprintf("Java %s (%s) for %s installed at %s", version, filename, platform, java_install_path))
   return(java_install_path)
-}
-
-
-#' Download and install and set Java in current working/project directory
-#'
-#' @inheritParams download_java
-#' @param verbose Whether to print messages. Defaults to TRUE.
-#' @return Message indicating that Java was installed and set in the current working/project directory.
-#' @export
-#'
-#' @examples java_quick_install()
-java_quick_install <- function(
-    version = 21,
-    distribution = "Corretto",
-    platform = .detect_platform()$os,
-    arch = .detect_platform()$arch,
-    verbose = TRUE) {
-
-  java_distr_path <- download_java(
-    version = version,
-    distribution = distribution,
-    platform = platform,
-    arch = arch,
-    verbose = verbose
-  )
-
-  install_java(java_distr_path, autoset_java_path = TRUE)
-  return(invisible(NULL))
 }

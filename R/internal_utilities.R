@@ -70,7 +70,7 @@
 }
 
 # Unexported function to initialize Java using rJava and check Java version
-# This is intended to be called from the exported function check_java_version_rJava
+# This is intended to be called from the exported function check_java_version_rjava
 .check_java_version_rscript <- function(java_home) {
   tryCatch(
     {
