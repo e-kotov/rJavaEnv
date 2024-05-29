@@ -11,3 +11,4 @@
 ^rjavaenv$
 ^private$
 ^codemeta\.json$
+^CITATION\.cff$

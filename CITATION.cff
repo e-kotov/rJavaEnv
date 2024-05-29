@@ -1,0 +1,136 @@
+# --------------------------------------------
+# CITATION file created with {cffr} R package
+# See also: https://docs.ropensci.org/cffr/
+# --------------------------------------------
+ 
+cff-version: 1.2.0
+message: 'To cite package "rJavaEnv" in publications use:'
+type: software
+license: MIT
+title: 'rJavaEnv: Java Environments for R Projects'
+version: 0.0.0.9000
+abstract: Install specific version of Java runtime environment at the R project level.
+  The goal of rJavaEnv is to manage multiple Java JDKs in R projects by automatingthe
+  process of downloading, installing, and configuring Java environments on a per-project
+  basis. This package is inspired by the renv <https://rstudio.github.io/renv/> package
+  for managing R environments in R projects. You can request a specific Java Development
+  Kit (JDK) in your project, and rJavaEnv will download and install the requested
+  Java environment in a project-specific directory and set the PATH and JAVA_HOME
+  for when you are using this project. Therefore, you can have different Java versions
+  for different projects without contaminating your system with different Java versions.
+authors:
+- family-names: Kotov
+  given-names: Egor
+  email: kotov.egor@gmail.com
+  orcid: https://orcid.org/0000-0001-6690-5345
+preferred-citation:
+  type: manual
+  title: 'rJavaEnv: Java Environments for R Projects'
+  authors:
+  - family-names: Kotov
+    given-names: Egor
+    email: kotov.egor@gmail.com
+    orcid: https://orcid.org/0000-0001-6690-5345
+  year: '2024'
+  url: https://github.com/e-kotov/rJavaEnv
+repository-code: https://github.com/e-kotov/rJavaEnv
+url: http://www.ekotov.pro/rJavaEnv/
+contact:
+- family-names: Kotov
+  given-names: Egor
+  email: kotov.egor@gmail.com
+  orcid: https://orcid.org/0000-0001-6690-5345
+references:
+- type: software
+  title: knitr
+  abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
+  notes: Suggests
+  url: https://yihui.org/knitr/
+  repository: https://CRAN.R-project.org/package=knitr
+  authors:
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  year: '2024'
+- type: software
+  title: rJava
+  abstract: 'rJava: Low-Level R to Java Interface'
+  notes: Suggests
+  url: http://www.rforge.net/rJava/
+  repository: https://CRAN.R-project.org/package=rJava
+  authors:
+  - family-names: Urbanek
+    given-names: Simon
+    email: simon.urbanek@r-project.org
+  year: '2024'
+- type: software
+  title: testthat
+  abstract: 'testthat: Unit Testing for R'
+  notes: Suggests
+  url: https://testthat.r-lib.org
+  repository: https://CRAN.R-project.org/package=testthat
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  year: '2024'
+  version: '>= 3.0.0'
+- type: software
+  title: checkmate
+  abstract: 'checkmate: Fast and Versatile Argument Checks'
+  notes: Imports
+  url: https://mllg.github.io/checkmate/
+  repository: https://CRAN.R-project.org/package=checkmate
+  authors:
+  - family-names: Lang
+    given-names: Michel
+    email: michellang@gmail.com
+    orcid: https://orcid.org/0000-0001-9754-0393
+  year: '2024'
+- type: software
+  title: cli
+  abstract: 'cli: Helpers for Developing Command Line Interfaces'
+  notes: Imports
+  url: https://cli.r-lib.org
+  repository: https://CRAN.R-project.org/package=cli
+  authors:
+  - family-names: Csárdi
+    given-names: Gábor
+    email: csardi.gabor@gmail.com
+  year: '2024'
+- type: software
+  title: curl
+  abstract: 'curl: A Modern and Flexible Web Client for R'
+  notes: Imports
+  url: https://jeroen.r-universe.dev/curl
+  repository: https://CRAN.R-project.org/package=curl
+  authors:
+  - family-names: Ooms
+    given-names: Jeroen
+    email: jeroen@berkeley.edu
+    orcid: https://orcid.org/0000-0002-4035-0289
+  year: '2024'
+- type: software
+  title: jsonlite
+  abstract: 'jsonlite: A Simple and Robust JSON Parser and Generator for R'
+  notes: Imports
+  url: https://jeroen.r-universe.dev/jsonlite
+  repository: https://CRAN.R-project.org/package=jsonlite
+  authors:
+  - family-names: Ooms
+    given-names: Jeroen
+    email: jeroen@berkeley.edu
+    orcid: https://orcid.org/0000-0002-4035-0289
+  year: '2024'
+- type: software
+  title: utils
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+
