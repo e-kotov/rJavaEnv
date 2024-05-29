@@ -28,7 +28,15 @@ You can request a specific Java Development Kit (JDK) in your project, and `rJav
 
 **WARNING** This package is in the early stages of development and is not yet ready for production use.
 
-## Installation
+
+```{r results="asis", echo = FALSE}
+glue::glue('<script type="application/ld+json">
+      {glue::glue_collapse(readLines("inst/schemaorg.json"), sep = "\n")}
+    </script>')
+```
+
+
+## Install
 
 You can install the development version of `rJavaEnv` from GitHub:
 
@@ -46,7 +54,7 @@ This will:
 
   - download Java 21 distribution compatible with the current operating system and processor architecture;
   
-  - create **/rjavaenv/`platform`/`processor_architecture`/`java_version`** in current directory/project and unpack the downloaded Java distribution there;
+  - create **rjavaenv/`platform`/`processor_architecture`/`java_version`** in current directory/project and unpack the downloaded Java distribution there;
   
   - set the current session's JAVA_HOME and PATH environment variables to point to the installed Java distribution;
   
@@ -86,7 +94,7 @@ The package has several core functions:
 
 For detailed usage, see the [Quick Start Vignette](vignettes/quick_start.Rmd).
 
-# Limitations
+## Limitations
 
 Currently, `rJavaEnv` only supports major Java versions such as 8, 11, 16, 17, 21, 22, etc. The download and install functions ignore the minor version of the Java distribution and just downloads the latest stable subversion of the specified major version. This is done to simplify the process and avoid the need to update the package every time a new minor version of Java is released. For most users this should be sufficient, but this is substandard for full reproducibility.
 
@@ -94,7 +102,7 @@ The main limitation is that if you want to switch to another Java environment, y
 
 Therefore, if you need to use R packages that depend on different Java versions within the same project, you will have to create separate R scripts for each Java environment and run them in separate R sessions. One effective way of doing this is to use the [`callr`](https://github.com/r-lib/callr){target="_blank"} package to run R scripts in separate R sessions. Another option is to use the [`targets`](https://github.com/ropensci/targets){target="_blank"} package to manage the whole project workflow, which, as a side effect, will lead to all R scripts being run in separate R sessions. To use `rJavaEnv` with `targets`, you will need to download and install several Java environments using `rJavaEnv::java_download()` and `rJavaEnv::java_install()` and set the relevant path with `rJavaEnv::java_env_set()` at the beginning of each function that requires a certain Java version.
 
-# Future work
+## Future work
 
 The future work includes:
 

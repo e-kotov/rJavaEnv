@@ -32,7 +32,50 @@ different Java versions.
 **WARNING** This package is in the early stages of development and is
 not yet ready for production use.
 
-## Installation
+<script type="application/ld+json">
+      {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "type": "SoftwareSourceCode",
+      "author": {
+        "id": "https://orcid.org/0000-0001-6690-5345"
+      },
+      "codeRepository": "https://github.com/e-kotov/rJavaEnv",
+      "copyrightHolder": {
+        "id": "https://orcid.org/0000-0001-6690-5345",
+        "type": "Person",
+        "email": "kotov.egor@gmail.com",
+        "familyName": "Kotov",
+        "givenName": "Egor"
+      },
+      "description": "Install specific version of Java runtime environment at the R project level. The goal of rJavaEnv is to manage multiple Java JDKs in R projects by automatingthe process of downloading, installing, and configuring Java environments on a per-project basis. This package is inspired by the renv <https://rstudio.github.io/renv/> package for managing R environments in R projects. You can request a specific Java Development Kit (JDK) in your project, and rJavaEnv will download and install the requested Java environment in a project-specific directory and set the PATH and JAVA_HOME for when you are using this project. Therefore, you can have different Java versions for different projects without contaminating your system with different Java versions.",
+      "license": "https://spdx.org/licenses/MIT",
+      "name": "rJavaEnv: Java Environments for R Projects",
+      "programmingLanguage": {
+        "type": "ComputerLanguage",
+        "name": "R",
+        "url": "https://r-project.org"
+      },
+      "runtimePlatform": "R version 4.4.0 (2024-04-24)",
+      "version": "0.0.0.9000"
+    },
+    {
+      "type": "SoftwareSourceCode",
+      "author": {
+        "id": "https://orcid.org/0000-0001-6690-5345",
+        "type": "Person",
+        "email": "kotov.egor@gmail.com",
+        "familyName": "Kotov",
+        "givenName": "Egor"
+      },
+      "name": "rJavaEnv: Java Environments for R Projects"
+    }
+  ]
+}
+    </script>
+
+## Install
 
 You can install the development version of `rJavaEnv` from GitHub:
 
@@ -51,10 +94,9 @@ This will:
 - download Java 21 distribution compatible with the current operating
   system and processor architecture;
 
-- create
-  **/rjavaenv/`platform`/`processor_architecture`/`java_version`** in
-  current directory/project and unpack the downloaded Java distribution
-  there;
+- create **rjavaenv/`platform`/`processor_architecture`/`java_version`**
+  in current directory/project and unpack the downloaded Java
+  distribution there;
 
 - set the current session’s JAVA_HOME and PATH environment variables to
   point to the installed Java distribution;
@@ -102,7 +144,7 @@ The package has several core functions:
 For detailed usage, see the [Quick Start
 Vignette](vignettes/quick_start.Rmd).
 
-# Limitations
+## Limitations
 
 Currently, `rJavaEnv` only supports major Java versions such as 8, 11,
 16, 17, 21, 22, etc. The download and install functions ignore the minor
@@ -141,7 +183,7 @@ will need to download and install several Java environments using
 relevant path with `rJavaEnv::java_env_set()` at the beginning of each
 function that requires a certain Java version.
 
-# Future work
+## Future work
 
 The future work includes:
 

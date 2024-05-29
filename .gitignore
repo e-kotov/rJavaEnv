@@ -11,3 +11,5 @@ README_cache
 renv
 .Rprofile
 rjavaenv
+/doc/
+/Meta/
