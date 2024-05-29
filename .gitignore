@@ -8,6 +8,6 @@ docs
 bin
 private
 README_cache
-rjaveenv
 renv
 .Rprofile
+rjavaenv

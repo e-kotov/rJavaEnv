@@ -1,0 +1,80 @@
+---
+title: "Get started with rJavaEnv"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Get started with rJavaEnv}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Quick Start with rJavaEnv
+
+This vignette provides a quick start guide for using the `rJavaEnv` package.
+
+## Installation
+
+You can install the development version of `rJavaEnv` from GitHub:
+
+```{r eval=FALSE}
+devtools::install_github("e-kotov/rJavaEnv")
+```
+
+## Example Workflow
+
+### 1. Quick Install Java
+
+This will download and install Java 21 (default) in the current project directory, and set the Java environment:
+
+```{r eval=FALSE}
+library(rJavaEnv)
+java_quick_install(21)
+```
+
+### 2. Step-by-Step Installation
+
+If you prefer a more controlled installation process, you can follow these steps:
+
+#### Download Java
+
+Download Java 21 distribution (default):
+
+```{r eval=FALSE}
+java_distr_path_21 <- java_download(version = 21)
+```
+
+#### Install Java
+
+Install the downloaded Java distribution:
+
+```{r eval=FALSE}
+java_home_path_21 <- java_install(java_distr_path_21)
+```
+
+### 3. Set Java Environment
+
+Set the JAVA_HOME and PATH environment variables to the installed Java directory:
+
+```{r eval=FALSE}
+java_env_set(java_home_path_21)
+```
+
+### 4. Check Java Version
+
+Check the installed Java version using terminal commands:
+
+```{r eval=FALSE}
+java_check_version_cmd()
+```
+
+Check the Java version using `rJava` in a separate R session:
+
+```{r eval=FALSE}
+java_version_check_rjava("/path/to/installed/java")
+```
