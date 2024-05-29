@@ -1,0 +1,9 @@
+bibentry(
+  key      = "rjavaenv",
+  bibtype  = "Manual",
+  title    = "rJavaEnv: Java Environments for R Projects",
+  author   = person("Egor", "Kotov", , "kotov.egor@gmail.com", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0001-6690-5345")),
+  year     = "2024",
+  url      = "https://github.com/e-kotov/rJavaEnv",
+)
