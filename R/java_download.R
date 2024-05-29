@@ -17,13 +17,13 @@
 #' java_download()
 #' }
 java_download <- function(version = 21,
-                          distribution = "Corretto",
-                          dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
-                          platform = rJavaEnv:::.detect_platform()$os,
-                          arch = rJavaEnv:::.detect_platform()$arch,
-                          verbose = TRUE) {
+                                       distribution = "Corretto",
+                                       dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
+                                       platform = platform_detect()$os,
+                                       arch = platform_detect()$arch,
+                                       verbose = TRUE) {
 
-  java_urls <- rJavaEnv:::.load_java_urls()
+  java_urls <- java_urls_load()
 
   valid_distributions <- names(java_urls)
   valid_platforms <- names(java_urls[[distribution]])
@@ -48,11 +48,11 @@ java_download <- function(version = 21,
 
   # Print out the detected platform and architecture
   if (verbose) {
-    cli::cli_inform(c(
+    pkg_message(
       "Detected platform: {.strong {platform}}",
       "Detected architecture: {.strong {arch}}",
       "You can change the platform and architecture by specifying the {.arg platform} and {.arg arch} arguments."
-    ))
+    )
   }
 
   if (!distribution %in% names(java_urls)) {
@@ -72,13 +72,13 @@ java_download <- function(version = 21,
 
   dest_file <- file.path(dest_dir, basename(url))
 
-  cli::cli_inform("Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}")
+  pkg_message("Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}")
 
   if (file.exists(dest_file)) {
-    cli::cli_alert_info("File already exists. Skipping download.")
+    pkg_message("File already exists. Skipping download.")
   } else {
     curl::curl_download(url, dest_file, quiet = FALSE)
-    cli::cli_alert_success("Download completed.")
+    pkg_message("Download completed.")
   }
 
   return(dest_file)

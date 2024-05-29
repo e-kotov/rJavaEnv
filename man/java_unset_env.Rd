@@ -4,7 +4,7 @@
 \alias{java_unset_env}
 \title{Unset the JAVA_HOME and PATH environment variables in the project .Rprofile}
 \usage{
-java_unset_env(quiet = FALSE)
+java_unset_env(verbose = TRUE)
 }
 \arguments{
 \item{quiet}{Whether to suppress messages. Defaults to FALSE.}

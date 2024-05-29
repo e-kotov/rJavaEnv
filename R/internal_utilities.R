@@ -1,38 +1,52 @@
-.detect_platform <- function() {
+# Helper function for verbosity control
+pkg_message <- function(...) {
+  if (getOption("rjavaenv.quiet", FALSE)) {
+    return()
+  }
+  cli::cli_inform(...)
+}
+
+
+# Detect platform and architecture
+platform_detect <- function() {
   sys_info <- tolower(Sys.info())
 
   os <- switch(sys_info["sysname"],
-    "windows" = "windows",
-    "linux" = "linux",
-    "darwin" = "macos",
-    stop("Unsupported platform")
+               "windows" = "windows",
+               "linux" = "linux",
+               "darwin" = "macos",
+               stop(cli::cli_abort("Unsupported platform"))
   )
 
   arch <- switch(sys_info["machine"],
-    "x86-64" = "x64",
-    "x86_64" = "x64",
-    "i386" = "x86",
-    "i686" = "x86",
-    "aarch64" = "arm64",
-    "arm64" = "arm64",
-    stop("Unsupported architecture")
+                 "x86-64" = "x64",
+                 "x86_64" = "x64",
+                 "i386" = "x86",
+                 "i686" = "x86",
+                 "aarch64" = "arm64",
+                 "arm64" = "arm64",
+                 stop(cli::cli_abort("Unsupported architecture"))
   )
 
   return(list(os = os, arch = arch))
 }
 
-.load_java_urls <- function() {
+
+# Load Java URLs from JSON file
+java_urls_load <- function() {
   json_file <- system.file("extdata", "java_urls.json", package = "rJavaEnv")
   if (json_file == "") {
-    stop("Configuration file not found")
+    cli::cli_abort("Configuration file not found")
   }
   jsonlite::fromJSON(json_file, simplifyVector = FALSE)
 }
 
 
-# Function to test all URLs in the JSON file
-.test_all_urls <- function() {
-  java_urls <- .load_java_urls()
+
+
+# Test all Java URLs
+urls_test_all <- function() {
+  java_urls <- java_urls_load()
   results <- list()
 
   for (distribution in names(java_urls)) {
@@ -69,10 +83,12 @@
   return(results)
 }
 
+
 # Unexported function to initialize Java using rJava and check Java version
-# This is intended to be called from the exported function check_java_version_rjava
-.check_java_version_rscript <- function(java_home) {
-  tryCatch(
+# This is intended to be called from the exported function java_check_version_rjava
+# Updated java_version_check_rscript function with verbosity control
+java_version_check_rscript <- function(java_home) {
+  result <- tryCatch(
     {
       Sys.setenv(JAVA_HOME = java_home)
 
@@ -80,21 +96,21 @@
       new_path <- file.path(java_home, "bin")
       Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 
-      rJava::.jinit()
+      suppressWarnings(rJava::.jinit())
+      suppressWarnings(java_version <- rJava::.jcall("java.lang.System", "S", "getProperty", "java.version"))
 
-      # Check and save the Java version
-      java_version <- rJava::.jcall("java.lang.System", "S", "getProperty", "java.version")
+      message <- cli::format_message(c(
+        "rJava and other rJava/Java-based packages will use Java version: {.val {java_version}}"
+      ))
 
-      # Print Java version
-      output_message <- sprintf(
-        "If you set JAVA_HOME to path: %s  rJava and other Java-based packages will use Java version: %s",
-        java_home, java_version
-      )
-
-      return(output_message)
+      message
     },
     error = function(e) {
-      return(paste("Error checking Java version:", e$message))
+      cli::format_message("Error checking Java version: {e$message}")
     }
   )
+
+  return(result)
 }
+
+

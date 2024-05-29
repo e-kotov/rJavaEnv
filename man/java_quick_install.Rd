@@ -7,8 +7,8 @@
 java_quick_install(
   version = 21,
   distribution = "Corretto",
-  platform = .detect_platform()$os,
-  arch = .detect_platform()$arch,
+  platform = platform_detect()$os,
+  arch = platform_detect()$arch,
   verbose = TRUE
 )
 }

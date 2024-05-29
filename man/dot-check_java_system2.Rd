@@ -7,7 +7,7 @@
 .check_java_system2()
 }
 \value{
-Nothing. Messages the Java path and version to the console.
+TRUE if successful, otherwise stops with an error.
 }
 \description{
 This function checks the Java executable path and retrieves the Java version,

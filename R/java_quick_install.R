@@ -9,8 +9,8 @@
 java_quick_install <- function(
     version = 21,
     distribution = "Corretto",
-    platform = .detect_platform()$os,
-    arch = .detect_platform()$arch,
+    platform = platform_detect()$os,
+    arch = platform_detect()$arch,
     verbose = TRUE) {
 
   java_distr_path <- java_download(

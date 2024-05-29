@@ -10,7 +10,6 @@
 #' \dontrun{
 #' java_install("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
 #' }
-# Example function that installs Java and sets up the environment
 java_install <- function(java_path, project = NULL, autoset_java_path = TRUE) {
   # Possible values for platform, architecture, and Java versions
   platforms <- c("windows", "linux", "macos")
@@ -29,9 +28,9 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE) {
   arch <- parts[sapply(parts, function(x) x %in% architectures)][1]
   platform <- parts[sapply(parts, function(x) x %in% platforms)][1]
 
-  if (is.na(version)) stop("Unable to detect Java version from filename.")
-  if (is.na(arch)) stop("Unable to detect architecture from filename.")
-  if (is.na(platform)) stop("Unable to detect platform from filename.")
+  if (is.na(version)) stop(cli::cli_abort("Unable to detect Java version from filename."))
+  if (is.na(arch)) stop(cli::cli_abort("Unable to detect architecture from filename."))
+  if (is.na(platform)) stop(cli::cli_abort("Unable to detect platform from filename."))
 
   # Create the installation path
   java_install_path <- file.path(project, "rjavaenv", platform, arch, version)
@@ -61,7 +60,7 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE) {
   } else if (grepl("\\.zip$", java_path)) {
     utils::unzip(java_path, exdir = temp_dir)
   } else {
-    stop("Unsupported file format")
+    stop(cli::cli_abort("Unsupported file format"))
   }
 
   # Safely find the extracted directory
@@ -80,9 +79,9 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE) {
 
   # Write the JAVA_HOME to the .Rprofile and environment after installation
   if (autoset_java_path) {
-    java_set_env(java_install_path)
+    java_env_set(java_install_path)
   }
 
-  message(sprintf("Java %s (%s) for %s installed at %s", version, filename, platform, java_install_path))
+  pkg_message("Java {version} ({filename}) for {platform} installed at {java_install_path}")
   return(java_install_path)
 }

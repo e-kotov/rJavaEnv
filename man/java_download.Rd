@@ -8,8 +8,8 @@ java_download(
   version = 21,
   distribution = "Corretto",
   dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
-  platform = .detect_platform()$os,
-  arch = .detect_platform()$arch,
+  platform = platform_detect()$os,
+  arch = platform_detect()$arch,
   verbose = TRUE
 )
 }
