@@ -19,6 +19,7 @@ Description: Install specific version of Java runtime environment
 License: MIT + file LICENSE
 Suggests: 
     knitr,
+    rmarkdown,
     rJava,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
