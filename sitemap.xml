@@ -25,19 +25,19 @@
     <loc>http://www.ekotov.pro/rJavaEnv/news/index.html</loc>
   </url>
   <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/dot-check_java_system2.html</loc>
-  </url>
-  <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/index.html</loc>
   </url>
   <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_cache_clear.html</loc>
-  </url>
-  <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_cache_list.html</loc>
-  </url>
-  <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/java_check_version_cmd.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_check_version_rjava.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_check_version_system.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_clear_distrib_cache.html</loc>
   </url>
   <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/java_download.html</loc>
@@ -52,18 +52,30 @@
     <loc>http://www.ekotov.pro/rJavaEnv/reference/java_env_set_session.html</loc>
   </url>
   <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_env_unset.html</loc>
+  </url>
+  <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/java_install.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_list_distrib_cache.html</loc>
   </url>
   <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/java_quick_install.html</loc>
   </url>
   <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_unset_env.html</loc>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_urls_load.html</loc>
   </url>
   <url>
-    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_version_check_rjava.html</loc>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/java_version_check_rscript.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/platform_detect.html</loc>
   </url>
   <url>
     <loc>http://www.ekotov.pro/rJavaEnv/reference/rJavaEnv-package.html</loc>
+  </url>
+  <url>
+    <loc>http://www.ekotov.pro/rJavaEnv/reference/urls_test_all.html</loc>
   </url>
 </urlset>

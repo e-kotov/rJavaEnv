@@ -137,7 +137,7 @@
 <p>This will:</p>
 <ul>
 <li><p>download Java 21 distribution compatible with the current operating system and processor architecture;</p></li>
-<li><p>create <strong>/rjavaenv/<code>platform</code>/<code>processor_architecture</code>/<code>java_version</code></strong> in current directory/project and unpack the downloaded Java distribution there;</p></li>
+<li><p>create <strong>rjavaenv/<code>platform</code>/<code>processor_architecture</code>/<code>java_version</code></strong> in current directory/project and unpack the downloaded Java distribution there;</p></li>
 <li><p>set the current session’s JAVA_HOME and PATH environment variables to point to the installed Java distribution;</p></li>
 <li><p>add code to .Rprofile file in the current directory/project to set JAVA_HOME and PATH environment variables when the project is opened in RStudio.</p></li>
 </ul>
@@ -169,7 +169,13 @@
 <li>
 <code><a href="reference/java_env_set.html">java_env_set()</a></code>
 <ul>
-<li>Sets the JAVA_HOME and PATH environment variables to a given path.</li>
+<li>Sets the JAVA_HOME and PATH environment variables to a given path in current R session and/or in the .Rprofile file in the project directory.</li>
+</ul>
+</li>
+<li>
+<code><a href="reference/java_env_set.html">java_env_set()</a></code>
+<ul>
+<li>Remove the JAVA_HOME and PATH environment variables from the .Rpofile file in the project directory (but not in the current R session, please restart the session so that R picks up the system Java).</li>
 </ul>
 </li>
 <li>
@@ -179,19 +185,19 @@
 </ul>
 </li>
 <li>
-<code><a href="reference/java_version_check_rjava.html">java_version_check_rjava()</a></code>
+<code>java_version_check_rjava()</code>
 <ul>
 <li>Checks the Java version using <code>rJava</code> in a separate R session. Useful for checking Java version that would be picked up by packages like <a href="https://github.com/ipeaGIT/r5r" target="_blank" class="external-link"><code>r5r</code></a>, that initialize Java using <code>rJava</code>.</li>
 </ul>
 </li>
 <li>
-<code><a href="reference/java_cache_list.html">java_cache_list()</a></code>
+<code><a href="reference/java_list_distrib_cache.html">java_list_distrib_cache()</a></code>
 <ul>
 <li>Lists the contents of the Java distributions cache folder in user data directory.</li>
 </ul>
 </li>
 <li>
-<code><a href="reference/java_cache_clear.html">java_cache_clear()</a></code>
+<code><a href="reference/java_clear_distrib_cache.html">java_clear_distrib_cache()</a></code>
 <ul>
 <li>Clears the Java distributions cache folder in user data directory.</li>
 </ul>
@@ -213,6 +219,7 @@
 <ul>
 <li><p>Adding support for more Java distributions and versions</p></li>
 <li><p>Possibly adding support for specifying Java version beyond the major version</p></li>
+<li><p>Possible allow downloading several Java distributions at once, e.g. different major versions of the same ‘flavour’ or different ‘flavours’ of the same major version</p></li>
 </ul>
 </div>
 <div class="section level2">
