@@ -16,7 +16,6 @@ TRUE if successful, otherwise FALSE.
 Check installed Java version using terminal commands
 }
 \examples{
-\dontrun{
 java_check_version_cmd()
-}
+
 }

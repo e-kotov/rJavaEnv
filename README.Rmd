@@ -85,10 +85,10 @@ The package has several core functions:
 6. `java_version_check_rjava()`
    * Checks the Java version using `rJava` in a separate R session. Useful for checking Java version that would be picked up by packages like [`r5r`](https://github.com/ipeaGIT/r5r){target="_blank"}, that initialize Java using `rJava`.
 
-7. `java_cache_list()`
+7. `java_list_distrib_cache()`
    * Lists the contents of the Java distributions cache folder in user data directory.
 
-8. `java_cache_clear()`
+8. `java_clear_distrib_cache()`
    * Clears the Java distributions cache folder in user data directory.
 
 
@@ -109,6 +109,8 @@ The future work includes:
   - Adding support for more Java distributions and versions
   
   - Possibly adding support for specifying Java version beyond the major version
+  
+  - Possible allow downloading several Java distributions at once, e.g. different major versions of the same 'flavour' or different 'flavours' of the same major version
   
 
 ## Acknowledgements

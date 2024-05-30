@@ -1,38 +1,44 @@
-# Helper function for verbosity control
-pkg_message <- function(...) {
-  if (getOption("rjavaenv.quiet", FALSE)) {
-    return()
-  }
-  cli::cli_inform(...)
-}
-
-
-# Detect platform and architecture
-platform_detect <- function() {
+#' Detect platform and architecture
+#'
+#' @keywords internal
+#' @param verbose Whether to print detailed messages. Defaults to FALSE.
+#' @return A list of length 2 with the detected platform and architecture.
+#'
+platform_detect <- function(verbose = FALSE) {
   sys_info <- tolower(Sys.info())
 
   os <- switch(sys_info["sysname"],
-               "windows" = "windows",
-               "linux" = "linux",
-               "darwin" = "macos",
-               stop(cli::cli_abort("Unsupported platform"))
+    "windows" = "windows",
+    "linux" = "linux",
+    "darwin" = "macos",
+    stop(cli::cli_abort("Unsupported platform"))
   )
 
   arch <- switch(sys_info["machine"],
-                 "x86-64" = "x64",
-                 "x86_64" = "x64",
-                 "i386" = "x86",
-                 "i686" = "x86",
-                 "aarch64" = "arm64",
-                 "arm64" = "arm64",
-                 stop(cli::cli_abort("Unsupported architecture"))
+    "x86-64" = "x64",
+    "x86_64" = "x64",
+    "i386" = "x86",
+    "i686" = "x86",
+    "aarch64" = "arm64",
+    "arm64" = "arm64",
+    stop(cli::cli_abort("Unsupported architecture"))
   )
+
+  if (verbose) {
+    cli::cli_inform("Detected platform: {os}")
+    cli::cli_inform("Detected architecture: {arch}")
+  }
 
   return(list(os = os, arch = arch))
 }
 
 
-# Load Java URLs from JSON file
+#' Load Java URLs from JSON file
+#'
+#' @keywords internal
+#'
+#' @return A list with the Java URLs structured as in the JSON file by distribution, platform, and architecture.
+#'
 java_urls_load <- function() {
   json_file <- system.file("extdata", "java_urls.json", package = "rJavaEnv")
   if (json_file == "") {
@@ -42,9 +48,12 @@ java_urls_load <- function() {
 }
 
 
-
-
-# Test all Java URLs
+#' Test all Java URLs
+#'
+#' @keywords internal
+#'
+#' @return A list with the results of testing all Java URLs.
+#'
 urls_test_all <- function() {
   java_urls <- java_urls_load()
   results <- list()
@@ -87,6 +96,14 @@ urls_test_all <- function() {
 # Unexported function to initialize Java using rJava and check Java version
 # This is intended to be called from the exported function java_check_version_rjava
 # Updated java_version_check_rscript function with verbosity control
+#' Check Java version using rJava
+#'
+#' @keywords internal
+#'
+#' @param java_home
+#'
+#' @return A message with the Java version or an error message.
+#'
 java_version_check_rscript <- function(java_home) {
   result <- tryCatch(
     {
@@ -99,9 +116,7 @@ java_version_check_rscript <- function(java_home) {
       suppressWarnings(rJava::.jinit())
       suppressWarnings(java_version <- rJava::.jcall("java.lang.System", "S", "getProperty", "java.version"))
 
-      message <- cli::format_message(c(
-        "rJava and other rJava/Java-based packages will use Java version: {.val {java_version}}"
-      ))
+      message <- cli::format_message("rJava and other rJava/Java-based packages will use Java version: {.val {java_version}}")
 
       message
     },
@@ -112,5 +127,3 @@ java_version_check_rscript <- function(java_home) {
 
   return(result)
 }
-
-

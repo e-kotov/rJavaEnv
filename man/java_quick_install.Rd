@@ -30,5 +30,7 @@ Message indicating that Java was installed and set in the current working/projec
 Download and install and set Java in current working/project directory
 }
 \examples{
+\dontrun{
 java_quick_install()
+}
 }

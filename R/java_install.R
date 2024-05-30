@@ -28,9 +28,9 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE) {
   arch <- parts[sapply(parts, function(x) x %in% architectures)][1]
   platform <- parts[sapply(parts, function(x) x %in% platforms)][1]
 
-  if (is.na(version)) stop(cli::cli_abort("Unable to detect Java version from filename."))
-  if (is.na(arch)) stop(cli::cli_abort("Unable to detect architecture from filename."))
-  if (is.na(platform)) stop(cli::cli_abort("Unable to detect platform from filename."))
+  if (is.na(version)) stop(cli::cli_abort("Unable to detect Java version from filename.", .envir = environment()))
+  if (is.na(arch)) stop(cli::cli_abort("Unable to detect architecture from filename.", .envir = environment()))
+  if (is.na(platform)) stop(cli::cli_abort("Unable to detect platform from filename.", .envir = environment()))
 
   # Create the installation path
   java_install_path <- file.path(project, "rjavaenv", platform, arch, version)
@@ -60,7 +60,7 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE) {
   } else if (grepl("\\.zip$", java_path)) {
     utils::unzip(java_path, exdir = temp_dir)
   } else {
-    stop(cli::cli_abort("Unsupported file format"))
+    stop(cli::cli_abort("Unsupported file format", .envir = environment()))
   }
 
   # Safely find the extracted directory
@@ -82,6 +82,6 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE) {
     java_env_set(java_install_path)
   }
 
-  pkg_message("Java {version} ({filename}) for {platform} installed at {java_install_path}")
+  cli::cli_inform("Java {version} ({filename}) for {platform} installed at {java_install_path}", .envir = environment())
   return(java_install_path)
 }

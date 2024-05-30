@@ -4,12 +4,14 @@
 \alias{java_env_set}
 \title{Set the JAVA_HOME and PATH environment variables to a given path}
 \usage{
-java_env_set(java_home, where = c("both", "session", "project"))
+java_env_set(java_home, where = c("both", "session", "project"), verbose = T)
 }
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME.}
 
 \item{where}{Where to set the JAVA_HOME: "session", "project", or "both". Defaults to "both". When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.}
+
+\item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
 }
 \value{
 Nothing. Sets the JAVA_HOME and PATH environment variables.

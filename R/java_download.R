@@ -5,7 +5,7 @@
 #' @param dest_dir The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
 #' @param arch The architecture for which to download the Java distribution. Defaults to the current architecture.
-#' @param verbose Whether to print out information about the detected platform and architecture. Defaults to TRUE.
+#' @param verbose Whether to print detailed messages. Defaults to TRUE.
 #'
 #' @return The path to the downloaded Java distribution file.
 #' @export
@@ -17,12 +17,11 @@
 #' java_download()
 #' }
 java_download <- function(version = 21,
-                                       distribution = "Corretto",
-                                       dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
-                                       platform = platform_detect()$os,
-                                       arch = platform_detect()$arch,
-                                       verbose = TRUE) {
-
+                          distribution = "Corretto",
+                          dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
+                          platform = platform_detect()$os,
+                          arch = platform_detect()$arch,
+                          verbose = TRUE) {
   java_urls <- java_urls_load()
 
   valid_distributions <- names(java_urls)
@@ -48,23 +47,23 @@ java_download <- function(version = 21,
 
   # Print out the detected platform and architecture
   if (verbose) {
-    pkg_message(
+    cli::cli_inform(c(
       "Detected platform: {.strong {platform}}",
       "Detected architecture: {.strong {arch}}",
       "You can change the platform and architecture by specifying the {.arg platform} and {.arg arch} arguments."
-    )
+    ))
   }
 
   if (!distribution %in% names(java_urls)) {
-    cli::cli_abort("Unsupported distribution: {.val {distribution}}")
+    cli::cli_abort("Unsupported distribution: {.val {distribution}}", .envir = environment())
   }
 
   if (!platform %in% names(java_urls[[distribution]])) {
-    cli::cli_abort("Unsupported platform: {.val {platform}}")
+    cli::cli_abort("Unsupported platform: {.val {platform}}", .envir = environment())
   }
 
   if (!arch %in% names(java_urls[[distribution]][[platform]])) {
-    cli::cli_abort("Unsupported architecture: {.val {arch}}")
+    cli::cli_abort("Unsupported architecture: {.val {arch}}", .envir = environment())
   }
 
   url_template <- java_urls[[distribution]][[platform]][[arch]]
@@ -72,13 +71,19 @@ java_download <- function(version = 21,
 
   dest_file <- file.path(dest_dir, basename(url))
 
-  pkg_message("Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}")
+  if (verbose) {
+    cli::cli_inform("Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}", .envir = environment())
+  }
 
   if (file.exists(dest_file)) {
-    pkg_message("File already exists. Skipping download.")
+    if (verbose) {
+      cli::cli_inform("File already exists. Skipping download.", .envir = environment())
+    }
   } else {
     curl::curl_download(url, dest_file, quiet = FALSE)
-    pkg_message("Download completed.")
+    if (verbose) {
+      cli::cli_inform("Download completed.", .envir = environment())
+    }
   }
 
   return(dest_file)

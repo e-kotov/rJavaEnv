@@ -135,10 +135,10 @@ The package has several core functions:
       packages like <a href="https://github.com/ipeaGIT/r5r"
       target="_blank"><code>r5r</code></a>, that initialize Java using
       `rJava`.
-7.  `java_cache_list()`
+7.  `java_list_distrib_cache()`
     - Lists the contents of the Java distributions cache folder in user
       data directory.
-8.  `java_cache_clear()`
+8.  `java_clear_distrib_cache()`
     - Clears the Java distributions cache folder in user data directory.
 
 For detailed usage, see the [Quick Start
@@ -191,6 +191,10 @@ The future work includes:
 
 - Possibly adding support for specifying Java version beyond the major
   version
+
+- Possible allow downloading several Java distributions at once,
+  e.g. different major versions of the same ‘flavour’ or different
+  ‘flavours’ of the same major version
 
 ## Acknowledgements
 
