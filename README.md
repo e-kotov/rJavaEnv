@@ -30,7 +30,8 @@ versions for different projects without contaminating your system with
 different Java versions.
 
 **WARNING** This package is in the early stages of development and is
-not yet ready for production use.
+not yet ready for production use. Please test it thoroughly before using
+it in your projects.
 
 <script type="application/ld+json">
       {

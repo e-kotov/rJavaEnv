@@ -12,7 +12,7 @@
 
 
 
-<title>Get started with rJavaEnv</title>
+<title>Quick Start Guide: Java Setup for R Projects</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -336,59 +336,152 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Get started with rJavaEnv</h1>
+<h1 class="title toc-ignore">Quick Start Guide: Java Setup for R
+Projects</h1>
 
 
 
-<div id="quick-start-with-rjavaenv" class="section level1">
-<h1>Quick Start with rJavaEnv</h1>
-<p>This vignette provides a quick start guide for using the
-<code>rJavaEnv</code> package.</p>
-<div id="installation" class="section level2">
-<h2>Installation</h2>
-<p>You can install the development version of <code>rJavaEnv</code> from
-GitHub:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;e-kotov/rJavaEnv&quot;</span>)</span></code></pre></div>
-</div>
-<div id="example-workflow" class="section level2">
-<h2>Example Workflow</h2>
-<div id="quick-install-java" class="section level3">
-<h3>1. Quick Install Java</h3>
-<p>This will download and install Java 21 (default) in the current
-project directory, and set the Java environment:</p>
+<p>This guide will walk you through downloading, installing, and
+managing Java environments for your R projects using the
+<code>rJavaEnv</code> package. We’ll cover setting up the environment,
+unsetting it, managing distributions, installing Java, and checking Java
+versions.</p>
+<div id="step-1-download-and-install-java" class="section level3">
+<h3>Step 1: Download and Install Java</h3>
+<ol style="list-style-type: decimal">
+<li><p><strong>Install <code>rJavaEnv</code></strong>: First, install
+the development version of <code>rJavaEnv</code> from GitHub:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;e-kotov/rJavaEnv&quot;</span>)</span></code></pre></div></li>
+<li><p><strong>Quick Install Java</strong>: To quickly install Java 21
+(default) in your current project directory and set the environment:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(rJavaEnv)</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">java_quick_install</span>(<span class="dv">21</span>)</span></code></pre></div>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">java_quick_install</span>()</span></code></pre></div>
+<p>This command:</p>
+<ul>
+<li>Downloads the Java distribution compatible with your OS and
+architecture.</li>
+<li>Installs Java in a cache directory.</li>
+<li>Sets the JAVA_HOME and PATH environment variables for the current
+session and project.</li>
+</ul>
+<p>Expected output:</p>
+<pre><code>Platform detected or provided: &lt;your_platform&gt;
+Architecture detected or provided: &lt;your_architecture&gt;
+Downloading Java 21 (Corretto) for &lt;your_platform&gt; &lt;your_architecture&gt; to &lt;destination_path&gt;
+Download completed.
+Java 21 (Corretto) for &lt;your_platform&gt; &lt;your_architecture&gt; installed at &lt;installed_path&gt; and symlinked to &lt;symlink_path&gt;</code></pre></li>
+<li><p><strong>Step-by-Step Installation</strong>: If you prefer a more
+controlled process:</p>
+<ul>
+<li><p><strong>Download Java</strong>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>java_distr_path <span class="ot">&lt;-</span> <span class="fu">java_download</span>(<span class="at">version =</span> <span class="dv">21</span>, <span class="at">distribution =</span> <span class="st">&quot;Corretto&quot;</span>)</span></code></pre></div>
+<p>This will download Java 21 from the Corretto distribution.</p>
+<p>Expected output:</p>
+<pre><code>Downloading Java 21 (Corretto) for &lt;your_platform&gt; &lt;your_architecture&gt; to &lt;destination_path&gt;
+Download completed.</code></pre></li>
+<li><p><strong>Install Java</strong>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>java_home_path <span class="ot">&lt;-</span> <span class="fu">java_install</span>(java_distr_path)</span></code></pre></div>
+<p>This will install the downloaded Java distribution and set the
+JAVA_HOME and PATH environment variables.</p>
+<p>Expected output:</p>
+<pre><code>Java 21 (Corretto) installed at &lt;installed_path&gt; and symlinked to &lt;symlink_path&gt;</code></pre></li>
+</ul></li>
+</ol>
 </div>
-<div id="step-by-step-installation" class="section level3">
-<h3>2. Step-by-Step Installation</h3>
-<p>If you prefer a more controlled installation process, you can follow
-these steps:</p>
-<div id="download-java" class="section level4">
-<h4>Download Java</h4>
-<p>Download Java 21 distribution (default):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>java_distr_path_21 <span class="ot">&lt;-</span> <span class="fu">java_download</span>(<span class="at">version =</span> <span class="dv">21</span>)</span></code></pre></div>
-</div>
-<div id="install-java" class="section level4">
-<h4>Install Java</h4>
-<p>Install the downloaded Java distribution:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>java_home_path_21 <span class="ot">&lt;-</span> <span class="fu">java_install</span>(java_distr_path_21)</span></code></pre></div>
-</div>
-</div>
-<div id="set-java-environment" class="section level3">
-<h3>3. Set Java Environment</h3>
+<div id="step-2-set-java-environment" class="section level3">
+<h3>Step 2: Set Java Environment</h3>
 <p>Set the JAVA_HOME and PATH environment variables to the installed
 Java directory:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">java_env_set</span>(java_home_path_21)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">java_env_set</span>(java_home_path)</span></code></pre></div>
+<p>This function sets the JAVA_HOME and PATH environment variables for
+the current R session and/or the project <code>.Rprofile</code>
+file.</p>
+<p>Expected output:</p>
+<pre><code>Current R Session: JAVA_HOME and PATH set to &lt;java_home_path&gt;
+Current R Project/Working Directory: JAVA_HOME and PATH set to &lt;java_home_path&gt; in .Rprofile in &lt;project_directory&gt;</code></pre>
 </div>
-<div id="check-java-version" class="section level3">
-<h3>4. Check Java Version</h3>
-<p>Check the installed Java version using terminal commands:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">java_check_version_cmd</span>()</span></code></pre></div>
-<p>Check the Java version using <code>rJava</code> in a separate R
-session:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">java_version_check_rjava</span>(<span class="st">&quot;/path/to/installed/java&quot;</span>)</span></code></pre></div>
+<div id="step-3-unset-java-environment" class="section level3">
+<h3>Step 3: Unset Java Environment</h3>
+<p>Remove the JAVA_HOME and PATH environment variables settings from the
+project <code>.Rprofile</code> file:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">java_env_unset</span>()</span></code></pre></div>
+<p>This function removes the JAVA_HOME and PATH environment variables
+from the <code>.Rprofile</code> file in the project directory.</p>
+<p>Expected output:</p>
+<pre><code>Removed JAVA_HOME settings from .Rprofile in &lt;project_directory&gt;</code></pre>
 </div>
+<div id="step-4-manage-java-distributions" class="section level3">
+<h3>Step 4: Manage Java Distributions</h3>
+<ul>
+<li><p><strong>List Cached Java Distributions</strong>:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">java_list</span>(<span class="at">type =</span> <span class="st">&quot;distrib&quot;</span>)</span></code></pre></div>
+<p>This function lists all Java distributions cached in the
+user-specific data directory.</p>
+<p>Expected output:</p>
+<pre><code>&lt;data.frame or vector of cached Java distributions&gt;</code></pre></li>
+<li><p><strong>Clear Cached Java Distributions</strong>:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">java_clear</span>(<span class="at">type =</span> <span class="st">&quot;distrib&quot;</span>)</span></code></pre></div>
+<p>This function clears all cached Java distributions.</p>
+<p>Expected output:</p>
+<pre><code>Java distributions cache cleared.</code></pre></li>
+</ul>
 </div>
+<div id="step-5-manage-installed-java-versions" class="section level3">
+<h3>Step 5: Manage Installed Java Versions</h3>
+<ul>
+<li><p><strong>List Installed Java Versions</strong>:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">java_list</span>(<span class="at">type =</span> <span class="st">&quot;installed&quot;</span>)</span></code></pre></div>
+<p>This function lists all installed Java versions in the user-specific
+data directory.</p>
+<p>Expected output:</p>
+<pre><code>&lt;data.frame or vector of installed Java versions&gt;</code></pre></li>
+<li><p><strong>Clear Installed Java Versions</strong>:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">java_clear</span>(<span class="at">type =</span> <span class="st">&quot;installed&quot;</span>)</span></code></pre></div>
+<p>This function clears all installed Java versions.</p>
+<p>Expected output:</p>
+<pre><code>Java installations cache cleared.</code></pre></li>
+</ul>
+</div>
+<div id="step-6-manage-project-specific-java-versions" class="section level3">
+<h3>Step 6: Manage Project-Specific Java Versions</h3>
+<ul>
+<li><p><strong>List Project-Specific Java Versions</strong>:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">java_list</span>(<span class="at">type =</span> <span class="st">&quot;project&quot;</span>)</span></code></pre></div>
+<p>This function lists all Java versions symlinked in the current
+project directory.</p>
+<p>Expected output:</p>
+<pre><code>&lt;data.frame or vector of project-specific Java versions&gt;</code></pre></li>
+<li><p><strong>Clear Project-Specific Java Versions</strong>:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">java_clear</span>(<span class="at">type =</span> <span class="st">&quot;project&quot;</span>)</span></code></pre></div>
+<p>This function clears all Java versions symlinked in the current
+project directory.</p>
+<p>Expected output:</p>
+<pre><code>All Java symlinks in the project have been cleared.</code></pre></li>
+</ul>
+</div>
+<div id="step-7-check-java-version" class="section level3">
+<h3>Step 7: Check Java Version</h3>
+<ul>
+<li><p><strong>Check Installed Java Version using Terminal
+Commands</strong>:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">java_check_version_cmd</span>()</span></code></pre></div>
+<p>This function checks the Java version using terminal commands and
+prints the Java version and path.</p>
+<p>Expected output:</p>
+<pre><code>JAVA_HOME: &lt;current_java_home&gt;
+Java path: &lt;java_path&gt;
+Java version:
+&lt;java_version_details&gt;</code></pre></li>
+<li><p><strong>Check Java Version using <code>rJava</code> in a Separate
+R Session</strong>:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">java_check_version_rjava</span>(<span class="st">&quot;/path/to/installed/java&quot;</span>)</span></code></pre></div>
+<p>This function checks the Java version using <code>rJava</code> in a
+separate R session.</p>
+<p>Expected output:</p>
+<pre><code>With the current session&#39;s JAVA_HOME &lt;java_version_details&gt;
+or
+With the user-specified JAVA_HOME &lt;java_version_details&gt;</code></pre></li>
+</ul>
 </div>
 
 

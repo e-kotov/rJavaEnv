@@ -26,7 +26,7 @@ The goal of `rJavaEnv` is to manage multiple Java JDKs in R projects by automati
 
 You can request a specific Java Development Kit (JDK) in your project, and `rJavaEnv` will download and install the requested Java environment in a project-specific directory and set the PATH and JAVA_HOME for when you are using this project. Therefore, you can have different Java versions for different projects without contaminating your system with different Java versions.
 
-**WARNING** This package is in the early stages of development and is not yet ready for production use.
+**WARNING** This package is in the early stages of development and is not yet ready for production use. Please test it thoroughly before using it in your projects.
 
 
 ```{r results="asis", echo = FALSE}
