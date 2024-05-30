@@ -11,7 +11,11 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
+is_html <- knitr::is_html_output()
 ```
+
+
 
 # rJavaEnv: Java Environments for R Projects <a href="http://www.ekotov.pro/rJavaEnv/"><img src="man/figures/logo.png" align="right" height="134" alt="rJavaEnv website" /></a>
 
@@ -27,14 +31,13 @@ The goal of `rJavaEnv` is to manage multiple Java JDKs in R projects by automati
 You can request a specific Java Development Kit (JDK) in your project, and `rJavaEnv` will download and install the requested Java environment in a project-specific directory and set the PATH and JAVA_HOME for when you are using this project. Therefore, you can have different Java versions for different projects without contaminating your system with different Java versions.
 
 **WARNING** This package is in the early stages of development and is not yet ready for production use. Please test it thoroughly before using it in your projects.
+0
 
-
-```{r results="asis"}
+```{r results="asis", eval = !is_html, include = !is_html}
 glue::glue('<script type="application/ld+json">
       {glue::glue_collapse(readLines("inst/schemaorg.json"), sep = "\n")}
     </script>')
 ```
-
 
 ## Install
 

@@ -31,56 +31,7 @@ different Java versions.
 
 **WARNING** This package is in the early stages of development and is
 not yet ready for production use. Please test it thoroughly before using
-it in your projects.
-
-``` r
-glue::glue('<script type="application/ld+json">
-      {glue::glue_collapse(readLines("inst/schemaorg.json"), sep = "\n")}
-    </script>')
-```
-
-<script type="application/ld+json">
-      {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "type": "SoftwareSourceCode",
-      "author": {
-        "id": "https://orcid.org/0000-0001-6690-5345"
-      },
-      "codeRepository": "https://github.com/e-kotov/rJavaEnv",
-      "copyrightHolder": {
-        "id": "https://orcid.org/0000-0001-6690-5345",
-        "type": "Person",
-        "email": "kotov.egor@gmail.com",
-        "familyName": "Kotov",
-        "givenName": "Egor"
-      },
-      "description": "Install specific version of Java runtime environment at the R project level. The goal of rJavaEnv is to manage multiple Java JDKs in R projects by automatingthe process of downloading, installing, and configuring Java environments on a per-project basis. This package is inspired by the renv <https://rstudio.github.io/renv/> package for managing R environments in R projects. You can request a specific Java Development Kit (JDK) in your project, and rJavaEnv will download and install the requested Java environment in a project-specific directory and set the PATH and JAVA_HOME for when you are using this project. Therefore, you can have different Java versions for different projects without contaminating your system with different Java versions.",
-      "license": "https://spdx.org/licenses/MIT",
-      "name": "rJavaEnv: Java Environments for R Projects",
-      "programmingLanguage": {
-        "type": "ComputerLanguage",
-        "name": "R",
-        "url": "https://r-project.org"
-      },
-      "runtimePlatform": "R version 4.4.0 (2024-04-24)",
-      "version": "0.0.0.9000"
-    },
-    {
-      "type": "SoftwareSourceCode",
-      "author": {
-        "id": "https://orcid.org/0000-0001-6690-5345",
-        "type": "Person",
-        "email": "kotov.egor@gmail.com",
-        "familyName": "Kotov",
-        "givenName": "Egor"
-      },
-      "name": "rJavaEnv: Java Environments for R Projects"
-    }
-  ]
-}
-    </script>
+it in your projects. 0
 
 ## Install
 
