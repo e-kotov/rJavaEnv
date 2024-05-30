@@ -109,11 +109,15 @@ Therefore, if you need to use R packages that depend on different Java versions 
 
 The future work includes:
 
-  - Adding support for more Java distributions and versions
+  - Add support for more Java distributions and versions
   
-  - Possibly adding support for specifying Java version beyond the major version
+  - Take care of [`R CMD javareconf`](https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r){target="_blank"}
   
-  - Possible allow downloading several Java distributions at once, e.g. different major versions of the same 'flavour' or different 'flavours' of the same major version
+  - Possibly add support for specifying Java version beyond the major version
+  
+  - Possibly allow downloading several Java distributions at once, e.g. different major versions of the same 'flavour' or different 'flavours' of the same major version
+  
+I am open to suggestions and contributions, welcome to [issues](https://github.com/e-kotov/rJavaEnv/issues){target="_blank"} and [pull requests](https://github.com/e-kotov/rJavaEnv/pulls){target="_blank"}.
   
 
 ## Acknowledgements

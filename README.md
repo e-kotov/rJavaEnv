@@ -194,14 +194,24 @@ function that requires a certain Java version.
 
 The future work includes:
 
-- Adding support for more Java distributions and versions
+- Add support for more Java distributions and versions
 
-- Possibly adding support for specifying Java version beyond the major
+- Take care of <a
+  href="https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r"
+  target="_blank"><code>R CMD javareconf</code></a>
+
+- Possibly add support for specifying Java version beyond the major
   version
 
-- Possible allow downloading several Java distributions at once,
+- Possibly allow downloading several Java distributions at once,
   e.g. different major versions of the same ‘flavour’ or different
   ‘flavours’ of the same major version
+
+I am open to suggestions and contributions, welcome to
+<a href="https://github.com/e-kotov/rJavaEnv/issues"
+target="_blank">issues</a> and
+<a href="https://github.com/e-kotov/rJavaEnv/pulls" target="_blank">pull
+requests</a>.
 
 ## Acknowledgements
 
