@@ -268,6 +268,10 @@ java_check_version_system <- function() {
 #' @param verbose Whether to print detailed messages. Defaults to TRUE.
 #' @export
 #' @return Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.
+#' @examples
+#' \dontrun{
+#' java_env_unset()
+#' }
 java_env_unset <- function(
     # where = c("both", "session", "project"),
     verbose = TRUE) {

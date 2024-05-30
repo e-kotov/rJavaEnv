@@ -15,3 +15,8 @@ Nothing. Removes the JAVA_HOME and PATH environment variables settings from the 
 \description{
 Unset the JAVA_HOME and PATH environment variables in the project .Rprofile
 }
+\examples{
+\dontrun{
+java_env_unset()
+}
+}
