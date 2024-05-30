@@ -50,9 +50,9 @@ java_list <- function(
 #' @export
 #'
 #' @examples
-#' java_clear_cache("project")
-#' java_clear_cache("installed")
-#' java_clear_cache("distrib")
+#' java_clear("project")
+#' java_clear("installed")
+#' java_clear("distrib")
 #'
 java_clear <- function(
     type = c("project", "installed", "distrib"),
@@ -62,7 +62,7 @@ java_clear <- function(
 
   type <- match.arg(type)
 
-  if (is.null(cache_dir)) {
+  if (is.null(target_dir)) {
     if (type == "project") {
       target_dir <- getwd()
     } else {
