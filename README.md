@@ -92,14 +92,16 @@ rJavaEnv::java_quick_install(version = 21)
 This will:
 
 - download Java 21 distribution compatible with the current operating
-  system and processor architecture;
+  system and processor architecture into a local cache folder;
 
-- create **rjavaenv/`platform`/`processor_architecture`/`java_version`**
-  in current directory/project and unpack the downloaded Java
-  distribution there;
+- extract the downloaded Java distribution into another cache folder;
+
+- create a symbolic link (for macOS and Linux) or junction (for Windows)
+  **rjavaenv/`platform`/`processor_architecture`/`java_version`** in the
+  current directory/project to point to the cached installation;
 
 - set the current session’s JAVA_HOME and PATH environment variables to
-  point to the installed Java distribution;
+  point to the installed (symlinked) Java distribution;
 
 - add code to .Rprofile file in the current directory/project to set
   JAVA_HOME and PATH environment variables when the project is opened in
@@ -125,28 +127,22 @@ The package has several core functions:
     - Sets the JAVA_HOME and PATH environment variables to a given path
       in current R session and/or in the .Rprofile file in the project
       directory.
-5.  `java_env_set()`
+5.  `java_env_unset()`
     - Remove the JAVA_HOME and PATH environment variables from the
       .Rpofile file in the project directory (but not in the current R
       session, please restart the session so that R picks up the system
       Java).
-6.  `java_check_version_cmd()`
-    - Checks the installed Java version using terminal commands. Useful
-      for checking Java version that would be picked up by packages like
-      <a href="https://github.com/ropensci/opentripplanner"
-      target="_blank"><code>opentripplanner</code></a>, that controls
-      Java via command line.
-7.  `java_version_check_rjava()`
-    - Checks the Java version using `rJava` in a separate R session.
-      Useful for checking Java version that would be picked up by
-      packages like <a href="https://github.com/ipeaGIT/r5r"
-      target="_blank"><code>r5r</code></a>, that initialize Java using
-      `rJava`.
-8.  `java_list_distrib_cache()`
-    - Lists the contents of the Java distributions cache folder in user
-      data directory.
-9.  `java_clear_distrib_cache()`
-    - Clears the Java distributions cache folder in user data directory.
+6.  `java_list()`
+    - Lists all or some Java versions linked in the current project (or
+      cached distributions or installations).
+7.  `java_clear()`
+    - Removes all or some Java versions linked in the current project
+      (or cached distributions or installations).
+
+See more details on the functions that help manage the cached
+distributions, installations and more in the
+<a href="https://e-kotov.github.io/rJavaEnv/reference/index.html"
+target="_blank">Reference</a>.
 
 For detailed usage, see the [Quick Start
 Vignette](vignettes/quick_start.Rmd).
@@ -154,12 +150,12 @@ Vignette](vignettes/quick_start.Rmd).
 ## Limitations
 
 Currently, `rJavaEnv` only supports major Java versions such as 8, 11,
-16, 17, 21, 22, etc. The download and install functions ignore the minor
-version of the Java distribution and just downloads the latest stable
-subversion of the specified major version. This is done to simplify the
-process and avoid the need to update the package every time a new minor
-version of Java is released. For most users this should be sufficient,
-but this is substandard for full reproducibility.
+17, 21, 22. The download and install functions ignore the minor version
+of the Java distribution and just downloads the latest stable subversion
+of the specified major version. This is done to simplify the process and
+avoid the need to update the package every time a new minor version of
+Java is released. For most users this should be sufficient, but this is
+substandard for full reproducibility.
 
 The main limitation is that if you want to switch to another Java
 environment, you will most likely have to restart the current R session

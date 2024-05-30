@@ -35,7 +35,8 @@ java_download <- function(version = 21,
   )
   checkmate::assert_choice(distribution, valid_distributions)
 
-  # Check if the directory exists, if not, create it
+  # Create the distrib subfolder within the destination directory
+  dest_dir <- file.path(dest_dir, "distrib")
   if (!dir.exists(dest_dir)) {
     dir.create(dest_dir, recursive = TRUE)
   }

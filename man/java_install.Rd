@@ -4,7 +4,12 @@
 \alias{java_install}
 \title{Install Java from a distribution file}
 \usage{
-java_install(java_path, project = NULL, autoset_java_path = TRUE)
+java_install(
+  java_path,
+  project = NULL,
+  autoset_java_path = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{java_path}{The path to the Java distribution file.}
@@ -12,6 +17,8 @@ java_install(java_path, project = NULL, autoset_java_path = TRUE)
 \item{project}{The project directory where Java should be installed. Defaults to the current working directory.}
 
 \item{autoset_java_path}{Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.}
+
+\item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
 }
 \value{
 The path to the installed Java directory.
