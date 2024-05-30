@@ -11,7 +11,7 @@
 #' java_install("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
 #' }
 java_install <- function(java_path, project = NULL, autoset_java_path = TRUE) {
-  # Possible values for platform, architecture, and Java versions
+
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
   java_versions <- c("8", "11", "17", "21", "22")
