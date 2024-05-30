@@ -5,6 +5,9 @@
 
 <!-- badges: start -->
 
+[![Project Status: WIP – Initial development is in progress, but there
+has not yet been a stable, usable release suitable for the
+public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"
 target="_blank"><img
 src="https://img.shields.io/badge/lifecycle-experimental-orange.svg"
@@ -12,12 +15,9 @@ alt="Lifecycle: experimental" /></a>
 <a href="https://CRAN.R-project.org/package=rJavaEnv"
 target="_blank"><img src="https://www.r-pkg.org/badges/version/rJavaEnv"
 alt="CRAN status" /></a>
-
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
-
-[![Project Status: WIP – Initial development is in progress, but there
-has not yet been a stable, usable release suitable for the
-public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck)
+[![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://codecov.io/github/e-kotov/rJavaEnv)
 
 <!-- badges: end -->
 
