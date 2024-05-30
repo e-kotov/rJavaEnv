@@ -77,18 +77,21 @@ The package has several core functions:
    * Installs a Java distribution file into current (or user-specified) project directory.
 
 4. `java_env_set()`
-   * Sets the JAVA_HOME and PATH environment variables to a given path.
+   * Sets the JAVA_HOME and PATH environment variables to a given path in current R session and/or in the .Rprofile file in the project directory.
 
-5. `java_check_version_cmd()`
+5. `java_env_set()`
+   * Remove the JAVA_HOME and PATH environment variables from the .Rpofile file in the project directory (but not in the current R session, please restart the session so that R picks up the system Java).
+
+6. `java_check_version_cmd()`
    * Checks the installed Java version using terminal commands. Useful for checking Java version that would be picked up by packages like [`opentripplanner`](https://github.com/ropensci/opentripplanner){target="_blank"}, that controls Java via command line.
 
-6. `java_version_check_rjava()`
+7. `java_version_check_rjava()`
    * Checks the Java version using `rJava` in a separate R session. Useful for checking Java version that would be picked up by packages like [`r5r`](https://github.com/ipeaGIT/r5r){target="_blank"}, that initialize Java using `rJava`.
 
-7. `java_list_distrib_cache()`
+8. `java_list_distrib_cache()`
    * Lists the contents of the Java distributions cache folder in user data directory.
 
-8. `java_clear_distrib_cache()`
+9. `java_clear_distrib_cache()`
    * Clears the Java distributions cache folder in user data directory.
 
 
