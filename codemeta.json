@@ -57,6 +57,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "rJava",
       "name": "rJava",
       "provider": {
@@ -137,7 +149,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "309.804KB",
+  "fileSize": "364.422KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",

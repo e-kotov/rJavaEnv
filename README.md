@@ -33,6 +33,12 @@ different Java versions.
 not yet ready for production use. Please test it thoroughly before using
 it in your projects.
 
+``` r
+glue::glue('<script type="application/ld+json">
+      {glue::glue_collapse(readLines("inst/schemaorg.json"), sep = "\n")}
+    </script>')
+```
+
 <script type="application/ld+json">
       {
   "@context": "https://schema.org",
