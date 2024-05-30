@@ -11,6 +11,9 @@ java_check_version_rjava(java_home = NULL, verbose = TRUE)
 
 \item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
 }
+\value{
+TRUE if successful, otherwise FALSE.
+}
 \description{
 This function sets the JAVA_HOME environment variable, initializes the JVM using rJava,
 and prints the Java version that would be used if the user sets the given JAVA_HOME

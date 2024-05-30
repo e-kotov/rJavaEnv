@@ -98,6 +98,7 @@ java_env_set_rprofile <- function(java_home) {
 #'
 #' @param java_home The path to the desired JAVA_HOME. If NULL, uses the current JAVA_HOME environment variable.
 #' @param verbose Whether to print detailed messages. Defaults to TRUE.
+#' @return TRUE if successful, otherwise FALSE.
 #' @examples
 #' java_check_version_rjava()
 #'
@@ -106,7 +107,7 @@ java_check_version_rjava <- function(java_home = NULL, verbose = TRUE) {
   # Check if rJava is installed
   if (!requireNamespace("rJava", quietly = TRUE)) {
     cli::cli_alert_danger("rJava package is not installed. You need to install rJava to use this function to check if rJava-based packages will work with the specified Java version.")
-    return(invisible(NULL))
+    return(FALSE)
   }
 
   # Determine JAVA_HOME if not specified by the user
@@ -149,24 +150,29 @@ java_check_version_rjava <- function(java_home = NULL, verbose = TRUE) {
   # Delete the temporary script file
   unlink(script_file)
 
-
   # Process and print the output
   if (length(output) > 0) {
-    output <- paste(output, collapse = "\n")
-    java_version <- sub(".*Java version: \"([^\"]+)\".*", "\\1", output)
-    if (verbose) {
-      if (is.null(java_home)) {
-        cli::cli_inform("With the current session's JAVA_HOME {output}")
-      } else {
-        cli::cli_inform("With the user-specified JAVA_HOME {output}")
-      }
+    if (any(grepl("error", tolower(output)))){
+      cli::cli_alert_danger("Failed to retrieve Java version.")
+      return(FALSE)
     } else {
-      cli::cli_inform(c("OK", paste("Java version:", java_version)))
+      output <- paste(output, collapse = "\n")
+      java_version <- sub(".*Java version: \"([^\"]+)\".*", "\\1", output)
+      if (verbose) {
+        if (is.null(java_home)) {
+          cli::cli_inform("With the current session's JAVA_HOME {output}")
+        } else {
+          cli::cli_inform("With the user-specified JAVA_HOME {output}")
+        }
+      } else {
+        cli::cli_inform(c("OK", paste("Java version:", java_version)))
+      }
+      return(TRUE)
     }
-    return(TRUE)
   } else {
     if (verbose) cli::cli_alert_danger("Failed to retrieve Java version.")
   }
+
 }
 
 #' Check installed Java version using terminal commands
