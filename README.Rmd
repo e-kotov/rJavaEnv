@@ -80,7 +80,7 @@ The package has several core functions:
    * Downloads, installs, and sets Java environment in the current working/project directory, all in one line of code.
 
 2. `java_check_version_cmd()`
-   * Checks the installed Java version using terminal commands. For packages like [`opentripplanner`](https://github.com/ropensci/opentripplanner){target="_blank"}, that performs Java calls using command line
+   * Checks the installed Java version using terminal commands. For packages like [`opentripplanner`](https://github.com/ropensci/opentripplanner){target="_blank"}, that performs Java calls using command line.
    
 3. `java_version_check_rjava()`
    * Checks the installed Java version using `rJava` in a separate R session. For `rJava`-dependent packages such as [`r5r`](https://github.com/ipeaGIT/r5r){target="_blank"}.

@@ -88,7 +88,7 @@ The package has several core functions:
       packages like
       <a href="https://github.com/ropensci/opentripplanner"
       target="_blank"><code>opentripplanner</code></a>, that performs
-      Java calls using command line
+      Java calls using command line.
 3.  `java_version_check_rjava()`
     - Checks the installed Java version using `rJava` in a separate R
       session. For `rJava`-dependent packages such as
