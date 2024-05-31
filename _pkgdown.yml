@@ -18,8 +18,8 @@ home:
 template:
   opengraph:
     image:
-      src: man/figures/card.png
-      alt: "Pool noodles configured to form the word poolnoodlr"
+      src: pkgdown/assets/images/card.png
+      alt: "rJavaEnv: Java Environments for R Projects. Install and manage Java environments using R"
     twitter:
       creator: "@EgorKotov"
       card: summary_large_image
