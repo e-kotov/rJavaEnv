@@ -60,7 +60,8 @@ This will:
 
 - extract the downloaded Java distribution into another cache folder;
 
-- create a symbolic link (for macOS and Linux) or junction (for Windows)
+- create a symbolic link (for macOS and Linux) or junction (for Windows,
+  if that fails, just copies the files)
   **rjavaenv/`platform`/`processor_architecture`/`java_version`** in the
   current directory/project to point to the cached installation;
 
@@ -82,34 +83,45 @@ The package has several core functions:
 1.  `java_quick_install()`
     - Downloads, installs, and sets Java environment in the current
       working/project directory, all in one line of code.
-2.  `java_download()`
+2.  `java_check_version_cmd()`
+    - Checks the installed Java version using terminal commands. For
+      packages like
+      <a href="https://github.com/ropensci/opentripplanner"
+      target="_blank"><code>opentripplanner</code></a>, that performs
+      Java calls using command line
+3.  `java_version_check_rjava()`
+    - Checks the installed Java version using `rJava` in a separate R
+      session. For `rJava`-dependent packages such as
+      <a href="https://github.com/ipeaGIT/r5r"
+      target="_blank"><code>r5r</code></a>.
+4.  `java_download()`
     - Downloads a specified version and distribution of Java.
-3.  `java_install()`
+5.  `java_install()`
     - Installs a Java distribution file into current (or user-specified)
       project directory.
-4.  `java_env_set()`
+6.  `java_env_set()`
     - Sets the JAVA_HOME and PATH environment variables to a given path
       in current R session and/or in the .Rprofile file in the project
       directory.
-5.  `java_env_unset()`
+7.  `java_env_unset()`
     - Remove the JAVA_HOME and PATH environment variables from the
       .Rpofile file in the project directory (but not in the current R
       session, please restart the session so that R picks up the system
       Java).
-6.  `java_list()`
+8.  `java_list()`
     - Lists all or some Java versions linked in the current project (or
       cached distributions or installations).
-7.  `java_clear()`
+9.  `java_clear()`
     - Removes all or some Java versions linked in the current project
       (or cached distributions or installations).
 
-See more details on the functions that help manage the cached
-distributions, installations and more in the
+See more details on all the functions in the
 <a href="https://e-kotov.github.io/rJavaEnv/reference/index.html"
 target="_blank">Reference</a>.
 
 For detailed usage, see the [Quick Start
-Vignette](vignettes/quick_start.Rmd).
+Vignette](https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html) (work
+in progress).
 
 ## Limitations
 
@@ -131,7 +143,7 @@ in R, particularly with the `rJava`-dependent packages such as
 target="_blank"><code>r5r</code></a>. With packages like
 <a href="https://github.com/ropensci/opentripplanner"
 target="_blank"><code>opentripplanner</code></a>, that performs Java
-calls using command line, you can swtich Java environments dynamically
+calls using command line, you can switch Java environments dynamically
 within the same R session as much as you want.
 
 Therefore, if you need to use R packages that depend on different Java
@@ -163,9 +175,12 @@ The future work includes:
 - Possibly add support for specifying Java version beyond the major
   version
 
-- Possibly allow downloading several Java distributions at once,
-  e.g. different major versions of the same ‘flavour’ or different
+- Possibly allow downloading several Java distributions in one function
+  call, e.g. different major versions of the same ‘flavour’ or different
   ‘flavours’ of the same major version
+
+- Possibly add automation to get the Java that is required by specific
+  Java-dependent R packages
 
 I am open to suggestions and contributions, welcome to
 <a href="https://github.com/e-kotov/rJavaEnv/issues"
