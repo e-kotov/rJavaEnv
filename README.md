@@ -19,6 +19,8 @@ alt="CRAN status" /></a>
 [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck)
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://codecov.io/github/e-kotov/rJavaEnv)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11403009.svg)](https://dx.doi.org/10.5281/zenodo.11403009)
+
 <!-- badges: end -->
 
 The goal of `rJavaEnv` is to manage multiple Java JDKs in R projects by
