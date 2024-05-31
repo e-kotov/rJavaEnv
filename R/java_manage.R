@@ -78,4 +78,3 @@ java_clear <- function(
     java_clear_in_project(project_dir = target_dir, check = check, delete_all = delete_all)
   }
 }
-

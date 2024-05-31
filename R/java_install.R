@@ -92,11 +92,15 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
   link_success <- FALSE
   if (.Platform$OS.type == "windows") {
     try({
-      shell(sprintf("mklink /J \"%s\" \"%s\"", gsub("/", "\\\\", project_version_path), gsub("/", "\\\\", installed_path)), intern = TRUE)
-      link_success <- TRUE
+      cmd <- sprintf("mklink /J \"%s\" \"%s\"", gsub("/", "\\\\", project_version_path), gsub("/", "\\\\", installed_path))
+      result <- system2("cmd.exe", args = c("/c", cmd), stdout = TRUE, stderr = TRUE)
+      if (any(grepl("Junction created", result))) {
+        link_success <- TRUE
+      }
     }, silent = TRUE)
     if (!link_success) {
-      file.copy(list.files(installed_path, full.names = TRUE), project_version_path, recursive = TRUE)
+      dir.create(project_version_path, recursive = TRUE)
+      file.copy(installed_path, project_version_path, recursive = TRUE, overwrite = TRUE)
       if (verbose) cli::cli_inform("Junction creation failed. Files copied to {.path {project_version_path}}")
     }
   } else {
