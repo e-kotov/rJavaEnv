@@ -96,11 +96,11 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
       result <- tryCatch(
         system2("cmd.exe", args = c("/c", cmd), stdout = TRUE, stderr = TRUE),
         warning = function(w) {
-          if (verbose) cli::cli_inform("Warning: {w}")
+          # if (verbose) cli::cli_inform("Warning: {w}")
           NULL
         },
         error = function(e) {
-          if (verbose) cli::cli_inform("Error: {e}")
+          # if (verbose) cli::cli_inform("Error: {e}")
           NULL
         }
       )
@@ -109,9 +109,10 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
       }
     }, silent = TRUE)
     if (!link_success) {
+      if (verbose) cli::cli_inform("Junction creation failed. Java files will instead be copied to {.path {project_version_path}}")
       dir.create(project_version_path, recursive = TRUE)
       file.copy(installed_path, project_version_path, recursive = TRUE, overwrite = TRUE)
-      if (verbose) cli::cli_inform("Junction creation failed. Files copied to {.path {project_version_path}}")
+      if (verbose) cli::cli_inform("Java copied to project {.path {project_version_path}}")
     }
   } else {
     tryCatch({
