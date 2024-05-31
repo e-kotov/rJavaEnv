@@ -93,8 +93,18 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
   if (.Platform$OS.type == "windows") {
     try({
       cmd <- sprintf("mklink /J \"%s\" \"%s\"", gsub("/", "\\\\", project_version_path), gsub("/", "\\\\", installed_path))
-      result <- system2("cmd.exe", args = c("/c", cmd), stdout = TRUE, stderr = TRUE)
-      if (any(grepl("Junction created", result))) {
+      result <- tryCatch(
+        system2("cmd.exe", args = c("/c", cmd), stdout = TRUE, stderr = TRUE),
+        warning = function(w) {
+          if (verbose) cli::cli_inform("Warning: {w}")
+          NULL
+        },
+        error = function(e) {
+          if (verbose) cli::cli_inform("Error: {e}")
+          NULL
+        }
+      )
+      if (!is.null(result) && any(grepl("Junction created", result))) {
         link_success <- TRUE
       }
     }, silent = TRUE)
@@ -104,8 +114,19 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
       if (verbose) cli::cli_inform("Junction creation failed. Files copied to {.path {project_version_path}}")
     }
   } else {
-    file.symlink(installed_path, project_version_path)
+    tryCatch({
+      file.symlink(installed_path, project_version_path)
+    }, warning = function(w) {
+      if (verbose) cli::cli_inform("Warning: {w}")
+    }, error = function(e) {
+      if (verbose) cli::cli_inform("Error: {e}")
+      dir.create(project_version_path, recursive = TRUE)
+      file.copy(installed_path, project_version_path, recursive = TRUE, overwrite = TRUE)
+      if (verbose) cli::cli_inform("Symlink creation failed. Files copied to {.path {project_version_path}}")
+    })
   }
+
+
 
   # Write the JAVA_HOME to the .Rprofile and environment after installation
   if (autoset_java_path) {
