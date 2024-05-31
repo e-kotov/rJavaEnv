@@ -89,12 +89,16 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
     dir.create(dirname(project_version_path), recursive = TRUE)
   }
 
-  if (file.exists(project_version_path) || dir.exists(project_version_path)) {
-    unlink(project_version_path, recursive = TRUE)
-  }
-
+  link_success <- FALSE
   if (.Platform$OS.type == "windows") {
-    shell(sprintf("mklink /J \"%s\" \"%s\"", project_version_path, installed_path))
+    try({
+      shell(sprintf("mklink /J \"%s\" \"%s\"", gsub("/", "\\\\", project_version_path), gsub("/", "\\\\", installed_path)), intern = TRUE)
+      link_success <- TRUE
+    }, silent = TRUE)
+    if (!link_success) {
+      file.copy(list.files(installed_path, full.names = TRUE), project_version_path, recursive = TRUE)
+      if (verbose) cli::cli_inform("Junction creation failed. Files copied to {.path {project_version_path}}")
+    }
   } else {
     file.symlink(installed_path, project_version_path)
   }
