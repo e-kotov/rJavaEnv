@@ -67,6 +67,12 @@ java_env_set_rprofile <- function(java_home) {
 
   project <- getwd()
   rprofile_path <- file.path(project, ".Rprofile")
+
+  # Normalize the path for Windows
+  if (.Platform$OS.type == "windows") {
+    java_home <- gsub("\\\\", "/", java_home)
+  }
+
   lines_to_add <- c(
     "# rJavaEnv begin: Manage JAVA_HOME",
     sprintf("Sys.setenv(JAVA_HOME = '%s') # rJavaEnv", java_home),
@@ -85,6 +91,7 @@ java_env_set_rprofile <- function(java_home) {
 
   invisible(NULL)
 }
+
 
 
 

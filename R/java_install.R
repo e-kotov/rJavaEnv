@@ -89,15 +89,45 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
     dir.create(dirname(project_version_path), recursive = TRUE)
   }
 
-  if (file.exists(project_version_path) || dir.exists(project_version_path)) {
-    unlink(project_version_path, recursive = TRUE)
+  link_success <- FALSE
+  if (.Platform$OS.type == "windows") {
+    try({
+      cmd <- sprintf("mklink /J \"%s\" \"%s\"", gsub("/", "\\\\", project_version_path), gsub("/", "\\\\", installed_path))
+      result <- tryCatch(
+        system2("cmd.exe", args = c("/c", cmd), stdout = TRUE, stderr = TRUE),
+        warning = function(w) {
+          # if (verbose) cli::cli_inform("Warning: {w}")
+          NULL
+        },
+        error = function(e) {
+          # if (verbose) cli::cli_inform("Error: {e}")
+          NULL
+        }
+      )
+      if (!is.null(result) && any(grepl("Junction created", result))) {
+        link_success <- TRUE
+      }
+    }, silent = TRUE)
+    if (!link_success) {
+      if (verbose) cli::cli_inform("Junction creation failed. Java files will instead be copied to {.path {project_version_path}}")
+      dir.create(project_version_path, recursive = TRUE)
+      file.copy(installed_path, project_version_path, recursive = TRUE, overwrite = TRUE)
+      if (verbose) cli::cli_inform("Java copied to project {.path {project_version_path}}")
+    }
+  } else {
+    tryCatch({
+      file.symlink(installed_path, project_version_path)
+    }, warning = function(w) {
+      if (verbose) cli::cli_inform("Warning: {w}")
+    }, error = function(e) {
+      if (verbose) cli::cli_inform("Error: {e}")
+      dir.create(project_version_path, recursive = TRUE)
+      file.copy(installed_path, project_version_path, recursive = TRUE, overwrite = TRUE)
+      if (verbose) cli::cli_inform("Symlink creation failed. Files copied to {.path {project_version_path}}")
+    })
   }
 
-  if (.Platform$OS.type == "windows") {
-    shell(sprintf("mklink /J \"%s\" \"%s\"", project_version_path, installed_path))
-  } else {
-    file.symlink(installed_path, project_version_path)
-  }
+
 
   # Write the JAVA_HOME to the .Rprofile and environment after installation
   if (autoset_java_path) {
