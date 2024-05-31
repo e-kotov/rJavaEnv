@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/e-kotov/rJavaEnv",
   "issueTracker": "https://github.com/e-kotov/rJavaEnv/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.0.0.9000",
+  "version": "0.0.1",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -149,7 +149,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "364.422KB",
+  "fileSize": "559591.852KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",
@@ -164,11 +164,14 @@
         }
       ],
       "name": "rJavaEnv: Java Environments for R Projects",
-      "url": "https://github.com/e-kotov/rJavaEnv"
+      "identifier": "10.5281/zenodo.11403010",
+      "url": "https://github.com/e-kotov/rJavaEnv",
+      "@id": "https://doi.org/10.5281/zenodo.11403010",
+      "sameAs": "https://doi.org/10.5281/zenodo.11403010"
     }
   ],
   "releaseNotes": "https://github.com/e-kotov/rJavaEnv/blob/master/NEWS.md",
   "readme": "https://github.com/e-kotov/rJavaEnv/blob/main/README.md",
-  "contIntegration": "https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml",
-  "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html#experimental"
+  "contIntegration": ["https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml", "https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck", "https://codecov.io/github/e-kotov/rJavaEnv"],
+  "developmentStatus": ["https://www.repostatus.org/#wip", "https://lifecycle.r-lib.org/articles/stages.html#experimental"]
 }

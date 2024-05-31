@@ -6,4 +6,5 @@ bibentry(
            comment = c(ORCID = "0000-0001-6690-5345")),
   year     = "2024",
   url      = "https://github.com/e-kotov/rJavaEnv",
+  doi      = "10.5281/zenodo.11403010"
 )
