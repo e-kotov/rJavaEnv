@@ -4,12 +4,12 @@
 \alias{java_env_set}
 \title{Set the JAVA_HOME and PATH environment variables to a given path}
 \usage{
-java_env_set(java_home, where = c("both", "session", "project"), verbose = T)
+java_env_set(java_home, where = c("session", "project"), verbose = TRUE)
 }
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME.}
 
-\item{where}{Where to set the JAVA_HOME: "session", "project", or "both". Defaults to "both". When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.}
+\item{where}{Where to set the JAVA_HOME (and prepend to PATH): "session", "project", "global", or a combination of these options. Defaults to c("session", "project"). When set to "session", only the current R session is affected. When set to "project", the \code{.Rprofile} file in the project directory is updated and selected Java version will only be used in the current project. When set to "global", the global \code{.Rprofile} in user's home directory is updated, and the selected Java version will be used in all R sessions. If multiple values are provided, the function will set the JAVA_HOME and PATH in all specified locations.}
 
 \item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
 }
@@ -21,6 +21,7 @@ Set the JAVA_HOME and PATH environment variables to a given path
 }
 \examples{
 \dontrun{
-java_env_set("/path/to/java", "both")
+java_env_set("/path/to/java", c("session", "project"))
+java_env_set("/path/to/java", "global")
 }
 }

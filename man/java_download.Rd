@@ -10,7 +10,9 @@ java_download(
   dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  verbose = TRUE
+  verbose = TRUE,
+  curl_download_func = curl::curl_download,
+  assert_dir_exists_func = checkmate::assert_directory_exists
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ java_download(
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
 
 \item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
+
+\item{curl_download_func}{Function to download the file (for dependency injection).}
+
+\item{assert_dir_exists_func}{Function to assert directory exists (for dependency injection).}
 }
 \value{
 The path to the downloaded Java distribution file.

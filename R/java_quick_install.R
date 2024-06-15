@@ -1,6 +1,7 @@
 #' Download and install and set Java in current working/project directory
 #'
 #' @inheritParams java_download
+#' @inheritParams java_install
 #' @param verbose Whether to print messages. Defaults to TRUE.
 #' @return Message indicating that Java was installed and set in the current working/project directory.
 #' @export
@@ -14,13 +15,13 @@ java_quick_install <- function(
     distribution = "Corretto",
     platform = platform_detect()$os,
     arch = platform_detect()$arch,
+    where = c("session", "project"),
     verbose = TRUE) {
   # Print out the detected or provided platform and architecture
   if (verbose) {
     message("Platform detected or provided: ", platform)
     message("Architecture detected or provided: ", arch)
   }
-
 
   java_distr_path <- java_download(
     version = version,
@@ -30,6 +31,6 @@ java_quick_install <- function(
     verbose = verbose
   )
 
-  java_install(java_distr_path, autoset_java_path = TRUE)
+  java_install(java_distr_path, autoset_java_path = TRUE, where = where, verbose = verbose)
   return(invisible(NULL))
 }

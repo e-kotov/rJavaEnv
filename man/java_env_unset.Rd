@@ -2,21 +2,26 @@
 % Please edit documentation in R/java_env.R
 \name{java_env_unset}
 \alias{java_env_unset}
-\title{Unset the JAVA_HOME and PATH environment variables in the project .Rprofile}
+\title{Unset the JAVA_HOME and PATH environment variables in the \code{.Rprofile} or session}
 \usage{
-java_env_unset(verbose = TRUE)
+java_env_unset(where = c("project", "global", "session"), verbose = TRUE)
 }
 \arguments{
+\item{where}{Where to reset the JAVA_HOME and PATH: "project", "global", "session", or a combination any of these options. Defaults to "project". When set to "project", the \code{.Rprofile} file in the project directory is updated. When set to "global", the global \code{.Rprofile} in user's home directory is updated. If multiple values are provided, the function will unset the JAVA_HOME and PATH in all specified locations. Unsetting JAVA_HOME in the current session and resetting it to global operating system default (is if R was started with no global or project level \code{.Rprofile} and inherited JAVA_HOME and PATH from the operating system environment) is actually impossible. Therefore, "session" option is provided for consistency and completeness, but it will only inform the user to clear \code{.Rprofile} and restart the R session.}
+
 \item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
 }
 \value{
-Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.
+Nothing. Removes the JAVA_HOME and PATH environment variables settings from the specified .Rprofile or session.
 }
 \description{
-Unset the JAVA_HOME and PATH environment variables in the project .Rprofile
+Unset the JAVA_HOME and PATH environment variables in the \code{.Rprofile} or session
 }
 \examples{
 \dontrun{
-java_env_unset()
+java_env_unset("project")
+java_env_unset("global")
+java_env_unset("session")
+java_env_unset(c("project", "global", "session"))
 }
 }

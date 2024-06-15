@@ -6,6 +6,8 @@
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
 #' @param arch The architecture for which to download the Java distribution. Defaults to the current architecture.
 #' @param verbose Whether to print detailed messages. Defaults to TRUE.
+#' @param curl_download_func Function to download the file (for dependency injection).
+#' @param assert_dir_exists_func Function to assert directory exists (for dependency injection).
 #'
 #' @return The path to the downloaded Java distribution file.
 #' @export
@@ -21,7 +23,9 @@ java_download <- function(version = 21,
                           dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
                           platform = platform_detect()$os,
                           arch = platform_detect()$arch,
-                          verbose = TRUE) {
+                          verbose = TRUE,
+                          curl_download_func = curl::curl_download,
+                          assert_dir_exists_func = checkmate::assert_directory_exists) {
   java_urls <- java_urls_load()
 
   valid_distributions <- names(java_urls)
@@ -40,7 +44,7 @@ java_download <- function(version = 21,
   if (!dir.exists(dest_dir)) {
     dir.create(dest_dir, recursive = TRUE)
   }
-  checkmate::assert_directory_exists(dest_dir, access = "rw", add = TRUE)
+  assert_dir_exists_func(dest_dir, access = "rw")
 
   checkmate::assert_choice(platform, valid_platforms)
   checkmate::assert_choice(arch, valid_architectures)
@@ -80,8 +84,10 @@ java_download <- function(version = 21,
     if (verbose) {
       cli::cli_inform("File already exists. Skipping download.", .envir = environment())
     }
+    return(dest_file)
   } else {
-    curl::curl_download(url, dest_file, quiet = FALSE)
+    cli::cli_inform("File does not exist. Proceeding to download.", .envir = environment())
+    curl_download_func(url, dest_file, quiet = FALSE)
     if (verbose) {
       cli::cli_inform("Download completed.", .envir = environment())
     }

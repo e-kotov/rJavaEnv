@@ -9,6 +9,7 @@ java_quick_install(
   distribution = "Corretto",
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
+  where = c("session", "project"),
   verbose = TRUE
 )
 }
@@ -20,6 +21,8 @@ java_quick_install(
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
+
+\item{where}{Where to set the JAVA_HOME: "session", "project", "global", or a combination. Defaults to c("session", "project").}
 
 \item{verbose}{Whether to print messages. Defaults to TRUE.}
 }

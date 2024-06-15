@@ -2,14 +2,16 @@
 % Please edit documentation in R/java_env.R
 \name{java_env_set_rprofile}
 \alias{java_env_set_rprofile}
-\title{Update the .Rprofile file in the project directory}
+\title{Update the \code{.Rprofile} file}
 \usage{
-java_env_set_rprofile(java_home)
+java_env_set_rprofile(java_home, where = c("project", "global"))
 }
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME.}
+
+\item{where}{Where to update the .Rprofile: "project" or "global". Defaults to "project".}
 }
 \description{
-Update the .Rprofile file in the project directory
+Update the \code{.Rprofile} file
 }
 \keyword{internal}

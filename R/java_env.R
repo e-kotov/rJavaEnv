@@ -3,24 +3,24 @@
 #' Set the JAVA_HOME and PATH environment variables to a given path
 #'
 #' @param java_home The path to the desired JAVA_HOME.
-#' @param where Where to set the JAVA_HOME: "session", "project", or "both". Defaults to "both". When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.
+#' @param where Where to set the JAVA_HOME (and prepend to PATH): "session", "project", "global", or a combination of these options. Defaults to c("session", "project"). When set to "session", only the current R session is affected. When set to "project", the `.Rprofile` file in the project directory is updated and selected Java version will only be used in the current project. When set to "global", the global `.Rprofile` in user's home directory is updated, and the selected Java version will be used in all R sessions. If multiple values are provided, the function will set the JAVA_HOME and PATH in all specified locations.
 #' @param verbose Whether to print detailed messages. Defaults to TRUE.
 #' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
 #' @export
 #' @examples
 #' \dontrun{
-#' java_env_set("/path/to/java", "both")
+#' java_env_set("/path/to/java", c("session", "project"))
+#' java_env_set("/path/to/java", "global")
 #' }
 java_env_set <- function(java_home,
-                         where = c("both", "session", "project"),
-                         verbose = T) {
-  where <- match.arg(where)
+                         where = c("session", "project"),
+                         verbose = TRUE) {
   checkmate::assertString(java_home)
   checkmate::assertFlag(verbose)
+  checkmate::assertCharacter(where, min.len = 1)
+  where <- match.arg(where, choices = c("session", "project", "global"), several.ok = TRUE)
 
-
-
-  if (where %in% c("session", "both")) {
+  if ("session" %in% where) {
     java_env_set_session(java_home)
     if (verbose) {
       cli::cli_alert_success(c(
@@ -30,12 +30,22 @@ java_env_set <- function(java_home,
     }
   }
 
-  if (where %in% c("project", "both")) {
-    java_env_set_rprofile(java_home)
+  if ("project" %in% where) {
+    java_env_set_rprofile(java_home, where = "project")
     if (verbose) {
       cli::cli_alert_success(c(
         "Current R Project/Working Directory: ",
         "JAVA_HOME and PATH set to '{.path {java_home}}' in .Rprofile in '{.path {file.path(getwd(), \".Rprofile\")}}'"
+      ))
+    }
+  }
+
+  if ("global" %in% where) {
+    java_env_set_rprofile(java_home, where = "global")
+    if (verbose) {
+      cli::cli_alert_success(c(
+        "Global R Session: ",
+        "JAVA_HOME and PATH set to '{.path {java_home}}' in global .Rprofile in '{.path {file.path(Sys.getenv('HOME'), \".Rprofile\")}}'"
       ))
     }
   }
@@ -57,16 +67,16 @@ java_env_set_session <- function(java_home) {
 }
 
 # Helper function for java_env_set_rprofile with Roxygen Documentation
-#' Update the .Rprofile file in the project directory
+#' Update the `.Rprofile` file
 #'
 #' @keywords internal
 #'
 #' @param java_home The path to the desired JAVA_HOME.
-java_env_set_rprofile <- function(java_home) {
-  java_env_unset(verbose = FALSE)
-
-  project <- getwd()
-  rprofile_path <- file.path(project, ".Rprofile")
+#' @param where Where to update the .Rprofile: "project" or "global". Defaults to "project".
+java_env_set_rprofile <- function(java_home, where = c("project", "global")) {
+  where <- match.arg(where)
+  rprofile_folder <- if (where == "project") getwd() else Sys.getenv("HOME")
+  rprofile_path <- file.path(rprofile_folder, ".Rprofile")
 
   # Normalize the path for Windows
   if (.Platform$OS.type == "windows") {
@@ -270,31 +280,77 @@ java_check_version_system <- function() {
 
 # unset java env ----------------------------------------------------------
 
-#' Unset the JAVA_HOME and PATH environment variables in the project .Rprofile
+#' Unset the JAVA_HOME and PATH environment variables in the `.Rprofile` or session
 #'
+#' @param where Where to reset the JAVA_HOME and PATH: "project", "global", "session", or a combination any of these options. Defaults to "project". When set to "project", the `.Rprofile` file in the project directory is updated. When set to "global", the global `.Rprofile` in user's home directory is updated. If multiple values are provided, the function will unset the JAVA_HOME and PATH in all specified locations. Unsetting JAVA_HOME in the current session and resetting it to global operating system default (is if R was started with no global or project level `.Rprofile` and inherited JAVA_HOME and PATH from the operating system environment) is actually impossible. Therefore, "session" option is provided for consistency and completeness, but it will only inform the user to clear `.Rprofile` and restart the R session.
 #' @param verbose Whether to print detailed messages. Defaults to TRUE.
 #' @export
-#' @return Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.
+#' @return Nothing. Removes the JAVA_HOME and PATH environment variables settings from the specified .Rprofile or session.
 #' @examples
 #' \dontrun{
-#' java_env_unset()
+#' java_env_unset("project")
+#' java_env_unset("global")
+#' java_env_unset("session")
+#' java_env_unset(c("project", "global", "session"))
 #' }
-java_env_unset <- function(
-    # where = c("both", "session", "project"),
-    verbose = TRUE) {
-  project_directory <- getwd()
-  rprofile_path <- file.path(project_directory, ".Rprofile")
+java_env_unset <- function(where = c("project", "global", "session"), verbose = TRUE) {
+  where <- match.arg(where, choices = c("project", "global", "session"), several.ok = TRUE)
+
+  if ("project" %in% where) {
+    java_env_unset_rprofile("project", verbose)
+  }
+
+  if ("global" %in% where) {
+    java_env_unset_rprofile("global", verbose)
+  }
+
+  if ("session" %in% where) {
+    java_env_unset_session(verbose)
+  }
+
+  invisible(NULL)
+}
+
+#' Helper function to unset JAVA_HOME in the .Rprofile
+#'
+#' @keywords internal
+#' @param where Where to remove the JAVA_HOME: "project" or "global".
+#' @param verbose Whether to print detailed messages. Defaults to TRUE.
+java_env_unset_rprofile <- function(where, verbose = TRUE) {
+  rprofile_folder <- if (where == "project") getwd() else Sys.getenv("HOME")
+  rprofile_path <- file.path(rprofile_folder, ".Rprofile")
 
   if (file.exists(rprofile_path)) {
     rprofile_content <- readLines(rprofile_path, warn = FALSE)
     rprofile_content <- rprofile_content[!grepl("# rJavaEnv", rprofile_content)]
-    writeLines(rprofile_content, con = rprofile_path)
-    if (verbose) {
-      cli::cli_inform("Removed JAVA_HOME settings from .Rprofile in '{.path {rprofile_path}}'")
+
+    if (length(rprofile_content) == 0) {
+      unlink(rprofile_path)
+      if (verbose) {
+        cli::cli_inform("Removed .Rprofile in '{.path {rprofile_path}}' as it became empty")
+      }
+    } else {
+      writeLines(rprofile_content, con = rprofile_path)
+      if (verbose) {
+        cli::cli_inform("Removed JAVA_HOME settings from .Rprofile in '{.path {rprofile_path}}'")
+      }
     }
   } else {
     if (verbose) {
-      cli::cli_alert_warning("No .Rprofile found in the project directory: {.path project_directory}")
+      cli::cli_alert_warning("No .Rprofile found in the specified directory: {.path {rprofile_folder}}")
     }
   }
+}
+
+#' Helper function to unset JAVA_HOME and PATH for the current session
+#'
+#' @keywords internal
+#' @param verbose Whether to print detailed messages. Defaults to TRUE.
+java_env_unset_session <- function(verbose = TRUE) {
+  # Inform the user to restart the R session after cleaning .Rprofile files
+  if (verbose) {
+    cli::cli_alert_warning("To fully reset the JAVA_HOME and PATH environment variables for the session, please clean the .Rprofile files using java_env_unset(c('project', 'global')) and restart the R session.")
+  }
+
+  invisible(NULL)
 }

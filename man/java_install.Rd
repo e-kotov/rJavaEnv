@@ -8,6 +8,7 @@ java_install(
   java_path,
   project = NULL,
   autoset_java_path = TRUE,
+  where = c("session", "project"),
   verbose = TRUE
 )
 }
@@ -17,6 +18,8 @@ java_install(
 \item{project}{The project directory where Java should be installed. Defaults to the current working directory.}
 
 \item{autoset_java_path}{Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.}
+
+\item{where}{Where to set the JAVA_HOME: "session", "project", "global", or a combination. Defaults to c("session", "project").}
 
 \item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
 }
