@@ -46,7 +46,11 @@ it in your projects.
 You can install the development version of `rJavaEnv` from GitHub:
 
 ``` r
-devtools::install_github("e-kotov/rJavaEnv")
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
+
+remotes::install_github("e-kotov/rJavaEnv")
 ```
 
 ## Simple Example
