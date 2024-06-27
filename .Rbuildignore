@@ -15,4 +15,4 @@
 ^doc$
 ^Meta$
 ^CODE_OF_CONDUCT\.md$
-vignettes\why-rJavaEnv.Rmd
+^vignettes/why-rJavaEnv\.Rmd$

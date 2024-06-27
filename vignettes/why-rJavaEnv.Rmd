@@ -6,11 +6,7 @@ output:
       fig_caption: yes
       toc: true
       toc_depth: 2
-bibliography: [bibliography.bib]
-vignette: >
-  %\VignetteIndexEntry{Why rJavaEnv: the landscape of Java-dependent R packages}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+bibliography: [../bibliography.bib]
 pkgdown:
   as_is: true
 ---
@@ -36,11 +32,11 @@ rm(package_list)
 ```
 
 ```{r load_data, include=FALSE, echo=FALSE}
-rJava_dlstats <- readr::read_csv2("data-for-vignettes/rJava_dlstats.csv")
-rJava_dependants_dlstats_cran <- readr::read_csv2("data-for-vignettes/rJava_dependants_dlstats_cran.csv")
-rJava_dependants_dlstats_bioc <- readr::read_csv2("data-for-vignettes/rJava_dependants_dlstats_bioc.csv")
-data_table_dlstats <- readr::read_csv2("data-for-vignettes/data_table_dlstats.csv")
-ggplot2_dlstats <- readr::read_csv2("data-for-vignettes/ggplot2_dlstats.csv")
+rJava_dlstats <- readr::read_csv2("../data-for-vignettes/rJava_dlstats.csv")
+rJava_dependants_dlstats_cran <- readr::read_csv2("../data-for-vignettes/rJava_dependants_dlstats_cran.csv")
+rJava_dependants_dlstats_bioc <- readr::read_csv2("../data-for-vignettes/rJava_dependants_dlstats_bioc.csv")
+data_table_dlstats <- readr::read_csv2("../data-for-vignettes/data_table_dlstats.csv")
+ggplot2_dlstats <- readr::read_csv2("../data-for-vignettes/ggplot2_dlstats.csv")
 
 cutoff_date <- "2024-05-31"
 ```
@@ -65,7 +61,7 @@ rj_and_rj_dep_total_down <- rJava_dependants_dlstats_cran |>
 ```
 
 ```{r rJavaPopularity, fig.cap="CRAN Downloads Over Time for rJava and rJava-dependent Packages, compared to popular ggplot2 and data.table for context", echo = FALSE, fig.width=12, fig.height=6}
-knitr::include_graphics("media/images/rJavaPopularity.png")
+knitr::include_graphics("../media/images/rJavaPopularity.png")
 ```
 
 Note that the analysis above only covers packages that are available on CRAN and Bioconductor and only those that explicitly depend on the `rJava` package. There are other packages that use `Java` but do not depend on the `rJava` package. For example, the [`opentripplanner`](https://github.com/ropensci/opentripplanner){target="_blank"} package also relies on underlying Java-based software but calls it from the command line. This, however, also requires system environment variables to be set up correctly.
