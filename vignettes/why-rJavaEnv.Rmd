@@ -1,6 +1,11 @@
 ---
 title: "Why rJavaEnv: the landscape of Java-dependent R packages"
-output: rmarkdown::html_vignette
+output: 
+  bookdown::html_document2:
+      base_format: rmarkdown::html_vignette
+      fig_caption: yes
+      toc: true
+      toc_depth: 2
 bibliography: [bibliography.bib]
 pkgdown:
   as_is: true
