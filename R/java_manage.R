@@ -17,7 +17,6 @@ java_list <- function(
     output = c("data.frame", "vector"),
     verbose = FALSE,
     target_dir = NULL) {
-
   type <- match.arg(type)
   output <- match.arg(output)
 
@@ -59,7 +58,6 @@ java_clear <- function(
     target_dir = NULL,
     check = TRUE,
     delete_all = FALSE) {
-
   type <- match.arg(type)
 
   if (is.null(target_dir)) {

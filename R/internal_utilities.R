@@ -47,7 +47,6 @@ java_urls_load <- function() {
   jsonlite::fromJSON(json_file, simplifyVector = FALSE)
 }
 
-
 #' Test all Java URLs
 #'
 #' @keywords internal

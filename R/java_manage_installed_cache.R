@@ -25,9 +25,10 @@ java_list_installed_cache <- function(
 
   # List directories up to the specified depth
   java_paths <- list.dirs(installed_cache_dir, recursive = TRUE, full.names = TRUE)
-  java_paths <- java_paths[sapply(java_paths, function(x) {
+
+  java_paths <- java_paths[vapply(java_paths, function(x) {
     length(strsplit(x, .Platform$file.sep)[[1]]) == length(strsplit(installed_cache_dir, .Platform$file.sep)[[1]]) + 3
-  })]
+  }, logical(1))]
 
   if (length(java_paths) == 0) {
     return(character(0))
