@@ -22,5 +22,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Egor Kotov \email{kotov.egor@gmail.com} (\href{https://orcid.org/0000-0001-6690-5345}{ORCID}) [copyright holder]
 
+Other contributors:
+\itemize{
+  \item Mauricio Vargas \email{mavargas11@uc.cl} (\href{https://orcid.org/0000-0003-1017-7574}{ORCID}) [contributor]
+}
+
 }
 \keyword{internal}
