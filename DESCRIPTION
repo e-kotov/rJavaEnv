@@ -1,9 +1,12 @@
 Package: rJavaEnv
 Title: Java Environments for R Projects
 Version: 0.0.1
-Authors@R: 
+Authors@R: c(
     person("Egor", "Kotov", , "kotov.egor@gmail.com", role = c("aut", "cre", "cph"),
-           comment = c(ORCID = "0000-0001-6690-5345"))
+           comment = c(ORCID = "0000-0001-6690-5345")),
+    person("Mauricio", "Vargas", , "mavargas11@uc.cl", role = "ctb",
+           comment = c(ORCID = "0000-0003-1017-7574"))
+  )
 Description: Install specific version of Java runtime environment at the R
     project level. The goal of rJavaEnv is to manage multiple Java JDKs in
     R projects by automatingthe process of downloading, installing, and
@@ -34,4 +37,4 @@ VignetteBuilder:
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2.9000
