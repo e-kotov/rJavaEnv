@@ -69,8 +69,11 @@ java_download <- function(version = 21,
 
   url_template <- java_urls[[distribution]][[platform]][[arch]]
   url <- gsub("\\{version\\}", version, url_template)
+  url_md5 <- gsub("latest/", "latest_checksum/", url)
 
   dest_file <- file.path(dest_dir, basename(url))
+  dest_file_md5 <- paste0(file.path(dest_dir, basename(url_md5)), ".md5")
+
 
   if (verbose) {
     cli::cli_inform("Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}", .envir = environment())
@@ -82,8 +85,20 @@ java_download <- function(version = 21,
     }
   } else {
     curl::curl_download(url, dest_file, quiet = FALSE)
+    curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
     if (verbose) {
       cli::cli_inform("Download completed.", .envir = environment())
+
+      md5sum <- tools::md5sum(dest_file)
+      md5sum_expected <- readLines(dest_file_md5, warn = FALSE)
+
+      if (md5sum != md5sum_expected) {
+        cli::cli_alert_danger("MD5 checksum mismatch. Please try downloading the file again.", .envir = environment())
+        unlink(dest_file)
+        return(NULL)
+      } else {
+        cli::cli_inform("MD5 checksum verified.", .envir = environment())
+      }
     }
   }
 

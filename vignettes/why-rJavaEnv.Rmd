@@ -13,12 +13,12 @@ pkgdown:
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-collapse = TRUE,
-comment = "#>",
-fig.path = "man/figures/README-",
-out.width = "100%",
-message = FALSE,
-warning = FALSE
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  message = FALSE,
+  warning = FALSE
 )
 ```
 
@@ -48,14 +48,14 @@ While not as popular as widely known and highly popular `ggplot2` and `data.tabl
 
 
 ```{r transform_data, include=FALSE, echo=FALSE}
-rj_and_rj_dep_total_down <- rJava_dependants_dlstats_cran |> 
+rj_and_rj_dep_total_down <- rJava_dependants_dlstats_cran |>
   rbind(rJava_dlstats) |>
   rbind(data_table_dlstats) |>
   rbind(ggplot2_dlstats) |>
-  mutate(is_rJava = if_else(package == "rJava", "rJava", "rJava dependent")) |> 
-  mutate(is_rJava = if_else(package == "ggplot2", "ggplot2", is_rJava)) |> 
+  mutate(is_rJava = if_else(package == "rJava", "rJava", "rJava dependent")) |>
+  mutate(is_rJava = if_else(package == "ggplot2", "ggplot2", is_rJava)) |>
   mutate(is_rJava = if_else(package == "data.table", "data.table", is_rJava)) |>
-  group_by(start, end, is_rJava) |> 
+  group_by(start, end, is_rJava) |>
   summarise(downloads = sum(downloads, na.rm = T), .groups = "keep") |>
   ungroup()
 ```

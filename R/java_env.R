@@ -13,7 +13,7 @@
 #' }
 java_env_set <- function(java_home,
                          where = c("both", "session", "project"),
-                         verbose = T) {
+                         verbose = TRUE) {
   where <- match.arg(where)
   checkmate::assertString(java_home)
   checkmate::assertFlag(verbose)
@@ -159,7 +159,7 @@ java_check_version_rjava <- function(java_home = NULL, verbose = TRUE) {
 
   # Process and print the output
   if (length(output) > 0) {
-    if (any(grepl("error", tolower(output)))){
+    if (any(grepl("error", tolower(output)))) {
       cli::cli_alert_danger("Failed to retrieve Java version.")
       return(FALSE)
     } else {
@@ -179,7 +179,6 @@ java_check_version_rjava <- function(java_home = NULL, verbose = TRUE) {
   } else {
     if (verbose) cli::cli_alert_danger("Failed to retrieve Java version.")
   }
-
 }
 
 #' Check installed Java version using terminal commands
