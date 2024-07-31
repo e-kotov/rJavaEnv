@@ -1,8 +1,8 @@
 #' Install Java from a distribution file
 #'
 #' @param java_path The path to the Java distribution file.
-#' @param project The project directory where Java should be installed. Defaults to the current working directory.
-#' @param autoset_java_path Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.
+#' @param project_path The project directory where Java should be installed. Defaults to the current working directory.
+#' @param autoset_java_env Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.
 #' @param verbose Whether to print detailed messages. Defaults to TRUE.
 #' @return The path to the installed Java directory.
 #' @export
@@ -11,13 +11,17 @@
 #' \dontrun{
 #' java_install("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
 #' }
-java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, verbose = TRUE) {
+java_install <- function(
+  java_path,
+  project_path = NULL,
+  autoset_java_env = TRUE,
+  verbose = TRUE) {
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
   java_versions <- c("8", "11", "17", "21", "22")
 
   # Resolve the project path
-  project <- ifelse(is.null(project), getwd(), project)
+  project_path <- ifelse(is.null(project_path), getwd(), project_path)
 
   # Extract information from the file name
   filename <- basename(java_path)
@@ -84,7 +88,7 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
   }
 
   # Create a symlink in the project directory
-  project_version_path <- file.path(project, "rjavaenv", platform, arch, version)
+  project_version_path <- file.path(project_path, "rjavaenv", platform, arch, version)
   if (!dir.exists(dirname(project_version_path))) {
     dir.create(dirname(project_version_path), recursive = TRUE)
   }
@@ -112,7 +116,7 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
       silent = TRUE
     )
     if (!link_success) {
-      if (verbose) cli::cli_inform("Junction creation failed. Java files will instead be copied to {.path {project_version_path}}")
+      if (verbose) cli::cli_inform("Junction creation failed. This is likely because the project directory is not on the same disk as the R package cache directory. Java files will instead be copied to {.path {project_version_path}}")
       dir.create(project_version_path, recursive = TRUE)
       file.copy(installed_path, project_version_path, recursive = TRUE, overwrite = TRUE)
       if (verbose) cli::cli_inform("Java copied to project {.path {project_version_path}}")
@@ -137,7 +141,7 @@ java_install <- function(java_path, project = NULL, autoset_java_path = TRUE, ve
 
 
   # Write the JAVA_HOME to the .Rprofile and environment after installation
-  if (autoset_java_path) {
+  if (autoset_java_env) {
     java_env_set(installed_path, verbose = verbose)
   }
 
