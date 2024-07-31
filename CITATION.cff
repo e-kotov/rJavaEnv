@@ -8,7 +8,7 @@ message: 'To cite package "rJavaEnv" in publications use:'
 type: software
 license: MIT
 title: 'rJavaEnv: Java Environments for R Projects'
-version: 0.0.1
+version: 0.1.0
 doi: 10.5281/zenodo.11403010
 abstract: Install specific version of Java runtime environment at the R project level.
   The goal of rJavaEnv is to manage multiple Java JDKs in R projects by automatingthe
