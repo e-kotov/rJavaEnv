@@ -48,6 +48,8 @@ java_clear_distrib_cache <- function(
     check = TRUE,
     delete_all = FALSE,
     cache_dir = tools::R_user_dir("rJavaEnv", which = "cache")) {
+  rje_consent_check()
+  
   distrib_cache_dir <- file.path(cache_dir, "distrib")
 
   if (!dir.exists(distrib_cache_dir)) {

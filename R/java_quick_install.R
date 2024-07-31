@@ -30,6 +30,6 @@ java_quick_install <- function(
     verbose = verbose
   )
 
-  java_install(java_distr_path, autoset_java_path = TRUE)
+  java_install(java_distr_path, autoset_java_env = TRUE)
   return(invisible(NULL))
 }

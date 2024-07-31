@@ -22,6 +22,7 @@ java_download <- function(version = 21,
                           platform = platform_detect()$os,
                           arch = platform_detect()$arch,
                           verbose = TRUE) {
+  rje_consent_check()
   java_urls <- java_urls_load()
 
   valid_distributions <- names(java_urls)

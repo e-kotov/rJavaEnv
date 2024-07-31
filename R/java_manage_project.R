@@ -13,6 +13,7 @@ java_list_in_project <- function(
     project_dir = getwd(),
     output = c("data.frame", "vector"),
     verbose = FALSE) {
+
   output <- match.arg(output)
   java_symlink_dir <- file.path(project_dir, "rjavaenv")
 
@@ -66,6 +67,8 @@ java_clear_in_project <- function(
     project_dir = getwd(),
     check = TRUE,
     delete_all = FALSE) {
+  rje_consent_check()
+  
   java_symlink_dir <- file.path(project_dir, "rjavaenv")
 
   if (!dir.exists(java_symlink_dir)) {
