@@ -1,0 +1,27 @@
+rJavaEnv: Manage Java Environments for R Projects
+
+Welcome to rJavaEnv! It looks like this is your first time using rJavaEnv.
+This message will guide you through some of the key features and how rJavaEnv works.
+
+rJavaEnv will manage Java Development Kits (JDKs) specifically for your R projects,
+ensuring that each project uses the appropriate Java version
+without affecting other projects or your system-wide Java installation.
+
+Here's what rJavaEnv will do:
+
+  - Create a 'rjavaenv' folder in your project/current working directory.
+  - Generate necessary configuration files in the project/current working directory.
+
+rJavaEnv will also update some existing files in your project/current working directory, such as:
+  
+  - .Rprofile
+
+Additionally, rJavaEnv maintains a cache of Java distributions and installations at:
+
+  - ${rJavaEnv_CACHE}
+
+You can customize this path by setting the $RJAVAENV_CACHE with `Sys.setenv(RJAVAENV_CACHE = "path/to/cache")`.
+Alternatively, you can set the cache folder as argument `dest_dir` in `java_download()`.
+The same cache folder is used for both zipped java distributions and extracted distrubution files.
+
+For more information, read the introductory vignette with `vignette("rJavaEnv")` and browse the package documentation online at https://www.ekotov.pro/rJavaEnv/.
