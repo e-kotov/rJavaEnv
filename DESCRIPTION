@@ -9,7 +9,7 @@ Authors@R: c(
   )
 Description: Install specific version of Java runtime environment at the R
     project level. The goal of rJavaEnv is to manage multiple Java JDKs in
-    R projects by automatingthe process of downloading, installing, and
+    R projects by automating the process of downloading, installing, and
     configuring Java environments on a per-project basis.  This package is
     inspired by the renv <https://rstudio.github.io/renv/> package for
     managing R environments in R projects. You can request a specific Java
