@@ -11,6 +11,7 @@ Here's what rJavaEnv will do:
 
   - Create a 'rjavaenv' folder in your project/current working directory.
   - Generate necessary configuration files in the project/current working directory.
+  - Update your $JAVA_HOME and $PATH variables within the current R session.
 
 rJavaEnv will also update some existing files in your project/current working directory, such as:
   
