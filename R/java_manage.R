@@ -58,6 +58,8 @@ java_clear <- function(
     target_dir = NULL,
     check = TRUE,
     delete_all = FALSE) {
+  rje_consent_check()
+  
   type <- match.arg(type)
 
   if (is.null(target_dir)) {

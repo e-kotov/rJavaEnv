@@ -14,6 +14,8 @@
 java_env_set <- function(java_home,
                          where = c("both", "session", "project"),
                          verbose = TRUE) {
+  rje_consent_check()
+
   where <- match.arg(where)
   checkmate::assertString(java_home)
   checkmate::assertFlag(verbose)
@@ -281,6 +283,8 @@ java_check_version_system <- function() {
 java_env_unset <- function(
     # where = c("both", "session", "project"),
     verbose = TRUE) {
+  rje_consent_check()
+  
   project_directory <- getwd()
   rprofile_path <- file.path(project_directory, ".Rprofile")
 

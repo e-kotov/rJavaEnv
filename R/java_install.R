@@ -16,6 +16,8 @@ java_install <- function(
   project_path = NULL,
   autoset_java_env = TRUE,
   verbose = TRUE) {
+  rje_consent_check()
+  
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
   java_versions <- c("8", "11", "17", "21", "22")

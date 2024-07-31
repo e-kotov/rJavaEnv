@@ -66,6 +66,8 @@ java_clear_installed_cache <- function(
     check = TRUE,
     delete_all = FALSE,
     cache_dir = tools::R_user_dir("rJavaEnv", which = "cache")) {
+  rje_consent_check()
+  
   installed_cache_dir <- file.path(cache_dir, "installed")
 
   if (!dir.exists(installed_cache_dir)) {
