@@ -6,17 +6,17 @@
 \usage{
 java_install(
   java_path,
-  project = NULL,
-  autoset_java_path = TRUE,
+  project_path = NULL,
+  autoset_java_env = TRUE,
   verbose = TRUE
 )
 }
 \arguments{
 \item{java_path}{The path to the Java distribution file.}
 
-\item{project}{The project directory where Java should be installed. Defaults to the current working directory.}
+\item{project_path}{The project directory where Java should be installed. Defaults to the current working directory.}
 
-\item{autoset_java_path}{Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.}
+\item{autoset_java_env}{Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.}
 
 \item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
 }
