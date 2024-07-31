@@ -20,8 +20,7 @@ rJavaEnv needs permission to manage files in your project and cache directories
 to function correctly.
 }
 \details{
-In line with \href{(https://cran.r-project.org/web/packages/policies.html)}{CRAN policies},
-explicit user consent is required before making these changes.
+In line with \href{https://cran.r-project.org/web/packages/policies.html}{CRAN policies}, explicit user consent is required before making these changes.
 Please call \code{rJavaEnv::consent()} to provide consent.
 
 Alternatively, you can set the following \R option

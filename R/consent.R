@@ -4,8 +4,7 @@
 #' rJavaEnv needs permission to manage files in your project and cache directories
 #' to function correctly.
 #'
-#' In line with [CRAN policies]((https://cran.r-project.org/web/packages/policies.html)),
-#' explicit user consent is required before making these changes.
+#' In line with [CRAN policies](https://cran.r-project.org/web/packages/policies.html), explicit user consent is required before making these changes.
 #' Please call `rJavaEnv::consent()` to provide consent.
 #'
 #' Alternatively, you can set the following \R option
