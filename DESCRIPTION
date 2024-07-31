@@ -19,7 +19,7 @@ Description: Install specific version of Java runtime environment at the R
     Therefore, you can have different Java versions for different projects
     without contaminating your system with different Java versions.
 License: MIT + file LICENSE
-URL: https://github.com/e-kotov/rJavaEnv, http://www.ekotov.pro/rJavaEnv/
+URL: https://github.com/e-kotov/rJavaEnv, https://www.ekotov.pro/rJavaEnv/
 BugReports: https://github.com/e-kotov/rJavaEnv/issues
 Imports: 
     checkmate,

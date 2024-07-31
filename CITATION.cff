@@ -36,12 +36,18 @@ preferred-citation:
   url: https://github.com/e-kotov/rJavaEnv
   doi: 10.5281/zenodo.11403010
 repository-code: https://github.com/e-kotov/rJavaEnv
-url: http://www.ekotov.pro/rJavaEnv/
+url: https://www.ekotov.pro/rJavaEnv/
 contact:
 - family-names: Kotov
   given-names: Egor
   email: kotov.egor@gmail.com
   orcid: https://orcid.org/0000-0001-6690-5345
+keywords:
+- environments
+- java
+- r
+- reproducibility
+- reproducible-research
 references:
 - type: software
   title: checkmate

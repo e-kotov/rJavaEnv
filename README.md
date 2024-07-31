@@ -1,17 +1,17 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# rJavaEnv: Java Environments for R Projects <a href="http://www.ekotov.pro/rJavaEnv/"><img src="man/figures/logo.png" align="right" height="134" alt="rJavaEnv website" /></a>
+# rJavaEnv: Java Environments for R Projects <a href="https://www.ekotov.pro/rJavaEnv/"><img src="man/figures/logo.png" align="right" height="134" alt="rJavaEnv website" /></a>
 
 <!-- badges: start -->
 
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
-public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"
+public.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+<a href="https://lifecycle.r-lib.org/articles/stages.html#stable"
 target="_blank"><img
-src="https://img.shields.io/badge/lifecycle-experimental-orange.svg"
-alt="Lifecycle: experimental" /></a>
+src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg"
+alt="Lifecycle: stable" /></a>
 <a href="https://CRAN.R-project.org/package=rJavaEnv"
 target="_blank"><img src="https://www.r-pkg.org/badges/version/rJavaEnv"
 alt="CRAN status" /></a>
@@ -122,7 +122,7 @@ The package has several core functions:
       (or cached distributions or installations).
 
 See more details on all the functions in the
-<a href="https://e-kotov.github.io/rJavaEnv/reference/index.html"
+<a href="https://www.ekotov.pro/rJavaEnv/reference/index.html"
 target="_blank">Reference</a>.
 
 For detailed usage, see the [Quick Start

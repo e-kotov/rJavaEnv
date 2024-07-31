@@ -14,7 +14,7 @@ Install specific version of Java runtime environment at the R project level. The
 Useful links:
 \itemize{
   \item \url{https://github.com/e-kotov/rJavaEnv}
-  \item \url{http://www.ekotov.pro/rJavaEnv/}
+  \item \url{https://www.ekotov.pro/rJavaEnv/}
   \item Report bugs at \url{https://github.com/e-kotov/rJavaEnv/issues}
 }
 
