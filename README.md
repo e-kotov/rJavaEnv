@@ -17,7 +17,7 @@ target="_blank"><img src="https://www.r-pkg.org/badges/version/rJavaEnv"
 alt="CRAN status" /></a>
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
 [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck)
-[![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://codecov.io/github/e-kotov/rJavaEnv)
+[![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11403009.svg)](https://dx.doi.org/10.5281/zenodo.11403009)
 
