@@ -43,6 +43,12 @@ it in your projects.
 
 ## Install
 
+Install latest release from **R-multiverse**:
+
+``` r
+install.packages('rJavaEnv', repos = c('https://community.r-multiverse.org', 'https://cloud.r-project.org'))
+```
+
 You can install the development version of `rJavaEnv` from GitHub:
 
 ``` r
@@ -81,6 +87,21 @@ This will:
 After that, you can even remove `rJavaEnv` completely, as the Java
 environment will be set up in the project directory with the base R code
 that does not rely on `rJavaEnv`.
+
+As part of normal operation, rJavaEnv will update the JAVA_HOME and PATH
+environment variables in the current R session, the local cache in your
+R package library, and the `.Rprofile` file in the project/current
+working directory. In line with [CRAN
+policies](https://cran.r-project.org/web/packages/policies.html),
+explicit user consent is required before making these changes.
+Therefore, the first time you run any function from `rJavaEnv` that
+makes such changes, you will be asked for consent. To explicitly consent
+and/or to prevent interruptions in non-interactive mode, you can use the
+`rje_consent()` function:
+
+``` r
+rje_consent(provided = TRUE)
+```
 
 ## Functions Overview
 
