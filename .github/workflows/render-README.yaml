@@ -30,7 +30,7 @@ jobs:
       
       - name: Install devtools and the target package
         run: |
-          Rscript -e 'install.packages("rJavaEnv", repos="https://community.r-multiverse.org")'
+          Rscript -e 'install.packages("rJavaEnv", repos=c("https://community.r-multiverse.org", "https://packagemanager.posit.co/cran/__linux__/jammy/latest")'
 
 
       - name: Render README.Rmd
