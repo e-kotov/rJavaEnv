@@ -28,6 +28,12 @@ jobs:
         run: |
           Rscript -e 'install.packages("rmarkdown")'
       
+      - name: Install devtools and the target package
+        run: |
+          Rscript -e 'install.packages("devtools")'
+          Rscript -e 'devtools::install()'
+
+
       - name: Render README.Rmd
         run: |
           Rscript -e 'rmarkdown::render("README.Rmd")'
