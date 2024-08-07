@@ -26,11 +26,11 @@ jobs:
 
       - name: Install rmarkdown
         run: |
-          Rscript -e 'install.packages("rmarkdown")'
+          Rscript -e 'install.packages("rmarkdown", repos="https://packagemanager.rstudio.com/cran/__linux__/jammy/latest")'
       
       - name: Install devtools and the target package
         run: |
-          Rscript -e 'install.packages("rJavaEnv", repos=c("https://community.r-multiverse.org", "https://packagemanager.posit.co/cran/__linux__/jammy/latest")'
+          Rscript -e 'install.packages("rJavaEnv", repos=c("https://community.r-multiverse.org", "https://packagemanager.posit.co/cran/__linux__/jammy/latest"))'
 
 
       - name: Render README.Rmd
