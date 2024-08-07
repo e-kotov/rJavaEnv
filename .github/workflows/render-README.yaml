@@ -24,10 +24,8 @@ jobs:
 
       - uses: r-lib/actions/setup-r@v2
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: |
-            any::rmarkdown
+      - uses: install rmarkdown from PPM
+        run: Rscript -e 'install.packages("rmarkdown", repos=c("https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"))'
       
       - name: Install devtools and the target package
         run: |
@@ -40,8 +38,8 @@ jobs:
 
       - name: Commit results
         run: |
-          git config --local user.name "$GITHUB_ACTOR"
-          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.
           git add README.md
           git commit -m 'Re-build README.Rmd' || echo "No changes to commit"
           git push origin || echo "No changes to commit"
