@@ -3,6 +3,9 @@
 on:
   push:
     paths: ['README.Rmd']
+  workflow_dispatch:
+    paths: ['README.Rmd']
+
 
 name: Render README
 
