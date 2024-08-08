@@ -47,7 +47,7 @@ Install latest release from **R-multiverse**:
 
 ``` r
 install.packages('rJavaEnv',
-  repos = c('https://community.r-multiverse.org', 'https://cloud.r-project.org')
+   repos = c('https://community.r-multiverse.org', 'https://cloud.r-project.org')
 )
 ```
 
