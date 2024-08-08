@@ -46,7 +46,9 @@ it in your projects.
 Install latest release from **R-multiverse**:
 
 ``` r
-install.packages('rJavaEnv', repos = c('https://community.r-multiverse.org', 'https://cloud.r-project.org'))
+install.packages('rJavaEnv',
+  repos = c('https://community.r-multiverse.org', 'https://cloud.r-project.org')
+)
 ```
 
 You can install the development version of `rJavaEnv` from GitHub:
