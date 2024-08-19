@@ -10,9 +10,10 @@
 #' java_list_distrib_cache()
 #'
 java_list_distrib_cache <- function(
+    cache_dir = tools::R_user_dir("rJavaEnv", which = "cache")
     output = c("data.frame", "vector"),
-    verbose = FALSE,
-    cache_dir = tools::R_user_dir("rJavaEnv", which = "cache")) {
+    verbose = FALSE
+) {
   output <- match.arg(output)
 
   cache_dir <- file.path(cache_dir, "distrib")
@@ -23,11 +24,17 @@ java_list_distrib_cache <- function(
   }
   if (verbose) cli::cli_inform("Contents of the Java distributions cache folder:")
 
+  java_distrs <- grep(
+    "md5$",
+    list.files(cache_dir, full.names = TRUE),
+    invert = TRUE,
+    value = TRUE
+  )
+
   if (output == "vector") {
-    java_distrs <- list.files(cache_dir, full.names = TRUE)
     return(java_distrs)
   } else if (output == "data.frame") {
-    java_distrs <- data.frame(java_distr_path = list.files(cache_dir, full.names = TRUE))
+    java_distrs <- data.frame(java_distr_path = java_distrs)
     return(java_distrs)
   }
 }
