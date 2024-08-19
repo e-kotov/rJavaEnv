@@ -1,0 +1,266 @@
+---
+title: "Quick Start Guide: `Java` Setup for 'R' Projects"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Quick Start Guide: `Java` Setup for 'R' Projects}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+execute:
+  eval: false
+---
+
+<!-- ```{r, include = FALSE}
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+``` -->
+
+This guide will walk you through downloading, installing, and managing `Java` environments for your R projects using the `rJavaEnv` package. We'll cover setting up the environment, unsetting it, managing distributions, installing `Java`, and checking `Java` versions.
+
+### Quickly Download and Install Java
+
+#### 1. **Install `rJavaEnv`**:
+
+Install `rJavaEnv` from CRAN (once available):
+
+
+```{r}
+install.packages("rJavaEnv")
+```
+
+
+Or install the latest version of `rJavaEnv` from R universe:
+
+```{r}
+install.packages('rJavaEnv',
+  repos = c('https://e-kotov.r-universe.dev', 'https://cloud.r-project.org')
+)
+```
+
+
+#### 2. **Quick Install `Java` JDK**:
+
+Assume your project directory is currently in a temporary directory:
+
+```{r}
+project_dir <- tempdir()
+setwd(project_dir)
+```
+
+To quickly install `Java` JDK 21 (which is also default, if not specified) in your current project directory and set the environment:
+
+```{r}
+library(rJavaEnv)
+java_quick_install(version = 21)
+```
+
+On first run, you will be asked for consent to change your environment variables and `.Rprofile` file in the current working/project directory. This only happens once.
+
+The command above:
+
+- Downloads the `Java` distribution compatible with your OS and architecture.
+
+- Installs `Java` in a cache directory.
+
+- Sets the `JAVA_HOME` and `PATH` environment variables for the current session and project/working directory, so that any `Java`/`rJava` dependent `R` package can use this requested `Java` version.
+
+Expected output:
+
+```
+Detected platform: macos
+Detected architecture: arm64
+You can change the platform and architecture by specifying the `platform` and `arch` arguments.
+Downloading Java 21 (Corretto) for macos arm64 to
+/Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-21-aarch64-macos-jdk.tar.gz
+File already exists. Skipping download.
+Java distribution amazon-corretto-21-aarch64-macos-jdk.tar.gz already unpacked at
+/Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21
+✔ Current R Session: JAVA_HOME and PATH set to /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21
+✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21' in .Rprofile in '/private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/.Rprofile'
+Java 21 (amazon-corretto-21-aarch64-macos-jdk.tar.gz) for macos aarch64 installed at
+/Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21 and symlinked to
+/private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/rjavaenv/macos/aarch64/21
+```
+
+That is it. You can now use your `Java`/`rJava`-dependent `R` package.
+
+You can check if the newly installed `Java` will be correctly picked up by the `Java`/`rJava`-dependent `R` package that you are going to use with.
+
+For `R` packages that use `Java` via `rJava`-dependency (e.g. [`r5r`](https://github.com/ipeaGIT/r5r){target="_blank"}), you can use the following command:
+
+```{r}
+java_check_version_rjava()
+```
+
+Expected output:
+
+```
+Using current session's JAVA_HOME: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21
+With the user-specified JAVA_HOME rJava and other rJava/Java-based packages will use Java version: "21.0.3"
+[1] TRUE
+```
+
+For `R` packages that use `Java` from command line (e.g. [`opentripplanner`](https://github.com/ropensci/opentripplanner){target="_blank"}), you can use the following command:
+
+```{r}
+java_check_version_cmd()
+```
+
+Expected output:
+
+```
+JAVA_HOME: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21
+Java path: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21/bin/java
+Java version: "openjdk version \"21.0.3\" 2024-04-16 LTS OpenJDK Runtime Environment Corretto-21.0.3.9.1 (build 21.0.3+9-LTS) OpenJDK 64-Bit
+Server VM Corretto-21.0.3.9.1 (build 21.0.3+9-LTS, mixed mode, sharing)"
+[1] TRUE
+```
+
+
+
+#### Note for Linux users {#note-linux}
+Note: if you are on a Linux system that did not have any `Java` version previoulsy installed and you are not using pre-build `R` package binaries (for example from 'Posit Package Manager') and instead install all `R` packages from source, after this step you may have to quit `R`, [follow these steps](https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r){target='_blank'} to set configure `Java` for `R`, and only then install `rJava`, as otherwise `rJava` cannot be built from source.*
+
+#### To return things to their original state
+
+##### Unset `Java`
+
+Run the following code to unset the `Java` for the current working directory:
+
+```{r}
+java_env_unset()
+```
+
+And restart the current `R` session so that `R` picks up the system `Java` (or no `Java`, if it is not installed in the system).
+
+##### List installed `Java` versions
+
+Simply delete the `rjavaenv` folder in the project directory or current working directory.
+
+For finer control, you can list the `Java` versions installed in the project directory:
+
+```{r}
+java_list("project")
+```
+
+Example expected output (if you installed several `Java` versions in the project directory):
+
+```
+path platform    arch version
+1 /private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/rjavaenv/macos/aarch64/17    macos aarch64      17
+2 /private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/rjavaenv/macos/aarch64/21    macos aarch64      21
+3  /private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/rjavaenv/macos/aarch64/8    macos aarch64       8
+```
+
+To delete a specific `Java` version:
+
+```{r}
+java_clear("project")
+```
+
+Expected output:
+
+```
+ℹ Existing Java symlinks:
+1: /private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/rjavaenv/macos/aarch64/17
+2: /private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/rjavaenv/macos/aarch64/21
+3: /private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/rjavaenv/macos/aarch64/8
+ℹ Enter the number of the symlink to delete, 'all' to delete all, or '0' or any other character to cancel:
+```
+
+Choose a number from the list and hit enter. This will remove selected `Java` from your project/current working directory. However that does not affect the cached `Java` distributions in the user-specific data directory.
+
+
+##### Clear Java installation cache
+
+`rJavaEnv` unpacks the downloaded distributions into a cached location in user-specific data directory and links to this installation cache in your project/current working directory, so that you do not waste space by duplicating the same `Java` installation. This behavior is similar to how `renv` manages `R` packages.
+
+To check the `Java` installation cache:
+
+```{r}
+java_list("installed")
+```
+
+Expected example output:
+
+```
+path platform    arch version
+1 /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/17    macos aarch64      17
+2 /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21    macos aarch64      21
+3 /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/22    macos aarch64      22
+4  /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/8    macos aarch64       8
+```
+
+To delete a specific `Java` distribution:
+
+```{r}
+java_clear("installed")
+```
+
+Expected output:
+
+```
+Contents of the Java installations cache folder:
+ℹ Existing Java installations:
+1: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/17
+2: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21
+3: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/22
+4: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/8
+ℹ Enter the number of the installation to delete, 'all' to delete all, or '0' or any other character to cancel:
+```
+
+You can also remove all without any additional confirmation with the `delete_all = TRUE` argument.
+
+```{r}
+java_clear("installed", delete_all = TRUE)
+```
+
+
+##### Clear Java distribution cache
+
+To check the `Java` distribution cache:
+
+```{r}
+java_list("distrib")
+```
+
+Expected example output:
+
+```
+java_distr_path
+1     /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-17-aarch64-macos-jdk.tar.gz
+2 /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-17-aarch64-macos-jdk.tar.gz.md5
+3     /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-21-aarch64-macos-jdk.tar.gz
+4 /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-21-aarch64-macos-jdk.tar.gz.md5
+5      /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-8-aarch64-macos-jdk.tar.gz
+6  /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-8-aarch64-macos-jdk.tar.gz.md5
+```
+
+To delete a specific `Java` distribution:
+
+```{r}
+java_clear("distrib")
+```
+
+Expected output:
+
+```
+ℹ Existing Java distributions:
+1: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-17-aarch64-macos-jdk.tar.gz
+2: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-17-aarch64-macos-jdk.tar.gz.md5
+3: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-21-aarch64-macos-jdk.tar.gz
+4: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-21-aarch64-macos-jdk.tar.gz.md5
+5: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-8-aarch64-macos-jdk.tar.gz
+6: /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/distrib/amazon-corretto-8-aarch64-macos-jdk.tar.gz.md5
+ℹ Enter the number of the distribution to delete, 'all' to delete all, or '0' or any other character to cancel:
+```
+
+You can also remove all without any additional confirmation with the `delete_all = TRUE` argument.
+
+```{r}
+java_clear("distrib", delete_all = TRUE)
+```

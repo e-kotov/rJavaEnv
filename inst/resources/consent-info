@@ -22,7 +22,7 @@ Additionally, `rJavaEnv` maintains a cache of Java distributions and installatio
   - ${rJavaEnv_CACHE}
 
 You can customize this path by setting the `$RJAVAENV_CACHE` with `Sys.setenv(RJAVAENV_CACHE = "path/to/cache")`.
-Alternatively, you can set the cache folder as argument `dest_dir` in `java_download()`.
+Alternatively, you can set the cache folder as argument `distribution_cache_path` in `java_download()`.
 The same cache folder is used for both zipped java distributions and extracted distrubution files.
 
 For more information, read the introductory vignette with `vignette("rJavaEnv")` and browse the package documentation online at https://www.ekotov.pro/rJavaEnv/.
@@ -30,3 +30,5 @@ For more information, read the introductory vignette with `vignette("rJavaEnv")`
 Whenever you install any `Java` JDK, kindly read the respective software license and agree to it before use.
 For the current default JDK installed with rJavaEnv, which is Amazon Corretto, please find the license for the version
 you are installing at https://github.com/corretto/.
+
+Finally, if you are on a Linux system that did not have any 'Java' version previoulsy installed and you are not using pre-build 'R' package binaries (for example from 'Posit Package Manager') and instead install all 'R' packages from source, after this step you may have to quit R, follow these steps: https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r to set configure 'Java' for 'R', and only then install 'rJava', as otherwise 'rJava' cannot be built from source.

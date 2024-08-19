@@ -2,18 +2,18 @@
 % Please edit documentation in R/java_env.R
 \name{java_env_set}
 \alias{java_env_set}
-\title{Set the JAVA_HOME and PATH environment variables to a given path}
+\title{Set the \code{JAVA_HOME} and \code{PATH} environment variables to a given path}
 \usage{
 java_env_set(
   java_home,
-  where = c("both", "session", "project"),
+  where = c("session", "both", "project"),
   verbose = TRUE
 )
 }
 \arguments{
-\item{java_home}{The path to the desired JAVA_HOME.}
+\item{java_home}{The path to the desired \code{JAVA_HOME}.}
 
-\item{where}{Where to set the JAVA_HOME: "session", "project", or "both". Defaults to "both". When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.}
+\item{where}{Where to set the \code{JAVA_HOME}: "session", "project", or "both". Defaults to "session" and only updates the paths in the current R session. When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.}
 
 \item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
 }
@@ -21,10 +21,20 @@ java_env_set(
 Nothing. Sets the JAVA_HOME and PATH environment variables.
 }
 \description{
-Set the JAVA_HOME and PATH environment variables to a given path
+Set the \code{JAVA_HOME} and \code{PATH} environment variables to a given path
 }
 \examples{
 \dontrun{
-java_env_set("/path/to/java", "both")
+# download, install Java 17
+java_17_distrib <- java_download(version = "17", temp_dir = TRUE)
+java_home <- java_install(
+  java_distrib_path = java_17_distrib,
+  project_path = tempdir(),
+  autoset_java_env = FALSE
+)
+
+# now manually set the JAVA_HOME and PATH environment variables in current session
+java_env_set(java_home = java_home, where = "session")
+
 }
 }

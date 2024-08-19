@@ -1,21 +1,24 @@
 #' Install Java from a distribution file
 #'
-#' @param java_path The path to the Java distribution file.
-#' @param project_path The project directory where Java should be installed. Defaults to the current working directory.
-#' @param autoset_java_env Whether to set the JAVA_HOME and PATH environment variables to the installed Java directory. Defaults to TRUE.
-#' @param verbose Whether to print detailed messages. Defaults to TRUE.
+#' @param java_distrib_path The path to the Java distribution file.
+#' @param project_path The project directory where Java should be installed. If not specified or `NULL`, defaults to the current working directory.
+#' @param autoset_java_env Whether to set the `JAVA_HOME` and `PATH` environment variables to the installed Java directory. Defaults to `TRUE`.
+#' @inheritParams java_download
 #' @return The path to the installed Java directory.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' java_install("path/to/any-java-17-aarch64-macos-jdk.tar.gz")
+#' # download, install and autoset environmnet variables for Java 17
+#' java_17_distrib <- java_download(version = "17", distribution = "Corretto", temp_dir = TRUE)
+#' java_install(java_distrib_path = java_17_distrib, project_path = tempdir())
 #' }
 java_install <- function(
-  java_path,
+  java_distrib_path,
   project_path = NULL,
   autoset_java_env = TRUE,
-  verbose = TRUE) {
+  verbose = TRUE
+) {
   rje_consent_check()
   
   platforms <- c("windows", "linux", "macos")
@@ -26,7 +29,7 @@ java_install <- function(
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
 
   # Extract information from the file name
-  filename <- basename(java_path)
+  filename <- basename(java_distrib_path)
   parts <- strsplit(gsub("\\.tar\\.gz|\\.zip", "", filename), "-")[[1]]
 
   # Guess the version, architecture, and platform
@@ -64,10 +67,10 @@ java_install <- function(
 
     dir.create(temp_dir)
 
-    if (grepl("\\.tar\\.gz$", java_path)) {
-      utils::untar(java_path, exdir = temp_dir)
-    } else if (grepl("\\.zip$", java_path)) {
-      utils::unzip(java_path, exdir = temp_dir)
+    if (grepl("\\.tar\\.gz$", java_distrib_path)) {
+      utils::untar(java_distrib_path, exdir = temp_dir)
+    } else if (grepl("\\.zip$", java_distrib_path)) {
+      utils::unzip(java_distrib_path, exdir = temp_dir)
     } else {
       stop(cli::cli_abort("Unsupported file format", .envir = environment()))
     }
@@ -144,7 +147,7 @@ java_install <- function(
 
   # Write the JAVA_HOME to the .Rprofile and environment after installation
   if (autoset_java_env) {
-    java_env_set(installed_path, verbose = verbose)
+    java_env_set(installed_path, where = "both", verbose = verbose)
   }
 
   if (verbose) cli::cli_inform("Java {version} ({filename}) for {platform} {arch} installed at {.path {installed_path}} and symlinked to {.path {project_version_path}}", .envir = environment())

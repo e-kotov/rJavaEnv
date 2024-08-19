@@ -1,19 +1,31 @@
 # set Java environment ------------------------------------------------------------
 
-#' Set the JAVA_HOME and PATH environment variables to a given path
+#' Set the `JAVA_HOME` and `PATH` environment variables to a given path
 #'
-#' @param java_home The path to the desired JAVA_HOME.
-#' @param where Where to set the JAVA_HOME: "session", "project", or "both". Defaults to "both". When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.
+#' @param java_home The path to the desired `JAVA_HOME`.
+#' @param where Where to set the `JAVA_HOME`: "session", "project", or "both". Defaults to "session" and only updates the paths in the current R session. When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.
 #' @param verbose Whether to print detailed messages. Defaults to TRUE.
 #' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
 #' @export
 #' @examples
 #' \dontrun{
-#' java_env_set("/path/to/java", "both")
+#' # download, install Java 17
+#' java_17_distrib <- java_download(version = "17", temp_dir = TRUE)
+#' java_home <- java_install(
+#'   java_distrib_path = java_17_distrib,
+#'   project_path = tempdir(),
+#'   autoset_java_env = FALSE
+#' )
+#' 
+#' # now manually set the JAVA_HOME and PATH environment variables in current session
+#' java_env_set(java_home = java_home, where = "session")
+#' 
 #' }
-java_env_set <- function(java_home,
-                         where = c("both", "session", "project"),
-                         verbose = TRUE) {
+java_env_set <- function(
+  java_home,
+  where = c("session", "both", "project"),
+  verbose = TRUE
+) {
   rje_consent_check()
 
   where <- match.arg(where)
@@ -45,7 +57,7 @@ java_env_set <- function(java_home,
   invisible(NULL)
 }
 
-# Helper function for java_env_set_session with Roxygen Documentation
+# Helper function for java_env_set_session
 #' Set the JAVA_HOME and PATH environment variables for the current session
 #'
 #' @keywords internal
@@ -58,7 +70,7 @@ java_env_set_session <- function(java_home) {
   Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 }
 
-# Helper function for java_env_set_rprofile with Roxygen Documentation
+# Helper function for java_env_set_rprofile
 #' Update the .Rprofile file in the project directory
 #'
 #' @keywords internal
@@ -281,7 +293,6 @@ java_check_version_system <- function() {
 #' java_env_unset()
 #' }
 java_env_unset <- function(
-    # where = c("both", "session", "project"),
     verbose = TRUE) {
   rje_consent_check()
   
