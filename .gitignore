@@ -13,3 +13,5 @@ renv
 rjavaenv
 /doc/
 /Meta/
+
+/.quarto/

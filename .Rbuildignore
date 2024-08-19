@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^README\.Rmd$
+^README\.qmd$
 ^cran-comments\.md$
 ^_pkgdown\.yml$
 ^docs$
@@ -15,4 +16,7 @@
 ^doc$
 ^Meta$
 ^CODE_OF_CONDUCT\.md$
-^vignettes/why-rJavaEnv\.Rmd$
+^vignettes/why-rJavaEnv\.qmd$
+^vignettes/data-for-vignettes$
+^vignettes/bibliography.bib$
+^vignettes/media$
