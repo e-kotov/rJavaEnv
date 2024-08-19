@@ -4,10 +4,10 @@
 \alias{java_clear_in_project}
 \title{Clear the Java versions symlinked in the current project}
 \usage{
-java_clear_in_project(project_dir = getwd(), check = TRUE, delete_all = FALSE)
+java_clear_in_project(project_path = NULL, check = TRUE, delete_all = FALSE)
 }
 \arguments{
-\item{project_dir}{The project directory to clear. Defaults to the current working directory.}
+\item{project_path}{The project directory to clear. Defaults to the current working directory.}
 
 \item{check}{Whether to list the symlinked Java versions before clearing them. Defaults to TRUE.}
 

@@ -5,6 +5,7 @@
 #' @param java_home The path to the desired `JAVA_HOME`.
 #' @param where Where to set the `JAVA_HOME`: "session", "project", or "both". Defaults to "session" and only updates the paths in the current R session. When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.
 #' @param verbose Whether to print detailed messages. Defaults to TRUE.
+#' @inheritParams java_install
 #' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
 #' @export
 #' @examples
@@ -18,12 +19,23 @@
 #' )
 #' 
 #' # now manually set the JAVA_HOME and PATH environment variables in current session
-#' java_env_set(java_home = java_home, where = "session")
+#' java_env_set(
+#'   where = "session",
+#'   java_home = java_home
+#' )
+#' 
+#' # or set JAVA_HOME and PATH in the spefific projects' .Rprofile
+#' java_env_set(
+#'   where = "session",
+#'   java_home = java_home,
+#'   project_path = tempdir()
+#' )
 #' 
 #' }
 java_env_set <- function(
-  java_home,
   where = c("session", "both", "project"),
+  java_home,
+  project_path,
   verbose = TRUE
 ) {
   rje_consent_check()
@@ -45,11 +57,11 @@ java_env_set <- function(
   }
 
   if (where %in% c("project", "both")) {
-    java_env_set_rprofile(java_home)
+    java_env_set_rprofile(java_home, project_path = project_path)
     if (verbose) {
       cli::cli_alert_success(c(
         "Current R Project/Working Directory: ",
-        "JAVA_HOME and PATH set to '{.path {java_home}}' in .Rprofile in '{.path {file.path(getwd(), \".Rprofile\")}}'"
+        "JAVA_HOME and PATH set to '{.path {java_home}}' in .Rprofile in '{.path {project_path, \".Rprofile\")}}'"
       ))
     }
   }
@@ -60,9 +72,9 @@ java_env_set <- function(
 # Helper function for java_env_set_session
 #' Set the JAVA_HOME and PATH environment variables for the current session
 #'
+#' @param java_home The path to the desired JAVA_HOME.
 #' @keywords internal
 #'
-#' @param java_home The path to the desired JAVA_HOME.
 java_env_set_session <- function(java_home) {
   Sys.setenv(JAVA_HOME = java_home)
   old_path <- Sys.getenv("PATH")
@@ -70,17 +82,25 @@ java_env_set_session <- function(java_home) {
   Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 }
 
-# Helper function for java_env_set_rprofile
+
 #' Update the .Rprofile file in the project directory
 #'
+#' @inheritParams java_install
 #' @keywords internal
 #'
 #' @param java_home The path to the desired JAVA_HOME.
-java_env_set_rprofile <- function(java_home) {
+#' @returns NULL
+java_env_set_rprofile <- function(
+  java_home,
+  project_path = NULL
+) {
   java_env_unset(verbose = FALSE)
 
-  project <- getwd()
-  rprofile_path <- file.path(project, ".Rprofile")
+  # Resolve the project path
+  # consistent with renv behavior
+  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
+  project_path <- ifelse(is.null(project_path), getwd(), project_path)
+  rprofile_path <- file.path(project_path, ".Rprofile")
 
   # Normalize the path for Windows
   if (.Platform$OS.type == "windows") {
@@ -103,7 +123,7 @@ java_env_set_rprofile <- function(java_home) {
     writeLines(lines_to_add, con = rprofile_path)
   }
 
-  invisible(NULL)
+  return(invisible(NULL))
 }
 
 
@@ -286,18 +306,25 @@ java_check_version_system <- function() {
 #' Unset the JAVA_HOME and PATH environment variables in the project .Rprofile
 #'
 #' @param verbose Whether to print detailed messages. Defaults to TRUE.
+#' @inheritParams java_install
 #' @export
 #' @return Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.
 #' @examples
 #' \dontrun{
-#' java_env_unset()
+#' # clear the JAVA_HOME and PATH environment variables in the specified project .Rprofile
+#' java_env_unset(project_path = tempdir())
 #' }
 java_env_unset <- function(
-    verbose = TRUE) {
+    project_path = NULL,
+    verbose = TRUE
+) {
   rje_consent_check()
   
-  project_directory <- getwd()
-  rprofile_path <- file.path(project_directory, ".Rprofile")
+  # Resolve the project path
+  # consistent with renv behavior
+  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
+  project_path <- ifelse(is.null(project_path), getwd(), project_path)
+  rprofile_path <- file.path(project_path, ".Rprofile")
 
   if (file.exists(rprofile_path)) {
     rprofile_content <- readLines(rprofile_path, warn = FALSE)
@@ -308,7 +335,7 @@ java_env_unset <- function(
     }
   } else {
     if (verbose) {
-      cli::cli_alert_warning("No .Rprofile found in the project directory: {.path project_directory}")
+      cli::cli_alert_warning("No .Rprofile found in the project directory: {.path project_path}")
     }
   }
 }

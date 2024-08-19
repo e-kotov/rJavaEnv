@@ -26,17 +26,17 @@ java_quick_install <- function(
     temp_dir <- tempdir()
     setwd(temp_dir)
     dir.create("rJavaEnv_cache", recursive = TRUE)
-    distribution_cache_path <- file.path(temp_dir, "rJavaEnv_cache")
+    cache_path <- file.path(temp_dir, "rJavaEnv_cache")
     dir.create("rJavaEnv_project", recursive = TRUE)
     project_path <- file.path(temp_dir, "rJavaEnv_project")
   } else {
-    distribution_cache_path <- tools::R_user_dir("rJavaEnv", which = "cache")
+    cache_path <- tools::R_user_dir("rJavaEnv", which = "cache")
   }
 
   java_distrib_path <- java_download(
     version = version,
     distribution = distribution,
-    distribution_cache_path = distribution_cache_path,
+    cache_path = cache_path,
     platform = platform,
     arch = arch,
     verbose = verbose

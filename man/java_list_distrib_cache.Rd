@@ -5,17 +5,17 @@
 \title{List the contents of the Java distributions cache folder}
 \usage{
 java_list_distrib_cache(
+  cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
   output = c("data.frame", "vector"),
-  verbose = FALSE,
-  cache_dir = tools::R_user_dir("rJavaEnv", which = "cache")
+  verbose = FALSE
 )
 }
 \arguments{
+\item{cache_path}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
+
 \item{output}{The format of the output: "data.frame" or "vector". Defaults to "data.frame".}
 
 \item{verbose}{Whether to print detailed messages. Defaults to FALSE.}
-
-\item{cache_dir}{The cache directory to list. Defaults to the user-specific data directory.}
 }
 \value{
 A character vector with the contents of the cache directory.
@@ -24,6 +24,8 @@ A character vector with the contents of the cache directory.
 List the contents of the Java distributions cache folder
 }
 \examples{
+\dontrun{
 java_list_distrib_cache()
+}
 
 }

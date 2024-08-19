@@ -44,12 +44,14 @@ install.packages('rJavaEnv',
 
 #### 2. **Quick Install `Java` JDK**:
 
-Assume your project directory is currently in a temporary directory:
+Assume your project directory is currently in a temporary directory (feel free to skip that, if you are already working in a desired project directory wehre you would like to install `Java`):
 
 ```{r}
 project_dir <- tempdir()
 setwd(project_dir)
 ```
+
+The first time you run any function that requires writing into your home space, you will be provided with a prompt warnin you that the package may write to the package cache folder in your home directory, to your current project directory, as well as to the .Rprofile file in your project directory (or any directory you specify).
 
 To quickly install `Java` JDK 21 (which is also default, if not specified) in your current project directory and set the environment:
 
@@ -80,10 +82,10 @@ File already exists. Skipping download.
 Java distribution amazon-corretto-21-aarch64-macos-jdk.tar.gz already unpacked at
 /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21
 ✔ Current R Session: JAVA_HOME and PATH set to /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21
-✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21' in .Rprofile in '/private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/.Rprofile'
+✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21' in .Rprofile in '/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/.Rprofile'
 Java 21 (amazon-corretto-21-aarch64-macos-jdk.tar.gz) for macos aarch64 installed at
 /Users/ek/Library/Caches/org.R-project.R/R/rJavaEnv/installed/macos/aarch64/21 and symlinked to
-/private/var/folders/gb/t5zr5rn15sldqybrmqbyh6y80000gn/T/RtmpUrAdMK/rjavaenv/macos/aarch64/21
+/Users/ek/home/sync/personal/code_repository/pet_projects/rJavaEnv/rjavaenv/macos/aarch64/21
 ```
 
 That is it. You can now use your `Java`/`rJava`-dependent `R` package.

@@ -26,6 +26,8 @@ java_install <- function(
   java_versions <- c("8", "11", "17", "21", "22")
 
   # Resolve the project path
+  # consistent with renv behavior
+  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
 
   # Extract information from the file name
@@ -42,8 +44,8 @@ java_install <- function(
   if (is.na(platform)) stop(cli::cli_abort("Unable to detect platform from filename.", .envir = environment()))
 
   # Create the installation path in the package cache
-  cache_dir <- tools::R_user_dir("rJavaEnv", which = "cache")
-  installed_path <- file.path(cache_dir, "installed", platform, arch, version)
+  cache_path <- tools::R_user_dir("rJavaEnv", which = "cache")
+  installed_path <- file.path(cache_path, "installed", platform, arch, version)
 
   # Check if the distribution has already been unpacked
   if (!dir.exists(installed_path) || length(list.files(installed_path)) == 0) {
@@ -147,7 +149,7 @@ java_install <- function(
 
   # Write the JAVA_HOME to the .Rprofile and environment after installation
   if (autoset_java_env) {
-    java_env_set(installed_path, where = "both", verbose = verbose)
+    java_env_set(installed_path, where = "both", verbose = verbose, project_path = project_path)
   }
 
   if (verbose) cli::cli_inform("Java {version} ({filename}) for {platform} {arch} installed at {.path {installed_path}} and symlinked to {.path {project_version_path}}", .envir = environment())

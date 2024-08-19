@@ -7,7 +7,7 @@
 java_download(
   version = 21,
   distribution = "Corretto",
-  distribution_cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
+  cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
   verbose = TRUE,
@@ -19,7 +19,7 @@ java_download(
 
 \item{distribution}{The Java distribution to download. If not specified, defaults to "Corretto".}
 
-\item{distribution_cache_path}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
+\item{cache_path}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
 
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 
@@ -39,7 +39,7 @@ Download a Java distribution
 \dontrun{
 
 # download distribution of Java version 17
-java_download(version = "17", distribution = "Corretto", temp_dir = TRUE)
+java_download(version = "17", temp_dir = TRUE)
 
 # download default Java distribution (version 21)
 java_download(temp_dir = TRUE)

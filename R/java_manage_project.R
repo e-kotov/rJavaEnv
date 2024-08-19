@@ -1,21 +1,23 @@
 #' List the Java versions symlinked in the current project
 #'
-#' @param project_dir The project directory to list. Defaults to the current working directory.
+#' @param project_path The project directory to list. Defaults to the current working directory.
 #' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
 #' @param verbose Whether to print detailed messages. Defaults to FALSE.
 #' @return A data frame or character vector with the symlinked Java versions in the project directory.
-#' @export
-#'
-#' @examples
-#' java_list_in_project()
 #'
 java_list_in_project <- function(
-    project_dir = getwd(),
+    project_path = NULL,
     output = c("data.frame", "vector"),
-    verbose = FALSE) {
-
+    verbose = FALSE
+  ) {
+  
+  # Resolve the project path
+  # consistent with renv behavior
+  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
+  project_path <- ifelse(is.null(project_path), getwd(), project_path)
+      
   output <- match.arg(output)
-  java_symlink_dir <- file.path(project_dir, "rjavaenv")
+  java_symlink_dir <- file.path(project_path, "rjavaenv")
 
   if (!dir.exists(java_symlink_dir)) {
     cli::cli_alert_danger("Project Java symlink directory does not exist")
@@ -53,23 +55,28 @@ java_list_in_project <- function(
 
 #' Clear the Java versions symlinked in the current project
 #'
-#' @param project_dir The project directory to clear. Defaults to the current working directory.
+#' @param project_path The project directory to clear. Defaults to the current working directory.
 #' @param check Whether to list the symlinked Java versions before clearing them. Defaults to TRUE.
 #' @param delete_all Whether to delete all symlinks without prompting. Defaults to FALSE.
 #' @return A message indicating whether the symlinks were cleared or not.
-#' @export
 #'
 #' @examples
 #' \dontrun{
 #' java_clear_in_project()
 #' }
 java_clear_in_project <- function(
-    project_dir = getwd(),
+    project_path = NULL,
     check = TRUE,
-    delete_all = FALSE) {
+    delete_all = FALSE
+) {
   rje_consent_check()
   
-  java_symlink_dir <- file.path(project_dir, "rjavaenv")
+  # Resolve the project path
+  # consistent with renv behavior
+  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
+  project_path <- ifelse(is.null(project_path), getwd(), project_path)
+
+  java_symlink_dir <- file.path(project_path, "rjavaenv")
 
   if (!dir.exists(java_symlink_dir)) {
     cli::cli_inform("Java symlink directory does not exist in the project.")
@@ -83,7 +90,7 @@ java_clear_in_project <- function(
   }
 
   if (check) {
-    symlinks <- java_list_in_project(project_dir = project_dir, output = "vector")
+    symlinks <- java_list_in_project(project_path = project_path, output = "vector")
     if (length(symlinks) == 0) {
       cli::cli_inform("No Java symlinks found to clear.")
       return(invisible(NULL))

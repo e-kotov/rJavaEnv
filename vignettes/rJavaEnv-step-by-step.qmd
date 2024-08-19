@@ -1,0 +1,95 @@
+---
+title: "Step-by-step: Download, Install, and Setup `Java` for 'R' Projects"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Step-by-step: Download, Install, and Setup `Java` for 'R' Projects}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+execute:
+  eval: false
+---
+
+
+The basics of using `rJavaEnv` are covered in the [Quick Start Guide](rJavaEnv.qmd), which demonstrates how to install Java in one line of code. This guide will show you how to have a more fine-grained control over your Java environment.
+
+```{r}
+library(rJavaEnv)
+```
+
+Let us use the temporary directory for the following examples.
+
+```{r}
+project_dir <- tempdir()
+setwd(project_dir)
+
+dir.create("distrib_cache")
+```
+
+The code in examples will use the temporary directory created above.
+
+
+
+### Download `Java` JDK distributions
+
+
+
+To download a specific Java distribution, use the `java_download` function:
+
+
+```{r}
+java_17_distr <- java_download(version = 17, distribution_cache_path = "distrib_cache/")
+java_17_distr
+```
+
+
+This function will download the specified version of `Java` JDK (currently defaults to the only supported Corretto distribution by Amazon, more will be added in new package releases).
+
+The function returns the path to the downloaded distribution file.
+
+By default, if no `distribution_cache_path` is specified, the distribution is downloaded into the cache folder of `rJavaEnv` in the user cache. Depending on the user's operating system, the cache folder may be located in different locations. You can check where the cache folder is with:
+
+
+```{r}
+tools::R_user_dir("rJavaEnv", which = "cache")
+```
+
+`java_download()` also allows you to define the operating system and processor architecture with function arguments. For example, this may be useful if you are packaging a Java distribtution for Linux while using a Windows or macOS machine. This may also be useful if for some reason automatic OS and CPU detection fails.
+
+For example, this line above will download the `Amazon Corretto` `Java JDK` version 8 for x86-64 Linux, even though you may be running this code on aarch64 macOS or x86_64 Windows machine:
+
+```{r}
+java_8_linux64_distr <- java_download(version = 8, platform = "linux", arch = "x64",
+  distribution_cache_path = "distrib_cache/")
+```
+
+
+You can managed downloaded distribtuions with the `java_list` and `java_clear` functions.
+
+
+```{r}
+java_list("distrib", target_dir = "distrib_cache")
+```
+
+
+```{r}
+java_clear("distrib", target_dir = "distrib_cache")
+```
+
+
+### Install from downloaded `Java` JDK distributions
+
+Now that we have downloaded the `Java` distribution, we can install any one of them. Installation in the context of `rJavaEnv` means extracting the distribution into the `installed` cache folder (which is in the same root cache directory as the zip archives of the distributions), and linking the files (via symlinks in macOS and Linux, and junctions in Windows[^1]) This is a preparation step before we can either use the `java_env_set()` function, or alternatively manually set the `JAVA_HOME` or `PATH` environment variables to this installation folder in any R script.
+
+
+```{r}
+java_installed <- java_install(
+  java_distrib_path = java_17_distr,
+  project_path = project_dir,
+  autoset_java_env = FALSE)
+```
+
+
+
+
+
+[^1]: In Windows, it is impossible to create junctions for files that are located on different drives. Therefore, if `rJavaEnv` is installed on a C: drive and the `Java` distribution cache is in the same drive in user folder (which it isually is), the Java folder cannot be linked using junctions into a project folder that is on drive different from C:. In this case, the `Java` installation will have to be copied into the project folder, which will take some time. This behaviour is the same `renv`'s for R packages and is an operating system limitation.

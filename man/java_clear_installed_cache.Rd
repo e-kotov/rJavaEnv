@@ -7,7 +7,7 @@
 java_clear_installed_cache(
   check = TRUE,
   delete_all = FALSE,
-  cache_dir = tools::R_user_dir("rJavaEnv", which = "cache")
+  cache_path = tools::R_user_dir("rJavaEnv", which = "cache")
 )
 }
 \arguments{
@@ -15,7 +15,7 @@ java_clear_installed_cache(
 
 \item{delete_all}{Whether to delete all installations without prompting. Defaults to FALSE.}
 
-\item{cache_dir}{The cache directory to clear. Defaults to the user-specific data directory.}
+\item{cache_path}{The cache directory to clear. Defaults to the user-specific data directory.}
 }
 \value{
 A message indicating whether the cache was cleared or not.

@@ -5,17 +5,17 @@
 \title{Clear the Java distributions cache folder}
 \usage{
 java_clear_distrib_cache(
+  cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
   check = TRUE,
-  delete_all = FALSE,
-  cache_dir = tools::R_user_dir("rJavaEnv", which = "cache")
+  delete_all = FALSE
 )
 }
 \arguments{
+\item{cache_path}{The cache directory to clear. Defaults to the user-specific data directory.}
+
 \item{check}{Whether to list the contents of the cache directory before clearing it. Defaults to TRUE.}
 
-\item{delete_all}{Whether to delete all distributions without prompting. Defaults to FALSE.}
-
-\item{cache_dir}{The cache directory to clear. Defaults to the user-specific data directory.}
+\item{delete_all}{Whether to delete all items without prompting. Defaults to FALSE.}
 }
 \value{
 A message indicating whether the cache was cleared or not.
@@ -25,6 +25,13 @@ Clear the Java distributions cache folder
 }
 \examples{
 \dontrun{
-java_clear_distrib_cache()
+# delete all cached distributions
+# if you leave `cache_path` empty, the function
+# will clear in the package cache in your default user space cache
+java_clear_distrib_cache(
+  cache_path = tempdir(),
+  check = FALSE,
+  delete_all = TRUE
+)
 }
 }

@@ -6,7 +6,9 @@
 #' @return A character vector with the contents of the cache directory.
 #'
 #' @examples
+#' \dontrun{
 #' java_list_distrib_cache()
+#' }
 #'
 java_list_distrib_cache <- function(
   cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
@@ -47,7 +49,9 @@ java_list_distrib_cache <- function(
 #'
 #' @examples
 #' \dontrun{
-#' # delete all cached distributions, leave cache path empty to clear in the package cache in your default cache user space
+#' # delete all cached distributions
+#' # if you leave `cache_path` empty, the function
+#' # will clear in the package cache in your default user space cache
 #' java_clear_distrib_cache(
 #'   cache_path = tempdir(),
 #'   check = FALSE,

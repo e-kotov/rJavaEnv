@@ -29,11 +29,11 @@ java_list <- function(
   }
 
   if (type == "distrib") {
-    return(java_list_distrib_cache(output = output, verbose = verbose, cache_dir = target_dir))
+    return(java_list_distrib_cache(output = output, verbose = verbose, cache_path = target_dir))
   } else if (type == "installed") {
-    return(java_list_installed_cache(output = output, verbose = verbose, cache_dir = target_dir))
+    return(java_list_installed_cache(output = output, verbose = verbose, cache_path = target_dir))
   } else if (type == "project") {
-    return(java_list_in_project(output = output, verbose = verbose, project_dir = target_dir))
+    return(java_list_in_project(output = output, verbose = verbose, project_path = target_dir))
   }
 }
 
@@ -71,10 +71,10 @@ java_clear <- function(
   }
 
   if (type == "distrib") {
-    java_clear_distrib_cache(cache_dir = target_dir, check = check, delete_all = delete_all)
+    java_clear_distrib_cache(cache_path = target_dir, check = check, delete_all = delete_all)
   } else if (type == "installed") {
-    java_clear_installed_cache(cache_dir = target_dir, check = check, delete_all = delete_all)
+    java_clear_installed_cache(cache_path = target_dir, check = check, delete_all = delete_all)
   } else if (type == "project") {
-    java_clear_in_project(project_dir = target_dir, check = check, delete_all = delete_all)
+    java_clear_in_project(project_path = target_dir, check = check, delete_all = delete_all)
   }
 }

@@ -5,15 +5,18 @@
 \title{Set the \code{JAVA_HOME} and \code{PATH} environment variables to a given path}
 \usage{
 java_env_set(
-  java_home,
   where = c("session", "both", "project"),
+  java_home,
+  project_path,
   verbose = TRUE
 )
 }
 \arguments{
+\item{where}{Where to set the \code{JAVA_HOME}: "session", "project", or "both". Defaults to "session" and only updates the paths in the current R session. When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.}
+
 \item{java_home}{The path to the desired \code{JAVA_HOME}.}
 
-\item{where}{Where to set the \code{JAVA_HOME}: "session", "project", or "both". Defaults to "session" and only updates the paths in the current R session. When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.}
+\item{project_path}{The project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
 
 \item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
 }
@@ -34,7 +37,17 @@ java_home <- java_install(
 )
 
 # now manually set the JAVA_HOME and PATH environment variables in current session
-java_env_set(java_home = java_home, where = "session")
+java_env_set(
+  where = "session",
+  java_home = java_home
+)
+
+# or set JAVA_HOME and PATH in the spefific projects' .Rprofile
+java_env_set(
+  where = "session",
+  java_home = java_home,
+  project_path = tempdir()
+)
 
 }
 }
