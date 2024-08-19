@@ -11,7 +11,7 @@
 #' }
 #'
 java_list_distrib_cache <- function(
-  cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
+  cache_path = getOption("rJavaEnv.cache_path"),
   output = c("data.frame", "vector"),
   verbose = FALSE
 ) {
@@ -59,7 +59,7 @@ java_list_distrib_cache <- function(
 #' )
 #' }
 java_clear_distrib_cache <- function(
-  cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
+  cache_path = getOption("rJavaEnv.cache_path"),
   check = TRUE,
   delete_all = FALSE
 ) {

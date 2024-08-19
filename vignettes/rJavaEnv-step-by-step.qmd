@@ -22,10 +22,15 @@ Let us use the temporary directory for the following examples.
 project_dir <- tempdir()
 setwd(project_dir)
 
-dir.create("distrib_cache")
+dir.create("rJavaEnv_test_project")
+dir.create("rJavaEnv_tmp_cache")
 ```
 
-The code in examples will use the temporary directory created above.
+If you want to use your current project/working directory and the default location of rJavaEnv cache do:
+
+```{r}
+
+```
 
 
 
@@ -37,7 +42,7 @@ To download a specific Java distribution, use the `java_download` function:
 
 
 ```{r}
-java_17_distr <- java_download(version = 17, distribution_cache_path = "distrib_cache/")
+java_17_distr <- java_download(version = 17, cache_path = "distrib_cache/")
 java_17_distr
 ```
 

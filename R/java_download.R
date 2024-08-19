@@ -23,7 +23,7 @@
 java_download <- function(
   version = 21,
   distribution = "Corretto",
-  cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
+  cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
   verbose = TRUE,
