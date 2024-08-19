@@ -13,7 +13,8 @@
 java_list_installed_cache <- function(
     output = c("data.frame", "vector"),
     verbose = FALSE,
-    cache_path = tools::R_user_dir("rJavaEnv", which = "cache")) {
+    cache_path = getOption("rJavaEnv.cache_path")
+) {
   output <- match.arg(output)
   installed_cache_path <- file.path(cache_path, "installed")
 
@@ -65,7 +66,8 @@ java_list_installed_cache <- function(
 java_clear_installed_cache <- function(
     check = TRUE,
     delete_all = FALSE,
-    cache_path = tools::R_user_dir("rJavaEnv", which = "cache")) {
+    cache_path = getOption("rJavaEnv.cache_path")
+) {
   rje_consent_check()
   
   installed_cache_path <- file.path(cache_path, "installed")

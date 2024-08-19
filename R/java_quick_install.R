@@ -30,7 +30,7 @@ java_quick_install <- function(
     dir.create("rJavaEnv_project", recursive = TRUE)
     project_path <- file.path(temp_dir, "rJavaEnv_project")
   } else {
-    cache_path <- tools::R_user_dir("rJavaEnv", which = "cache")
+    cache_path <- getOption("rJavaEnv.cache_path")
   }
 
   java_distrib_path <- java_download(
