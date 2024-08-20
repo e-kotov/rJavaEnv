@@ -21,9 +21,9 @@
         "familyName": "Kotov",
         "givenName": "Egor"
       },
-      "description": "Install specific version of Java runtime environment at the R project level. The goal of rJavaEnv is to manage multiple Java JDKs in R projects by automating the process of downloading, installing, and configuring Java environments on a per-project basis. This package is inspired by the renv <https://rstudio.github.io/renv/> package for managing R environments in R projects. You can request a specific Java Development Kit (JDK) in your project, and rJavaEnv will download and install the requested Java environment in a project-specific directory and set the PATH and JAVA_HOME for when you are using this project. Therefore, you can have different Java versions for different projects without contaminating your system with different Java versions.",
+      "description": "The 'rJavaEnv' package addresses common issues with 'Java' environment management in 'R' for users of 'Java'/'rJava'-dependent 'R' packages such as 'r5r', 'opentripplanner', 'xlsx', 'openNLP', 'rWeka', 'RJDBC', 'tabulapdf', and many more. It resolves common problems like 'Java' not found, 'Java' version conflicts, missing 'Java' installations, and the inability to install 'Java' due to lack of administrative privileges. 'rJavaEnv' automates the download, installation, and setup of the 'Java Development Kit' ('JDK') on a per-project basis by setting the relevant 'JAVA_HOME' in the current 'R' session or the current working directory (via '.Rprofile', with the user's consent). Similar to what 'renv' does for 'R' packages, 'rJavaEnv' allows different 'Java' versions to be used across different projects, but can also be configured to allow multiple versions within the same project (e.g. with the help of 'targets' package). Note: there are a few extra steps for 'Linux' users, who don't have any 'Java' previously installed in their systemm, and who prefer package installation from source, rather then installing binaries from 'Posit Package Manager'. See documentation for details.",
       "license": "https://spdx.org/licenses/MIT",
-      "name": "rJavaEnv: Java Environments for R Projects",
+      "name": "rJavaEnv: 'Java' Environments for R Projects",
       "programmingLanguage": {
         "type": "ComputerLanguage",
         "name": "R",
