@@ -67,7 +67,7 @@ java_install <- function(
       unlink(temp_dir, recursive = TRUE)
     }
 
-    dir.create(temp_dir)
+    dir.create(temp_dir, recursive = TRUE)
 
     if (grepl("\\.tar\\.gz$", java_distrib_path)) {
       utils::untar(java_distrib_path, exdir = temp_dir)
@@ -131,6 +131,9 @@ java_install <- function(
   } else {
     tryCatch(
       {
+        if( file.exists(installed_path) ){
+          unlink(project_version_path)
+        }
         file.symlink(installed_path, project_version_path)
       },
       warning = function(w) {
