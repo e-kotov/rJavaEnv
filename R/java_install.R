@@ -18,7 +18,7 @@ java_install <- function(
   java_distrib_path,
   project_path = NULL,
   autoset_java_env = TRUE,
-  quite = FALSE
+  quiet = FALSE
 ) {
   rje_consent_check()
   
