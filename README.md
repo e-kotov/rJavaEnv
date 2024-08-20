@@ -1,4 +1,5 @@
 
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # rJavaEnv: Java Environments for R Projects <a href="https://www.ekotov.pro/rJavaEnv/"><img src="man/figures/logo.png" align="right" height="134" alt="rJavaEnv website" /></a>
@@ -13,7 +14,8 @@ target="_blank"><img
 src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg"
 alt="Lifecycle: stable" /></a>
 <a href="https://CRAN.R-project.org/package=rJavaEnv"
-target="_blank"><img src="https://www.r-pkg.org/badges/version/rJavaEnv"
+target="_blank"><img
+src="https://www.r-pkg.org/badges/version/rJavaEnv.png"
 alt="CRAN status" /></a>
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
 [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck)
@@ -23,23 +25,82 @@ alt="CRAN status" /></a>
 
 <!-- badges: end -->
 
-The goal of `rJavaEnv` is to manage multiple Java JDKs in R projects by
-automating the process of downloading, installing, and configuring Java
-environments on a per-project basis. This package is inspired by the
-<a href="https://rstudio.github.io/renv/"
-target="_blank"><code>renv</code></a> package for managing R
-environments in R projects.
+The `{rJavaEnv}` package addresses common issues with `Java` environment
+management in `R` for users of `Java`/`{rJava}`-dependent `R` packages
+such as `{r5r}`, `{opentripplanner}`, `{xlsx}`, `{openNLP}`, `{rWeka}`,
+`{RJDBC}`, `{tabulapdf}`, and many more. It resolves common problems
+like `Java` not found, `Java` version conflicts, missing `Java`
+installations, and the inability to install `Java` due to lack of
+administrative privileges. `rJavaEnv` automates the download,
+installation, and setup of the `Java Development Kit` (`JDK`) on a
+per-project basis by setting the relevant `JAVA_HOME` in the current `R`
+session or the current working directory (via `.Rprofile`, with the
+user’s consent). Similar to what `renv` does for `R` packages,
+`rJavaEnv` allows different `Java` versions to be used across different
+projects, but can also be configured to allow multiple versions within
+the same project (e.g. with the help of `{targets}` package). **Note:
+there are a few extra steps for ‘Linux’ users, who don’t have any ‘Java’
+previously installed in their systemm, and who prefer package
+installation from source, rather then installing binaries from ‘Posit
+Package Manager’. See [documentation](vignettes/rJavaEnv.Rmd#note-linux)
+for details.**
 
-You can request a specific Java Development Kit (JDK) in your project,
-and `rJavaEnv` will download and install the requested Java environment
-in a project-specific directory and set the PATH and JAVA_HOME for when
-you are using this project. Therefore, you can have different Java
-versions for different projects without contaminating your system with
-different Java versions.
+``` r
+glue::glue('<script type="application/ld+json">
+      {glue::glue_collapse(readLines("inst/schemaorg.json"), sep = "\n")}
+    </script>')
+```
 
-**WARNING** This package is in the early stages of development and is
-not yet ready for production use. Please test it thoroughly before using
-it in your projects.
+<script type="application/ld+json">
+      {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "type": "SoftwareSourceCode",
+      "author": {
+        "id": "https://orcid.org/0000-0001-6690-5345"
+      },
+      "codeRepository": "https://github.com/e-kotov/rJavaEnv",
+      "contributor": {
+        "id": "https://orcid.org/0000-0003-1017-7574",
+        "type": "Person",
+        "email": "mavargas11@uc.cl",
+        "familyName": "Vargas",
+        "givenName": "Mauricio"
+      },
+      "copyrightHolder": {
+        "id": "https://orcid.org/0000-0001-6690-5345",
+        "type": "Person",
+        "email": "kotov.egor@gmail.com",
+        "familyName": "Kotov",
+        "givenName": "Egor"
+      },
+      "description": "The 'rJavaEnv' package addresses common issues with 'Java' environment management in 'R' for users of 'Java'/'rJava'-dependent 'R' packages such as 'r5r', 'opentripplanner', 'xlsx', 'openNLP', 'rWeka', 'RJDBC', 'tabulapdf', and many more. It resolves common problems like 'Java' not found, 'Java' version conflicts, missing 'Java' installations, and the inability to install 'Java' due to lack of administrative privileges. 'rJavaEnv' automates the download, installation, and setup of the 'Java Development Kit' ('JDK') on a per-project basis by setting the relevant 'JAVA_HOME' in the current 'R' session or the current working directory (via '.Rprofile', with the user's consent). Similar to what 'renv' does for 'R' packages, 'rJavaEnv' allows different 'Java' versions to be used across different projects, but can also be configured to allow multiple versions within the same project (e.g. with the help of 'targets' package). Note: there are a few extra steps for 'Linux' users, who don't have any 'Java' previously installed in their systemm, and who prefer package installation from source, rather then installing binaries from 'Posit Package Manager'. See documentation for details.",
+      "license": "https://spdx.org/licenses/MIT",
+      "name": "rJavaEnv: 'Java' Environments for R Projects",
+      "programmingLanguage": {
+        "type": "ComputerLanguage",
+        "name": "R",
+        "url": "https://r-project.org"
+      },
+      "runtimePlatform": "R version 4.4.1 (2024-06-14)",
+      "version": "0.1.0"
+    },
+    {
+      "id": "https://doi.org/10.5281/zenodo.11403010",
+      "type": "SoftwareSourceCode",
+      "author": {
+        "id": "https://orcid.org/0000-0001-6690-5345",
+        "type": "Person",
+        "email": "kotov.egor@gmail.com",
+        "familyName": "Kotov",
+        "givenName": "Egor"
+      },
+      "name": "rJavaEnv: Java Environments for R Projects"
+    }
+  ]
+}
+    </script>
 
 ## Install
 
@@ -47,7 +108,7 @@ Install latest release from **R-multiverse**:
 
 ``` r
 install.packages('rJavaEnv',
-   repos = c('https://community.r-multiverse.org', 'https://cloud.r-project.org')
+ repos = c('https://community.r-multiverse.org', 'https://cloud.r-project.org')
 )
 ```
 
@@ -85,10 +146,6 @@ This will:
 - add code to .Rprofile file in the current directory/project to set
   JAVA_HOME and PATH environment variables when the project is opened in
   RStudio.
-
-After that, you can even remove `rJavaEnv` completely, as the Java
-environment will be set up in the project directory with the base R code
-that does not rely on `rJavaEnv`.
 
 As part of normal operation, rJavaEnv will update the JAVA_HOME and PATH
 environment variables in the current R session, the local cache in your
@@ -232,6 +289,7 @@ logo also contains the original R logo.
 To cite package ‘rJavaEnv’ in publications use:
 
 Kotov E (2024). *rJavaEnv: Java Environments for R Projects*.
+doi:10.5281/zenodo.11403010 <https://doi.org/10.5281/zenodo.11403010>,
 <https://github.com/e-kotov/rJavaEnv>.
 
 BibTeX:
@@ -241,4 +299,5 @@ BibTeX:
       author = {Egor Kotov},
       year = {2024},
       url = {https://github.com/e-kotov/rJavaEnv},
+      doi = {10.5281/zenodo.11403010},
     }

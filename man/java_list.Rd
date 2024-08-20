@@ -2,33 +2,40 @@
 % Please edit documentation in R/java_manage.R
 \name{java_list}
 \alias{java_list}
-\title{List the contents of the Java cache}
+\title{List the contents of the Java versions installed or cached}
 \usage{
 java_list(
   type = c("project", "installed", "distrib"),
   output = c("data.frame", "vector"),
-  verbose = FALSE,
+  quiet = TRUE,
   target_dir = NULL
 )
 }
 \arguments{
-\item{type}{The type of cache to list: "distrib", "installed", or "project".}
+\item{type}{The type of cache to list: "distrib", "installed", or "project". Defaults to "project".}
 
-\item{output}{The format of the output: "data.frame" or "vector". Defaults to "data.frame".}
+\item{output}{The format of the output: \verb{data.frame`` or }vector``. Defaults to \code{data.frame}.}
 
-\item{verbose}{Whether to print detailed messages. Defaults to FALSE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 
 \item{target_dir}{The cache directory to list. Defaults to the user-specific data directory for "distrib" and "installed", and the current working directory for "project".}
 }
 \value{
-A data frame or character vector with the contents of the specified cache directory.
+A \code{dataframe} or \code{character} \code{vector} with the contents of the specified cache or project directory.
 }
 \description{
-List the contents of the Java cache
+This function lists one of the following:
+\itemize{
+\item \code{project} - list the contents of the Java symlinked/copied in the current project or directory specified by \code{target_dir}
+\item \code{distrib} - list the contents of the downloaded Java distributions cache in default location or specified by \code{target_dir}
+\item \code{installed} - list the contents of the Java installations cache (unpacked distributions) in default location or specified by \code{target_dir}
+}
 }
 \examples{
+\dontrun{
 java_list("project")
 java_list("installed")
 java_list("distrib")
+}
 
 }

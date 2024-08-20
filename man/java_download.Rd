@@ -7,10 +7,11 @@
 java_download(
   version = 21,
   distribution = "Corretto",
-  dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
+  cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  verbose = TRUE
+  quiet = FALSE,
+  temp_dir = FALSE
 )
 }
 \arguments{
@@ -18,13 +19,15 @@ java_download(
 
 \item{distribution}{The Java distribution to download. If not specified, defaults to "Corretto".}
 
-\item{dest_dir}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
+\item{cache_path}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
 
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
 
-\item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
+
+\item{temp_dir}{A logical. Whether the file should be saved in a temporary directory. Defaults to \code{FALSE}.}
 }
 \value{
 The path to the downloaded Java distribution file.
@@ -34,8 +37,11 @@ Download a Java distribution
 }
 \examples{
 \dontrun{
-java_download(version = "17", distribution = "Corretto")
-java_download(distribution = "Corretto")
-java_download()
+
+# download distribution of Java version 17
+java_download(version = "17", temp_dir = TRUE)
+
+# download default Java distribution (version 21)
+java_download(temp_dir = TRUE)
 }
 }

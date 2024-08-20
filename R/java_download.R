@@ -2,26 +2,44 @@
 #'
 #' @param version The Java version to download. If not specified, defaults to the latest LTS version.
 #' @param distribution The Java distribution to download. If not specified, defaults to "Corretto".
-#' @param dest_dir The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
+#' @param cache_path The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
 #' @param arch The architecture for which to download the Java distribution. Defaults to the current architecture.
-#' @param verbose Whether to print detailed messages. Defaults to TRUE.
+#' @param temp_dir A logical. Whether the file should be saved in a temporary directory. Defaults to `FALSE`.
+#' @inheritParams global_quiet_param
 #'
 #' @return The path to the downloaded Java distribution file.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' java_download(version = "17", distribution = "Corretto")
-#' java_download(distribution = "Corretto")
-#' java_download()
+#' 
+#' # download distribution of Java version 17
+#' java_download(version = "17", temp_dir = TRUE)
+#' 
+#' # download default Java distribution (version 21)
+#' java_download(temp_dir = TRUE)
 #' }
-java_download <- function(version = 21,
-                          distribution = "Corretto",
-                          dest_dir = tools::R_user_dir("rJavaEnv", which = "cache"),
-                          platform = platform_detect()$os,
-                          arch = platform_detect()$arch,
-                          verbose = TRUE) {
+java_download <- function(
+  version = 21,
+  distribution = "Corretto",
+  cache_path = getOption("rJavaEnv.cache_path"),
+  platform = platform_detect()$os,
+  arch = platform_detect()$arch,
+  quiet = FALSE,
+  temp_dir = FALSE
+) {
+  
+  # override cache_path if temp_dir is set to TRUE
+  if (temp_dir) {
+    temp_dir <- tempdir()
+    setwd(temp_dir)
+    if (!dir.exists("rJavaEnv_cache")) {
+      dir.create("rJavaEnv_cache", recursive = TRUE)
+    }
+    cache_path <- file.path(temp_dir, "rJavaEnv_cache")
+  }
+
   rje_consent_check()
   java_urls <- java_urls_load()
 
@@ -37,18 +55,18 @@ java_download <- function(version = 21,
   checkmate::assert_choice(distribution, valid_distributions)
 
   # Create the distrib subfolder within the destination directory
-  dest_dir <- file.path(dest_dir, "distrib")
-  if (!dir.exists(dest_dir)) {
-    dir.create(dest_dir, recursive = TRUE)
+  cache_path <- file.path(cache_path, "distrib")
+  if (!dir.exists(cache_path)) {
+    dir.create(cache_path, recursive = TRUE)
   }
-  checkmate::assert_directory_exists(dest_dir, access = "rw", add = TRUE)
+  checkmate::assert_directory_exists(cache_path, access = "rw", add = TRUE)
 
   checkmate::assert_choice(platform, valid_platforms)
   checkmate::assert_choice(arch, valid_architectures)
-  checkmate::assert_flag(verbose)
+  checkmate::assert_flag(quiet)
 
   # Print out the detected platform and architecture
-  if (verbose) {
+  if (!quiet) {
     cli::cli_inform(c(
       "Detected platform: {.strong {platform}}",
       "Detected architecture: {.strong {arch}}",
@@ -72,22 +90,22 @@ java_download <- function(version = 21,
   url <- gsub("\\{version\\}", version, url_template)
   url_md5 <- gsub("latest/", "latest_checksum/", url)
 
-  dest_file <- file.path(dest_dir, basename(url))
-  dest_file_md5 <- paste0(file.path(dest_dir, basename(url_md5)), ".md5")
+  dest_file <- file.path(cache_path, basename(url))
+  dest_file_md5 <- paste0(file.path(cache_path, basename(url_md5)), ".md5")
 
 
-  if (verbose) {
+  if (!quiet) {
     cli::cli_inform("Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}", .envir = environment())
   }
 
   if (file.exists(dest_file)) {
-    if (verbose) {
+    if (!quiet) {
       cli::cli_inform("File already exists. Skipping download.", .envir = environment())
     }
   } else {
     curl::curl_download(url, dest_file, quiet = FALSE)
     curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
-    if (verbose) {
+    if (!quiet) {
       cli::cli_inform("Download completed.", .envir = environment())
 
       md5sum <- tools::md5sum(dest_file)

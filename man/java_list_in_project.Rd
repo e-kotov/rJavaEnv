@@ -5,17 +5,17 @@
 \title{List the Java versions symlinked in the current project}
 \usage{
 java_list_in_project(
-  project_dir = getwd(),
+  project_path = NULL,
   output = c("data.frame", "vector"),
-  verbose = FALSE
+  quiet = TRUE
 )
 }
 \arguments{
-\item{project_dir}{The project directory to list. Defaults to the current working directory.}
+\item{project_path}{The project directory to list. Defaults to the current working directory.}
 
 \item{output}{The format of the output: "data.frame" or "vector". Defaults to "data.frame".}
 
-\item{verbose}{Whether to print detailed messages. Defaults to FALSE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 A data frame or character vector with the symlinked Java versions in the project directory.
@@ -23,7 +23,4 @@ A data frame or character vector with the symlinked Java versions in the project
 \description{
 List the Java versions symlinked in the current project
 }
-\examples{
-java_list_in_project()
-
-}
+\keyword{internal}

@@ -2,29 +2,52 @@
 % Please edit documentation in R/java_env.R
 \name{java_env_set}
 \alias{java_env_set}
-\title{Set the JAVA_HOME and PATH environment variables to a given path}
+\title{Set the \code{JAVA_HOME} and \code{PATH} environment variables to a given path}
 \usage{
 java_env_set(
+  where = c("session", "both", "project"),
   java_home,
-  where = c("both", "session", "project"),
-  verbose = TRUE
+  project_path = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
-\item{java_home}{The path to the desired JAVA_HOME.}
+\item{where}{Where to set the \code{JAVA_HOME}: "session", "project", or "both". Defaults to "session" and only updates the paths in the current R session. When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.}
 
-\item{where}{Where to set the JAVA_HOME: "session", "project", or "both". Defaults to "both". When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.}
+\item{java_home}{The path to the desired \code{JAVA_HOME}.}
 
-\item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
+\item{project_path}{The project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
+
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 Nothing. Sets the JAVA_HOME and PATH environment variables.
 }
 \description{
-Set the JAVA_HOME and PATH environment variables to a given path
+Set the \code{JAVA_HOME} and \code{PATH} environment variables to a given path
 }
 \examples{
 \dontrun{
-java_env_set("/path/to/java", "both")
+# download, install Java 17
+java_17_distrib <- java_download(version = "17", temp_dir = TRUE)
+java_home <- java_install(
+  java_distrib_path = java_17_distrib,
+  project_path = tempdir(),
+  autoset_java_env = FALSE
+)
+
+# now manually set the JAVA_HOME and PATH environment variables in current session
+java_env_set(
+  where = "session",
+  java_home = java_home
+)
+
+# or set JAVA_HOME and PATH in the spefific projects' .Rprofile
+java_env_set(
+  where = "session",
+  java_home = java_home,
+  project_path = tempdir()
+)
+
 }
 }

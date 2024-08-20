@@ -6,16 +6,16 @@
 \usage{
 java_list_installed_cache(
   output = c("data.frame", "vector"),
-  verbose = FALSE,
-  cache_dir = tools::R_user_dir("rJavaEnv", which = "cache")
+  quiet = TRUE,
+  cache_path = getOption("rJavaEnv.cache_path")
 )
 }
 \arguments{
 \item{output}{The format of the output: "data.frame" or "vector". Defaults to "data.frame".}
 
-\item{verbose}{Whether to print detailed messages. Defaults to FALSE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 
-\item{cache_dir}{The cache directory to list. Defaults to the user-specific data directory. Not recommended to change.}
+\item{cache_path}{The cache directory to list. Defaults to the user-specific data directory. Not recommended to change.}
 }
 \value{
 A data frame or character vector with the contents of the cache directory.
@@ -23,7 +23,4 @@ A data frame or character vector with the contents of the cache directory.
 \description{
 List the contents of the Java installations cache folder
 }
-\examples{
-java_list_installed_cache()
-
-}
+\keyword{internal}

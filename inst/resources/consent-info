@@ -1,28 +1,34 @@
-rJavaEnv: Manage Java Environments for R Projects
+`rJavaEnv`: Manage Java Environments for R Projects
 
-Welcome to rJavaEnv! It looks like this is your first time using rJavaEnv.
-This message will guide you through some of the key features and how rJavaEnv works.
+Welcome to `rJavaEnv`! It looks like this is your first time using `rJavaEnv`.
+This message will guide you through some of the key features and how `rJavaEnv` works.
 
-rJavaEnv will manage Java Development Kits (JDKs) specifically for your R projects,
+`rJavaEnv` will manage Java Development Kits (JDKs) specifically for your R projects,
 ensuring that each project uses the appropriate Java version
 without affecting other projects or your system-wide Java installation.
 
-Here's what rJavaEnv will do:
+Here's what `rJavaEnv` will do:
 
   - Create a 'rjavaenv' folder in your project/current working directory.
   - Generate necessary configuration files in the project/current working directory.
   - Update your $JAVA_HOME and $PATH variables within the current R session.
 
-rJavaEnv will also update some existing files in your project/current working directory, such as:
+`rJavaEnv` will also update some existing files in your project/current working directory, such as:
   
   - .Rprofile
 
-Additionally, rJavaEnv maintains a cache of Java distributions and installations at:
+Additionally, `rJavaEnv` maintains a cache of Java distributions and installations at:
 
   - ${rJavaEnv_CACHE}
 
-You can customize this path by setting the $RJAVAENV_CACHE with `Sys.setenv(RJAVAENV_CACHE = "path/to/cache")`.
-Alternatively, you can set the cache folder as argument `dest_dir` in `java_download()`.
-The same cache folder is used for both zipped java distributions and extracted distrubution files.
+You can customize this path by setting the option `options(rJavaEnv.cache_path = 'path/to/your/java/cache')`.
+Alternatively, you can set the cache folder as argument `cache_path` package functions that have option.
+The same cache folder is used for both zipped java distributions and extracted distribution files.
 
 For more information, read the introductory vignette with `vignette("rJavaEnv")` and browse the package documentation online at https://www.ekotov.pro/rJavaEnv/.
+
+Whenever you install any `Java` JDK, kindly read the respective software license and agree to it before use.
+For the current default JDK installed with rJavaEnv, which is Amazon Corretto, please find the license for the version
+you are installing at https://github.com/corretto/.
+
+Finally, if you are on a Linux system that did not have any 'Java' version previoulsy installed and you are not using pre-build 'R' package binaries (for example from 'Posit Package Manager') and instead install all 'R' packages from source, after this step you may have to quit R, follow these steps: https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r to set configure 'Java' for 'R', and only then install 'rJava', as otherwise 'rJava' cannot be built from source.

@@ -24,6 +24,13 @@
 #' @return `TRUE` if consent is given, otherwise an error is raised.
 #' 
 #' @export
+#' @examples
+#' \dontrun{
+#' 
+#' # to provide consent and prevent other functions from interrupting to get the consent
+#' rje_consent(provided = TRUE)
+#' }
+#' 
 rje_consent <- function(provided = FALSE) {
 
   # Check if consent is already given via environment variable
@@ -33,8 +40,9 @@ rje_consent <- function(provided = FALSE) {
   }
 
   # Check if consent is already given via cache directory
-  user_pacakge_cache_dir <- tools::R_user_dir("rJavaEnv", which = "cache")
-  if (dir.exists(user_pacakge_cache_dir)) {
+  user_package_cache_path <- getOption("rJavaEnv.cache_path")
+  user_package_cache_path <- normalizePath(user_package_cache_path, winslash = "/", mustWork = FALSE)
+  if (dir.exists(user_package_cache_path)) {
     cli::cli_inform("Consent for using rJavaEnv has already been provided.")
     return(invisible(TRUE))
   }
@@ -42,7 +50,7 @@ rje_consent <- function(provided = FALSE) {
   # write welcome message
   template <- system.file("resources/consent-info", package = "rJavaEnv")
   contents <- readLines(template)
-  contents <- gsub("\\$\\{rJavaEnv_CACHE\\}", user_pacakge_cache_dir, contents)
+  contents <- gsub("\\$\\{rJavaEnv_CACHE\\}", user_package_cache_path, contents)
   cli::cli_inform(contents)
 
   # Request user consent if not already provided
@@ -57,7 +65,7 @@ rje_consent <- function(provided = FALSE) {
 
   # Save user consent
   options(rJavaEnv.consent = TRUE)
-  dir.create(user_pacakge_cache_dir, recursive = TRUE, showWarnings = FALSE)
+  dir.create(user_package_cache_path, recursive = TRUE, showWarnings = FALSE)
   cli::cli_inform("Consent has been granted and recorded.")
 
   invisible(TRUE)
@@ -79,7 +87,7 @@ rje_consent_check <- function() {
   if (getOption("rJavaEnv.consent", FALSE)) {
     return(TRUE)
   }
-  if (dir.exists(tools::R_user_dir("rJavaEnv", which = "cache"))){
+  if (dir.exists(getOption("rJavaEnv.cache_path"))) {
     return(TRUE)
   }
 

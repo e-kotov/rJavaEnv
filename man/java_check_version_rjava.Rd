@@ -4,12 +4,12 @@
 \alias{java_check_version_rjava}
 \title{Check Java Version with a Specified JAVA_HOME Using a Separate R Session}
 \usage{
-java_check_version_rjava(java_home = NULL, verbose = TRUE)
+java_check_version_rjava(java_home = NULL, quiet = FALSE)
 }
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME. If NULL, uses the current JAVA_HOME environment variable.}
 
-\item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 TRUE if successful, otherwise FALSE.

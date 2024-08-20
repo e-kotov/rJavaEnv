@@ -7,9 +7,11 @@
 java_quick_install(
   version = 21,
   distribution = "Corretto",
+  project_path = NULL,
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  verbose = TRUE
+  quiet = FALSE,
+  temp_dir = FALSE
 )
 }
 \arguments{
@@ -17,11 +19,15 @@ java_quick_install(
 
 \item{distribution}{The Java distribution to download. If not specified, defaults to "Corretto".}
 
+\item{project_path}{The project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
+
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
 
-\item{verbose}{Whether to print messages. Defaults to TRUE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
+
+\item{temp_dir}{A logical. Whether the file should be saved in a temporary directory. Defaults to \code{FALSE}.}
 }
 \value{
 Message indicating that Java was installed and set in the current working/project directory.
@@ -31,6 +37,8 @@ Download and install and set Java in current working/project directory
 }
 \examples{
 \dontrun{
-java_quick_install()
+
+# quick download, unpack, install and set in current working directory default Java version (21)
+java_quick_install(17, temp_dir = TRUE)
 }
 }

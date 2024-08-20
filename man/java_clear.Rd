@@ -27,8 +27,10 @@ A message indicating whether the cache was cleared or not.
 Wrapper function to clear the Java symlinked in the current project, installed, or distributions caches.
 }
 \examples{
-java_clear("project")
-java_clear("installed")
-java_clear("distrib")
+\dontrun{
+java_clear("project", target_dir = tempdir())
+java_clear("installed", target_dir = tempdir())
+java_clear("distrib", target_dir = tempdir())
+}
 
 }

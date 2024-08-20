@@ -1,40 +1,44 @@
 #' List the Java versions symlinked in the current project
 #'
-#' @param project_dir The project directory to list. Defaults to the current working directory.
+#' @param project_path The project directory to list. Defaults to the current working directory.
 #' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
-#' @param verbose Whether to print detailed messages. Defaults to FALSE.
+#' @inheritParams global_quiet_param
 #' @return A data frame or character vector with the symlinked Java versions in the project directory.
-#' @export
-#'
-#' @examples
-#' java_list_in_project()
-#'
+#' @keywords internal
 java_list_in_project <- function(
-    project_dir = getwd(),
+    project_path = NULL,
     output = c("data.frame", "vector"),
-    verbose = FALSE) {
-
+    quiet = TRUE
+  ) {
+  
+  # Resolve the project path
+  # consistent with renv behavior
+  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
+  project_path <- ifelse(is.null(project_path), getwd(), project_path)
+      
   output <- match.arg(output)
-  java_symlink_dir <- file.path(project_dir, "rjavaenv")
+  java_symlink_dir <- file.path(project_path, "rjavaenv")
 
   if (!dir.exists(java_symlink_dir)) {
-    cli::cli_alert_danger("Project Java symlink directory does not exist")
-    return(character(0))
+    cli::cli_alert_danger("No Java has been installed in the project.")
+    return(invisible(NULL))
   }
 
-  if (verbose) cli::cli_inform("Contents of the Java symlinks in the project folder:")
-
+  
   # List directories up to the specified depth
   java_paths <- list.dirs(java_symlink_dir, recursive = TRUE, full.names = TRUE)
-
+  
   java_paths <- java_paths[vapply(java_paths, function(x) {
     length(strsplit(x, .Platform$file.sep)[[1]]) == length(strsplit(java_symlink_dir, .Platform$file.sep)[[1]]) + 3
   }, logical(1))]
-
+  
   if (length(java_paths) == 0) {
-    return(character(0))
+    cli::cli_alert_danger("No Java has been installed in the project.")
+    return(invisible(NULL))
   }
-
+  
+  if (!quiet) cli::cli_inform("Contents of the Java symlinks in the project folder:")
+  
   if (output == "vector") {
     return(unname(java_paths))
   } else if (output == "data.frame") {
@@ -53,23 +57,25 @@ java_list_in_project <- function(
 
 #' Clear the Java versions symlinked in the current project
 #'
-#' @param project_dir The project directory to clear. Defaults to the current working directory.
+#' @param project_path The project directory to clear. Defaults to the current working directory.
 #' @param check Whether to list the symlinked Java versions before clearing them. Defaults to TRUE.
 #' @param delete_all Whether to delete all symlinks without prompting. Defaults to FALSE.
 #' @return A message indicating whether the symlinks were cleared or not.
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' java_clear_in_project()
-#' }
+#' 
+#' @keywords internal
 java_clear_in_project <- function(
-    project_dir = getwd(),
+    project_path = NULL,
     check = TRUE,
-    delete_all = FALSE) {
+    delete_all = FALSE
+) {
   rje_consent_check()
   
-  java_symlink_dir <- file.path(project_dir, "rjavaenv")
+  # Resolve the project path
+  # consistent with renv behavior
+  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
+  project_path <- ifelse(is.null(project_path), getwd(), project_path)
+
+  java_symlink_dir <- file.path(project_path, "rjavaenv")
 
   if (!dir.exists(java_symlink_dir)) {
     cli::cli_inform("Java symlink directory does not exist in the project.")
@@ -77,13 +83,13 @@ java_clear_in_project <- function(
   }
 
   if (delete_all) {
-    unlink(file.path(java_symlink_dir, "*"), recursive = TRUE)
+    unlink(file.path(java_symlink_dir), recursive = TRUE)
     cli::cli_inform("All Java symlinks in the project have been cleared.")
     return(invisible(NULL))
   }
 
   if (check) {
-    symlinks <- java_list_in_project(project_dir = project_dir, output = "vector")
+    symlinks <- java_list_in_project(project_path = project_path, output = "vector")
     if (length(symlinks) == 0) {
       cli::cli_inform("No Java symlinks found to clear.")
       return(invisible(NULL))
