@@ -28,9 +28,9 @@ Wrapper function to clear the Java symlinked in the current project, installed, 
 }
 \examples{
 \dontrun{
-java_clear("project")
-java_clear("installed")
-java_clear("distrib")
+java_clear("project", target_dir = tempdir())
+java_clear("installed", target_dir = tempdir())
+java_clear("distrib", target_dir = tempdir())
 }
 
 }

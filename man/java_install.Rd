@@ -28,8 +28,11 @@ Install Java from a distribution file
 }
 \examples{
 \dontrun{
+
+# set cache dir to temporary directory
+options(rJavaEnv.cache_path = tempdir())
 # download, install and autoset environmnet variables for Java 17
-java_17_distrib <- java_download(version = "17", distribution = "Corretto", temp_dir = TRUE)
+java_17_distrib <- java_download(version = "17")
 java_install(java_distrib_path = java_17_distrib, project_path = tempdir())
 }
 }
