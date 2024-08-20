@@ -197,12 +197,12 @@ java_install(
 Expected output (on a Windows machine):
 
 ```
-Java distribution amazon-corretto-8-x64-windows-jdk.zip already unpacked at C:\Users\kotov\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
-v Current R Session: JAVA_HOME and PATH set to C:\Users\kotov\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
-v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:\Users\kotov\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8' in .Rprofile at 'C:/Users/kotov/AppData/Local/Temp/75/R
+Java distribution amazon-corretto-8-x64-windows-jdk.zip already unpacked at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
+v Current R Session: JAVA_HOME and PATH set to C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
+v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
 tmp0MasTW'
-Java 8 (amazon-corretto-8-x64-windows-jdk.zip) for windows x64 installed at C:\Users\kotov\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8 and symlinked to
-C:/Users/kotov/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8
+Java 8 (amazon-corretto-8-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8 and symlinked to
+C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8
 ```
 
 We can now list the `Java` versions installed in the project directory:
@@ -228,8 +228,8 @@ java_check_version_cmd()
 Expected output (on a Windows machine):
 
 ```
-JAVA_HOME: C:\Users\kotov\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
-Java path: /c/Users/kotov/AppData/Local/R/cache/R/rJavaEnv/installed/windows/x64/8/bin/java
+JAVA_HOME: C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
+Java path: /c/Users/user_name/AppData/Local/R/cache/R/rJavaEnv/installed/windows/x64/8/bin/java
 Java version: "openjdk version \"1.8.0_422\" OpenJDK Runtime Environment Corretto-8.422.05.1 (build 1.8.0_422-b05) OpenJDK 64-Bit Server VM Corretto-8.422.05.1 (build 25.422-b05, mixed mode)"
 [1] TRUE
 ```
@@ -243,8 +243,8 @@ java_list("project")
 Expected output (on a Windows machine):
 ```
 path platform arch version
-1 C:/Users/kotov/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17  windows  x64      17
-2  C:/Users/kotov/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8  windows  x64       8
+1 C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17  windows  x64      17
+2  C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8  windows  x64       8
 ```
 
 As we can see, the Java 17 is currently number 1 in this list, so we save this path:
@@ -258,7 +258,7 @@ java_home_17
 Expected output (on a Windows machine):
 
 ```
-"C:/Users/kotov/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17"
+"C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17"
 ```
 
 Now we can reuse this path in the `java_env_set()` function:
@@ -270,8 +270,8 @@ java_env_set(where = "both", java_home = java_home_17)
 Expected output (on a Windows machine):
 
 ```
-v Current R Session: JAVA_HOME and PATH set to C:/Users/kotov/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
-v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:/Users/kotov/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17' in .Rprofile at 'C:/Users/kotov/AppData/Local/Temp/75/R
+v Current R Session: JAVA_HOME and PATH set to C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
+v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
 tmp0MasTW'
 ```
 
@@ -286,13 +286,13 @@ java_check_version_rjava() # for packages that use Java via `rJava`, like r5r
 Expected output (on a Windows machine):
 
 ```
-JAVA_HOME: C:/Users/kotov/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
-Java path: /c/Users/kotov/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17/bin/java
+JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
+Java path: /c/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17/bin/java
 Java version: "openjdk version \"17.0.12\" 2024-07-16 LTS OpenJDK Runtime Environment Corretto-17.0.12.7.1 (build 17.0.12+7-LTS) OpenJDK 64-Bit Server VM Corretto-17.0.12.7.1 (build
 17.0.12+7-LTS, mixed mode, sharing)"
 [1] TRUE
 
-Using current session's JAVA_HOME: C:/Users/kotov/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
+Using current session's JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
 With the user-specified JAVA_HOME rJava and other rJava/Java-based packages will use Java version: "17.0.12"
 [1] TRUE
 ```
