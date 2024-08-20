@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Why rJavaEnv: the landscape of Java-dependent R packages • rJavaEnv</title>
+<title>Why rJavaEnv: the landscape of ‘Java’-dependent R packages • rJavaEnv</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,7 +16,14 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Why rJavaEnv: the landscape of Java-dependent R packages">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="why-rJavaEnv_files/libs/quarto-html/popper.min.js"></script><script src="why-rJavaEnv_files/libs/quarto-html/tippy.umd.min.js"></script><link href="why-rJavaEnv_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="why-rJavaEnv_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Why rJavaEnv: the landscape of ‘Java’-dependent R packages">
+<meta property="og:image" content="https://www.ekotov.pro/rJavaEnv/pkgdown/assets/images/card.png">
+<meta property="og:image:alt" content="rJavaEnv: Java Environments for R Projects. Install and manage Java environments using R">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@EgorKotov">
+<meta name="twitter:site" content="@EgorKotov">
 <!-- counter.dev analytics --><script data-goatcounter="https://jukadipos.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><!-- counter.dev analytics --><script src="https://cdn.counter.dev/script.js" data-id="7e3e8d31-9a84-48b0-a678-a00715236a90" data-utcoffset="1"></script><script>
  (function(h,o,t,j,a,r){
      h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
@@ -36,7 +43,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rJavaEnv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +57,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of Java-dependent R packages</a></li>
+<li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
+    <li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -65,103 +73,201 @@
 
 
   </div>
-</nav><div class="container template-article">
-
-
+</nav><div class="container template-quarto">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Why rJavaEnv: the landscape of Java-dependent R packages</h1>
-            
-      
-      <small class="dont-index">Source: <a href="https://github.com/e-kotov/rJavaEnv/blob/main/vignettes/why-rJavaEnv.Rmd" class="external-link"><code>vignettes/why-rJavaEnv.Rmd</code></a></small>
-      <div class="d-none name"><code>why-rJavaEnv.Rmd</code></div>
+      <img src="../logo.png" class="logo" alt=""><h1>Why rJavaEnv: the landscape of ‘Java’-dependent R packages</h1>
+
+
+
+
+      <small class="dont-index">Source: <a href="https://github.com/e-kotov/rJavaEnv/blob/main/vignettes/why-rJavaEnv.qmd" class="external-link"><code>vignettes/why-rJavaEnv.qmd</code></a></small>
+      <div class="d-none name"><code></code></div>
     </div>
 
-    
-    
-<div class="section level2" number="1">
-<h2 id="overall-popularity-of-java-dependent-r-packages">
-<span class="header-section-number">1</span> Overall popularity of Java-dependent R packages<a class="anchor" aria-label="anchor" href="#overall-popularity-of-java-dependent-r-packages"></a>
+
+
+
+
+
+    <section class="section level2"><h2 id="overall-popularity-of-java-dependent-r-packages">Overall popularity of Java-dependent R packages<a class="anchor" aria-label="anchor" href="#overall-popularity-of-java-dependent-r-packages"></a>
 </h2>
-<p>While not as popular as widely known and highly popular <code>ggplot2</code> and <code>data.table</code> packages, and <code>rJava</code>-dependent packages (104 on CRAN and another 14 on Bioconductor) (and consequently, <code>rJava</code> itself ) are widely used in the R community (see Fig. <a href="#fig:rJavaPopularity">1.1</a>). The <code>rJava</code> <span class="citation">(Urbanek 2024)</span> itself was downloaded 198,761 times in May, 2024. The total number of downloads for <code>rJava</code>-dependant packages was 301,259 on CRAN and 5,368 on Bioconductor. To put this into context, <code>ggplot2</code> was downloaded 1,891,742 times and <code>data.table</code> was downloaded 846,726 times in May, 2024. So <code>rJava</code>-based packages collectively are 6.3 times less popular than <code>ggplot2</code>, but they have a noticeable number of users.</p>
-<div class="figure">
-<span style="display:block;" id="fig:rJavaPopularity"></span>
-<img src="media/images/rJavaPopularity.png" alt="CRAN Downloads Over Time for rJava and rJava-dependent Packages, compared to popular ggplot2 and data.table for context" width="100%"><p class="caption">
-Figure 1.1: CRAN Downloads Over Time for rJava and rJava-dependent Packages, compared to popular ggplot2 and data.table for context
-</p>
+<p>While not as popular as widely known and highly popular ggplot2 and data.table packages, and rJava-dependent packages (104 on CRAN and another 14 on Bioconductor) (and consequently, rJava itself ) are widely used in the R community (see <a href="#fig-rJavaPopularity" class="quarto-xref">Figure 1</a>). The rJava <span class="citation" data-cites="rjava">(<a href="#ref-rjava" role="doc-biblioref">Urbanek 2024</a>)</span> itself was downloaded 198,761 times in May, 2024. The total number of downloads for rJava-dependant packages was 301,259 on CRAN and 5,368 on Bioconductor. To put this into context, ggplot2 was downloaded 1,891,742 times and data.table was downloaded 846,726 times in May, 2024. So rJava-based packages collectively are 6.3 times less popular than ggplot2, but they have a noticeable number of users.</p>
+<div id="fig-rJavaPopularity" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig"><div aria-describedby="fig-rJavaPopularity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="media/images/rJavaPopularity.png">
 </div>
-<p>Note that the analysis above only covers packages that are available on CRAN and Bioconductor and only those that explicitly depend on the <code>rJava</code> package. There are other packages that use <code>Java</code> but do not depend on the <code>rJava</code> package. For example, the <a href="https://github.com/ropensci/opentripplanner" target="_blank" class="external-link"><code>opentripplanner</code></a> package also relies on underlying Java-based software but calls it from the command line. This, however, also requires system environment variables to be set up correctly.</p>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rJavaPopularity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure 1: CRAN Downloads Over Time for rJava and rJava-dependent Packages, compared to popular ggplot2 and data.table for context
+</figcaption></figure>
+</div>
+<p>Note that the analysis above only covers packages that are available on CRAN and Bioconductor and only those that explicitly depend on the <code>rJava</code> package. There are other packages that use <code>Java</code> but do not depend on the <code>rJava</code> package. For example, the <a href="https://github.com/ropensci/opentripplanner" target="_blank" class="external-link"><code>{opentripplanner}</code></a> package also relies on underlying Java-based software but calls it from the command line. This, however, also requires system environment variables to be set up correctly.</p>
 <p>Identifying packages such as <code>opentripplanner</code> is more complicated, as they do not have a direct dependency on the <code>rJava</code> package. We can assume that there are not as many of them compared to those that depend on <code>rJava.</code></p>
-</div>
-<div class="section level2" number="2">
-<h2 id="individual-java-dependent-packages">
-<span class="header-section-number">2</span> Individual Java-dependent packages<a class="anchor" aria-label="anchor" href="#individual-java-dependent-packages"></a>
+</section><section class="section level2"><h2 id="individual-java-dependent-packages">Individual Java-dependent packages<a class="anchor" aria-label="anchor" href="#individual-java-dependent-packages"></a>
 </h2>
-<p>If we zoom in to the individual <code>rJava</code>-dependent packages, we will see (Fig. <a href="#fig:rJavaDepIndivAll">2.1</a>), that most donwloads are generated by <code>xlsx</code> and its “companion” <code>xlsxjars</code>.</p>
-<div class="figure">
-<span style="display:block;" id="fig:rJavaDepIndivAll"></span>
-<img src="media/images/rJavaDepIndivAll.png" alt="CRAN Downloads Over Time for all rJava-dependent Packages" width="100%"><p class="caption">
-Figure 2.1: CRAN Downloads Over Time for all rJava-dependent Packages
-</p>
+<p>If we zoom in to the individual <code>rJava</code>-dependent packages, we will see in <a href="#fig-rJavaDepIndivAll" class="quarto-xref">Figure 2</a>, that most donwloads are generated by <code>xlsx</code> and its “companion” <code>xlsxjars</code>.</p>
+<div id="fig-rJavaDepIndivAll" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig"><div aria-describedby="fig-rJavaDepIndivAll-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="media/images/rJavaDepIndivAll.png">
 </div>
-<p>If we remove <code>xlsx</code> (and <code>xlsxjars</code>) as an outlier, we will see (Fig. <a href="#fig:rJavaDepIndivFiltered">2.2</a>), that top packages are:</p>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rJavaDepIndivAll-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure 2: CRAN Downloads Over Time for all rJava-dependent Packages
+</figcaption></figure>
+</div>
+<p>If we remove <code>xlsx</code> (and <code>xlsxjars</code>) as an outlier, we will see in <a href="#fig-rJavaDepIndivFiltered" class="quarto-xref">Figure 3</a>), that top packages are:</p>
 <ul>
-<li><p><a href="https://github.com/ipeaGIT/r5r" target="_blank" class="external-link"><code>r5r</code></a> for <em>“rapid realistic routing on multimodal transport networks (walk, bike, public transport and car)”</em> <span class="citation">(Pereira et al. 2021)</span>. The package users experience multiple issues with Java and report them on GitHub, just few examples include <a href="https://github.com/ipeaGIT/r5r/issues/372" target="_blank" class="external-link">1</a>, <a href="https://github.com/ipeaGIT/r5r/issues/374" target="_blank" class="external-link">2</a>, <a href="https://github.com/ipeaGIT/r5r/issues/338" target="_blank" class="external-link">3</a> and <a href="https://github.com/ipeaGIT/r5r/issues" target="_blank" class="external-link">many more</a>.</p></li>
-<li><p><a href="https://www.rforge.net/RJDBC/" target="_blank" class="external-link"><code>RJDBC</code></a> that <em>“[p]rovides Access to Databases Through the JDBC Interface”</em> <span class="citation">(Urbanek 2022)</span>. I was not able to find a bug tracker for this package, but a simple web search reveals multiple issues such as <a href="https://stackoverflow.com/questions/45338197/r-cannot-find-java-home-when-using-java-jdk-1-8-rjava-wont-work" target="_blank" class="external-link">this one</a> on StackOverflow.</p></li>
-<li><p><a href="https://github.com/rpremrajGit/mailR" target="_blank" class="external-link"><code>mailR</code></a> for <em>“send[ing] emails from R”</em> <span class="citation">(Premraj 2021)</span> (has a Java related <a href="https://github.com/rpremrajGit/mailR/issues/9" target="_blank" class="external-link">issue</a> on GitHub). Web search also reveals StackOverflow <a href="https://stackoverflow.com/questions/61871960/r-mailr-package-not-loading-java" target="_blank" class="external-link">discussions</a> related to Java version issues.</p></li>
-<li><p><a href="https://doi.org/10.32614/CRAN.package.RWeka" target="_blank" class="external-link"><code>RWeka</code></a>, R interface to Weka. Weka itself <em>“is a collection of machine learning algorithms for data mining tasks written in Java</em>” <span class="citation">(Hornik, Buchta, and Zeileis 2009)</span>. StackOverflow <a href="https://stackoverflow.com/questions/40752070/issues-installing-rweka" target="_blank" class="external-link">discussions</a> related to Java version issues.</p></li>
+<li><p><a href="https://github.com/ipeaGIT/r5r" target="_blank" class="external-link"><code>r5r</code></a> for <em>“rapid realistic routing on multimodal transport networks (walk, bike, public transport and car)”</em> <span class="citation" data-cites="pereira_r5r_2021">(<a href="#ref-pereira_r5r_2021" role="doc-biblioref">Pereira et al. 2021</a>)</span>. The package users experience multiple issues with Java and report them on GitHub, just few examples include <a href="https://github.com/ipeaGIT/r5r/issues/372" target="_blank" class="external-link">1</a>, <a href="https://github.com/ipeaGIT/r5r/issues/374" target="_blank" class="external-link">2</a>, <a href="https://github.com/ipeaGIT/r5r/issues/338" target="_blank" class="external-link">3</a> and <a href="https://github.com/ipeaGIT/r5r/issues" target="_blank" class="external-link">many more</a>.</p></li>
+<li><p><a href="https://www.rforge.net/RJDBC/" target="_blank" class="external-link"><code>RJDBC</code></a> that <em>“[p]rovides Access to Databases Through the JDBC Interface”</em> <span class="citation" data-cites="rjdbc">(<a href="#ref-rjdbc" role="doc-biblioref">Urbanek 2022</a>)</span>. I was not able to find a bug tracker for this package, but a simple web search reveals multiple issues such as <a href="https://stackoverflow.com/questions/45338197/r-cannot-find-java-home-when-using-java-jdk-1-8-rjava-wont-work" target="_blank" class="external-link">this one</a> on StackOverflow.</p></li>
+<li><p><a href="https://github.com/rpremrajGit/mailR" target="_blank" class="external-link"><code>mailR</code></a> for <em>“send[ing] emails from R”</em> <span class="citation" data-cites="mailr">(<a href="#ref-mailr" role="doc-biblioref">Premraj 2021</a>)</span> (has a Java related <a href="https://github.com/rpremrajGit/mailR/issues/9" target="_blank" class="external-link">issue</a> on GitHub). Web search also reveals StackOverflow <a href="https://stackoverflow.com/questions/61871960/r-mailr-package-not-loading-java" target="_blank" class="external-link">discussions</a> related to Java version issues.</p></li>
+<li><p><a href="https://doi.org/10.32614/CRAN.package.RWeka" target="_blank" class="external-link"><code>RWeka</code></a>, R interface to Weka. Weka itself <em>“is a collection of machine learning algorithms for data mining tasks written in Java</em>” <span class="citation" data-cites="rweka">(<a href="#ref-rweka" role="doc-biblioref">Hornik, Buchta, and Zeileis 2009</a>)</span>. StackOverflow <a href="https://stackoverflow.com/questions/40752070/issues-installing-rweka" target="_blank" class="external-link">discussions</a> related to Java version issues.</p></li>
 </ul>
-<div class="figure">
-<span style="display:block;" id="fig:rJavaDepIndivFiltered"></span>
-<img src="media/images/rJavaDepIndivFiltered.png" alt="CRAN Downloads for top 20 rJava-dependent Packages over 1 year" width="100%"><p class="caption">
-Figure 2.2: CRAN Downloads for top 20 rJava-dependent Packages over 1 year
-</p>
+<div id="fig-rJavaDepIndivFiltered" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig"><div aria-describedby="fig-rJavaDepIndivFiltered-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="media/images/rJavaDepIndivFiltered.png">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rJavaDepIndivFiltered-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure 3: CRAN Downloads Over Time for top 20 rJava-dependent Packages
+</figcaption></figure>
 </div>
 <p>Some other packages:</p>
 <ul>
-<li><p><a href="https://doi.org/10.32614/CRAN.package.openNLP" target="_blank" class="external-link"><code>openNLP</code></a>. <em>“OpenNLP library is a machine learning based toolkit for the processing of natural language text written in Java”</em> <span class="citation">(Hornik 2019)</span>. It also has Java related issues <a href="https://stackoverflow.com/questions/37014340/installing-r-package-opennlp-in-r" target="_blank" class="external-link">discussed</a> on StackOverflow.</p></li>
-<li><p><a href="https://github.com/colearendt/xlsx" target="_blank" class="external-link"><code>xlsx</code></a>. <em>“An R package to interact with Excel files using the Apache POI [J]ava library”</em> <span class="citation">(Dragulescu and Arendt 2020)</span>. Also many discussions on both <a href="https://stackoverflow.com/questions/62012760/r-xlsx-package-can-not-be-used" target="_blank" class="external-link">StackOverflow</a> and <a href="https://github.com/colearendt/xlsx/issues/183" target="_blank" class="external-link">GitHub</a>.</p></li>
+<li><p><a href="https://doi.org/10.32614/CRAN.package.openNLP" target="_blank" class="external-link"><code>openNLP</code></a>. <em>“OpenNLP library is a machine learning based toolkit for the processing of natural language text written in Java”</em> <span class="citation" data-cites="opennlp">(<a href="#ref-opennlp" role="doc-biblioref">Hornik 2019</a>)</span>. It also has Java related issues <a href="https://stackoverflow.com/questions/37014340/installing-r-package-opennlp-in-r" target="_blank" class="external-link">discussed</a> on StackOverflow.</p></li>
+<li><p><a href="https://github.com/colearendt/xlsx" target="_blank" class="external-link"><code>xlsx</code></a>. <em>“An R package to interact with Excel files using the Apache POI [J]ava library”</em> <span class="citation" data-cites="xlsx">(<a href="#ref-xlsx" role="doc-biblioref">Dragulescu and Arendt 2020</a>)</span>. Also many discussions on both <a href="https://stackoverflow.com/questions/62012760/r-xlsx-package-can-not-be-used" target="_blank" class="external-link">StackOverflow</a> and <a href="https://github.com/colearendt/xlsx/issues/183" target="_blank" class="external-link">GitHub</a>.</p></li>
 </ul>
 <p>To summarize, regardless of the Java-dependent R package being used, users consistently encounter issues with having the correct Java runtime installed on their system. Additionally, they may be using various R packages that depend on different Java versions, complicating the management of Java environment variables. This task is particularly challenging for ordinary users who simply want to get their analysis running smoothly and efficiently.</p>
-</div>
-<div class="section level2" number="3">
-<h2 id="rjavaenv-r-package-as-a-solution">
-<span class="header-section-number">3</span> <code>rJavaEnv</code> R package as a solution<a class="anchor" aria-label="anchor" href="#rjavaenv-r-package-as-a-solution"></a>
+</section><section class="section level2"><h2 id="rjavaenv-r-package-as-a-solution">
+<code>rJavaEnv</code> R package as a solution<a class="anchor" aria-label="anchor" href="#rjavaenv-r-package-as-a-solution"></a>
 </h2>
 <p><code>rJavaEnv</code> aims to assist users of all <code>Java</code>/<code>rJava</code>-dependent packages by providing functions to quickly install the required <code>Java</code> version and set environment variables. This ensures that the packages the user plans to use pick up the correct Java version with minimal intervention to the user’s system. Compared to manually downloading <code>Java</code> from Oracle, Amazon, or another vendor and installing it using the installer, <code>rJavaEnv</code> downloads non-installer archives of <code>Java</code>, extracts them to a cache folder, and links them in the current project or working directory. This way, <code>rJavaEnv</code> does not contaminate the user’s machine with unnecessary installations and configurations.</p>
 <p>Furthermore, <code>rJavaEnv</code> streamlines the process, allowing users to focus on their analysis without worrying about complex <code>Java</code> setup issues. By automating these tasks, <code>rJavaEnv</code> reduces the potential for errors and ensures a smoother experience for users who need to manage multiple Java-dependent R packages.</p>
-</div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</section><section class="section level2"><h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
-<div id="ref-xlsx" class="csl-entry">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-xlsx" class="csl-entry" role="listitem">
 Dragulescu, Adrian, and Cole Arendt. 2020. <em>Xlsx: Read, Write, Format Excel 2007 and Excel 97/2000/XP/2003 Files</em>. <a href="https://CRAN.R-project.org/package=xlsx" class="external-link">https://CRAN.R-project.org/package=xlsx</a>.
 </div>
-<div id="ref-opennlp" class="csl-entry">
+<div id="ref-opennlp" class="csl-entry" role="listitem">
 Hornik, Kurt. 2019. <em>openNLP: Apache OpenNLP Tools Interface</em>. <a href="https://CRAN.R-project.org/package=openNLP" class="external-link">https://CRAN.R-project.org/package=openNLP</a>.
 </div>
-<div id="ref-rweka" class="csl-entry">
+<div id="ref-rweka" class="csl-entry" role="listitem">
 Hornik, Kurt, Christian Buchta, and Achim Zeileis. 2009. <span>“Open-Source Machine Learning: <span>R</span> Meets <span>Weka</span>.”</span> <em>Computational Statistics</em> 24 (2): 225–32. <a href="https://doi.org/10.1007/s00180-008-0119-7" class="external-link">https://doi.org/10.1007/s00180-008-0119-7</a>.
 </div>
-<div id="ref-pereira_r5r_2021" class="csl-entry">
-Pereira, Rafael H. M., Marcus Saraiva, Daniel Herszenhut, Carlos Kaue Vieira Braga, and Matthew Wigginton Conway. 2021. <span>“R5r: Rapid Realistic Routing on Multimodal Transport Networks with <span>R</span><span class="math inline">\(^{\textrm{5}}\)</span> in r.”</span> <em>Findings</em>, March. <a href="https://doi.org/10.32866/001c.21262" class="external-link">https://doi.org/10.32866/001c.21262</a>.
+<div id="ref-pereira_r5r_2021" class="csl-entry" role="listitem">
+Pereira, Rafael H. M., Marcus Saraiva, Daniel Herszenhut, Carlos Kaue Vieira Braga, and Matthew Wigginton Conway. 2021. <span>“R5r: Rapid Realistic Routing on Multimodal Transport Networks with <span>R</span><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi></mi><mtext mathvariant="normal">5</mtext></msup><annotation encoding="application/x-tex">^{\textrm{5}}</annotation></semantics></math> in r.”</span> <em>Findings</em>, March. <a href="https://doi.org/10.32866/001c.21262" class="external-link">https://doi.org/10.32866/001c.21262</a>.
 </div>
-<div id="ref-mailr" class="csl-entry">
+<div id="ref-mailr" class="csl-entry" role="listitem">
 Premraj, Rahul. 2021. <em>mailR: A Utility to Send Emails from r</em>. <a href="https://CRAN.R-project.org/package=mailR" class="external-link">https://CRAN.R-project.org/package=mailR</a>.
 </div>
-<div id="ref-rjdbc" class="csl-entry">
+<div id="ref-rjdbc" class="csl-entry" role="listitem">
 Urbanek, Simon. 2022. <em>RJDBC: Provides Access to Databases Through the JDBC Interface</em>. <a href="https://CRAN.R-project.org/package=RJDBC" class="external-link">https://CRAN.R-project.org/package=RJDBC</a>.
 </div>
-<div id="ref-rjava" class="csl-entry">
+<div id="ref-rjava" class="csl-entry" role="listitem">
 ———. 2024. <em>rJava: Low-Level r to Java Interface</em>. <a href="https://CRAN.R-project.org/package=rJava" class="external-link">https://CRAN.R-project.org/package=rJava</a>.
 </div>
 </div>
+</section><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'light-border',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config);
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script></main>
 </div>
-  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
-    </nav></aside>
-</div>
-
 
 
     <footer><div class="pkgdown-footer-left">

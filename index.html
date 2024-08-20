@@ -43,7 +43,7 @@
 
     <a class="navbar-brand me-2" href="index.html">rJavaEnv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of Java-dependent R packages</a></li>
+<li><a class="dropdown-item" href="articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
+    <li><a class="dropdown-item" href="articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -84,29 +85,80 @@
 
 
 <!-- badges: end -->
-<p>The goal of <code>rJavaEnv</code> is to manage multiple Java JDKs in R projects by automating the process of downloading, installing, and configuring Java environments on a per-project basis. This package is inspired by the <a href="https://rstudio.github.io/renv/" target="_blank" class="external-link"><code>renv</code></a> package for managing R environments in R projects.</p>
-<p>You can request a specific Java Development Kit (JDK) in your project, and <code>rJavaEnv</code> will download and install the requested Java environment in a project-specific directory and set the PATH and JAVA_HOME for when you are using this project. Therefore, you can have different Java versions for different projects without contaminating your system with different Java versions.</p>
-<p><strong>WARNING</strong> This package is in the early stages of development and is not yet ready for production use. Please test it thoroughly before using it in your projects.</p>
-<div class="section level2">
+<p>The <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> package addresses common issues with <code>Java</code> environment management in <code>R</code> for users of <code>Java</code>/<a href="http://www.rforge.net/rJava/" class="external-link">rJava</a>-dependent <code>R</code> packages such as <a href="https://github.com/ipeaGIT/r5r" class="external-link">r5r</a>, <a href="https://docs.ropensci.org/opentripplanner" class="external-link">opentripplanner</a>, <a href="https://github.com/colearendt/xlsx" class="external-link">xlsx</a>, <code>{openNLP}</code>, <code>{rWeka}</code>, <a href="http://www.rforge.net/RJDBC/" class="external-link">RJDBC</a>, <a href="https://docs.ropensci.org/tabulapdf/" class="external-link">tabulapdf</a>, and many more. It resolves common problems like <code>Java</code> not found, <code>Java</code> version conflicts, missing <code>Java</code> installations, and the inability to install <code>Java</code> due to lack of administrative privileges. <code>rJavaEnv</code> automates the download, installation, and setup of the <code>Java Development Kit</code> (<code>JDK</code>) on a per-project basis by setting the relevant <code>JAVA_HOME</code> in the current <code>R</code> session or the current working directory (via <code>.Rprofile</code>, with the user’s consent). Similar to what <code>renv</code> does for <code>R</code> packages, <code>rJavaEnv</code> allows different <code>Java</code> versions to be used across different projects, but can also be configured to allow multiple versions within the same project (e.g. with the help of <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> package). <strong>Note: there are a few extra steps for ‘Linux’ users, who don’t have any ‘Java’ previously installed in their systemm, and who prefer package installation from source, rather then installing binaries from ‘Posit Package Manager’. See <a href="vignettes/rJavaEnv.Rmd#note-linux">documentation</a> for details.</strong></p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">'&lt;script type="application/ld+json"&gt;</span></span>
+<span><span class="st">      {glue::glue_collapse(readLines("inst/schemaorg.json"), sep = "\n")}</span></span>
+<span><span class="st">    &lt;/script&gt;'</span><span class="op">)</span></span></code></pre></div>
+<script type="application/ld+json">
+      {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "type": "SoftwareSourceCode",
+      "author": {
+        "id": "https://orcid.org/0000-0001-6690-5345"
+      },
+      "codeRepository": "https://github.com/e-kotov/rJavaEnv",
+      "contributor": {
+        "id": "https://orcid.org/0000-0003-1017-7574",
+        "type": "Person",
+        "email": "mavargas11@uc.cl",
+        "familyName": "Vargas",
+        "givenName": "Mauricio"
+      },
+      "copyrightHolder": {
+        "id": "https://orcid.org/0000-0001-6690-5345",
+        "type": "Person",
+        "email": "kotov.egor@gmail.com",
+        "familyName": "Kotov",
+        "givenName": "Egor"
+      },
+      "description": "The 'rJavaEnv' package addresses common issues with 'Java' environment management in 'R' for users of 'Java'/'rJava'-dependent 'R' packages such as 'r5r', 'opentripplanner', 'xlsx', 'openNLP', 'rWeka', 'RJDBC', 'tabulapdf', and many more. It resolves common problems like 'Java' not found, 'Java' version conflicts, missing 'Java' installations, and the inability to install 'Java' due to lack of administrative privileges. 'rJavaEnv' automates the download, installation, and setup of the 'Java Development Kit' ('JDK') on a per-project basis by setting the relevant 'JAVA_HOME' in the current 'R' session or the current working directory (via '.Rprofile', with the user's consent). Similar to what 'renv' does for 'R' packages, 'rJavaEnv' allows different 'Java' versions to be used across different projects, but can also be configured to allow multiple versions within the same project (e.g. with the help of 'targets' package). Note: there are a few extra steps for 'Linux' users, who don't have any 'Java' previously installed in their systemm, and who prefer package installation from source, rather then installing binaries from 'Posit Package Manager'. See documentation for details.",
+      "license": "https://spdx.org/licenses/MIT",
+      "name": "rJavaEnv: 'Java' Environments for R Projects",
+      "programmingLanguage": {
+        "type": "ComputerLanguage",
+        "name": "R",
+        "url": "https://r-project.org"
+      },
+      "runtimePlatform": "R version 4.4.1 (2024-06-14)",
+      "version": "0.1.0"
+    },
+    {
+      "id": "https://doi.org/10.5281/zenodo.11403010",
+      "type": "SoftwareSourceCode",
+      "author": {
+        "id": "https://orcid.org/0000-0001-6690-5345",
+        "type": "Person",
+        "email": "kotov.egor@gmail.com",
+        "familyName": "Kotov",
+        "givenName": "Egor"
+      },
+      "name": "rJavaEnv: Java Environments for R Projects"
+    }
+  ]
+}
+    </script><div class="section level2">
 <h2 id="install">Install<a class="anchor" aria-label="anchor" href="#install"></a>
 </h2>
 <p>Install latest release from <strong>R-multiverse</strong>:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'rJavaEnv'</span>,</span>
-<span>  repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'https://community.r-multiverse.org'</span>, <span class="st">'https://cloud.r-project.org'</span><span class="op">)</span></span>
+<span> repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'https://community.r-multiverse.org'</span>, <span class="st">'https://cloud.r-project.org'</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>You can install the development version of <code>rJavaEnv</code> from GitHub:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"e-kotov/rJavaEnv"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"e-kotov/rJavaEnv"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="simple-example">Simple Example<a class="anchor" aria-label="anchor" href="#simple-example"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="reference/java_quick_install.html">java_quick_install</a></span><span class="op">(</span>version <span class="op">=</span> <span class="fl">21</span><span class="op">)</span></span></code></pre></div>
 <p>This will:</p>
 <ul>
@@ -116,9 +168,8 @@
 <li><p>set the current session’s JAVA_HOME and PATH environment variables to point to the installed (symlinked) Java distribution;</p></li>
 <li><p>add code to .Rprofile file in the current directory/project to set JAVA_HOME and PATH environment variables when the project is opened in RStudio.</p></li>
 </ul>
-<p>After that, you can even remove <code>rJavaEnv</code> completely, as the Java environment will be set up in the project directory with the base R code that does not rely on <code>rJavaEnv</code>.</p>
 <p>As part of normal operation, rJavaEnv will update the JAVA_HOME and PATH environment variables in the current R session, the local cache in your R package library, and the <code>.Rprofile</code> file in the project/current working directory. In line with <a href="https://cran.r-project.org/web/packages/policies.html" class="external-link">CRAN policies</a>, explicit user consent is required before making these changes. Therefore, the first time you run any function from <code>rJavaEnv</code> that makes such changes, you will be asked for consent. To explicitly consent and/or to prevent interruptions in non-interactive mode, you can use the <code><a href="reference/rje_consent.html">rje_consent()</a></code> function:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/rje_consent.html">rje_consent</a></span><span class="op">(</span>provided <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -214,14 +265,15 @@
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
 <p>To cite package ‘rJavaEnv’ in publications use:</p>
-<p>Kotov E (2024). <em>rJavaEnv: Java Environments for R Projects</em>. <a href="https://github.com/e-kotov/rJavaEnv" class="external-link uri">https://github.com/e-kotov/rJavaEnv</a>.</p>
+<p>Kotov E (2024). <em>rJavaEnv: Java Environments for R Projects</em>. <a href="doi:10.5281/zenodo.11403010" class="uri">doi:10.5281/zenodo.11403010</a> <a href="https://doi.org/10.5281/zenodo.11403010" class="external-link uri">https://doi.org/10.5281/zenodo.11403010</a>, <a href="https://github.com/e-kotov/rJavaEnv" class="external-link uri">https://github.com/e-kotov/rJavaEnv</a>.</p>
 <p>BibTeX:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="sc">@</span>Manual{rjavaenv,</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  title <span class="ot">=</span> {rJavaEnv<span class="sc">:</span> Java Environments <span class="cf">for</span> R Projects},</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  author <span class="ot">=</span> {Egor Kotov},</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  year <span class="ot">=</span> {<span class="dv">2024</span>},</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>e<span class="sc">-</span>kotov<span class="sc">/</span>rJavaEnv},</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="sc">@</span>Manual{rjavaenv,</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  title <span class="ot">=</span> {rJavaEnv<span class="sc">:</span> Java Environments <span class="cf">for</span> R Projects},</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  author <span class="ot">=</span> {Egor Kotov},</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  year <span class="ot">=</span> {<span class="dv">2024</span>},</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>e<span class="sc">-</span>kotov<span class="sc">/</span>rJavaEnv},</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  doi <span class="ot">=</span> {<span class="fl">10.5281</span><span class="sc">/</span>zenodo<span class="fl">.11403010</span>},</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -269,7 +321,7 @@
 <ul class="list-unstyled">
 <li><a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public."></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" target="_blank" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
-<li><a href="https://CRAN.R-project.org/package=rJavaEnv" target="_blank" class="external-link"><img src="https://www.r-pkg.org/badges/version/rJavaEnv" alt="CRAN status"></a></li>
+<li><a href="https://CRAN.R-project.org/package=rJavaEnv" target="_blank" class="external-link"><img src="https://www.r-pkg.org/badges/version/rJavaEnv.png" alt="CRAN status"></a></li>
 <li><a href="https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck" class="external-link"><img src="https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg" alt="pkgcheck"></a></li>
 <li><a href="https://app.codecov.io/github/e-kotov/rJavaEnv" class="external-link"><img src="https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V" alt="codecov"></a></li>
