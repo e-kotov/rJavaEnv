@@ -35,7 +35,7 @@
 java_env_set <- function(
   where = c("session", "both", "project"),
   java_home,
-  project_path,
+  project_path = NULL,
   verbose = TRUE
 ) {
   rje_consent_check()
@@ -57,11 +57,17 @@ java_env_set <- function(
   }
 
   if (where %in% c("project", "both")) {
+    # consistent with renv behavior for using
+    # the current working directory by default
+    # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
+    project_path <- ifelse(is.null(project_path), getwd(), project_path)
+    
     java_env_set_rprofile(java_home, project_path = project_path)
+    
     if (verbose) {
       cli::cli_alert_success(c(
         "Current R Project/Working Directory: ",
-        "JAVA_HOME and PATH set to '{.path {java_home}}' in .Rprofile in '{.path {project_path, \".Rprofile\")}}'"
+        "JAVA_HOME and PATH set to '{.path {java_home}}' in .Rprofile at '{.path {project_path}}'"
       ))
     }
   }
