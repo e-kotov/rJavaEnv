@@ -23,7 +23,7 @@ abstract: 'The ''rJavaEnv'' package addresses common issues with ''Java'' enviro
   different projects, but can also be configured to allow multiple versions within
   the same project (e.g. with the help of ''targets'' package). Note: there are a
   few extra steps for ''Linux'' users, who don''t have any ''Java'' previously installed
-  in their systemm, and who prefer package installation from source, rather then installing
+  in their system, and who prefer package installation from source, rather then installing
   binaries from ''Posit Package Manager''. See documentation for details.'
 authors:
 - family-names: Kotov

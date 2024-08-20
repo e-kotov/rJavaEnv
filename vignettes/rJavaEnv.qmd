@@ -14,7 +14,7 @@ pkgdown:
   as_is: true
 ---
 
-This guide will walk you through downloading, installing, and managing `Java` environments for your R projects using the `rJavaEnv` package. We'll cover setting up the environment, unsetting it, managing distributions, installing `Java`, and checking `Java` versions.
+This guide will walk you through downloading, installing, and managing `Java` environments for your R projects using the `rJavaEnv` package. We'll cover setting up the environment, un-setting it, managing distributions, installing `Java`, and checking `Java` versions.
 
 
 ### 1. Quickly Download and Install Java
@@ -40,14 +40,14 @@ install.packages('rJavaEnv',
 
 #### **Quick Install `Java` JDK**
 
-Assume your project directory is currently in a temporary directory. Feel free to skip that, if you are already working in a desired project directory wehre you would like to install `Java`. In the example outputs below you will see paths that point to a temporary directory, but in a real project you would see your project directory instead.
+Assume your project directory is currently in a temporary directory. Feel free to skip that, if you are already working in a desired project directory where you would like to install `Java`. In the example outputs below you will see paths that point to a temporary directory, but in a real project you would see your project directory instead.
 
 ```{r}
 project_dir <- tempdir()
 setwd(project_dir)
 ```
 
-The first time you run any function that requires writing into your home space, you will be provided with a prompt warnin you that the package may write to the package cache folder in your home directory, to your current project directory, as well as to the .Rprofile file in your project directory (or any directory you specify).
+The first time you run any function that requires writing into your home space, you will be provided with a prompt warning you that the package may write to the package cache folder in your home directory, to your current project directory, as well as to the .Rprofile file in your project directory (or any directory you specify).
 
 To quickly install `Java` JDK 21 (which is also default, if not specified) in your current project directory and set the environment:
 

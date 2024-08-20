@@ -10,7 +10,7 @@ rje_consent_check()
 \code{TRUE} if consent is verified, otherwise an error is raised.
 }
 \description{
-Ensure that the user has granted permission for rJavaEnv to manage files on their filesystem.
+Ensure that the user has granted permission for rJavaEnv to manage files on their file system.
 }
 \details{
 The function is based on the code of the \code{renv} package.

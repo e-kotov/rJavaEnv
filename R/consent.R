@@ -1,6 +1,6 @@
 #' Obtain User Consent for rJavaEnv
 #'
-#' Get user consent for rJavaEnv to write and update files on the filesystem.
+#' Get user consent for rJavaEnv to write and update files on the file system.
 #' rJavaEnv needs permission to manage files in your project and cache directories
 #' to function correctly.
 #'
@@ -73,7 +73,7 @@ rje_consent <- function(provided = FALSE) {
 
 #' Verify User Consent for rJavaEnv
 #'
-#' Ensure that the user has granted permission for rJavaEnv to manage files on their filesystem.
+#' Ensure that the user has granted permission for rJavaEnv to manage files on their file system.
 #'
 #' The function is based on the code of the `renv` package.
 #' Copyright 2023 Posit Software, PBC

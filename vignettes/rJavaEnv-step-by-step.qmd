@@ -18,7 +18,7 @@ The basics of using `rJavaEnv` are covered in the [Quick Start Guide](rJavaEnv.q
 library(rJavaEnv)
 ```
 
-Assume your project directory is currently in a temporary directory. Feel free to skip that, if you are already working in a desired project directory wehre you would like to install `Java`. In the example outputs below you will see paths that point to a temporary directory, but in a real project you would see your project directory instead.
+Assume your project directory is currently in a temporary directory. Feel free to skip that, if you are already working in a desired project directory where you would like to install `Java`. In the example outputs below you will see paths that point to a temporary directory, but in a real project you would see your project directory instead.
 
 ```{r}
 project_dir <- tempdir()
@@ -84,7 +84,7 @@ The function returns the path to the downloaded distribution file, which is just
 
 By default, if no `cache_path` is specified when calling `java_download()`, the distribution is downloaded into the folder defined by `getOption("rJavaEnv.cache_path")`. So with this argument you can override the globally set cache folder location for this single download.
 
-`java_download()` also allows you to define the operating system and processor architecture with function arguments `platform` and `arch` (pleasee see the function documentation using `?rJavaEnv::java_download`). For example, this may be useful if you are packaging a Java distribtution for Linux while using a Windows or macOS machine. This may also be useful if for some reason automatic OS and CPU detection fails.
+`java_download()` also allows you to define the operating system and processor architecture with function arguments `platform` and `arch` (please see the function documentation using `?rJavaEnv::java_download`). For example, this may be useful if you are packaging a Java distribution for Linux while using a Windows or macOS machine. This may also be useful if for some reason automatic OS and CPU detection fails.
 
 For example, this line above will download the `Amazon Corretto` `Java JDK` version 8 for x86-64 Linux, even though you may be running this code on aarch64 macOS or x86_64 Windows machine:
 
@@ -111,7 +111,7 @@ MD5 checksum verified.
 
 ### 3. Manage downloaded `Java` JDK distributions
 
-You can manage downloaded distribtuions with the `java_list` and `java_clear` functions.
+You can manage downloaded distributions with the `java_list` and `java_clear` functions.
 
 
 ```{r}

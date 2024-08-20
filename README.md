@@ -39,10 +39,10 @@ user’s consent). Similar to what `renv` does for `R` packages,
 `rJavaEnv` allows different `Java` versions to be used across different
 projects, but can also be configured to allow multiple versions within
 the same project (e.g. with the help of `{targets}` package). **Note:
-there are a few extra steps for ‘Linux’ users, who don’t have any ‘Java’
+there are a few extra steps for 'Linux' users, who don’t have any 'Java'
 previously installed in their systemm, and who prefer package
-installation from source, rather then installing binaries from ‘Posit
-Package Manager’. See [documentation](vignettes/rJavaEnv.Rmd#note-linux)
+installation from source, rather then installing binaries from 'Posit
+Package Manager'. See [documentation](vignettes/rJavaEnv.Rmd#note-linux)
 for details.**
 
 ``` r
@@ -191,7 +191,7 @@ The package has several core functions:
       directory.
 7.  `java_env_unset()`
     - Remove the JAVA_HOME and PATH environment variables from the
-      .Rpofile file in the project directory (but not in the current R
+      .Rprofile file in the project directory (but not in the current R
       session, please restart the session so that R picks up the system
       Java).
 8.  `java_list()`
@@ -262,8 +262,8 @@ The future work includes:
   version
 
 - Possibly allow downloading several Java distributions in one function
-  call, e.g. different major versions of the same ‘flavour’ or different
-  ‘flavours’ of the same major version
+  call, e.g. different major versions of the same 'flavour' or different
+  'flavours' of the same major version
 
 - Possibly add automation to get the Java that is required by specific
   Java-dependent R packages
@@ -286,7 +286,7 @@ logo also contains the original R logo.
 
 ## Citation
 
-To cite package ‘rJavaEnv’ in publications use:
+To cite package `rJavaEnv` in publications use:
 
 Kotov E (2024). *rJavaEnv: Java Environments for R Projects*.
 doi:10.5281/zenodo.11403010 <https://doi.org/10.5281/zenodo.11403010>,
