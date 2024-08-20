@@ -10,7 +10,7 @@
 #' \dontrun{
 #' 
 #' # quick download, unpack, install and set in current working directory default Java version (21)
-#' java_quick_install(temp_dir = TRUE)
+#' java_quick_install(17, temp_dir = TRUE)
 #' }
 java_quick_install <- function(
   version = 21,
