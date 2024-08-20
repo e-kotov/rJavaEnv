@@ -26,9 +26,13 @@ java_quick_install <- function(
   if (temp_dir) {
     temp_dir <- tempdir()
     setwd(temp_dir)
-    dir.create("rJavaEnv_cache", recursive = TRUE)
+    if (!dir.exists("rJavaEnv_cache")) {
+      dir.create("rJavaEnv_cache", recursive = TRUE)
+    }
     cache_path <- file.path(temp_dir, "rJavaEnv_cache")
-    dir.create("rJavaEnv_project", recursive = TRUE)
+    if (!dir.exists("rJavaEnv_project")) {
+      dir.create("rJavaEnv_project", recursive = TRUE)
+    }
     project_path <- file.path(temp_dir, "rJavaEnv_project")
   } else {
     cache_path <- getOption("rJavaEnv.cache_path")

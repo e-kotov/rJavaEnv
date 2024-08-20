@@ -34,7 +34,9 @@ java_download <- function(
   if (temp_dir) {
     temp_dir <- tempdir()
     setwd(temp_dir)
-    dir.create("rJavaEnv_cache", recursive = TRUE)
+    if (!dir.exists("rJavaEnv_cache")) {
+      dir.create("rJavaEnv_cache", recursive = TRUE)
+    }
     cache_path <- file.path(temp_dir, "rJavaEnv_cache")
   }
 
