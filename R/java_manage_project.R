@@ -86,7 +86,7 @@ java_clear_in_project <- function(
   }
 
   if (delete_all) {
-    unlink(file.path(java_symlink_dir, "*"), recursive = TRUE)
+    unlink(file.path(java_symlink_dir), recursive = TRUE)
     cli::cli_inform("All Java symlinks in the project have been cleared.")
     return(invisible(NULL))
   }
