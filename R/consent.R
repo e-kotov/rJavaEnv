@@ -33,7 +33,8 @@ rje_consent <- function(provided = FALSE) {
   }
 
   # Check if consent is already given via cache directory
-  user_package_cache_path <- tools::R_user_dir("rJavaEnv", which = "cache")
+  user_package_cache_path <- getOption("rJavaEnv.cache_path")
+  user_package_cache_path <- normalizePath(user_package_cache_path, winslash = "/", mustWork = FALSE)
   if (dir.exists(user_package_cache_path)) {
     cli::cli_inform("Consent for using rJavaEnv has already been provided.")
     return(invisible(TRUE))
