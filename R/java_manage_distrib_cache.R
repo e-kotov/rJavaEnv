@@ -6,11 +6,7 @@
 #' @inheritParams global_quiet_param
 #' @return A character vector with the contents of the cache directory.
 #'
-#' @examples
-#' \dontrun{
-#' java_list_distrib_cache()
-#' }
-#'
+#' @keywords internal
 java_list_distrib_cache <- function(
   cache_path = getOption("rJavaEnv.cache_path"),
   output = c("data.frame", "vector"),
@@ -21,7 +17,7 @@ java_list_distrib_cache <- function(
   cache_path <- file.path(cache_path, "distrib")
 
   if (!dir.exists(cache_path)) {
-    cli::cli_alert_danger("Path does not exist")
+    cli::cli_alert_danger("No Java distributions have been downloaded.")
     return(character(0))
   }
   if (!quiet) cli::cli_inform("Contents of the Java distributions cache folder:")
@@ -48,17 +44,7 @@ java_list_distrib_cache <- function(
 #' @inheritParams java_download
 #' @return A message indicating whether the cache was cleared or not.
 #'
-#' @examples
-#' \dontrun{
-#' # delete all cached distributions
-#' # if you leave `cache_path` empty, the function
-#' # will clear in the package cache in your default user space cache
-#' java_clear_distrib_cache(
-#'   cache_path = tempdir(),
-#'   check = FALSE,
-#'   delete_all = TRUE
-#' )
-#' }
+#' @keywords internal
 java_clear_distrib_cache <- function(
   cache_path = getOption("rJavaEnv.cache_path"),
   check = TRUE,

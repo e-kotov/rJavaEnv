@@ -19,8 +19,4 @@ A message indicating whether the symlinks were cleared or not.
 \description{
 Clear the Java versions symlinked in the current project
 }
-\examples{
-\dontrun{
-java_clear_in_project()
-}
-}
+\keyword{internal}

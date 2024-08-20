@@ -4,7 +4,7 @@
 #' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
 #' @inheritParams global_quiet_param
 #' @return A data frame or character vector with the symlinked Java versions in the project directory.
-#'
+#' @keywords internal
 java_list_in_project <- function(
     project_path = NULL,
     output = c("data.frame", "vector"),
@@ -61,11 +61,8 @@ java_list_in_project <- function(
 #' @param check Whether to list the symlinked Java versions before clearing them. Defaults to TRUE.
 #' @param delete_all Whether to delete all symlinks without prompting. Defaults to FALSE.
 #' @return A message indicating whether the symlinks were cleared or not.
-#'
-#' @examples
-#' \dontrun{
-#' java_clear_in_project()
-#' }
+#' 
+#' @keywords internal
 java_clear_in_project <- function(
     project_path = NULL,
     check = TRUE,

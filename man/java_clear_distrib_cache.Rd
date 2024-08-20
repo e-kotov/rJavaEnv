@@ -23,15 +23,4 @@ A message indicating whether the cache was cleared or not.
 \description{
 Clear the Java distributions cache folder
 }
-\examples{
-\dontrun{
-# delete all cached distributions
-# if you leave `cache_path` empty, the function
-# will clear in the package cache in your default user space cache
-java_clear_distrib_cache(
-  cache_path = tempdir(),
-  check = FALSE,
-  delete_all = TRUE
-)
-}
-}
+\keyword{internal}

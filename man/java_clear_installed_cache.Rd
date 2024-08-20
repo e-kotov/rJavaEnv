@@ -23,8 +23,4 @@ A message indicating whether the cache was cleared or not.
 \description{
 Clear the Java installations cache folder
 }
-\examples{
-\dontrun{
-java_clear_installed_cache()
-}
-}
+\keyword{internal}

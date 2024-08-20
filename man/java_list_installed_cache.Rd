@@ -23,9 +23,4 @@ A data frame or character vector with the contents of the cache directory.
 \description{
 List the contents of the Java installations cache folder
 }
-\examples{
-\dontrun{
-java_list_installed_cache()
-}
-
-}
+\keyword{internal}

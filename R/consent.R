@@ -24,6 +24,13 @@
 #' @return `TRUE` if consent is given, otherwise an error is raised.
 #' 
 #' @export
+#' @examples
+#' \dontrun{
+#' 
+#' # to provide consent and prevent other functions from interrupting to get the consent
+#' rje_consent(provided = TRUE)
+#' }
+#' 
 rje_consent <- function(provided = FALSE) {
 
   # Check if consent is already given via environment variable

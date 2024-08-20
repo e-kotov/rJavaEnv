@@ -1,17 +1,28 @@
-#' List the contents of the Java cache
+#' List the contents of the Java versions installed or cached
 #'
-#' @param type The type of cache to list: "distrib", "installed", or "project".
-#' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
+#' @description
+#' This function lists one of the following:
+#' 
+#' * `project` - list the contents of the Java symlinked/copied in the current project or directory specified by `target_dir`
+#' 
+#'  * `distrib` - list the contents of the downloaded Java distributions cache in default location or specified by `target_dir`
+#' 
+#'  * `installed` - list the contents of the Java installations cache (unpacked distributions) in default location or specified by `target_dir`
+#' 
+#' @param type The type of cache to list: "distrib", "installed", or "project". Defaults to "project".
+#' @param output The format of the output: `data.frame`` or `vector``. Defaults to `data.frame`.
 #' @inheritParams global_quiet_param
 #' @param target_dir The cache directory to list. Defaults to the user-specific data directory for "distrib" and "installed", and the current working directory for "project".
-#' @return A data frame or character vector with the contents of the specified cache directory.
+#' @return A `dataframe` or `character` `vector` with the contents of the specified cache or project directory.
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' java_list("project")
 #' java_list("installed")
 #' java_list("distrib")
-#'
+#'}
+#' 
 java_list <- function(
     type = c("project", "installed", "distrib"),
     output = c("data.frame", "vector"),
@@ -24,7 +35,7 @@ java_list <- function(
     if (type == "project") {
       target_dir <- getwd()
     } else {
-      target_dir <- tools::R_user_dir("rJavaEnv", which = "cache")
+      target_dir <- getOption("rJavaEnv.cache_path")
     }
   }
 
@@ -49,9 +60,11 @@ java_list <- function(
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' java_clear("project")
 #' java_clear("installed")
 #' java_clear("distrib")
+#' }
 #'
 java_clear <- function(
     type = c("project", "installed", "distrib"),

@@ -4,12 +4,7 @@
 #' @param cache_path The cache directory to list. Defaults to the user-specific data directory. Not recommended to change.
 #' @inheritParams global_quiet_param
 #' @return A data frame or character vector with the contents of the cache directory.
-#'
-#' @examples
-#' \dontrun{
-#' java_list_installed_cache()
-#' }
-#'
+#' @keywords internal
 java_list_installed_cache <- function(
     output = c("data.frame", "vector"),
     quiet = TRUE,
@@ -19,7 +14,7 @@ java_list_installed_cache <- function(
   installed_cache_path <- file.path(cache_path, "installed")
 
   if (!dir.exists(installed_cache_path)) {
-    cli::cli_alert_danger("Path does not exist")
+    cli::cli_alert_danger("No Java distributions have been installed yet.")
     return(character(0))
   }
 
@@ -59,10 +54,7 @@ java_list_installed_cache <- function(
 #' @param delete_all Whether to delete all installations without prompting. Defaults to FALSE.
 #' @return A message indicating whether the cache was cleared or not.
 #'
-#' @examples
-#' \dontrun{
-#' java_clear_installed_cache()
-#' }
+#' @keywords internal
 java_clear_installed_cache <- function(
     check = TRUE,
     delete_all = FALSE,
