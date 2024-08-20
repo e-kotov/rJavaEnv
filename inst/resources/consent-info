@@ -21,9 +21,9 @@ Additionally, `rJavaEnv` maintains a cache of Java distributions and installatio
 
   - ${rJavaEnv_CACHE}
 
-You can customize this path by setting the `$RJAVAENV_CACHE` with `Sys.setenv(RJAVAENV_CACHE = "path/to/cache")`.
-Alternatively, you can set the cache folder as argument `distribution_cache_path` in `java_download()`.
-The same cache folder is used for both zipped java distributions and extracted distrubution files.
+You can customize this path by setting the option `options(rJavaEnv.cache_path = 'path/to/your/java/cache')`.
+Alternatively, you can set the cache folder as argument `cache_path` package functions that have option.
+The same cache folder is used for both zipped java distributions and extracted distribution files.
 
 For more information, read the introductory vignette with `vignette("rJavaEnv")` and browse the package documentation online at https://www.ekotov.pro/rJavaEnv/.
 
