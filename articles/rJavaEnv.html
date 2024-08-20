@@ -90,7 +90,7 @@
 
 
 
-    <p>This guide will walk you through downloading, installing, and managing <code>Java</code> environments for your R projects using the <code>rJavaEnv</code> package. We’ll cover setting up the environment, unsetting it, managing distributions, installing <code>Java</code>, and checking <code>Java</code> versions.</p>
+    <p>This guide will walk you through downloading, installing, and managing <code>Java</code> environments for your R projects using the <code>rJavaEnv</code> package. We’ll cover setting up the environment, un-setting it, managing distributions, installing <code>Java</code>, and checking <code>Java</code> versions.</p>
 <section class="level3"><h3 id="quickly-download-and-install-java">1. Quickly Download and Install Java<a class="anchor" aria-label="anchor" href="#quickly-download-and-install-java"></a>
 </h3>
 <section class="level4"><h4 id="install-rjavaenv">
@@ -111,13 +111,13 @@
 </section><section class="level4"><h4 id="quick-install-java-jdk">
 <strong>Quick Install <code>Java</code> JDK</strong><a class="anchor" aria-label="anchor" href="#quick-install-java-jdk"></a>
 </h4>
-<p>Assume your project directory is currently in a temporary directory. Feel free to skip that, if you are already working in a desired project directory wehre you would like to install <code>Java</code>. In the example outputs below you will see paths that point to a temporary directory, but in a real project you would see your project directory instead.</p>
+<p>Assume your project directory is currently in a temporary directory. Feel free to skip that, if you are already working in a desired project directory where you would like to install <code>Java</code>. In the example outputs below you will see paths that point to a temporary directory, but in a real project you would see your project directory instead.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">project_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="va">project_dir</span><span class="op">)</span></span></code></pre></div>
 </div>
-<p>The first time you run any function that requires writing into your home space, you will be provided with a prompt warnin you that the package may write to the package cache folder in your home directory, to your current project directory, as well as to the .Rprofile file in your project directory (or any directory you specify).</p>
+<p>The first time you run any function that requires writing into your home space, you will be provided with a prompt warning you that the package may write to the package cache folder in your home directory, to your current project directory, as well as to the .Rprofile file in your project directory (or any directory you specify).</p>
 <p>To quickly install <code>Java</code> JDK 21 (which is also default, if not specified) in your current project directory and set the environment:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
