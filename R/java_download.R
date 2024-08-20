@@ -5,8 +5,8 @@
 #' @param cache_path The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
 #' @param arch The architecture for which to download the Java distribution. Defaults to the current architecture.
-#' @param verbose Whether to print detailed messages. Defaults to `TRUE`.
 #' @param temp_dir A logical. Whether the file should be saved in a temporary directory. Defaults to `FALSE`.
+#' @inheritParams global_quiet_param
 #'
 #' @return The path to the downloaded Java distribution file.
 #' @export
@@ -26,7 +26,7 @@ java_download <- function(
   cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  verbose = TRUE,
+  quiet = FALSE,
   temp_dir = FALSE
 ) {
   
@@ -61,10 +61,10 @@ java_download <- function(
 
   checkmate::assert_choice(platform, valid_platforms)
   checkmate::assert_choice(arch, valid_architectures)
-  checkmate::assert_flag(verbose)
+  checkmate::assert_flag(quiet)
 
   # Print out the detected platform and architecture
-  if (verbose) {
+  if (!quiet) {
     cli::cli_inform(c(
       "Detected platform: {.strong {platform}}",
       "Detected architecture: {.strong {arch}}",
@@ -92,18 +92,18 @@ java_download <- function(
   dest_file_md5 <- paste0(file.path(cache_path, basename(url_md5)), ".md5")
 
 
-  if (verbose) {
+  if (!quiet) {
     cli::cli_inform("Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}", .envir = environment())
   }
 
   if (file.exists(dest_file)) {
-    if (verbose) {
+    if (!quiet) {
       cli::cli_inform("File already exists. Skipping download.", .envir = environment())
     }
   } else {
     curl::curl_download(url, dest_file, quiet = FALSE)
     curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
-    if (verbose) {
+    if (!quiet) {
       cli::cli_inform("Download completed.", .envir = environment())
 
       md5sum <- tools::md5sum(dest_file)

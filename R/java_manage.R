@@ -2,7 +2,7 @@
 #'
 #' @param type The type of cache to list: "distrib", "installed", or "project".
 #' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
-#' @param verbose Whether to print detailed messages. Defaults to FALSE.
+#' @inheritParams global_quiet_param
 #' @param target_dir The cache directory to list. Defaults to the user-specific data directory for "distrib" and "installed", and the current working directory for "project".
 #' @return A data frame or character vector with the contents of the specified cache directory.
 #' @export
@@ -15,7 +15,7 @@
 java_list <- function(
     type = c("project", "installed", "distrib"),
     output = c("data.frame", "vector"),
-    verbose = FALSE,
+    quiet = TRUE,
     target_dir = NULL) {
   type <- match.arg(type)
   output <- match.arg(output)
@@ -29,11 +29,11 @@ java_list <- function(
   }
 
   if (type == "distrib") {
-    return(java_list_distrib_cache(output = output, verbose = verbose, cache_path = target_dir))
+    return(java_list_distrib_cache(output = output, quiet = quiet, cache_path = target_dir))
   } else if (type == "installed") {
-    return(java_list_installed_cache(output = output, verbose = verbose, cache_path = target_dir))
+    return(java_list_installed_cache(output = output, quiet = quiet, cache_path = target_dir))
   } else if (type == "project") {
-    return(java_list_in_project(output = output, verbose = verbose, project_path = target_dir))
+    return(java_list_in_project(output = output, quiet = quiet, project_path = target_dir))
   }
 }
 

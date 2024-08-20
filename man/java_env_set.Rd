@@ -7,8 +7,8 @@
 java_env_set(
   where = c("session", "both", "project"),
   java_home,
-  project_path,
-  verbose = TRUE
+  project_path = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ java_env_set(
 
 \item{project_path}{The project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
 
-\item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 Nothing. Sets the JAVA_HOME and PATH environment variables.

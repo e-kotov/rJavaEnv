@@ -2,6 +2,7 @@
 #'
 #' @inheritParams java_download
 #' @inheritParams java_install
+#' @inheritParams global_quiet_param
 #' @return Message indicating that Java was installed and set in the current working/project directory.
 #' @export
 #'
@@ -17,7 +18,7 @@ java_quick_install <- function(
   project_path = NULL,
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  verbose = TRUE,
+  quiet = FALSE,
   temp_dir = FALSE
 ) {
   rje_consent_check()
@@ -39,14 +40,14 @@ java_quick_install <- function(
     cache_path = cache_path,
     platform = platform,
     arch = arch,
-    verbose = verbose
+    quiet = quiet
   )
 
   java_install(
     java_distrib_path,
     project_path = project_path,
     autoset_java_env = TRUE,
-    verbose = verbose
+    quiet = quiet
   )
   return(invisible(NULL))
 }

@@ -4,10 +4,10 @@
 \alias{platform_detect}
 \title{Detect platform and architecture}
 \usage{
-platform_detect(verbose = FALSE)
+platform_detect(quiet = TRUE)
 }
 \arguments{
-\item{verbose}{Whether to print detailed messages. Defaults to FALSE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 A list of length 2 with the detected platform and architecture.

@@ -10,7 +10,7 @@ java_quick_install(
   project_path = NULL,
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  verbose = TRUE,
+  quiet = FALSE,
   temp_dir = FALSE
 )
 }
@@ -25,7 +25,7 @@ java_quick_install(
 
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
 
-\item{verbose}{Whether to print detailed messages. Defaults to \code{TRUE}.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 
 \item{temp_dir}{A logical. Whether the file should be saved in a temporary directory. Defaults to \code{FALSE}.}
 }

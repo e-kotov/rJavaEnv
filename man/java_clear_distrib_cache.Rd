@@ -5,7 +5,7 @@
 \title{Clear the Java distributions cache folder}
 \usage{
 java_clear_distrib_cache(
-  cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
+  cache_path = getOption("rJavaEnv.cache_path"),
   check = TRUE,
   delete_all = FALSE
 )

@@ -1,8 +1,8 @@
 #' List the contents of the Java installations cache folder
 #'
 #' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
-#' @param verbose Whether to print detailed messages. Defaults to FALSE.
 #' @param cache_path The cache directory to list. Defaults to the user-specific data directory. Not recommended to change.
+#' @inheritParams global_quiet_param
 #' @return A data frame or character vector with the contents of the cache directory.
 #'
 #' @examples
@@ -12,7 +12,7 @@
 #'
 java_list_installed_cache <- function(
     output = c("data.frame", "vector"),
-    verbose = FALSE,
+    quiet = TRUE,
     cache_path = getOption("rJavaEnv.cache_path")
 ) {
   output <- match.arg(output)
@@ -23,7 +23,7 @@ java_list_installed_cache <- function(
     return(character(0))
   }
 
-  if (verbose) cli::cli_inform("Contents of the Java installations cache folder:")
+  if (!quiet) cli::cli_inform("Contents of the Java installations cache folder:")
 
   # List directories up to the specified depth
   java_paths <- list.dirs(installed_cache_path, recursive = TRUE, full.names = TRUE)
@@ -84,7 +84,7 @@ java_clear_installed_cache <- function(
   }
 
   if (check) {
-    installations <- java_list_installed_cache(cache_path, verbose = TRUE, output = "vector")
+    installations <- java_list_installed_cache(cache_path, quiet = FALSE, output = "vector")
     if (length(installations) == 0) {
       cli::cli_inform("No Java installations found to clear.")
       return(invisible(NULL))

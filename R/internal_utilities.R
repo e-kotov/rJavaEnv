@@ -1,10 +1,10 @@
 #' Detect platform and architecture
 #'
+#' @inheritParams global_quiet_param
 #' @keywords internal
-#' @param verbose Whether to print detailed messages. Defaults to FALSE.
 #' @return A list of length 2 with the detected platform and architecture.
 #'
-platform_detect <- function(verbose = FALSE) {
+platform_detect <- function(quiet = TRUE) {
   sys_info <- tolower(Sys.info())
 
   os <- switch(sys_info["sysname"],
@@ -24,7 +24,7 @@ platform_detect <- function(verbose = FALSE) {
     stop(cli::cli_abort("Unsupported architecture"))
   )
 
-  if (verbose) {
+  if (isFALSE(quiet)) {
     cli::cli_inform("Detected platform: {os}")
     cli::cli_inform("Detected architecture: {arch}")
   }

@@ -4,7 +4,7 @@
 #'
 #' @param java_home The path to the desired `JAVA_HOME`.
 #' @param where Where to set the `JAVA_HOME`: "session", "project", or "both". Defaults to "session" and only updates the paths in the current R session. When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.
-#' @param verbose Whether to print detailed messages. Defaults to TRUE.
+#' @inheritParams global_quiet_param
 #' @inheritParams java_install
 #' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
 #' @export
@@ -36,19 +36,19 @@ java_env_set <- function(
   where = c("session", "both", "project"),
   java_home,
   project_path = NULL,
-  verbose = TRUE
+  quiet = FALSE
 ) {
   rje_consent_check()
 
   where <- match.arg(where)
   checkmate::assertString(java_home)
-  checkmate::assertFlag(verbose)
+  checkmate::assertFlag(quiet)
 
 
 
   if (where %in% c("session", "both")) {
     java_env_set_session(java_home)
-    if (verbose) {
+    if (!quiet) {
       cli::cli_alert_success(c(
         "Current R Session: ",
         "JAVA_HOME and PATH set to {.path {java_home}}"
@@ -64,7 +64,7 @@ java_env_set <- function(
     
     java_env_set_rprofile(java_home, project_path = project_path)
     
-    if (verbose) {
+    if (!quiet) {
       cli::cli_alert_success(c(
         "Current R Project/Working Directory: ",
         "JAVA_HOME and PATH set to '{.path {java_home}}' in .Rprofile at '{.path {project_path}}'"
@@ -100,7 +100,7 @@ java_env_set_rprofile <- function(
   java_home,
   project_path = NULL
 ) {
-  java_env_unset(verbose = FALSE)
+  java_env_unset(quiet = TRUE)
 
   # Resolve the project path
   # consistent with renv behavior
@@ -144,13 +144,16 @@ java_env_set_rprofile <- function(
 #' it cannot be uninitialized unless the current R session is restarted.
 #'
 #' @param java_home The path to the desired JAVA_HOME. If NULL, uses the current JAVA_HOME environment variable.
-#' @param verbose Whether to print detailed messages. Defaults to TRUE.
+#' @inheritParams global_quiet_param
 #' @return TRUE if successful, otherwise FALSE.
 #' @examples
 #' java_check_version_rjava()
 #'
 #' @export
-java_check_version_rjava <- function(java_home = NULL, verbose = TRUE) {
+java_check_version_rjava <- function(
+  java_home = NULL,
+  quiet = FALSE
+) {
   # Check if rJava is installed
   if (!requireNamespace("rJava", quietly = TRUE)) {
     cli::cli_alert_danger("rJava package is not installed. You need to install rJava to use this function to check if rJava-based packages will work with the specified Java version.")
@@ -160,17 +163,17 @@ java_check_version_rjava <- function(java_home = NULL, verbose = TRUE) {
   # Determine JAVA_HOME if not specified by the user
   if (is.null(java_home)) {
     current_java_home <- Sys.getenv("JAVA_HOME")
-    if (verbose) {
+    if (!quiet) {
       if (current_java_home == "") {
-        if (verbose) cli::cli_inform("JAVA_HOME is not set.")
+        cli::cli_inform("JAVA_HOME is not set.")
       } else {
-        if (verbose) cli::cli_inform("Using current session's JAVA_HOME: {.path {current_java_home}}")
+        cli::cli_inform("Using current session's JAVA_HOME: {.path {current_java_home}}")
       }
     }
     java_home <- current_java_home
   } else {
-    if (verbose) {
-      if (verbose) cli::cli_inform("Using user-specified JAVA_HOME: {.path {java_home}}")
+    if (!quiet) {
+      cli::cli_inform("Using user-specified JAVA_HOME: {.path {java_home}}")
     }
   }
 
@@ -205,7 +208,7 @@ java_check_version_rjava <- function(java_home = NULL, verbose = TRUE) {
     } else {
       output <- paste(output, collapse = "\n")
       java_version <- sub(".*Java version: \"([^\"]+)\".*", "\\1", output)
-      if (verbose) {
+      if (!quiet) {
         if (is.null(java_home)) {
           cli::cli_inform("With the current session's JAVA_HOME {output}")
         } else {
@@ -217,7 +220,7 @@ java_check_version_rjava <- function(java_home = NULL, verbose = TRUE) {
       return(TRUE)
     }
   } else {
-    if (verbose) cli::cli_alert_danger("Failed to retrieve Java version.")
+    if (!quiet) cli::cli_alert_danger("Failed to retrieve Java version.")
   }
 }
 
@@ -231,7 +234,9 @@ java_check_version_rjava <- function(java_home = NULL, verbose = TRUE) {
 #' @examples
 #' java_check_version_cmd()
 #'
-java_check_version_cmd <- function(java_home = NULL) {
+java_check_version_cmd <- function(
+  java_home = NULL
+) {
   # Backup the current JAVA_HOME
   old_java_home <- Sys.getenv("JAVA_HOME")
 
@@ -311,8 +316,8 @@ java_check_version_system <- function() {
 
 #' Unset the JAVA_HOME and PATH environment variables in the project .Rprofile
 #'
-#' @param verbose Whether to print detailed messages. Defaults to TRUE.
 #' @inheritParams java_install
+#' @inheritParams global_quiet_param
 #' @export
 #' @return Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.
 #' @examples
@@ -322,7 +327,7 @@ java_check_version_system <- function() {
 #' }
 java_env_unset <- function(
     project_path = NULL,
-    verbose = TRUE
+    quiet = FALSE
 ) {
   rje_consent_check()
   
@@ -336,11 +341,11 @@ java_env_unset <- function(
     rprofile_content <- readLines(rprofile_path, warn = FALSE)
     rprofile_content <- rprofile_content[!grepl("# rJavaEnv", rprofile_content)]
     writeLines(rprofile_content, con = rprofile_path)
-    if (verbose) {
+    if (!quiet) {
       cli::cli_inform("Removed JAVA_HOME settings from .Rprofile in '{.path {rprofile_path}}'")
     }
   } else {
-    if (verbose) {
+    if (!quiet) {
       cli::cli_alert_warning("No .Rprofile found in the project directory: {.path project_path}")
     }
   }

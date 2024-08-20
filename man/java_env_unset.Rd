@@ -4,12 +4,12 @@
 \alias{java_env_unset}
 \title{Unset the JAVA_HOME and PATH environment variables in the project .Rprofile}
 \usage{
-java_env_unset(project_path = NULL, verbose = TRUE)
+java_env_unset(project_path = NULL, quiet = FALSE)
 }
 \arguments{
 \item{project_path}{The project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
 
-\item{verbose}{Whether to print detailed messages. Defaults to TRUE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.

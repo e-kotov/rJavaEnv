@@ -2,13 +2,13 @@
 #'
 #' @param project_path The project directory to list. Defaults to the current working directory.
 #' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
-#' @param verbose Whether to print detailed messages. Defaults to FALSE.
+#' @inheritParams global_quiet_param
 #' @return A data frame or character vector with the symlinked Java versions in the project directory.
 #'
 java_list_in_project <- function(
     project_path = NULL,
     output = c("data.frame", "vector"),
-    verbose = FALSE
+    quiet = TRUE
   ) {
   
   # Resolve the project path
@@ -37,7 +37,7 @@ java_list_in_project <- function(
     return(invisible(NULL))
   }
   
-  if (verbose) cli::cli_inform("Contents of the Java symlinks in the project folder:")
+  if (!quiet) cli::cli_inform("Contents of the Java symlinks in the project folder:")
   
   if (output == "vector") {
     return(unname(java_paths))

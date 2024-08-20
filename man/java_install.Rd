@@ -8,7 +8,7 @@ java_install(
   java_distrib_path,
   project_path = NULL,
   autoset_java_env = TRUE,
-  verbose = TRUE
+  quite = FALSE
 )
 }
 \arguments{
@@ -17,8 +17,6 @@ java_install(
 \item{project_path}{The project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
 
 \item{autoset_java_env}{Whether to set the \code{JAVA_HOME} and \code{PATH} environment variables to the installed Java directory. Defaults to \code{TRUE}.}
-
-\item{verbose}{Whether to print detailed messages. Defaults to \code{TRUE}.}
 }
 \value{
 The path to the installed Java directory.

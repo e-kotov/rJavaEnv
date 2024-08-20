@@ -7,7 +7,7 @@
 java_list(
   type = c("project", "installed", "distrib"),
   output = c("data.frame", "vector"),
-  verbose = FALSE,
+  quiet = TRUE,
   target_dir = NULL
 )
 }
@@ -16,7 +16,7 @@ java_list(
 
 \item{output}{The format of the output: "data.frame" or "vector". Defaults to "data.frame".}
 
-\item{verbose}{Whether to print detailed messages. Defaults to FALSE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 
 \item{target_dir}{The cache directory to list. Defaults to the user-specific data directory for "distrib" and "installed", and the current working directory for "project".}
 }

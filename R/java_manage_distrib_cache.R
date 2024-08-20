@@ -3,6 +3,7 @@
 #' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
 #' @inheritParams java_list
 #' @inheritParams java_download
+#' @inheritParams global_quiet_param
 #' @return A character vector with the contents of the cache directory.
 #'
 #' @examples
@@ -13,7 +14,7 @@
 java_list_distrib_cache <- function(
   cache_path = getOption("rJavaEnv.cache_path"),
   output = c("data.frame", "vector"),
-  verbose = FALSE
+  quiet = TRUE
 ) {
   output <- match.arg(output)
 
@@ -23,7 +24,7 @@ java_list_distrib_cache <- function(
     cli::cli_alert_danger("Path does not exist")
     return(character(0))
   }
-  if (verbose) cli::cli_inform("Contents of the Java distributions cache folder:")
+  if (!quiet) cli::cli_inform("Contents of the Java distributions cache folder:")
 
   java_distrs <- grep(
     "md5$",

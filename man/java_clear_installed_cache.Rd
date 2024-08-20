@@ -7,7 +7,7 @@
 java_clear_installed_cache(
   check = TRUE,
   delete_all = FALSE,
-  cache_path = tools::R_user_dir("rJavaEnv", which = "cache")
+  cache_path = getOption("rJavaEnv.cache_path")
 )
 }
 \arguments{

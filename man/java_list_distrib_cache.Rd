@@ -5,9 +5,9 @@
 \title{List the contents of the Java distributions cache folder}
 \usage{
 java_list_distrib_cache(
-  cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
+  cache_path = getOption("rJavaEnv.cache_path"),
   output = c("data.frame", "vector"),
-  verbose = FALSE
+  quiet = TRUE
 )
 }
 \arguments{
@@ -15,7 +15,7 @@ java_list_distrib_cache(
 
 \item{output}{The format of the output: "data.frame" or "vector". Defaults to "data.frame".}
 
-\item{verbose}{Whether to print detailed messages. Defaults to FALSE.}
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 A character vector with the contents of the cache directory.
