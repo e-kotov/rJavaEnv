@@ -15,7 +15,7 @@ use \code{rJavaEnv::rje_consent(provided = TRUE)}. Default is \code{FALSE}.}
 \code{TRUE} if consent is given, otherwise an error is raised.
 }
 \description{
-Get user consent for rJavaEnv to write and update files on the filesystem.
+Get user consent for rJavaEnv to write and update files on the file system.
 rJavaEnv needs permission to manage files in your project and cache directories
 to function correctly.
 }
