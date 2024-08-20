@@ -20,3 +20,4 @@
 ^vignettes/data-for-vignettes$
 ^vignettes/bibliography.bib$
 ^vignettes/media$
+^CRAN-SUBMISSION$
