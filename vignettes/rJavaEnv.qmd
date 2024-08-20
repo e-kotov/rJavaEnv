@@ -40,7 +40,7 @@ install.packages('rJavaEnv',
 
 #### **Quick Install `Java` JDK**
 
-Assume your project directory is currently in a temporary directory (feel free to skip that, if you are already working in a desired project directory wehre you would like to install `Java`):
+Assume your project directory is currently in a temporary directory. Feel free to skip that, if you are already working in a desired project directory wehre you would like to install `Java`. In the example outputs below you will see paths that point to a temporary directory, but in a real project you would see your project directory instead.
 
 ```{r}
 project_dir <- tempdir()
