@@ -10,8 +10,12 @@
 #'
 #' @examples
 #' \dontrun{
+#' 
+#' # set cache dir to temporary directory
+#' options(rJavaEnv.cache_path = tempdir())
+#' 
 #' # download, install and autoset environmnet variables for Java 17
-#' java_17_distrib <- java_download(version = "17", distribution = "Corretto", temp_dir = TRUE)
+#' java_17_distrib <- java_download(version = "17", distribution = "Corretto")
 #' java_install(java_distrib_path = java_17_distrib, project_path = tempdir())
 #' }
 java_install <- function(
@@ -45,7 +49,7 @@ java_install <- function(
   if (is.na(platform)) stop(cli::cli_abort("Unable to detect platform from filename.", .envir = environment()))
 
   # Create the installation path in the package cache
-  cache_path <- tools::R_user_dir("rJavaEnv", which = "cache")
+  cache_path <- getOption("rJavaEnv.cache_path")
   installed_path <- file.path(cache_path, "installed", platform, arch, version)
 
   # Check if the distribution has already been unpacked

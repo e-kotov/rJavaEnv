@@ -79,7 +79,7 @@ java_clear <- function(
     if (type == "project") {
       target_dir <- getwd()
     } else {
-      target_dir <- tools::R_user_dir("rJavaEnv", which = "cache")
+      target_dir <- getOption("rJavaEnv.cache_path")
     }
   }
 

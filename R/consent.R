@@ -87,7 +87,7 @@ rje_consent_check <- function() {
   if (getOption("rJavaEnv.consent", FALSE)) {
     return(TRUE)
   }
-  if (dir.exists(tools::R_user_dir("rJavaEnv", which = "cache"))){
+  if (dir.exists(getOption("rJavaEnv.cache_path"))) {
     return(TRUE)
   }
 
