@@ -166,7 +166,7 @@ java_22_distr <- java_download(22)
 
 Now that we have downloaded the `Java` distributions, we can install any one of them into the project. Installation in the context of `rJavaEnv` means extracting the distribution into the `installed` cache folder (which is in the same root cache directory as the zip archives of the distributions), and linking the files (via symlinks in `macOS` and `Linux`, and junctions in `Windows`[^1]). If we set the `autoset_java_env` argument to `FALSE` we will need to set the `JAVA_HOME` and `PATH` environment variables manually.
 
-[^1]: In Windows, it is sometimes impossible to create junctions for files that are located on different drives. Foe example, if `rJavaEnv` is installed on a `C:` drive, and the `Java` distribution cache is in the same drive in user folder (which it isually is), the Java home folder cannot be linked using junctions into a project folder that is, for example, on drive `D:`. In this case, the `Java` installation will have to be copied into the project folder, which will take some time. This behaviour is the same `renv`'s for R packages and is an operating system limitation.
+[^1]: In Windows, it is sometimes impossible to create junctions for files and folders. In this case, the `Java` installation will have to be copied into the project folder, which will take some time. This behaviour is the same `renv`'s for R packages and is an operating system limitation.
 
 
 ```{r}
