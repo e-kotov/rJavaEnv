@@ -105,6 +105,9 @@ java_install <- function(
   if (.Platform$OS.type == "windows") {
     try(
       {
+        if( file.exists(project_version_path) ){
+          unlink(project_version_path, recursive = TRUE)
+        }
         cmd <- sprintf("mklink /J \"%s\" \"%s\"", gsub("/", "\\\\", project_version_path), gsub("/", "\\\\", installed_path))
         result <- tryCatch(
           system2("cmd.exe", args = c("/c", cmd), stdout = TRUE, stderr = TRUE),
@@ -132,8 +135,8 @@ java_install <- function(
   } else {
     tryCatch(
       {
-        if( file.exists(installed_path) ){
-          unlink(project_version_path)
+        if( file.exists(project_version_path) ){
+          unlink(project_version_path, recursive = TRUE)
         }
         file.symlink(installed_path, project_version_path)
       },
