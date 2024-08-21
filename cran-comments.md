@@ -2,6 +2,10 @@
 
 This is a resubmission. In this version I have:
 
+* Fixed removed the broken link in URI: vignettes/rJavaEnv.Rmd from: README.md
+
+This is a resubmission. In this version I have:
+
 * As per CRAN reviewer's request, added single quotes to all package, software and API names in the package title and package description.
 
 * As per CRAN reviewer's request, revised the logic of the functions, examples and vignettes to not write to the user's home filespace by default. All examples use `tempdir()`. Also, like 'renv' ( https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86 ), the package checks if user has previously consented to writing to the their home space on every run of a function that might result in writing something to the user's home filespace.
