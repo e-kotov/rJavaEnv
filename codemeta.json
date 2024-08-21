@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/e-kotov/rJavaEnv",
   "issueTracker": "https://github.com/e-kotov/rJavaEnv/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -146,7 +146,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "383.482KB",
+  "fileSize": "383.535KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",

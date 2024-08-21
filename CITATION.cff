@@ -8,7 +8,7 @@ message: 'To cite package "rJavaEnv" in publications use:'
 type: software
 license: MIT
 title: 'rJavaEnv: ''Java'' Environments for R Projects'
-version: 0.1.1
+version: 0.1.2
 doi: 10.5281/zenodo.11403010
 abstract: 'The ''rJavaEnv'' package addresses common issues with ''Java'' environment
   management in ''R'' for users of ''Java''/''rJava''-dependent ''R'' packages such

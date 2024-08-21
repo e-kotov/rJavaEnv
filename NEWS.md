@@ -1,3 +1,7 @@
+# rJavaEnv 0.1.2
+
+* Fixed broken links in README.md
+
 # rJavaEnv 0.1.1
 
 * Improved documentation
