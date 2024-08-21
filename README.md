@@ -39,10 +39,11 @@ user’s consent). Similar to what `renv` does for `R` packages,
 `rJavaEnv` allows different `Java` versions to be used across different
 projects, but can also be configured to allow multiple versions within
 the same project (e.g. with the help of `{targets}` package). **Note:
-there are a few extra steps for 'Linux' users, who don’t have any 'Java'
-previously installed in their systemm, and who prefer package
-installation from source, rather then installing binaries from 'Posit
-Package Manager'. See [documentation](vignettes/rJavaEnv.Rmd#note-linux)
+there are a few extra steps for ‘Linux’ users, who don’t have any ‘Java’
+previously installed in their system, and who prefer package
+installation from source, rather then installing binaries from ‘Posit
+Package Manager’. See
+[documentation](https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html#note-linux)
 for details.**
 
 ``` r
@@ -75,7 +76,7 @@ glue::glue('<script type="application/ld+json">
         "familyName": "Kotov",
         "givenName": "Egor"
       },
-      "description": "The 'rJavaEnv' package addresses common issues with 'Java' environment management in 'R' for users of 'Java'/'rJava'-dependent 'R' packages such as 'r5r', 'opentripplanner', 'xlsx', 'openNLP', 'rWeka', 'RJDBC', 'tabulapdf', and many more. It resolves common problems like 'Java' not found, 'Java' version conflicts, missing 'Java' installations, and the inability to install 'Java' due to lack of administrative privileges. 'rJavaEnv' automates the download, installation, and setup of the 'Java Development Kit' ('JDK') on a per-project basis by setting the relevant 'JAVA_HOME' in the current 'R' session or the current working directory (via '.Rprofile', with the user's consent). Similar to what 'renv' does for 'R' packages, 'rJavaEnv' allows different 'Java' versions to be used across different projects, but can also be configured to allow multiple versions within the same project (e.g. with the help of 'targets' package). Note: there are a few extra steps for 'Linux' users, who don't have any 'Java' previously installed in their systemm, and who prefer package installation from source, rather then installing binaries from 'Posit Package Manager'. See documentation for details.",
+      "description": "The 'rJavaEnv' package addresses common issues with 'Java' environment management in 'R' for users of 'Java'/'rJava'-dependent 'R' packages such as 'r5r', 'opentripplanner', 'xlsx', 'openNLP', 'rWeka', 'RJDBC', 'tabulapdf', and many more. It resolves common problems like 'Java' not found, 'Java' version conflicts, missing 'Java' installations, and the inability to install 'Java' due to lack of administrative privileges. 'rJavaEnv' automates the download, installation, and setup of the 'Java Development Kit' ('JDK') on a per-project basis by setting the relevant 'JAVA_HOME' in the current 'R' session or the current working directory (via '.Rprofile', with the user's consent). Similar to what 'renv' does for 'R' packages, 'rJavaEnv' allows different 'Java' versions to be used across different projects, but can also be configured to allow multiple versions within the same project (e.g. with the help of 'targets' package). Note: there are a few extra steps for 'Linux' users, who don't have any 'Java' previously installed in their system, and who prefer package installation from source, rather then installing binaries from 'Posit Package Manager'. See documentation for details.",
       "license": "https://spdx.org/licenses/MIT",
       "name": "rJavaEnv: 'Java' Environments for R Projects",
       "programmingLanguage": {
@@ -84,7 +85,7 @@ glue::glue('<script type="application/ld+json">
         "url": "https://r-project.org"
       },
       "runtimePlatform": "R version 4.4.1 (2024-06-14)",
-      "version": "0.1.0"
+      "version": "0.1.1"
     },
     {
       "id": "https://doi.org/10.5281/zenodo.11403010",
@@ -130,27 +131,27 @@ rJavaEnv::java_quick_install(version = 21)
 
 This will:
 
-- download Java 21 distribution compatible with the current operating
+- download `Java` 21 distribution compatible with the current operating
   system and processor architecture into a local cache folder;
 
-- extract the downloaded Java distribution into another cache folder;
+- extract the downloaded `Java` distribution into another cache folder;
 
 - create a symbolic link (for macOS and Linux) or junction (for Windows,
   if that fails, just copies the files)
   **rjavaenv/`platform`/`processor_architecture`/`java_version`** in the
   current directory/project to point to the cached installation;
 
-- set the current session’s JAVA_HOME and PATH environment variables to
-  point to the installed (symlinked) Java distribution;
+- set the current session’s `JAVA_HOME` and `PATH` environment variables
+  to point to the installed (symlinked) `Java` distribution;
 
-- add code to .Rprofile file in the current directory/project to set
-  JAVA_HOME and PATH environment variables when the project is opened in
-  RStudio.
+- add code to `.Rprofile` file in the current directory/project to set
+  `JAVA_HOME` and `PATH` environment variables when the project is
+  opened in RStudio.
 
-As part of normal operation, rJavaEnv will update the JAVA_HOME and PATH
-environment variables in the current R session, the local cache in your
-R package library, and the `.Rprofile` file in the project/current
-working directory. In line with [CRAN
+As part of normal operation, `rJavaEnv` will update the `JAVA_HOME` and
+`PATH` environment variables in the current R session, the local cache
+in your R package library, and the `.Rprofile` file in the
+project/current working directory. In line with [CRAN
 policies](https://cran.r-project.org/web/packages/policies.html),
 explicit user consent is required before making these changes.
 Therefore, the first time you run any function from `rJavaEnv` that
@@ -176,29 +177,29 @@ The package has several core functions:
       target="_blank"><code>opentripplanner</code></a>, that performs
       Java calls using command line.
 3.  `java_version_check_rjava()`
-    - Checks the installed Java version using `rJava` in a separate R
+    - Checks the installed `Java` version using `rJava` in a separate R
       session. For `rJava`-dependent packages such as
       <a href="https://github.com/ipeaGIT/r5r"
       target="_blank"><code>r5r</code></a>.
 4.  `java_download()`
-    - Downloads a specified version and distribution of Java.
+    - Downloads a specified version and distribution of `Java`.
 5.  `java_install()`
-    - Installs a Java distribution file into current (or user-specified)
-      project directory.
+    - Installs a `Java` distribution file into current (or
+      user-specified) project directory.
 6.  `java_env_set()`
-    - Sets the JAVA_HOME and PATH environment variables to a given path
-      in current R session and/or in the .Rprofile file in the project
-      directory.
+    - Sets the `JAVA_HOME` and `PATH` environment variables to a given
+      path in current R session and/or in the `.Rprofile` file in the
+      project directory.
 7.  `java_env_unset()`
-    - Remove the JAVA_HOME and PATH environment variables from the
-      .Rprofile file in the project directory (but not in the current R
-      session, please restart the session so that R picks up the system
-      Java).
+    - Remove the `JAVA_HOME` and `PATH` environment variables from the
+      `.Rrpofile` file in the project directory (but not in the current
+      R session, please restart the session so that R picks up the
+      system Java).
 8.  `java_list()`
-    - Lists all or some Java versions linked in the current project (or
-      cached distributions or installations).
+    - Lists all or some `Java` versions linked in the current project
+      (or cached distributions or installations).
 9.  `java_clear()`
-    - Removes all or some Java versions linked in the current project
+    - Removes all or some `Java` versions linked in the current project
       (or cached distributions or installations).
 
 See more details on all the functions in the
@@ -211,30 +212,30 @@ in progress).
 
 ## Limitations
 
-Currently, `rJavaEnv` only supports major Java versions such as 8, 11,
+Currently, `rJavaEnv` only supports major `Java` versions such as 8, 11,
 17, 21, 22. The download and install functions ignore the minor version
-of the Java distribution and just downloads the latest stable subversion
-of the specified major version. This is done to simplify the process and
-avoid the need to update the package every time a new minor version of
-Java is released. For most users this should be sufficient, but this is
-substandard for full reproducibility.
+of the `Java` distribution and just downloads the latest stable
+subversion of the specified major version. This is done to simplify the
+process and avoid the need to update the package every time a new minor
+version of `Java` is released. For most users this should be sufficient,
+but this is substandard for full reproducibility.
 
-The main limitation is that if you want to switch to another Java
+The main limitation is that if you want to switch to another `Java`
 environment, you will most likely have to restart the current R session
-and set the JAVA_HOME and PATH environment variables to the desired Java
-environment using `rJavaEnv::java_env_set()`. This cannot be done
+and set the `JAVA_HOME` and `PATH` environment variables to the desired
+`Java` environment using `rJavaEnv::java_env_set()`. This cannot be done
 dynamically within the same R session due to the way Java is initialized
 in R, particularly with the `rJava`-dependent packages such as
 <a href="https://github.com/ipeaGIT/r5r"
 target="_blank"><code>r5r</code></a>. With packages like
 <a href="https://github.com/ropensci/opentripplanner"
-target="_blank"><code>opentripplanner</code></a>, that performs Java
-calls using command line, you can switch Java environments dynamically
+target="_blank"><code>opentripplanner</code></a>, that performs `Java`
+calls using command line, you can switch `Java` environments dynamically
 within the same R session as much as you want.
 
-Therefore, if you need to use R packages that depend on different Java
+Therefore, if you need to use R packages that depend on different `Java`
 versions within the same project, you will have to create separate R
-scripts for each Java environment and run them in separate R sessions.
+scripts for each `Java` environment and run them in separate R sessions.
 One effective way of doing this is to use the
 <a href="https://github.com/r-lib/callr"
 target="_blank"><code>callr</code></a> package to run R scripts in
@@ -246,27 +247,27 @@ being run in separate R sessions. To use `rJavaEnv` with `targets`, you
 will need to download and install several Java environments using
 `rJavaEnv::java_download()` and `rJavaEnv::java_install()` and set the
 relevant path with `rJavaEnv::java_env_set()` at the beginning of each
-function that requires a certain Java version.
+function that requires a certain `Java` version.
 
 ## Future work
 
 The future work includes:
 
-- Add support for more Java distributions and versions
+- Add support for more `Java` distributions and versions
 
 - Take care of <a
   href="https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r"
   target="_blank"><code>R CMD javareconf</code></a>
 
-- Possibly add support for specifying Java version beyond the major
+- Possibly add support for specifying `Java` version beyond the major
   version
 
-- Possibly allow downloading several Java distributions in one function
-  call, e.g. different major versions of the same 'flavour' or different
-  'flavours' of the same major version
+- Possibly allow downloading several `Java` distributions in one
+  function call, e.g. different major versions of the same ‘flavour’ or
+  different ‘flavours’ of the same major version
 
-- Possibly add automation to get the Java that is required by specific
-  Java-dependent R packages
+- Possibly add automation to get the `Java` that is required by specific
+  `Java`-dependent R packages
 
 I am open to suggestions and contributions, welcome to
 <a href="https://github.com/e-kotov/rJavaEnv/issues"
@@ -286,7 +287,7 @@ logo also contains the original R logo.
 
 ## Citation
 
-To cite package `rJavaEnv` in publications use:
+To cite package ‘rJavaEnv’ in publications use:
 
 Kotov E (2024). *rJavaEnv: Java Environments for R Projects*.
 doi:10.5281/zenodo.11403010 <https://doi.org/10.5281/zenodo.11403010>,
