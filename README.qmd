@@ -36,7 +36,7 @@ The `{rJavaEnv}` package addresses common issues with `Java` environment managem
 
 
 
-```{r results="asis", eval = !is_html, include = !is_html}
+```{r results="asis", eval = !is_html, include = !is_html, include = FALSE}
 glue::glue('<script type="application/ld+json">
       {glue::glue_collapse(readLines("inst/schemaorg.json"), sep = "\n")}
     </script>')
