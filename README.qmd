@@ -44,6 +44,12 @@ glue::glue('<script type="application/ld+json">
 
 ## Install
 
+Install from CRAN:
+
+```r
+install.packages('rJavaEnv')
+```
+
 Install latest release from **R-multiverse**:
 
 ```r
@@ -52,7 +58,7 @@ install.packages('rJavaEnv',
 )
 ```
 
-You can install the development version of `rJavaEnv` from GitHub:
+You can also install the development version of `rJavaEnv` from GitHub:
 
 ```r
 if (!requireNamespace("remotes", quietly = TRUE)) {

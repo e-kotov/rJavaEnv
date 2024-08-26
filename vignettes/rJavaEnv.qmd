@@ -21,7 +21,7 @@ This guide will walk you through downloading, installing, and managing `Java` en
 
 #### **Install `rJavaEnv`**
 
-Install `rJavaEnv` from CRAN (once available):
+Install `rJavaEnv` from CRAN:
 
 
 ```{r}
