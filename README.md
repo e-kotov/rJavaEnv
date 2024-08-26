@@ -241,7 +241,8 @@ logo also contains the original R logo.
 To cite package ‘rJavaEnv’ in publications use:
 
 Kotov E (2024). *rJavaEnv: Java Environments for R Projects*.
-doi:10.5281/zenodo.11403010 <https://doi.org/10.5281/zenodo.11403010>,
+doi:10.32614/CRAN.package.rJavaEnv
+<https://doi.org/10.32614/CRAN.package.rJavaEnv>,
 <https://github.com/e-kotov/rJavaEnv>.
 
 BibTeX:
@@ -251,5 +252,5 @@ BibTeX:
       author = {Egor Kotov},
       year = {2024},
       url = {https://github.com/e-kotov/rJavaEnv},
-      doi = {10.5281/zenodo.11403010},
+      doi = {10.32614/CRAN.package.rJavaEnv},
     }
