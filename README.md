@@ -15,10 +15,11 @@ alt="Lifecycle: stable" /></a>
 <a href="https://CRAN.R-project.org/package=rJavaEnv"
 target="_blank"><img
 src="https://www.r-pkg.org/badges/version/rJavaEnv.png"
-alt="CRAN status" /></a> [![CRAN/METACRAN
-Version](https://www.r-pkg.org/badges/version/rJavaEnv.png)](https://CRAN.R-project.org/package=rJavaEnv)
-[![CRAN/METACRAN Total
-downloads](https://cranlogs.r-pkg.org/badges/grand-total/rJavaEnv?color=blue.png)](https://CRAN.R-project.org/package=rJavaEnv)
+alt="CRAN status" /></a>
+<a href="https://CRAN.R-project.org/package=rJavaEnv"
+target="_blank"><img
+src="https://cranlogs.r-pkg.org/badges/grand-total/rJavaEnv?color=blue.png"
+alt="CRAN/METACRAN Total downloads" /></a>
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
 <!-- [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck) -->
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
