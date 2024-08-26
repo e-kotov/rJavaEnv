@@ -19,7 +19,7 @@ alt="CRAN status" /></a>
 <a href="https://CRAN.R-project.org/package=rJavaEnv"
 target="_blank"><img
 src="https://cranlogs.r-pkg.org/badges/grand-total/rJavaEnv?color=blue.png"
-alt="CRAN/METACRAN Total downloads" /></a>
+alt="CRAN/METACRAN Total downloads" /></a>ges
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
 <!-- [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck) -->
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
@@ -28,11 +28,11 @@ alt="CRAN/METACRAN Total downloads" /></a>
 
 <!-- badges: end -->
 
-The `{rJavaEnv}` package addresses common issues with `Java` environment
-management in `R` for users of `Java`/`{rJava}`-dependent `R` packages
-such as `{r5r}`, `{opentripplanner}`, `{xlsx}`, `{openNLP}`, `{rWeka}`,
-`{RJDBC}`, `{tabulapdf}`, and many more. It resolves common problems
-like `Java` not found, `Java` version conflicts, missing `Java`
+Solve common issues with `Java` environment management in `R` for users
+of `Java`/`{rJava}`-dependent `R` packages such as `{r5r}`,
+`{opentripplanner}`, `{xlsx}`, `{openNLP}`, `{rWeka}`, `{RJDBC}`,
+`{tabulapdf}`, and many more. `{rJavaENv}` prevents common problems like
+`Java` not found, `Java` version conflicts, missing `Java`
 installations, and the inability to install `Java` due to lack of
 administrative privileges. `rJavaEnv` automates the download,
 installation, and setup of the `Java Development Kit` (`JDK`) on a
