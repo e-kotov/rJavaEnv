@@ -6,9 +6,8 @@
 
 <!-- badges: start -->
 
-[![Project Status: WIP – Initial development is in progress, but there
-has not yet been a stable, usable release suitable for the
-public.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Project Status:
+Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 <a href="https://lifecycle.r-lib.org/articles/stages.html#stable"
 target="_blank"><img
 src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg"
@@ -16,9 +15,12 @@ alt="Lifecycle: stable" /></a>
 <a href="https://CRAN.R-project.org/package=rJavaEnv"
 target="_blank"><img
 src="https://www.r-pkg.org/badges/version/rJavaEnv.png"
-alt="CRAN status" /></a>
+alt="CRAN status" /></a> [![CRAN/METACRAN
+Version](https://www.r-pkg.org/badges/version/rJavaEnv.png)](https://CRAN.R-project.org/package=rJavaEnv)
+[![CRAN/METACRAN Total
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/rJavaEnv?color=blue.png)](https://CRAN.R-project.org/package=rJavaEnv)
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
-[![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck)
+<!-- [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck) -->
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11403009.svg)](https://dx.doi.org/10.5281/zenodo.11403009)
@@ -48,6 +50,12 @@ for details.**
 
 ## Install
 
+Install from CRAN:
+
+``` r
+install.packages('rJavaEnv')
+```
+
 Install latest release from **R-multiverse**:
 
 ``` r
@@ -56,7 +64,7 @@ install.packages('rJavaEnv',
 )
 ```
 
-You can install the development version of `rJavaEnv` from GitHub:
+You can also install the development version of `rJavaEnv` from GitHub:
 
 ``` r
 if (!requireNamespace("remotes", quietly = TRUE)) {
