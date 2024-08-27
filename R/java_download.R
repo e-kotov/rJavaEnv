@@ -46,7 +46,6 @@ java_download <- function(
   valid_distributions <- names(java_urls)
   valid_platforms <- names(java_urls[[distribution]])
   valid_architectures <- names(java_urls[[distribution]][[platform]])
-  valid_versions <- 
 
   # Checks for the parameters
   checkmate::check_vector(version, len = 1)
