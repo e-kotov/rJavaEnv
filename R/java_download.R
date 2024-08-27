@@ -1,7 +1,7 @@
 #' Download a Java distribution
 #'
 #' @param version `Integer` or `character` vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", "11", "17", "21", "22", or 8, 11, 17, 21, or 22.
-#' @param distribution The Java distribution to download. If not specified, defaults to "Corretto".
+#' @param distribution The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \link{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.
 #' @param cache_path The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
 #' @param arch The architecture for which to download the Java distribution. Defaults to the current architecture.
@@ -40,7 +40,7 @@ java_download <- function(
     cache_path <- file.path(temp_dir, "rJavaEnv_cache")
   }
 
-  rje_consent_check()
+  # rje_consent_check() # disabling consent check for now
   java_urls <- java_urls_load()
 
   valid_distributions <- names(java_urls)

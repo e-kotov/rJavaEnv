@@ -9,7 +9,7 @@ java_env_set_rprofile(java_home, project_path = NULL)
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME.}
 
-\item{project_path}{The project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
+\item{project_path}{A \code{character} vector of length 1 containing the project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
 }
 \description{
 Update the .Rprofile file in the project directory

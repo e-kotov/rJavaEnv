@@ -15,11 +15,11 @@ java_quick_install(
 )
 }
 \arguments{
-\item{version}{The Java version to download. If not specified, defaults to the latest LTS version.}
+\item{version}{\code{Integer} or \code{character} vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", "11", "17", "21", "22", or 8, 11, 17, 21, or 22.}
 
-\item{distribution}{The Java distribution to download. If not specified, defaults to "Corretto".}
+\item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \link{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
 
-\item{project_path}{The project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
+\item{project_path}{A \code{character} vector of length 1 containing the project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
 
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 
