@@ -58,4 +58,5 @@ use_java <- function(
   if (!quiet) {
     cli::cli_alert_success("Java version {version} was set in the current R session")
   }
+  invisible()
 }
