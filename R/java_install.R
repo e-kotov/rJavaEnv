@@ -38,6 +38,19 @@ java_install <- function(
     quiet = quiet
   )
 
+  platforms <- c("windows", "linux", "macos")
+  architectures <- c("x64", "aarch64", "arm64")
+  java_versions <- getOption("rJavaEnv.valid_major_java_versions")
+
+  # Extract information from the file name
+  filename <- basename(java_distrib_path)
+  parts <- strsplit(gsub("\\.tar\\.gz|\\.zip", "", filename), "-")[[1]]
+
+  # Guess the version, architecture, and platform
+  version <- parts[vapply(parts, function(x) x %in% java_versions, logical(1))][1]
+  arch <- parts[vapply(parts, function(x) x %in% architectures, logical(1))][1]
+  platform <- parts[vapply(parts, function(x) x %in% platforms, logical(1))][1]
+
   # Create a symlink in the project directory
   project_version_path <- file.path(project_path, "rjavaenv", platform, arch, version)
   if (!dir.exists(dirname(project_version_path))) {

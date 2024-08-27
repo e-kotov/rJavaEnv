@@ -4,13 +4,15 @@
 \alias{java_check_version_cmd}
 \title{Check installed Java version using terminal commands}
 \usage{
-java_check_version_cmd(java_home = NULL)
+java_check_version_cmd(java_home = NULL, quiet = FALSE)
 }
 \arguments{
 \item{java_home}{Path to Java home directory. If NULL, the function uses the JAVA_HOME environment variable.}
+
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
-TRUE if successful, otherwise FALSE.
+A \code{character} vector of length 1 containing the major Java version.
 }
 \description{
 Check installed Java version using terminal commands

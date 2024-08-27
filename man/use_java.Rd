@@ -16,7 +16,7 @@ use_java(
 \arguments{
 \item{version}{\code{Integer} or \code{character} vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", "11", "17", "21", "22", or 8, 11, 17, 21, or 22.}
 
-\item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \link{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
+\item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
 
 \item{cache_path}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
 
@@ -30,7 +30,7 @@ use_java(
 \code{NULL}. Prints the message that Java was set in the current R session if \code{quiet} is set to \code{FALSE}.
 }
 \description{
-Using specified Java version, set the \code{JAVA_HOME} and \code{PATH} environment variables in the current R session. If Java distribtuion has not been downloaded yet, download it. If it was not installed into cache directory yet, install it there and then set the environment variables. This is intended as a quick and easy way to use different Java versions in R scripts that are in the same project, but require different Java versions. For example, one could use this in scripts that are called by \link{targets} package or \link{callr} package.
+Using specified Java version, set the \code{JAVA_HOME} and \code{PATH} environment variables in the current R session. If Java distribtuion has not been downloaded yet, download it. If it was not installed into cache directory yet, install it there and then set the environment variables. This is intended as a quick and easy way to use different Java versions in R scripts that are in the same project, but require different Java versions. For example, one could use this in scripts that are called by \verb{targets`` package or }callr` package.
 }
 \examples{
 \dontrun{

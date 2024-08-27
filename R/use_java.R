@@ -1,7 +1,7 @@
 #' Install specified Java version and set the `JAVA_HOME` and `PATH` environment variables in current R session
 #' 
 #' @description
-#' Using specified Java version, set the `JAVA_HOME` and `PATH` environment variables in the current R session. If Java distribtuion has not been downloaded yet, download it. If it was not installed into cache directory yet, install it there and then set the environment variables. This is intended as a quick and easy way to use different Java versions in R scripts that are in the same project, but require different Java versions. For example, one could use this in scripts that are called by \link{targets} package or \link{callr} package.
+#' Using specified Java version, set the `JAVA_HOME` and `PATH` environment variables in the current R session. If Java distribtuion has not been downloaded yet, download it. If it was not installed into cache directory yet, install it there and then set the environment variables. This is intended as a quick and easy way to use different Java versions in R scripts that are in the same project, but require different Java versions. For example, one could use this in scripts that are called by `targets`` package or `callr` package.
 #' @inheritParams java_download
 #' @inheritParams java_install
 #' @inheritParams global_quiet_param

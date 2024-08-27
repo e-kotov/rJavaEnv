@@ -137,17 +137,15 @@ java_env_set_rprofile <- function(
 
 #' Check Java Version with a Specified JAVA_HOME Using a Separate R Session
 #'
-#' This function sets the JAVA_HOME environment variable, initializes the JVM using rJava,
-#' and prints the Java version that would be used if the user sets the given JAVA_HOME
-#' in the current R session. This check is performed in a separate R session to avoid
-#' having to reload the current R session. The reason for this is that once Java is initialized in an R session,
-#' it cannot be uninitialized unless the current R session is restarted.
+#' This function sets the JAVA_HOME environment variable, initializes the JVM using rJava, and prints the Java version that would be used if the user sets the given JAVA_HOME in the current R session. This check is performed in a separate R session to avoid having to reload the current R session. The reason for this is that once Java is initialized in an R session, it cannot be uninitialized unless the current R session is restarted.
 #'
-#' @param java_home The path to the desired JAVA_HOME. If NULL, uses the current JAVA_HOME environment variable.
 #' @inheritParams global_quiet_param
-#' @return TRUE if successful, otherwise FALSE.
+#' @inheritParams java_check_version_cmd
+#' @return A `character` vector of length 1 containing the major Java version.
 #' @examples
+#' \dontrun{
 #' java_check_version_rjava()
+#' }
 #'
 #' @export
 java_check_version_rjava <- function(
@@ -214,20 +212,28 @@ java_check_version_rjava <- function(
         } else {
           cli::cli_inform("With the user-specified JAVA_HOME {output}")
         }
-      } else {
-        cli::cli_inform(c("OK", paste("Java version:", java_version)))
       }
-      return(TRUE)
     }
   } else {
     if (!quiet) cli::cli_alert_danger("Failed to retrieve Java version.")
   }
+
+  matches <- gregexpr('(?<=Java version: \\\")[0-9]{1,2}(?=\\.)', output, perl = TRUE)
+  major_java_ver <- regmatches(output, matches)[[1]]
+  major_java_ver
+
+  # fix 1 to 8, as Java 8 prints "1.8"
+  if (major_java_ver == "1") {
+    major_java_ver <- "8"
+  }
+
+  return(major_java_ver)
 }
 
 #' Check installed Java version using terminal commands
 #'
 #' @param java_home Path to Java home directory. If NULL, the function uses the JAVA_HOME environment variable.
-#'
+#' @inheritParams global_quiet_param
 #' @return A `character` vector of length 1 containing the major Java version.
 #' @export
 #'
@@ -235,7 +241,8 @@ java_check_version_rjava <- function(
 #' java_check_version_cmd()
 #'
 java_check_version_cmd <- function(
-  java_home = NULL
+  java_home = NULL,
+  quiet = FALSE
 ) {
   # Backup the current JAVA_HOME
   old_java_home <- Sys.getenv("JAVA_HOME")
@@ -248,13 +255,13 @@ java_check_version_cmd <- function(
   # Get JAVA_HOME again and check if it's set
   current_java_home <- Sys.getenv("JAVA_HOME")
   if (current_java_home == "") {
-    cli::cli_alert_warning("JAVA_HOME is not set.")
+    if (!quiet) cli::cli_alert_warning("JAVA_HOME is not set.")
     if (!is.null(java_home)) {
       Sys.setenv(JAVA_HOME = old_java_home)
     }
     return(FALSE)
   } else {
-    cli::cli_inform("JAVA_HOME: {.path {current_java_home}}")
+    if (!quiet) cli::cli_inform("JAVA_HOME: {.path {current_java_home}}")
   }
 
   # Check if java executable exists in the PATH
@@ -267,25 +274,27 @@ java_check_version_cmd <- function(
   }
 
   # Check Java path and version using system commands
-  success <- java_check_version_system()
+  major_java_version <- java_check_version_system(quiet = quiet)
 
   # restore original JAVA_HOME that was in the environment before the function was called
   if (!is.null(java_home)) {
     Sys.setenv(JAVA_HOME = old_java_home)
   }
 
-  return(success)
+  return(major_java_version)
 }
 
-#' Check and print Java path and version
+#' Check and print Java path and version using system commands
 #'
 #' This function checks the Java executable path and retrieves the Java version,
 #' then prints these details to the console.
-#'
+#' @inheritParams java_check_version_cmd
+#' @return A `character` vector of length 1 containing the major Java version.
 #' @keywords internal
-#'
-#' @return TRUE if successful, otherwise FALSE.
-java_check_version_system <- function() {
+#' 
+java_check_version_system <- function(
+  quiet
+) {
   which_java <- tryCatch(
     system2("which", args = "java", stdout = TRUE, stderr = TRUE),
     error = function(e) NULL
@@ -303,17 +312,24 @@ java_check_version_system <- function() {
     return(FALSE)
   }
 
-  cli::cli_inform(c(
-    "Java path: {.path {which_java}}",
-    "Java version:\n{.val {paste(java_ver, collapse = '\n')}}"
-  ))
+  if (!quiet) {
+    cli::cli_inform(c(
+      "Java path: {.path {which_java}}",
+      "Java version:\n{.val {paste(java_ver, collapse = '\n')}}"
+    ))
+  }
 
   # extract Java version
   java_ver_string <- java_ver[[1]]
   matches <- gregexpr('(?<=openjdk version \\\")[0-9]{1,2}(?=\\.)', java_ver_string, perl = TRUE)
   major_java_ver <- regmatches(java_ver_string, matches)[[1]]
   
-  invisible(major_java_ver)
+  # fix 1 to 8, as Java 8 prints "1.8"
+  if (major_java_ver == "1") {
+    major_java_ver <- "8"
+  }
+
+  return(major_java_ver)
 }
 
 
