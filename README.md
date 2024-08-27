@@ -23,7 +23,8 @@ alt="CRAN/METACRAN Total downloads" /></a>
 <!-- [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck) -->
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11403009.svg)](https://dx.doi.org/10.5281/zenodo.11403009)
+[![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg)](https://doi.org/10.32614/CRAN.package.rJavaEnv)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11403009.svg)](https://doi.org/10.5281/zenodo.11403009)
 
 <!-- badges: end -->
 
