@@ -21,9 +21,9 @@ java_unpack <- function(
     arch <- parts[parts %in% architectures][1]
     platform <- parts[parts %in% platforms][1]
 
-  if (is.na(version)) stop(cli::cli_abort("Unable to detect Java version from filename.", .envir = environment()))
-  if (is.na(arch)) stop(cli::cli_abort("Unable to detect architecture from filename.", .envir = environment()))
-  if (is.na(platform)) stop(cli::cli_abort("Unable to detect platform from filename.", .envir = environment()))
+  if (is.na(version)) cli::cli_abort("Unable to detect Java version from filename.")
+  if (is.na(arch)) cli::cli_abort("Unable to detect architecture from filename.")
+  if (is.na(platform)) cli::cli_abort("Unable to detect platform from filename.")
 
   # Create the installation path in the package cache
   cache_path <- getOption("rJavaEnv.cache_path")
