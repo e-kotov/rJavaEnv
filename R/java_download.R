@@ -1,6 +1,6 @@
 #' Download a Java distribution
 #'
-#' @param version The Java version to download. If not specified, defaults to the latest LTS version.
+#' @param version `Integer` or `character` vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", "11", "17", "21", "22", or 8, 11, 17, 21, or 22.
 #' @param distribution The Java distribution to download. If not specified, defaults to "Corretto".
 #' @param cache_path The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
@@ -46,12 +46,13 @@ java_download <- function(
   valid_distributions <- names(java_urls)
   valid_platforms <- names(java_urls[[distribution]])
   valid_architectures <- names(java_urls[[distribution]][[platform]])
+  valid_versions <- 
 
   # Checks for the parameters
-  checkmate::assert(
-    checkmate::check_integerish(version, lower = 1),
-    checkmate::check_character(version, pattern = "^[0-9]+$")
-  )
+  checkmate::check_vector(version, len = 1)
+  version <- as.character(version)
+  checkmate::assert_choice(version, getOption("rJavaEnv.valid_major_java_versions"))
+
   checkmate::assert_choice(distribution, valid_distributions)
 
   # Create the distrib subfolder within the destination directory
