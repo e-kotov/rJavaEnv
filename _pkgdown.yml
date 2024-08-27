@@ -19,7 +19,7 @@ template:
        </script>
   opengraph:
     image:
-      src: pkgdown/assets/images/card.png
+      src: man/figures/card.png
       alt: "rJavaEnv: Java Environments for R Projects. Install and manage Java environments using R"
     twitter:
       creator: "@EgorKotov"
@@ -32,4 +32,3 @@ authors:
 home:
   title: 'rJavaEnv: Java Environments for R Projects'
   description: 'Install and manage Java environments using R'
-
