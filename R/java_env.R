@@ -228,7 +228,7 @@ java_check_version_rjava <- function(
 #'
 #' @param java_home Path to Java home directory. If NULL, the function uses the JAVA_HOME environment variable.
 #'
-#' @return TRUE if successful, otherwise FALSE.
+#' @return A `character` vector of length 1 containing the major Java version.
 #' @export
 #'
 #' @examples
@@ -308,7 +308,12 @@ java_check_version_system <- function() {
     "Java version:\n{.val {paste(java_ver, collapse = '\n')}}"
   ))
 
-  invisible(TRUE)
+  # extract Java version
+  java_ver_string <- java_ver[[1]]
+  matches <- gregexpr('(?<=openjdk version \\\")[0-9]{1,2}(?=\\.)', java_ver_string, perl = TRUE)
+  major_java_ver <- regmatches(java_ver_string, matches)[[1]]
+  
+  invisible(major_java_ver)
 }
 
 
