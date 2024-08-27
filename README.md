@@ -13,12 +13,11 @@ target="_blank"><img
 src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg"
 alt="Lifecycle: stable" /></a>
 <a href="https://CRAN.R-project.org/package=rJavaEnv"
-target="_blank"><img
-src="https://www.r-pkg.org/badges/version/rJavaEnv.png"
+target="_blank"><img src="https://www.r-pkg.org/badges/version/rJavaEnv"
 alt="CRAN status" /></a>
 <a href="https://CRAN.R-project.org/package=rJavaEnv"
 target="_blank"><img
-src="https://cranlogs.r-pkg.org/badges/grand-total/rJavaEnv?color=blue.png"
+src="https://cranlogs.r-pkg.org/badges/grand-total/rJavaEnv?color=blue"
 alt="CRAN/METACRAN Total downloads" /></a>
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
 <!-- [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck) -->
