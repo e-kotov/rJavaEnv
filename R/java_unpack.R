@@ -17,9 +17,9 @@ java_unpack <- function(
   parts <- strsplit(gsub("\\.tar\\.gz|\\.zip", "", filename), "-")[[1]]
 
   # Guess the version, architecture, and platform
-  version <- parts[vapply(parts, function(x) x %in% java_versions, logical(1))][1]
-  arch <- parts[vapply(parts, function(x) x %in% architectures, logical(1))][1]
-  platform <- parts[vapply(parts, function(x) x %in% platforms, logical(1))][1]
+    version <- parts[parts %in% java_versions][1]
+    arch <- parts[parts %in% architectures][1]
+    platform <- parts[parts %in% platforms][1]
 
   if (is.na(version)) stop(cli::cli_abort("Unable to detect Java version from filename.", .envir = environment()))
   if (is.na(arch)) stop(cli::cli_abort("Unable to detect architecture from filename.", .envir = environment()))
