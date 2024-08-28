@@ -1,13 +1,15 @@
 ---
 title: "Why rJavaEnv: the landscape of 'Java'-dependent R packages"
-output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Why rJavaEnv: the landscape of 'Java'-dependent R packages}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 bibliography: [bibliography.bib]
-pkgdown:
-  as_is: true
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-overflow: wrap
 ---
 
 

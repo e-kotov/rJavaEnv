@@ -1,14 +1,16 @@
 ---
 title: "Multiple `Java` environments in one project with `targets` and `callr`"
-output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Multiple `Java` environments in one project with `targets` and `callr`}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 execute:
   eval: false
-pkgdown:
-  as_is: true
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-overflow: wrap
 ---
 
 If you need to use multiple `Java` distribution versions in a single project, you can use a handy shortcut function `use_java()` kindly [suggested by Hadley Wickham](https://github.com/e-kotov/rJavaEnv/issues/44){target='_blank'}.
