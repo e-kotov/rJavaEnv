@@ -23,7 +23,7 @@ alt="CRAN/METACRAN Total downloads" /></a>
 <!-- [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck) -->
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
 
-[![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg)](https://doi.org/10.32614/CRAN.package.rJavaEnv)
+[![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg)](https://doi.org/10.32614/CRAN.package.rJavaEnvi)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11403009.svg)](https://doi.org/10.5281/zenodo.11403009)
 
 <!-- badges: end -->
@@ -114,6 +114,19 @@ and/or to prevent interruptions in non-interactive mode, you can use the
 ``` r
 rje_consent(provided = TRUE)
 ```
+
+## Using `rJavaEnv` with `targets` and `callr`
+
+Just insert this line into the begining of any script that you run with
+`targets` or `callr`:
+
+``` r
+rJavaEnv::use_java("21")
+```
+
+More details are in the vignette [Multiple `Java` environments in one
+project with `targets` and
+`callr`](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.qmd).
 
 ## Functions Overview
 

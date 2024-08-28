@@ -1,8 +1,11 @@
 #' Install Java from a distribution file
 #'
-#' @param java_distrib_path The path to the Java distribution file.
-#' @param project_path The project directory where Java should be installed. If not specified or `NULL`, defaults to the current working directory.
-#' @param autoset_java_env Whether to set the `JAVA_HOME` and `PATH` environment variables to the installed Java directory. Defaults to `TRUE`.
+#' @description
+#' Unpack Java distribution file into cache directory and link the installation into a project directory, optionally setting the `JAVA_HOME` and `PATH` environment variables to the Java version that was just installed.
+#' 
+#' @param java_distrib_path A `character` vector of length 1 containing the path to the Java distribution file.
+#' @param project_path A `character` vector of length 1 containing the project directory where Java should be installed. If not specified or `NULL`, defaults to the current working directory.
+#' @param autoset_java_env A `logical` indicating whether to set the `JAVA_HOME` and `PATH` environment variables to the installed Java directory. Defaults to `TRUE`.
 #' @inheritParams java_download
 #' @inheritParams global_quiet_param
 #' @return The path to the installed Java directory.
@@ -24,15 +27,20 @@ java_install <- function(
   quiet = FALSE
 ) {
   rje_consent_check()
-  
-  platforms <- c("windows", "linux", "macos")
-  architectures <- c("x64", "aarch64", "arm64")
-  java_versions <- c("8", "11", "17", "21", "22")
 
   # Resolve the project path
   # consistent with renv behavior
   # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
+
+  installed_path <- java_unpack(
+    java_distrib_path = java_distrib_path,
+    quiet = quiet
+  )
+
+  platforms <- c("windows", "linux", "macos")
+  architectures <- c("x64", "aarch64", "arm64")
+  java_versions <- getOption("rJavaEnv.valid_major_java_versions")
 
   # Extract information from the file name
   filename <- basename(java_distrib_path)
@@ -42,61 +50,6 @@ java_install <- function(
   version <- parts[vapply(parts, function(x) x %in% java_versions, logical(1))][1]
   arch <- parts[vapply(parts, function(x) x %in% architectures, logical(1))][1]
   platform <- parts[vapply(parts, function(x) x %in% platforms, logical(1))][1]
-
-  if (is.na(version)) stop(cli::cli_abort("Unable to detect Java version from filename.", .envir = environment()))
-  if (is.na(arch)) stop(cli::cli_abort("Unable to detect architecture from filename.", .envir = environment()))
-  if (is.na(platform)) stop(cli::cli_abort("Unable to detect platform from filename.", .envir = environment()))
-
-  # Create the installation path in the package cache
-  cache_path <- getOption("rJavaEnv.cache_path")
-  installed_path <- file.path(cache_path, "installed", platform, arch, version)
-
-  # Check if the distribution has already been unpacked
-  if (!dir.exists(installed_path) || length(list.files(installed_path)) == 0) {
-    # Create the directories if they don't exist
-    if (!dir.exists(installed_path)) {
-      dir.create(installed_path, recursive = TRUE)
-    }
-
-    # Determine extraction path based on platform
-    if (platform == "macos") {
-      extract_subdir <- "Contents/Home"
-    } else {
-      extract_subdir <- "."
-    }
-
-    # Extract the files
-    temp_dir <- file.path(tempdir(), "java_temp")
-    if (dir.exists(temp_dir)) {
-      unlink(temp_dir, recursive = TRUE)
-    }
-
-    dir.create(temp_dir, recursive = TRUE)
-
-    if (grepl("\\.tar\\.gz$", java_distrib_path)) {
-      utils::untar(java_distrib_path, exdir = temp_dir)
-    } else if (grepl("\\.zip$", java_distrib_path)) {
-      utils::unzip(java_distrib_path, exdir = temp_dir)
-    } else {
-      stop(cli::cli_abort("Unsupported file format", .envir = environment()))
-    }
-
-    # Safely find the extracted directory
-    extracted_root_dir <- list.files(temp_dir, full.names = TRUE)[1]
-    if (platform == "macos") {
-      extracted_dir <- file.path(extracted_root_dir, "Contents", "Home")
-    } else {
-      extracted_dir <- extracted_root_dir
-    }
-
-    # Move the extracted files to the installation path
-    file.copy(list.files(extracted_dir, full.names = TRUE), installed_path, recursive = TRUE)
-
-    # Clean up temporary directory
-    unlink(temp_dir, recursive = TRUE)
-  } else {
-    if (!quiet) cli::cli_inform("Java distribution {filename} already unpacked at {.path {installed_path}}")
-  }
 
   # Create a symlink in the project directory
   project_version_path <- file.path(project_path, "rjavaenv", platform, arch, version)

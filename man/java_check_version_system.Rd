@@ -2,12 +2,15 @@
 % Please edit documentation in R/java_env.R
 \name{java_check_version_system}
 \alias{java_check_version_system}
-\title{Check and print Java path and version}
+\title{Check and print Java path and version using system commands}
 \usage{
-java_check_version_system()
+java_check_version_system(quiet)
+}
+\arguments{
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
-TRUE if successful, otherwise FALSE.
+A \code{character} vector of length 1 containing the major Java version.
 }
 \description{
 This function checks the Java executable path and retrieves the Java version,

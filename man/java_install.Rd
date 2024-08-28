@@ -12,11 +12,11 @@ java_install(
 )
 }
 \arguments{
-\item{java_distrib_path}{The path to the Java distribution file.}
+\item{java_distrib_path}{A \code{character} vector of length 1 containing the path to the Java distribution file.}
 
-\item{project_path}{The project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
+\item{project_path}{A \code{character} vector of length 1 containing the project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
 
-\item{autoset_java_env}{Whether to set the \code{JAVA_HOME} and \code{PATH} environment variables to the installed Java directory. Defaults to \code{TRUE}.}
+\item{autoset_java_env}{A \code{logical} indicating whether to set the \code{JAVA_HOME} and \code{PATH} environment variables to the installed Java directory. Defaults to \code{TRUE}.}
 
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
@@ -24,7 +24,7 @@ java_install(
 The path to the installed Java directory.
 }
 \description{
-Install Java from a distribution file
+Unpack Java distribution file into cache directory and link the installation into a project directory, optionally setting the \code{JAVA_HOME} and \code{PATH} environment variables to the Java version that was just installed.
 }
 \examples{
 \dontrun{
