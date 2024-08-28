@@ -108,6 +108,21 @@ This acts exactly like `java_quick_install()`, but only sets the environment var
 
 More details are in the vignette [Multiple `Java` environments in one project with `targets` and `callr`](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.qmd).
 
+## Cleanup
+
+If you do not want to use `rJavaEnv` anymore, please clear the cache folders before removing the package:
+
+```{r}
+java_clear("project", delete_all = TRUE)
+java_clear("installed", delete_all = TRUE)
+java_clear("distrib", delete_all = TRUE)
+```
+
+Also, clear the `.Rprofile` file in the projects there you used the package:
+
+```{r}
+java_env_unset()
+```
 
 ## Functions Overview
 

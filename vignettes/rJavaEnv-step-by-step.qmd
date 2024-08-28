@@ -305,3 +305,19 @@ Using current session's JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp
 With the user-specified JAVA_HOME rJava and other rJava/Java-based packages will use Java version: "17.0.12"
 [1] TRUE
 ```
+
+### 6. Cleanup
+
+If you do not want to use `rJavaEnv` anymore, please clear the cache folders before removing the package:
+
+```{r}
+java_clear("project", delete_all = TRUE)
+java_clear("installed", delete_all = TRUE)
+java_clear("distrib", delete_all = TRUE)
+```
+
+Also, clear the `.Rprofile` file in the projects there you used the package:
+
+```{r}
+java_env_unset()
+```
