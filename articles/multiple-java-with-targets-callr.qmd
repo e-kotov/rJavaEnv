@@ -11,7 +11,7 @@ pkgdown:
   as_is: true
 ---
 
-If you need to use multiple `Java` distribution versions in a single project, you can use a handy shortcut function `use_java()` kindly[suggested by Hadley Wickham](https://github.com/e-kotov/rJavaEnv/issues/44){target='_blank'}.
+If you need to use multiple `Java` distribution versions in a single project, you can use a handy shortcut function `use_java()` kindly [suggested by Hadley Wickham](https://github.com/e-kotov/rJavaEnv/issues/44){target='_blank'}.
 
 Essentialy, `use_java()` does the same thing as `java_quick_install()`, but in a less intrusive way. It downloads the distribution of the user requested major version of `Java`, unpacks it, also to the cache folder, but unlike `java_quick_install()`, it does not copy or link the `Java` installation folder from cache into the project directory and does not create or edit your `.Rprofile` file. Instead, it just sets the environment in the current R script to the requested `Java` binaries in the cache folder. The download and unpacking only happens once, so each next run is practically instant, as the function only needs to set the environment in the current R script.
 
