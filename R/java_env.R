@@ -38,14 +38,13 @@ java_env_set <- function(
   project_path = NULL,
   quiet = FALSE
 ) {
-  rje_consent_check()
-
+  
   where <- match.arg(where)
   checkmate::assertString(java_home)
   checkmate::assertFlag(quiet)
-
-
-
+  
+  
+  
   if (where %in% c("session", "both")) {
     java_env_set_session(java_home)
     if (!quiet) {
@@ -55,7 +54,8 @@ java_env_set <- function(
       ))
     }
   }
-
+  
+  rje_consent_check()
   if (where %in% c("project", "both")) {
     # consistent with renv behavior for using
     # the current working directory by default
@@ -82,6 +82,14 @@ java_env_set <- function(
 #' @keywords internal
 #'
 java_env_set_session <- function(java_home) {
+  
+  # check if rJava is installed and alread initialized
+  if (requireNamespace("rJava", quietly = TRUE)) {
+    if( rJava:::.jniInitialized == TRUE ) {
+      cli::cli_inform(c("!" = "You have already initialised `rJava` directly or via your Java-dependent R package in the current session. `Java` version can only be set once per session for packages that rely on `rJava`. Unless you restart the R session or run your code in a new R subprocess using `targets` or `callr`, the new `JAVA_HOME` and `PATH` will not take effect."))
+    }
+  }
+  
   Sys.setenv(JAVA_HOME = java_home)
   old_path <- Sys.getenv("PATH")
   new_path <- file.path(java_home, "bin")
