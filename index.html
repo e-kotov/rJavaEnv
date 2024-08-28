@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>rJavaEnv: Java Environments for R Projects • rJavaEnv</title>
+<title>rJavaEnv: `Java` Environments for R Projects • rJavaEnv</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -16,9 +16,9 @@
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="rJavaEnv: Java Environments for R Projects">
-<meta name="description" content="Install and manage Java environments using R">
-<meta property="og:description" content="Install and manage Java environments using R">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="rJavaEnv: `Java` Environments for R Projects">
+<meta name="description" content="Install and manage `Java` environments using R">
+<meta property="og:description" content="Install and manage `Java` environments using R">
 <meta property="og:image" content="https://www.ekotov.pro/rJavaEnv/reference/figures/card.png">
 <meta property="og:image:alt" content="rJavaEnv: Java Environments for R Projects. Install and manage Java environments using R">
 <meta name="twitter:card" content="summary_large_image">
@@ -57,7 +57,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
+<li><a class="dropdown-item" href="articles/multiple-java-with-targets-callr.html">Multiple `Java` environments in one project with `targets` and `callr`</a></li>
+    <li><a class="dropdown-item" href="articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
     <li><a class="dropdown-item" href="articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
   </ul>
 </li>
@@ -121,6 +122,15 @@
 <p>As part of normal operation, <code>rJavaEnv</code> will update the <code>JAVA_HOME</code> and <code>PATH</code> environment variables in the current R session, the local cache in your R package library, and the <code>.Rprofile</code> file in the project/current working directory. In line with <a href="https://cran.r-project.org/web/packages/policies.html" class="external-link">CRAN policies</a>, explicit user consent is required before making these changes. Therefore, the first time you run any function from <code>rJavaEnv</code> that makes such changes, you will be asked for consent. To explicitly consent and/or to prevent interruptions in non-interactive mode, you can use the <code><a href="reference/rje_consent.html">rje_consent()</a></code> function:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/rje_consent.html">rje_consent</a></span><span class="op">(</span>provided <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="using-rjavaenv-with-targets-and-callr">Using <code>rJavaEnv</code> with <code>targets</code> and <code>callr</code>
+<a class="anchor" aria-label="anchor" href="#using-rjavaenv-with-targets-and-callr"></a>
+</h2>
+<p>Just insert this line into the begining of any script that you run with <code>targets</code> or <code>callr</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="reference/use_java.html">use_java</a></span><span class="op">(</span><span class="st">"21"</span><span class="op">)</span></span></code></pre></div>
+<p>More details are in the vignette <a href="https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.qmd">Multiple <code>Java</code> environments in one project with <code>targets</code> and <code>callr</code></a>.</p>
 </div>
 <div class="section level2">
 <h2 id="functions-overview">Functions Overview<a class="anchor" aria-label="anchor" href="#functions-overview"></a>
@@ -217,13 +227,13 @@
 <p>To cite package ‘rJavaEnv’ in publications use:</p>
 <p>Kotov E (2024). <em>rJavaEnv: Java Environments for R Projects</em>. <a href="doi:10.32614/CRAN.package.rJavaEnv" class="uri">doi:10.32614/CRAN.package.rJavaEnv</a> <a href="https://doi.org/10.32614/CRAN.package.rJavaEnv" class="external-link uri">https://doi.org/10.32614/CRAN.package.rJavaEnv</a>, <a href="https://github.com/e-kotov/rJavaEnv" class="external-link uri">https://github.com/e-kotov/rJavaEnv</a>.</p>
 <p>BibTeX:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="sc">@</span>Manual{rjavaenv,</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  title <span class="ot">=</span> {rJavaEnv<span class="sc">:</span> Java Environments <span class="cf">for</span> R Projects},</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  author <span class="ot">=</span> {Egor Kotov},</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  year <span class="ot">=</span> {<span class="dv">2024</span>},</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>e<span class="sc">-</span>kotov<span class="sc">/</span>rJavaEnv},</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  doi <span class="ot">=</span> {<span class="fl">10.32614</span><span class="sc">/</span>CRAN.package.rJavaEnv},</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="sc">@</span>Manual{rjavaenv,</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  title <span class="ot">=</span> {rJavaEnv<span class="sc">:</span> Java Environments <span class="cf">for</span> R Projects},</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  author <span class="ot">=</span> {Egor Kotov},</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  year <span class="ot">=</span> {<span class="dv">2024</span>},</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>e<span class="sc">-</span>kotov<span class="sc">/</span>rJavaEnv},</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  doi <span class="ot">=</span> {<span class="fl">10.32614</span><span class="sc">/</span>CRAN.package.rJavaEnv},</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -276,7 +286,7 @@
 <li><a href="https://CRAN.R-project.org/package=rJavaEnv" target="_blank" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/rJavaEnv?color=blue" alt="CRAN/METACRAN Total downloads"></a></li>
 <li><a href="https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/github/e-kotov/rJavaEnv" class="external-link"><img src="https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V" alt="codecov"></a></li>
-<li><a href="https://doi.org/10.32614/CRAN.package.rJavaEnv" class="external-link"><img src="https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg" alt="DOI"></a></li>
+<li><a href="https://doi.org/10.32614/CRAN.package.rJavaEnvi" class="external-link"><img src="https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg" alt="DOI"></a></li>
 <li><a href="https://doi.org/10.5281/zenodo.11403009" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.11403009.svg" alt="DOI"></a></li>
 </ul>
 </div>

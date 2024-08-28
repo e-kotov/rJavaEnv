@@ -5,6 +5,7 @@
 <url><loc>https://www.ekotov.pro/rJavaEnv/LICENSE-text.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/LICENSE.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/articles/index.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv-step-by-step.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/articles/why-rJavaEnv.html</loc></url>
@@ -31,6 +32,7 @@
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/java_list_in_project.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/java_list_installed_cache.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/java_quick_install.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/reference/java_unpack.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/java_urls_load.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/java_version_check_rscript.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/platform_detect.html</loc></url>
@@ -39,5 +41,6 @@
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/rje_consent_check.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/rje_envvar_exists.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/urls_test_all.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/reference/use_java.html</loc></url>
 </urlset>
 

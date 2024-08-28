@@ -57,7 +57,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
+<li><a class="dropdown-item" href="../articles/multiple-java-with-targets-callr.html">Multiple `Java` environments in one project with `targets` and `callr`</a></li>
+    <li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
     <li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
   </ul>
 </li>
@@ -90,7 +91,7 @@
 
 
 
-    <p>This guide will walk you through downloading, installing, and managing <code>Java</code> environments for your R projects using the <code>rJavaEnv</code> package. We’ll cover setting up the environment, un-setting it, managing distributions, installing <code>Java</code>, and checking <code>Java</code> versions.</p>
+    <p>This guide will walk you through downloading, installing, and managing <code>Java</code> environments for your R projects using the <code>rJavaEnv</code> package. We’ll cover setting up the environment, un-setting it, managing distributions, installing <code>Java</code>, and checking <code>Java</code> versions. For more advanced use refer to the vignettes on <a href="rJavaEnv-step-by-step.qmd">step-by-step fine-grained procedure to download, unpack, install and linke <code>Java</code></a> and <a href="multiple-java-with-targets-callr.qmd">vignette on using <code>rJavaEnv</code> with the <code>targets</code> and <code>callr</code> packages to manage multiple <code>Java</code> environments</a></p>
 <section class="level3"><h3 id="quickly-download-and-install-java">1. Quickly Download and Install Java<a class="anchor" aria-label="anchor" href="#quickly-download-and-install-java"></a>
 </h3>
 <section class="level4"><h4 id="install-rjavaenv">
@@ -186,7 +187,6 @@ mixed mode, sharing)"
 </div>
 <p>Example expected output (on a Windows machine):</p>
 <pre><code>Removed JAVA_HOME settings from .Rprofile in 'C:/Users/user_name/AppData/Local/Temp/75/RtmpuoG3xJ/.Rprofile'</code></pre>
-<p>Now restart the current <code>R</code> session so that <code>R</code> picks up the system <code>Java</code> (or no <code>Java</code>, if it is not installed in the system).</p>
 </section><section class="level4"><h4 id="delete-java-from-the-project-directory">Delete <code>Java</code> from the project directory<a class="anchor" aria-label="anchor" href="#delete-java-from-the-project-directory"></a>
 </h4>
 <p>The line below clears all <code>Java</code> installations in the project directory:</p>
@@ -196,7 +196,23 @@ mixed mode, sharing)"
 </div>
 <p>Example expected output:</p>
 <pre><code>All Java symlinks in the project have been cleared.</code></pre>
-</section></section><script id="quarto-html-after-body" type="application/javascript">
+<p>Now restart the current <code>R</code> session so that <code>R</code> picks up the system <code>Java</code> (or no <code>Java</code>, if it is not installed in the system).</p>
+</section></section><section class="level3"><h3 id="complete-cleanup">4. Complete Cleanup<a class="anchor" aria-label="anchor" href="#complete-cleanup"></a>
+</h3>
+<p>If you do not want to use <code>rJavaEnv</code> anymore, please clear the cache folders before removing the package:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_clear.html">java_clear</a></span><span class="op">(</span><span class="st">"project"</span>, delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/java_clear.html">java_clear</a></span><span class="op">(</span><span class="st">"installed"</span>, delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/java_clear.html">java_clear</a></span><span class="op">(</span><span class="st">"distrib"</span>, delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<p>Also, clear the <code>.Rprofile</code> file in the projects there you used the package:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_env_unset.html">java_env_unset</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<p>Now you can remove the package and restart the current <code>R</code> session so that <code>R</code> picks up the system <code>Java</code> (or no <code>Java</code>, if it is not installed in the system).</p>
+</section><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");

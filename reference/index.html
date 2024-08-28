@@ -28,7 +28,8 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/multiple-java-with-targets-callr.html">Multiple `Java` environments in one project with `targets` and `callr`</a></li>
+    <li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
     <li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -46,9 +47,43 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="quick-install">Quick Install<a class="anchor" aria-label="anchor" href="#quick-install"></a></h2>
+
+      <div class="section-desc"><p>Just quickly install <code>Java</code> in the current project</p></div>
 
 
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="java_quick_install.html">java_quick_install()</a></code>
+
+        </dt>
+        <dd>Download and install and set Java in current working/project directory</dd>
+      </dl></div><div class="section level2">
+      <h2 id="quick-set">Quick Set<a class="anchor" aria-label="anchor" href="#quick-set"></a></h2>
+
+      <div class="section-desc"><p>Just quickly set <code>Java</code> in the current project (for use with <code>targets</code>/<code>callr</code>)</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="use_java.html">use_java()</a></code>
+
+        </dt>
+        <dd>Install specified Java version and set the <code>JAVA_HOME</code> and <code>PATH</code> environment variables in current R session</dd>
+      </dl></div><div class="section level2">
+      <h2 id="check-java-version">Check <code>Java</code> version<a class="anchor" aria-label="anchor" href="#check-java-version"></a></h2>
+
+      <div class="section-desc"><p>Check <code>Java</code> version with currently set environment</p></div>
 
 
     </div><div class="section level2">
@@ -68,18 +103,35 @@
 
         </dt>
         <dd>Check Java Version with a Specified JAVA_HOME Using a Separate R Session</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="fine-grained-control">Fine-grained Control<a class="anchor" aria-label="anchor" href="#fine-grained-control"></a></h2>
 
-          <code><a href="java_clear.html">java_clear()</a></code>
+      <div class="section-desc"><p>Control every step of <code>Java</code> download, unpacking and installation</p></div>
 
-        </dt>
-        <dd>Manage Java installations and distributions caches</dd>
-      </dl><dl><dt>
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="java_download.html">java_download()</a></code>
 
         </dt>
         <dd>Download a Java distribution</dd>
+      </dl><dl><dt>
+
+          <code><a href="java_unpack.html">java_unpack()</a></code>
+
+        </dt>
+        <dd>Unpack a Java distribution file into cache directory</dd>
+      </dl><dl><dt>
+
+          <code><a href="java_install.html">java_install()</a></code>
+
+        </dt>
+        <dd>Install Java from a distribution file</dd>
       </dl><dl><dt>
 
           <code><a href="java_env_set.html">java_env_set()</a></code>
@@ -92,13 +144,18 @@
 
         </dt>
         <dd>Unset the JAVA_HOME and PATH environment variables in the project .Rprofile</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="manage-files">Manage files<a class="anchor" aria-label="anchor" href="#manage-files"></a></h2>
 
-          <code><a href="java_install.html">java_install()</a></code>
+      <div class="section-desc"><p>Manage downloads, installs, and project-linked <code>Java</code> versions</p></div>
 
-        </dt>
-        <dd>Install Java from a distribution file</dd>
-      </dl><dl><dt>
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="java_list.html">java_list()</a></code>
 
@@ -106,18 +163,30 @@
         <dd>List the contents of the Java versions installed or cached</dd>
       </dl><dl><dt>
 
-          <code><a href="java_quick_install.html">java_quick_install()</a></code>
+          <code><a href="java_clear.html">java_clear()</a></code>
 
         </dt>
-        <dd>Download and install and set Java in current working/project directory</dd>
-      </dl><dl><dt>
+        <dd>Manage Java installations and distributions caches</dd>
+      </dl></div><div class="section level2">
+      <h2 id="other-commands">Other commands<a class="anchor" aria-label="anchor" href="#other-commands"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="rje_consent.html">rje_consent()</a></code>
 
         </dt>
         <dd>Obtain User Consent for rJavaEnv</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

@@ -28,7 +28,8 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/multiple-java-with-targets-callr.html">Multiple `Java` environments in one project with `targets` and `callr`</a></li>
+    <li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
     <li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -69,11 +70,11 @@
 
 
 <dl><dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p>The Java version to download. If not specified, defaults to the latest LTS version.</p></dd>
+<dd><p><code>Integer</code> or <code>character</code> vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", "11", "17", "21", "22", or 8, 11, 17, 21, or 22.</p></dd>
 
 
 <dt id="arg-distribution">distribution<a class="anchor" aria-label="anchor" href="#arg-distribution"></a></dt>
-<dd><p>The Java distribution to download. If not specified, defaults to "Corretto".</p></dd>
+<dd><p>The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only <a href="https://aws.amazon.com/corretto/" class="external-link">"Amazon Corretto"</a> is supported.</p></dd>
 
 
 <dt id="arg-cache-path">cache_path<a class="anchor" aria-label="anchor" href="#arg-cache-path"></a></dt>

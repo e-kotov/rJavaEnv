@@ -28,7 +28,8 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/multiple-java-with-targets-callr.html">Multiple `Java` environments in one project with `targets` and `callr`</a></li>
+    <li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
     <li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -53,7 +54,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">java_check_version_cmd</span><span class="op">(</span>java_home <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">java_check_version_cmd</span><span class="op">(</span>java_home <span class="op">=</span> <span class="cn">NULL</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,10 +64,14 @@
 <dl><dt id="arg-java-home">java_home<a class="anchor" aria-label="anchor" href="#arg-java-home"></a></dt>
 <dd><p>Path to Java home directory. If NULL, the function uses the JAVA_HOME environment variable.</p></dd>
 
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p>A <code>logical</code> value indicating whether to suppress messages. Can be <code>TRUE</code> or <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>TRUE if successful, otherwise FALSE.</p>
+    <p>A <code>character</code> vector of length 1 containing the major Java version.</p>
     </div>
 
     <div class="section level2">
@@ -77,7 +82,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Java version: <span style="color: #0000BB;">"openjdk version \"11.0.24\" 2024-07-16 OpenJDK Runtime</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">Environment Temurin-11.0.24+8 (build 11.0.24+8) OpenJDK 64-Bit Server VM</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">Temurin-11.0.24+8 (build 11.0.24+8, mixed mode)"</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "11"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

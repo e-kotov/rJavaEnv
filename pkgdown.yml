@@ -2,10 +2,11 @@ pandoc: 3.1.11
 pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
+  multiple-java-with-targets-callr: multiple-java-with-targets-callr.html
   rJavaEnv-step-by-step: rJavaEnv-step-by-step.html
   rJavaEnv: rJavaEnv.html
   why-rJavaEnv: why-rJavaEnv.html
-last_built: 2024-08-27T12:26Z
+last_built: 2024-08-28T13:31Z
 urls:
   reference: https://www.ekotov.pro/rJavaEnv/reference
   article: https://www.ekotov.pro/rJavaEnv/articles
