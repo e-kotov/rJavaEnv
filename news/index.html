@@ -16,7 +16,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rJavaEnv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,14 @@
       <small>Source: <a href="https://github.com/e-kotov/rJavaEnv/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="rjavaenv-020-2024-08-28">rJavaEnv 0.2.0 (2024-08-28)<a class="anchor" aria-label="anchor" href="#rjavaenv-020-2024-08-28"></a></h2>
+<ul><li><p>Breaking change: <code><a href="../reference/java_check_version_cmd.html">java_check_version_cmd()</a></code> and <code><a href="../reference/java_check_version_rjava.html">java_check_version_rjava()</a></code> now return detected <code>Java</code> version instead of <code>TRUE</code>/<code>FALSE</code></p></li>
+<li><p>New function <code><a href="../reference/use_java.html">use_java()</a></code> to download, install and set <code>Java</code> from cache for the current sesssion, without touching the current project/working directory. This is intended for use with <code>targets</code> and <code>callr</code>.</p></li>
+<li><p>New vignette on using the package with <code>targets' and 'callr</code></p></li>
+<li><p>Updated documentation with clearer instructions on cache folder cleanup before removing the package</p></li>
+<li><p>Depends on <code>R</code> &gt; 4.0 to be able to write to the package cache directory without extra user warning. Cache cleanup and management functions are provided, as well as the documentation in both README and vignettes.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.2" id="rjavaenv-012">rJavaEnv 0.1.2<a class="anchor" aria-label="anchor" href="#rjavaenv-012"></a></h2><p class="text-muted">CRAN release: 2024-08-26</p>
 <ul><li>Fixed broken links in README.md</li>
