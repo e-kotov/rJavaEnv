@@ -1,6 +1,7 @@
 ## Update to 0.2.0
 
 Brings new functions based on very quick user feedback after the first release.
+Also, hopefully, new safeguarding eval=false in vignette will prevent erros on macos-oldrel https://cran.r-project.org/web/checks/check_results_rJavaEnv.html when vignette code is executed.
 
 # rJavaEnv 0.2.0 (2024-08-28)
 
