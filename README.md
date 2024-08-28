@@ -23,7 +23,7 @@ alt="CRAN/METACRAN Total downloads" /></a>
 <!-- [![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck) -->
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
 
-[![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg)](https://doi.org/10.32614/CRAN.package.rJavaEnvi)
+[![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg)](https://doi.org/10.32614/CRAN.package.rJavaEnv)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11403009.svg)](https://doi.org/10.5281/zenodo.11403009)
 
 <!-- badges: end -->
@@ -31,7 +31,7 @@ alt="CRAN/METACRAN Total downloads" /></a>
 Solve common issues with `Java` environment management in `R` for users
 of `Java`/`{rJava}`-dependent `R` packages such as `{r5r}`,
 `{opentripplanner}`, `{xlsx}`, `{openNLP}`, `{rWeka}`, `{RJDBC}`,
-`{tabulapdf}`, and many more. `{rJavaENv}` prevents common problems like
+`{tabulapdf}`, and many more. `{rJavaEnv}` prevents common problems like
 `Java` not found, `Java` version conflicts, missing `Java`
 installations, and the inability to install `Java` due to lack of
 administrative privileges. `rJavaEnv` automates the download,
@@ -124,9 +124,31 @@ Just insert this line into the begining of any script that you run with
 rJavaEnv::use_java("21")
 ```
 
+This acts exactly like `java_quick_install()`, but only sets the
+environment variables in the current session and does not copy or link
+`Java` binaries into the project directory.
+
 More details are in the vignette [Multiple `Java` environments in one
 project with `targets` and
 `callr`](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.qmd).
+
+## Cleanup
+
+If you do not want to use `rJavaEnv` anymore, please clear the cache
+folders before removing the package:
+
+``` r
+java_clear("project", delete_all = TRUE)
+java_clear("installed", delete_all = TRUE)
+java_clear("distrib", delete_all = TRUE)
+```
+
+Also, clear the `.Rprofile` file in the projects there you used the
+package:
+
+``` r
+java_env_unset()
+```
 
 ## Functions Overview
 
@@ -166,6 +188,12 @@ The package has several core functions:
 9.  `java_clear()`
     - Removes all or some `Java` versions linked in the current project
       (or cached distributions or installations).
+10. `use_java()`
+
+- Same as `java_quick_install()`, but in a less intrusive way. Does not
+  copy or link the `Java` installation folder from cache into the
+  project directory and does not create or edit your `.Rprofile` file.
+  Only sets requested java in the current R session.
 
 See more details on all the functions in the
 <a href="https://www.ekotov.pro/rJavaEnv/reference/index.html"

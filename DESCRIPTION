@@ -1,6 +1,6 @@
 Package: rJavaEnv
 Title: 'Java' Environments for R Projects
-Version: 0.1.2
+Version: 0.2.0
 Authors@R: c(
     person("Egor", "Kotov", , "kotov.egor@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-6690-5345")),
@@ -28,6 +28,8 @@ Description: Solve common issues with 'Java' environment management in 'R'
 License: MIT + file LICENSE
 URL: https://github.com/e-kotov/rJavaEnv, https://www.ekotov.pro/rJavaEnv/
 BugReports: https://github.com/e-kotov/rJavaEnv/issues
+Depends: 
+    R (>= 4.0)
 Imports: 
     checkmate,
     cli,
@@ -45,5 +47,3 @@ Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Depends: 
-    R (>= 4.0)

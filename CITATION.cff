@@ -8,7 +8,7 @@ message: 'To cite package "rJavaEnv" in publications use:'
 type: software
 license: MIT
 title: 'rJavaEnv: ''Java'' Environments for R Projects'
-version: 0.1.2
+version: 0.2.0
 doi: 10.32614/CRAN.package.rJavaEnv
 abstract: 'Solve common issues with ''Java'' environment management in ''R'' for users
   of ''Java''/''rJava''-dependent ''R'' packages such as ''r5r'', ''opentripplanner'',
@@ -56,6 +56,17 @@ keywords:
 - reproducibility
 - reproducible-research
 references:
+- type: software
+  title: 'R: A Language and Environment for Statistical Computing'
+  notes: Depends
+  url: https://www.R-project.org/
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+  version: '>= 4.0'
 - type: software
   title: checkmate
   abstract: 'checkmate: Fast and Versatile Argument Checks'

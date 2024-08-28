@@ -1,4 +1,4 @@
-# rJavaEnv 0.1.3 (2024-08-28)
+# rJavaEnv 0.2.0 (2024-08-28)
 
 * Breaking change: `java_check_version_cmd()` and `java_check_version_rjava()` now return detected `Java` version instead of `TRUE`/`FALSE`
 
