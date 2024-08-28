@@ -1,14 +1,16 @@
 ---
 title: "Step-by-step: Download, Install, and Setup `Java` for 'R' Projects"
-output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Step-by-step: Download, Install, and Setup `Java` for 'R' Projects}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 execute:
   eval: false
-pkgdown:
-  as_is: true
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-overflow: wrap
 ---
 
 
@@ -32,7 +34,13 @@ setwd(project_dir)
 You can specify the cache folder location with the `rJavaEnv.cache_path` option.
 
 ```{r}
+#| eval: false
 options(rJavaEnv.cache_path = "/path/to/your/desired/cache/folder")
+```
+
+```{r}
+#| include: false
+options(rJavaEnv.cache_path = tempdir()) # does that fix the error on r-oldrel-macos-arm64 and r-oldrel-macos-x86_64?
 ```
 
 By default the location would be set to whichever path is returned by `tools::R_user_dir("rJavaEnv", which = "cache")`. The exact path will depend on the operating system. Our recommendation is to leave this option at it's default setting. This is similar to how `renv` package manages the cache for `R` packages.

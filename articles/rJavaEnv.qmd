@@ -1,17 +1,16 @@
 ---
 title: "Quick Start Guide: `Java` Setup for 'R' Projects"
-output:
-  rmarkdown::html_vignette:
-    code-fold: false
-    code-overflow: wrap
 vignette: >
   %\VignetteIndexEntry{Quick Start Guide: `Java` Setup for 'R' Projects}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 execute:
   eval: false
-pkgdown:
-  as_is: true
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-overflow: wrap
 ---
 
 
@@ -25,6 +24,7 @@ Install `rJavaEnv` from CRAN:
 
 
 ```{r}
+#| eval: false
 install.packages("rJavaEnv")
 ```
 
@@ -32,6 +32,7 @@ install.packages("rJavaEnv")
 Or install the latest version of `rJavaEnv` from R universe:
 
 ```{r}
+#| eval: false
 install.packages('rJavaEnv',
   repos = c('https://e-kotov.r-universe.dev', 'https://cloud.r-project.org')
 )
