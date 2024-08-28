@@ -1,9 +1,27 @@
 #' Unpack a Java distribution file into cache directory
 #' 
+#' @description
+#' Unpack the Java distribution file into cache directory and return the path to the unpacked Java directory with Java binaries.
+#' 
+#' 
 #' @inheritParams java_install
 #' @inheritParams global_quiet_param
 #' @return A `character` vector containing of length 1 containing the path to the unpacked Java directory.
-#' @keywords internal
+#' @export
+#' @examples
+#' \dontrun{
+#' 
+#' # set cache dir to temporary directory
+#' options(rJavaEnv.cache_path = tempdir())
+#' 
+#' # download Java 17 distrib and unpack it into cache dir
+#' java_17_distrib <- java_download(version = "17")
+#' java_home <- java_unpack(java_distrib_path = java_17_distrib)
+#' 
+#' # set the JAVA_HOME environment variable in the current session to the cache dir without touching any files in the current project directory
+#' java_env_set(where = "session", java_home = java_home)
+#' }
+#' 
 java_unpack <- function(
   java_distrib_path,
   quiet = FALSE
