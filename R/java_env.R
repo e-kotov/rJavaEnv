@@ -255,7 +255,7 @@ java_check_version_cmd <- function(
   # Get JAVA_HOME again and check if it's set
   current_java_home <- Sys.getenv("JAVA_HOME")
   if (current_java_home == "") {
-    if (!quiet) cli::cli_alert_warning("JAVA_HOME is not set.")
+    if (!quiet) cli::cli_inform(c("!" = "JAVA_HOME is not set."))
     if (!is.null(java_home)) {
       Sys.setenv(JAVA_HOME = old_java_home)
     }
@@ -296,7 +296,7 @@ java_check_version_system <- function(
   quiet
 ) {
   which_java <- tryCatch(
-    system2("which", args = "java", stdout = TRUE, stderr = TRUE),
+    Sys.which("java"),
     error = function(e) NULL
   )
   if (is.null(which_java)) {
@@ -367,7 +367,7 @@ java_env_unset <- function(
     }
   } else {
     if (!quiet) {
-      cli::cli_alert_warning("No .Rprofile found in the project directory: {.path project_path}")
+      cli::cli_inform(c("!" = "No .Rprofile found in the project directory: {.path project_path}"))
     }
   }
 }
