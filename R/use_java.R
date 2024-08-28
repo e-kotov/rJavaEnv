@@ -17,9 +17,15 @@
 #' 
 #' # install and set Java 8 in current R session
 #' use_java(8)
+#' # check Java version
+#' "8" == java_check_version_cmd(quiet = TRUE)
+#' "8" == java_check_version_rjava(quiet = TRUE)
 #' 
 #' # install and set Java 17 in current R session
 #' use_java(17)
+#' # check Java version
+#' "17" == java_check_version_cmd(quiet = TRUE)
+#' "17" == java_check_version_rjava(quiet = TRUE)
 #' 
 #' }
 #' 
