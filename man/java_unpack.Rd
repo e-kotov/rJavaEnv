@@ -27,7 +27,8 @@ options(rJavaEnv.cache_path = tempdir())
 java_17_distrib <- java_download(version = "17")
 java_home <- java_unpack(java_distrib_path = java_17_distrib)
 
-# set the JAVA_HOME environment variable in the current session to the cache dir without touching any files in the current project directory
+# set the JAVA_HOME environment variable in the current session
+# to the cache dir without touching any files in the current project directory
 java_env_set(where = "session", java_home = java_home)
 }
 
