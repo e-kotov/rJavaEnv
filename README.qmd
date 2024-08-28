@@ -96,6 +96,19 @@ As part of normal operation, `rJavaEnv` will update the `JAVA_HOME` and `PATH` e
 rje_consent(provided = TRUE)
 ```
 
+## Using `rJavaEnv` with `targets` and `callr`
+
+Just insert this line into the begining of any script that you run with `targets` or `callr`:
+
+```r
+rJavaEnv::use_java("21")
+```
+
+This acts exactly like `java_quick_install()`, but only sets the environment variables in the current session and does not copy or link `Java` binaries into the project directory.
+
+More details are in the vignette [Multiple `Java` environments in one project with `targets` and `callr`](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.qmd).
+
+
 ## Functions Overview
 
 The package has several core functions:
@@ -126,6 +139,9 @@ The package has several core functions:
    
 9. `java_clear()`
    * Removes all or some `Java` versions linked in the current project (or cached distributions or installations).
+
+10. `use_java()`
+   * Same as `java_quick_install()`, but in a less intrusive way. Does not copy or link the `Java` installation folder from cache into the project directory and does not create or edit your `.Rprofile` file. Only sets requested java in the current R session.
 
 See more details on all the functions in the [Reference](https://www.ekotov.pro/rJavaEnv/reference/index.html){target="_blank"}.
 
