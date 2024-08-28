@@ -30,5 +30,42 @@ authors:
     href: "https://www.ekotov.pro"
 
 home:
-  title: 'rJavaEnv: Java Environments for R Projects'
-  description: 'Install and manage Java environments using R'
+  title: 'rJavaEnv: `Java` Environments for R Projects'
+  description: 'Install and manage `Java` environments using R'
+
+
+reference:
+  - title: "Quick Install"
+    desc: >
+      Just quickly install `Java` in the current project
+    contents: 
+    - java_quick_install
+  - title: "Quick Set"
+    desc: >
+      Just quickly set `Java` in the current project (for use with `targets`/`callr`)
+    contents:
+      - use_java
+  - title: "Check `Java` version"
+    desc: >
+      Check `Java` version with currently set environment
+    contents:
+      - java_check_version_cmd
+      - java_check_version_rjava
+  - title: "Fine-grained Control"
+    desc: >
+      Control every step of `Java` download, unpacking and installation
+    contents:
+    - java_download
+    - java_unpack
+    - java_install
+    - java_env_set
+    - java_env_unset
+  - title: "Manage files"
+    desc: >
+      Manage downloads, installs, and project-linked `Java` versions
+    contents:
+    - java_list
+    - java_clear
+  - title: "Other commands"
+    contents:
+    - rje_consent
