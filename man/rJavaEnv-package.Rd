@@ -25,6 +25,7 @@ Useful links:
 Other contributors:
 \itemize{
   \item Mauricio Vargas \email{mavargas11@uc.cl} (\href{https://orcid.org/0000-0003-1017-7574}{ORCID}) [contributor]
+  \item Hadley Wickham \email{hadley@posit.co} (use_java feature suggestion and PR review) [contributor]
 }
 
 }

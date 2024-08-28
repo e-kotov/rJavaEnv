@@ -7,13 +7,21 @@
         "id": "https://orcid.org/0000-0001-6690-5345"
       },
       "codeRepository": "https://github.com/e-kotov/rJavaEnv",
-      "contributor": {
-        "id": "https://orcid.org/0000-0003-1017-7574",
-        "type": "Person",
-        "email": "mavargas11@uc.cl",
-        "familyName": "Vargas",
-        "givenName": "Mauricio"
-      },
+      "contributor": [
+        {
+          "id": "https://orcid.org/0000-0003-1017-7574",
+          "type": "Person",
+          "email": "mavargas11@uc.cl",
+          "familyName": "Vargas",
+          "givenName": "Mauricio"
+        },
+        {
+          "type": "Person",
+          "email": "hadley@posit.co",
+          "familyName": "Wickham",
+          "givenName": "Hadley"
+        }
+      ],
       "copyrightHolder": {
         "id": "https://orcid.org/0000-0001-6690-5345",
         "type": "Person",
