@@ -12,7 +12,7 @@ pkgdown:
 ---
 
 
-The basics of using `rJavaEnv` are covered in the [Quick Start Guide](rJavaEnv.qmd), which demonstrates how to install Java in one line of code. This guide will show you how to have a more fine-grained control over your Java environment.
+The basics of using `rJavaEnv` are covered in the [Quick Start Guide](rJavaEnv.qmd), which demonstrates how to install Java in one line of code. This guide will show you how to have a more fine-grained control over your Java environments. Also see the [vignette on using `rJavaEnv` with the `targets` and `callr` packages to manage multiple `Java` environments](multiple-java-with-targets-callr.qmd).
 
 ```{r}
 library(rJavaEnv)
@@ -153,7 +153,7 @@ Example expected output:
 Java distributions cache cleared.
 ```
 
-### 4. Install from downloaded `Java` JDK distributions
+### 4. Install from downloaded `Java` JDK distributions into current project
 
 As we have cleared all downloaded `Java` distributions, let us re-download a few of them:
 
@@ -183,6 +183,15 @@ C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
 ```
 
 If we did leave `autoset_java_env = TRUE` which is a default option, `install_java()` function would automatically set the `JAVA_HOME` and `PATH` environment variables manually in both the current `R` session and in the current project/working directory by writing a few lines into the `.Rprofile` file in the current working directory. This way each time you would start an R session, the `JAVA_HOME` and `PATH` environment variables would be set to the correct path to the installed `Java` distribution.
+
+Alternatively, you may want to not install `Java` into your project, but just unpack the distribution into the cache folder. For this, you can use the `java_unpack()` function, passing it the path to the downloaded `Java` distribution from before:
+
+```{r}
+java_home <- java_unpack(java_distr_path = java_8_distr)
+```
+
+`java_unpack` will return full path to the unpacked `Java` distribution that you can use to set the environment variables in the section below using `java_env_set()`.
+
 
 ### 5. Manually set installed `Java` environment
 
