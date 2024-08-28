@@ -102,8 +102,8 @@
 <code class="sourceCode R"><span><span class="va">project_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="va">project_dir</span><span class="op">)</span></span></code></pre></div>
 </div>
-<section class="level3"><h3 id="set-up-cache-folder-location">1. Set-up cache folder location<a class="anchor" aria-label="anchor" href="#set-up-cache-folder-location"></a>
-</h3>
+<section class="section level2"><h2 id="set-up-cache-folder-location">1. Set-up cache folder location<a class="anchor" aria-label="anchor" href="#set-up-cache-folder-location"></a>
+</h2>
 <p>You can specify the cache folder location with the <code>rJavaEnv.cache_path</code> option.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
@@ -119,8 +119,8 @@
 <pre><code><span><span class="st">"C:\\Users\\user_name\\AppData\\Local/R/cache/R/rJavaEnv"</span></span></code></pre>
 <p>Expected output (on a macOS machine):</p>
 <pre><code><span><span class="st">"/Users/user_name/Library/Caches/org.R-project.R/R/rJavaEnv"</span></span></code></pre>
-</section><section class="level3"><h3 id="download-java-jdk-distributions">2. Download <code>Java</code> JDK distributions<a class="anchor" aria-label="anchor" href="#download-java-jdk-distributions"></a>
-</h3>
+</section><section class="section level2"><h2 id="download-java-jdk-distributions">2. Download <code>Java</code> JDK distributions<a class="anchor" aria-label="anchor" href="#download-java-jdk-distributions"></a>
+</h2>
 <p>To download a specific Java distribution, use the <code>java_download</code> function:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
@@ -157,8 +157,8 @@ Downloading Java 8 (Corretto) for linux x64 to C:\Users\user_name\AppData\Local/
  [100%] Downloaded 118096667 bytes...
 Download completed.
 MD5 checksum verified.</code></pre>
-</section><section class="level3"><h3 id="manage-downloaded-java-jdk-distributions">3. Manage downloaded <code>Java</code> JDK distributions<a class="anchor" aria-label="anchor" href="#manage-downloaded-java-jdk-distributions"></a>
-</h3>
+</section><section class="section level2"><h2 id="manage-downloaded-java-jdk-distributions">3. Manage downloaded <code>Java</code> JDK distributions<a class="anchor" aria-label="anchor" href="#manage-downloaded-java-jdk-distributions"></a>
+</h2>
 <p>You can manage downloaded distributions with the <code>java_list</code> and <code>java_clear</code> functions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
@@ -186,8 +186,8 @@ i Enter the number of the distribution to delete, 'all' to delete all, or '0' or
 </div>
 <p>Example expected output:</p>
 <pre><code>Java distributions cache cleared.</code></pre>
-</section><section class="level3"><h3 id="install-from-downloaded-java-jdk-distributions-into-current-project">4. Install from downloaded <code>Java</code> JDK distributions into current project<a class="anchor" aria-label="anchor" href="#install-from-downloaded-java-jdk-distributions-into-current-project"></a>
-</h3>
+</section><section class="section level2"><h2 id="install-from-downloaded-java-jdk-distributions-into-current-project">4. Install from downloaded <code>Java</code> JDK distributions into current project<a class="anchor" aria-label="anchor" href="#install-from-downloaded-java-jdk-distributions-into-current-project"></a>
+</h2>
 <p>As we have cleared all downloaded <code>Java</code> distributions, let us re-download a few of them:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="downlit sourceCode r">
@@ -212,8 +212,8 @@ C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17</cod
 <code class="sourceCode R"><span><span class="va">java_home</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_unpack.html">java_unpack</a></span><span class="op">(</span>java_distr_path <span class="op">=</span> <span class="va">java_8_distr</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><code>java_unpack</code> will return full path to the unpacked <code>Java</code> distribution that you can use to set the environment variables in the section below using <code><a href="../reference/java_env_set.html">java_env_set()</a></code>.</p>
-</section><section class="level3"><h3 id="manually-set-installed-java-environment">5. Manually set installed <code>Java</code> environment<a class="anchor" aria-label="anchor" href="#manually-set-installed-java-environment"></a>
-</h3>
+</section><section class="section level2"><h2 id="manually-set-installed-java-environment">5. Manually set installed <code>Java</code> environment<a class="anchor" aria-label="anchor" href="#manually-set-installed-java-environment"></a>
+</h2>
 <p>Let us install another downloaded <code>Java</code> distribution, this time with <code>autoset_java_env = TRUE</code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="downlit sourceCode r">
@@ -289,8 +289,8 @@ Java version: "openjdk version \"17.0.12\" 2024-07-16 LTS OpenJDK Runtime Enviro
 Using current session's JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
 With the user-specified JAVA_HOME rJava and other rJava/Java-based packages will use Java version: "17.0.12"
 [1] TRUE</code></pre>
-</section><section class="level3"><h3 id="cleanup">6. Cleanup<a class="anchor" aria-label="anchor" href="#cleanup"></a>
-</h3>
+</section><section class="section level2"><h2 id="cleanup">6. Cleanup<a class="anchor" aria-label="anchor" href="#cleanup"></a>
+</h2>
 <p>If you do not want to use <code>rJavaEnv</code> anymore, please clear the cache folders before removing the package:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb35"><pre class="downlit sourceCode r">
@@ -404,8 +404,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
-    </nav></aside>
+</script></main>
 </div>
 
 

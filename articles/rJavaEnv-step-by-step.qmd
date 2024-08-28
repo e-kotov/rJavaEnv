@@ -26,7 +26,7 @@ setwd(project_dir)
 ```
 
 
-### 1. Set-up cache folder location
+# 1. Set-up cache folder location
 
 
 You can specify the cache folder location with the `rJavaEnv.cache_path` option.
@@ -55,7 +55,7 @@ Expected output (on a macOS machine):
 "/Users/user_name/Library/Caches/org.R-project.R/R/rJavaEnv"
 ```
 
-### 2. Download `Java` JDK distributions
+# 2. Download `Java` JDK distributions
 
 To download a specific Java distribution, use the `java_download` function:
 
@@ -109,7 +109,7 @@ MD5 checksum verified.
 ```
 
 
-### 3. Manage downloaded `Java` JDK distributions
+# 3. Manage downloaded `Java` JDK distributions
 
 You can manage downloaded distributions with the `java_list` and `java_clear` functions.
 
@@ -153,7 +153,7 @@ Example expected output:
 Java distributions cache cleared.
 ```
 
-### 4. Install from downloaded `Java` JDK distributions into current project
+# 4. Install from downloaded `Java` JDK distributions into current project
 
 As we have cleared all downloaded `Java` distributions, let us re-download a few of them:
 
@@ -193,7 +193,7 @@ java_home <- java_unpack(java_distr_path = java_8_distr)
 `java_unpack` will return full path to the unpacked `Java` distribution that you can use to set the environment variables in the section below using `java_env_set()`.
 
 
-### 5. Manually set installed `Java` environment
+# 5. Manually set installed `Java` environment
 
 Let us install another downloaded `Java` distribution, this time with `autoset_java_env = TRUE`:
 
@@ -306,7 +306,7 @@ With the user-specified JAVA_HOME rJava and other rJava/Java-based packages will
 [1] TRUE
 ```
 
-### 6. Cleanup
+# 6. Cleanup
 
 If you do not want to use `rJavaEnv` anymore, please clear the cache folders before removing the package:
 
