@@ -85,7 +85,7 @@ java_env_set_session <- function(java_home) {
   
   # check if rJava is installed and alread initialized
   if (requireNamespace("rJava", quietly = TRUE)) {
-    if( rJava:::.jniInitialized == TRUE ) {
+    if( getFromNamespace(".jniInitialized", "rJava") == TRUE ) {
       cli::cli_inform(c("!" = "You have already initialised `rJava` directly or via your Java-dependent R package in the current session. `Java` version can only be set once per session for packages that rely on `rJava`. Unless you restart the R session or run your code in a new R subprocess using `targets` or `callr`, the new `JAVA_HOME` and `PATH` will not take effect."))
     }
   }
