@@ -1,6 +1,7 @@
 url: https://www.ekotov.pro/rJavaEnv/
 template:
   bootstrap: 5
+  bootswatch: flatly
   includes:
     in_header: |
        <!-- counter.dev analytics -->
@@ -28,6 +29,11 @@ template:
 authors:
   Egor Kotov:
     href: "https://www.ekotov.pro"
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, tutorials, news]
+    right: [search, github, lightswitch]
 
 home:
   title: 'rJavaEnv: `Java` Environments for R Projects'
