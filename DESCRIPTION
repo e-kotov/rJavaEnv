@@ -14,7 +14,7 @@ Description: Quickly install 'Java Development Kit (JDK)' without
     session or project to solve common issues with 'Java' environment
     management in 'R'. Recommended to users of 'Java'/'rJava'-dependent
     'R' packages such as 'r5r', 'opentripplanner', 'xlsx', 'openNLP',
-    'rWeka', 'RJDBC', 'tabulapdf', and many more. `rJavaEnv` prevents
+    'rWeka', 'RJDBC', 'tabulapdf', and many more. 'rJavaEnv' prevents
     common problems like 'Java' not found, 'Java' version conflicts,
     missing 'Java' installations, and the inability to install 'Java' due
     to lack of administrative privileges.  'rJavaEnv' automates the
