@@ -1,11 +1,11 @@
 ## Update to 0.2.0
 
 Brings new functions based on very quick user feedback after the first release.
-Also, hopefully, new safeguarding eval=false in vignette will prevent erros on macos-oldrel https://cran.r-project.org/web/checks/check_results_rJavaEnv.html when vignette code is executed.
+Also, hopefully, the new safeguarding with 'eval=false' in vignette will prevent erros on macos-oldrel https://cran.r-project.org/web/checks/check_results_rJavaEnv.html when vignette code is executed, even though the whole vignette is set no to evaluate the code.
 
 # rJavaEnv 0.2.0 (2024-08-28)
 
-* Breaking change: `java_check_version_cmd()` and `java_check_version_rjava()` now return detected `Java` version instead of `TRUE`/`FALSE`
+* Improvement: `java_check_version_cmd()` and `java_check_version_rjava()` now return detected `Java` version instead of `TRUE`/`FALSE`. Note that this is a breaking change, but not critical given that the package has not obtained a significant user base yet.
 
 * New function `use_java()` to download, install and set `Java` from cache for the current sesssion, without touching the current project/working directory. This is intended for use with `targets` and `callr`.
 

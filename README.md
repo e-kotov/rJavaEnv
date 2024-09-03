@@ -32,7 +32,9 @@ alt="CRAN/METACRAN Downloads per month" /></a>
 
 <!-- badges: end -->
 
-Solve common issues with `Java` environment management in `R` for users
+Quickly install ‘Java’ SDK without administrative proviliges and set
+environment variables in current R session or project to solve common
+issues with ‘Java’ environment management in ‘R’. Recommended to users
 of `Java`/`{rJava}`-dependent `R` packages such as `{r5r}`,
 `{opentripplanner}`, `{xlsx}`, `{openNLP}`, `{rWeka}`, `{RJDBC}`,
 `{tabulapdf}`, and many more. `{rJavaEnv}` prevents common problems like
