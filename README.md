@@ -77,7 +77,7 @@ if (!requireNamespace("remotes", quietly = TRUE)) {
   install.packages("remotes")
 }
 
-remotes::install_github("e-kotov/rJavaEnv")
+remotes::install_github("e-kotov/rJavaEnv", force = TRUE)
 ```
 
 ## Simple Example
