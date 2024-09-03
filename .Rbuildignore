@@ -23,3 +23,4 @@
 ^CRAN-SUBMISSION$
 ^vignettes/.quarto$
 ^revdep$
+^man/figures/card.png$
