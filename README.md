@@ -32,7 +32,7 @@ alt="CRAN/METACRAN Downloads per month" /></a>
 
 <!-- badges: end -->
 
-Quickly install ‘Java’ SDK without administrative proviliges and set
+Quickly install ‘Java’ SDK without administrative priviliges and set
 environment variables in current R session or project to solve common
 issues with ‘Java’ environment management in ‘R’. Recommended to users
 of `Java`/`{rJava}`-dependent `R` packages such as `{r5r}`,
