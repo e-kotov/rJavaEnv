@@ -8,7 +8,7 @@ message: 'To cite package "rJavaEnv" in publications use:'
 type: software
 license: MIT
 title: 'rJavaEnv: ''Java'' Environments for R Projects'
-version: 0.2.0
+version: 0.2.1
 doi: 10.32614/CRAN.package.rJavaEnv
 abstract: 'Quickly install ''Java Development Kit (JDK)'' without administrative privileges
   and set environment variables in current R session or project to solve common issues
