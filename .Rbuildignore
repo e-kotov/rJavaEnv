@@ -24,3 +24,4 @@
 ^vignettes/.quarto$
 ^revdep$
 ^man/figures/card.png$
+^tools$
