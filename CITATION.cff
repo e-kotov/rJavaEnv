@@ -8,7 +8,7 @@ message: 'To cite package "rJavaEnv" in publications use:'
 type: software
 license: MIT
 title: 'rJavaEnv: ''Java'' Environments for R Projects'
-version: 0.2.1
+version: 0.2.2
 doi: 10.32614/CRAN.package.rJavaEnv
 abstract: 'Quickly install ''Java Development Kit (JDK)'' without administrative privileges
   and set environment variables in current R session or project to solve common issues
@@ -141,17 +141,6 @@ references:
     given-names: Christophe
     email: cderv@posit.co
     orcid: https://orcid.org/0000-0003-4474-2498
-  year: '2024'
-- type: software
-  title: rJava
-  abstract: 'rJava: Low-Level R to Java Interface'
-  notes: Suggests
-  url: http://www.rforge.net/rJava/
-  repository: https://CRAN.R-project.org/package=rJava
-  authors:
-  - family-names: Urbanek
-    given-names: Simon
-    email: simon.urbanek@r-project.org
   year: '2024'
 - type: software
   title: testthat

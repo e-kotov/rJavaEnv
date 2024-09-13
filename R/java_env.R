@@ -80,11 +80,12 @@ java_env_set <- function(
 #'
 #' @param java_home The path to the desired JAVA_HOME.
 #' @keywords internal
+#' @importFrom utils installed.packages
 #'
 java_env_set_session <- function(java_home) {
   
   # check if rJava is installed and alread initialized
-  if (any(installed.packages()[, 1] == "rJava")) {
+  if (any(utils::installed.packages()[, 1] == "rJava")) {
     if( "rJava" %in% loadedNamespaces() == TRUE ) {
       cli::cli_inform(c("!" = "You have `rJava` R package loaded in the current session. If you have already initialised it directly with ``rJava::.jinit()` or via your Java-dependent R package in the current session, you may not be able to switch to a different `Java` version unless you restart R. `Java` version can only be set once per session for packages that rely on `rJava`. Unless you restart the R session or run your code in a new R subprocess using `targets` or `callr`, the new `JAVA_HOME` and `PATH` will not take effect."))
     }
