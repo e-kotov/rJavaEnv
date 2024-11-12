@@ -135,7 +135,7 @@ environment variables in the current session and does not copy or link
 
 More details are in the vignette [Multiple `Java` environments in one
 project with `targets` and
-`callr`](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.qmd).
+`callr`](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.html).
 
 ## Cleanup
 
