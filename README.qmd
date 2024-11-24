@@ -107,7 +107,7 @@ rJavaEnv::use_java("21")
 
 This acts exactly like `java_quick_install()`, but only sets the environment variables in the current session and does not copy or link `Java` binaries into the project directory.
 
-More details are in the vignette [Multiple `Java` environments in one project with `targets` and `callr`](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.qmd).
+More details are in the vignette [Multiple `Java` environments in one project with `targets` and `callr`](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.html).
 
 ## Cleanup
 

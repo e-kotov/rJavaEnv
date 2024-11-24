@@ -11,7 +11,7 @@ rJava_dependants_dlstats_bioc <- readr::read_csv2("vignettes/data-for-vignettes/
 data_table_dlstats <- readr::read_csv2("vignettes/data-for-vignettes/data_table_dlstats.csv")
 ggplot2_dlstats <- readr::read_csv2("vignettes/data-for-vignettes/ggplot2_dlstats.csv")
 
-cutoff_date <- "2024-05-31"
+cutoff_date <- "2024-09-26"
 
 rj_and_rj_dep_total_down <- rJava_dependants_dlstats_cran |>
   rbind(rJava_dlstats) |>
@@ -69,15 +69,21 @@ rJavaPopularity_GTable <- ggplot_gtable(ggplot_build(p_rJavaPopularity))
 rJavaPopularity_GTable$layout$clip[rJavaPopularity_GTable$layout$name == "panel"] <- "off"
 
 # Draw the plot
-p_rJavaPopularity_filepath <- "vignettes/media/images/rJavaPopularity.png"
-if ( ! file.exists(p_rJavaPopularity_filepath) ) {
-  dir.create(dirname(p_rJavaPopularity_filepath), recursive = TRUE)
-  png(p_rJavaPopularity_filepath, width = 12, height = 6, units = "in", res = 300)
-  grid::grid.draw(rJavaPopularity_GTable)
-  dev.off()
-}
+p_rJavaPopularity_filepath <- "vignettes/media/images/rJavaPopularity.svg"
+dir.create(dirname(p_rJavaPopularity_filepath), recursive = TRUE)
+svg(p_rJavaPopularity_filepath, width = 12, height = 6)
+grid::grid.draw(rJavaPopularity_GTable)
+dev.off()
 
-resmush::resmush_file(p_rJavaPopularity_filepath, overwrite = TRUE)
+# resmush::resmush_file(p_rJavaPopularity_filepath, overwrite = TRUE)
+
+p_rJavaPopularity_filepath_pdf <- "vignettes/media/images/rJavaPopularity.pdf"
+dir.create(dirname(p_rJavaPopularity_filepath_pdf), recursive = TRUE)
+cairo_pdf(p_rJavaPopularity_filepath_pdf, width = 12, height = 6)
+grid::grid.draw(rJavaPopularity_GTable)
+dev.off()
+
+
 
 
 
@@ -97,22 +103,21 @@ p_rJavaDepIndivAll <- rJava_dependants_dlstats_cran |>
        color = "Package")
 
 # Draw the plot
-p_rJavaDepIndivAll_filepath <- "vignettes/media/images/rJavaDepIndivAll.png"
-if ( ! file.exists(p_rJavaDepIndivAll_filepath) ) {
-  dir.create(dirname(p_rJavaDepIndivAll_filepath), recursive = TRUE)
-  png(p_rJavaDepIndivAll_filepath, width = 12, height = 6, units = "in", res = 300)
-  grid::grid.draw(p_rJavaDepIndivAll)
-  dev.off()
-}
+p_rJavaDepIndivAll_filepath <- "vignettes/media/images/rJavaDepIndivAll.svg"
+dir.create(dirname(p_rJavaDepIndivAll_filepath), recursive = TRUE)
+svg(p_rJavaDepIndivAll_filepath, width = 12, height = 6)
+grid::grid.draw(p_rJavaDepIndivAll)
+dev.off()
 
-resmush::resmush_file(p_rJavaDepIndivAll_filepath, overwrite = TRUE)
+
+# resmush::resmush_file(p_rJavaDepIndivAll_filepath, overwrite = TRUE)
 
 # top 20 rJava-dependent packages without xlsx -----------------------------------------
 
 p_rJavaDepIndivFiltered <- rJava_dependants_dlstats_cran |>
   filter(! package %in% c("xlsx", "xlsxjars") ) |>
   filter(! grepl("jars$", package)) |>
-  filter(end >= "2023-05-01") |>
+  filter(end >= "2023-09-26") |>
   group_by(package) |>
   summarise(downloads = sum(downloads, na.rm = T), .groups = "drop") |>
   arrange(desc(downloads)) |>
@@ -128,27 +133,25 @@ p_rJavaDepIndivFiltered <- rJava_dependants_dlstats_cran |>
   # gghighlight(max(downloads), max_highlight = 6L) +
   theme_pubclean(base_size = 18) +
   labs(title = "Top rJava-based Package Downloads",
-       subtitle = "Over the Last Year (May 2023 - May 2024)",
+       subtitle = "Over the Last Year (September 2023 - September 2024)",
        x = "Total dowloads",
        y = "")
 
 # Draw the plot
-# Draw the plot
-p_rJavaDepIndivFiltered_filepath <- "vignettes/media/images/rJavaDepIndivFiltered.png"
-if ( ! file.exists(p_rJavaDepIndivFiltered_filepath) ) {
-  dir.create(dirname(p_rJavaDepIndivFiltered_filepath), recursive = TRUE)
-  png(p_rJavaDepIndivFiltered_filepath, width = 12, height = 6, units = "in", res = 300)
-  grid::grid.draw(p_rJavaDepIndivFiltered)
-  dev.off()
-}
+p_rJavaDepIndivFiltered_filepath <- "vignettes/media/images/rJavaDepIndivFiltered.svg"
+dir.create(dirname(p_rJavaDepIndivFiltered_filepath), recursive = TRUE)
+svg(p_rJavaDepIndivFiltered_filepath, width = 12, height = 6)
+grid::grid.draw(p_rJavaDepIndivFiltered)
+dev.off()
 
-resmush::resmush_file(p_rJavaDepIndivFiltered_filepath, overwrite = TRUE)
+
+# resmush::resmush_file(p_rJavaDepIndivFiltered_filepath, overwrite = TRUE)
 
 # top 20 rJava-dependent packages with xlsx -----------------------------------------
 
 p_rJavaDepIndivFilteredXslx <- rJava_dependants_dlstats_cran |>
   filter(! grepl("jars$", package)) |>
-  filter(end >= "2023-05-01") |>
+  filter(end >= "2023-09-26") |>
   group_by(package) |>
   summarise(downloads = sum(downloads, na.rm = T), .groups = "drop") |>
   arrange(desc(downloads)) |>
@@ -164,18 +167,17 @@ p_rJavaDepIndivFilteredXslx <- rJava_dependants_dlstats_cran |>
   # gghighlight(max(downloads), max_highlight = 6L) +
   theme_pubclean(base_size = 18) +
   labs(title = "Top rJava-based Package Downloads",
-       subtitle = "Over the Last Year (May 2023 - May 2024)",
+       subtitle = "Over the Last Year (September 2023 - September 2024)",
        x = "Total dowloads",
        y = "")
 
-# Draw the plot
-# Draw the plot
-p_rJavaDepIndivFilteredXslx_filepath <- "vignettes/media/images/rJavaDepIndivFilteredXslx.png"
-if ( ! file.exists(p_rJavaDepIndivFilteredXslx_filepath) ) {
-  dir.create(dirname(p_rJavaDepIndivFilteredXslx_filepath), recursive = TRUE)
-  png(p_rJavaDepIndivFilteredXslx_filepath, width = 12, height = 6, units = "in", res = 300)
-  grid::grid.draw(p_rJavaDepIndivFilteredXslx)
-  dev.off()
-}
 
-resmush::resmush_file(p_rJavaDepIndivFiltered_filepath, overwrite = TRUE)
+# Draw the plot
+p_rJavaDepIndivFilteredXslx_filepath <- "vignettes/media/images/rJavaDepIndivFilteredXslx.svg"
+dir.create(dirname(p_rJavaDepIndivFilteredXslx_filepath), recursive = TRUE)
+svg(p_rJavaDepIndivFilteredXslx_filepath, width = 12, height = 6)
+grid::grid.draw(p_rJavaDepIndivFilteredXslx)
+dev.off()
+
+
+# resmush::resmush_file(p_rJavaDepIndivFiltered_filepath, overwrite = TRUE)

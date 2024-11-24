@@ -8,7 +8,7 @@ rm(package_list)
 
 dlstats::set_cran_start_year(2014)
 
-rJava_dependants <- devtools::revdep("rJava", dependencies = c("Imports", "Depends"), bioconductor = FALSE)
+rJava_dependants <- devtools::revdep("rJava", dependencies = c("Imports", "Depends"), bioconductor = TRUE)
 
 rJava_dlstats <- dlstats::cran_stats("rJava", use_cache = FALSE)
 rJava_dependants_dlstats_cran <- dlstats::cran_stats(rJava_dependants, use_cache = FALSE)
