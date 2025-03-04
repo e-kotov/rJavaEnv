@@ -66,6 +66,7 @@ java_download <- function(
   checkmate::assert_choice(platform, valid_platforms)
   checkmate::assert_choice(arch, valid_architectures)
   checkmate::assert_flag(quiet)
+  checkmate::assert_flag(force)
 
   # Print out the detected platform and architecture
   if (!quiet) {
