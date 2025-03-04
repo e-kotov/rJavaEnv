@@ -11,6 +11,7 @@ java_download(
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
   quiet = FALSE,
+  force = FALSE,
   temp_dir = FALSE
 )
 }
@@ -26,6 +27,8 @@ java_download(
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
 
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
+
+\item{force}{A logical. Whether the distribution file should be overwritten or not. Defaults to \code{FALSE}.}
 
 \item{temp_dir}{A logical. Whether the file should be saved in a temporary directory. Defaults to \code{FALSE}.}
 }

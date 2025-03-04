@@ -14,7 +14,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.4.1 (2024-06-14)",
+  "runtimePlatform": "R version 4.4.1 (2024-06-14 ucrt)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -43,6 +43,13 @@
       "givenName": "Hadley",
       "familyName": "Wickham",
       "email": "hadley@posit.co"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Enrique",
+      "familyName": "Mondragon-Estrada",
+      "email": "enriquemondragon@proton.me",
+      "@id": "https://orcid.org/0009-0004-5592-1728"
     }
   ],
   "copyrightHolder": [
@@ -164,7 +171,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "219.775KB",
+  "fileSize": "224.631KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",

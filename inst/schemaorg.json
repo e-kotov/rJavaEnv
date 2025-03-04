@@ -20,6 +20,13 @@
           "email": "hadley@posit.co",
           "familyName": "Wickham",
           "givenName": "Hadley"
+        },
+        {
+          "id": "https://orcid.org/0009-0004-5592-1728",
+          "type": "Person",
+          "email": "enriquemondragon@proton.me",
+          "familyName": "Mondragon-Estrada",
+          "givenName": "Enrique"
         }
       ],
       "copyrightHolder": {
@@ -43,7 +50,7 @@
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "runtimePlatform": "R version 4.4.1 (2024-06-14)",
+      "runtimePlatform": "R version 4.4.1 (2024-06-14 ucrt)",
       "version": "0.2.2"
     },
     {

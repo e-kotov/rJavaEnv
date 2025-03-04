@@ -5,6 +5,7 @@
 #' @param cache_path The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
 #' @param arch The architecture for which to download the Java distribution. Defaults to the current architecture.
+#' @param force A logical. Whether the distribution file should be overwritten or not. Defaults to `FALSE`.
 #' @param temp_dir A logical. Whether the file should be saved in a temporary directory. Defaults to `FALSE`.
 #' @inheritParams global_quiet_param
 #'
@@ -13,10 +14,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' # download distribution of Java version 17
 #' java_download(version = "17", temp_dir = TRUE)
-#' 
+#'
 #' # download default Java distribution (version 21)
 #' java_download(temp_dir = TRUE)
 #' }
@@ -27,9 +28,10 @@ java_download <- function(
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
   quiet = FALSE,
+  force = FALSE,
   temp_dir = FALSE
 ) {
-  
+
   # override cache_path if temp_dir is set to TRUE
   if (temp_dir) {
     temp_dir <- tempdir()
@@ -64,6 +66,7 @@ java_download <- function(
   checkmate::assert_choice(platform, valid_platforms)
   checkmate::assert_choice(arch, valid_architectures)
   checkmate::assert_flag(quiet)
+  checkmate::assert_flag(force)
 
   # Print out the detected platform and architecture
   if (!quiet) {
@@ -98,11 +101,32 @@ java_download <- function(
     cli::cli_inform("Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}", .envir = environment())
   }
 
-  if (file.exists(dest_file)) {
+  if (file.exists(dest_file) & !force) {
     if (!quiet) {
       cli::cli_inform("File already exists. Skipping download.", .envir = environment())
     }
-  } else {
+  } else if(file.exists(dest_file) & force){
+    if (!quiet) {
+      cli::cli_inform("Removing existing installation.", .envir = environment())
+    }
+    file.remove(dest_file)
+    curl::curl_download(url, dest_file, quiet = FALSE)
+    curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
+    if (!quiet) {
+      cli::cli_inform("Download completed.", .envir = environment())
+
+      md5sum <- tools::md5sum(dest_file)
+      md5sum_expected <- readLines(dest_file_md5, warn = FALSE)
+
+      if (md5sum != md5sum_expected) {
+        cli::cli_alert_danger("MD5 checksum mismatch. Please try downloading the file again.", .envir = environment())
+        unlink(dest_file)
+        return(NULL)
+      } else {
+        cli::cli_inform("MD5 checksum verified.", .envir = environment())
+      }
+    }
+  } else if (!file.exists(dest_file)){
     curl::curl_download(url, dest_file, quiet = FALSE)
     curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
     if (!quiet) {
