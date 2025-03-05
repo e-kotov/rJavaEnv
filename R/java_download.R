@@ -105,42 +105,28 @@ java_download <- function(
     if (!quiet) {
       cli::cli_inform("File already exists. Skipping download.", .envir = environment())
     }
-  } else if(file.exists(dest_file) & force){
-    if (!quiet) {
-      cli::cli_inform("Removing existing installation.", .envir = environment())
-    }
-    file.remove(dest_file)
-    curl::curl_download(url, dest_file, quiet = FALSE)
-    curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
-    if (!quiet) {
-      cli::cli_inform("Download completed.", .envir = environment())
-
-      md5sum <- tools::md5sum(dest_file)
-      md5sum_expected <- readLines(dest_file_md5, warn = FALSE)
-
-      if (md5sum != md5sum_expected) {
-        cli::cli_alert_danger("MD5 checksum mismatch. Please try downloading the file again.", .envir = environment())
-        unlink(dest_file)
-        return(NULL)
-      } else {
-        cli::cli_inform("MD5 checksum verified.", .envir = environment())
+  } else if(file.exists(dest_file)) {
+    if (force) {
+      if (!quiet) {
+        cli::cli_inform("Removing existing installation.", .envir = environment())
       }
+      file.remove(dest_file)
+      curl::curl_download(url, dest_file, quiet = FALSE)
+      curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
     }
-  } else if (!file.exists(dest_file)){
-    curl::curl_download(url, dest_file, quiet = FALSE)
-    curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
     if (!quiet) {
       cli::cli_inform("Download completed.", .envir = environment())
+    }
+    md5sum <- tools::md5sum(dest_file)
+    md5sum_expected <- readLines(dest_file_md5, warn = FALSE)
 
-      md5sum <- tools::md5sum(dest_file)
-      md5sum_expected <- readLines(dest_file_md5, warn = FALSE)
-
-      if (md5sum != md5sum_expected) {
-        cli::cli_alert_danger("MD5 checksum mismatch. Please try downloading the file again.", .envir = environment())
-        unlink(dest_file)
-        return(NULL)
-      } else {
-        cli::cli_inform("MD5 checksum verified.", .envir = environment())
+    if (md5sum != md5sum_expected) {
+      cli::cli_alert_danger("MD5 checksum mismatch. Please try downloading the file again.", .envir = environment())
+      unlink(dest_file)
+      return(NULL)
+    } else {
+      if (!quiet) {
+      cli::cli_inform("MD5 checksum verified.", .envir = environment())
       }
     }
   }
