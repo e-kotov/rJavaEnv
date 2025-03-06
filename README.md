@@ -62,6 +62,8 @@ Install from CRAN:
 install.packages('rJavaEnv')
 ```
 
+<details>
+
 <summary>
 
 Install the development version
