@@ -62,7 +62,12 @@ Install from CRAN:
 install.packages('rJavaEnv')
 ```
 
-Install latest release from **R-multiverse**:
+<summary>
+
+Install the development version
+</summary>
+
+Install the latest release development version from **R-multiverse**:
 
 ``` r
 install.packages('rJavaEnv',
@@ -70,15 +75,18 @@ install.packages('rJavaEnv',
 )
 ```
 
-You can also install the development version of `rJavaEnv` from GitHub:
+You can also install the development version of `rJavaEnv` directly from
+GitHub:
 
 ``` r
 if (!requireNamespace("remotes", quietly = TRUE)) {
   install.packages("remotes")
 }
 
-remotes::install_github("e-kotov/rJavaEnv@dev", force = TRUE)
+remotes::install_github("e-kotov/rJavaEnv", force = TRUE)
 ```
+
+</details>
 
 ## Simple Example
 
