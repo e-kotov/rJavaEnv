@@ -45,7 +45,7 @@ java_download <- function(
     md5sum_expected <- readLines(dest_file_md5, warn = FALSE)
 
     if (md5sum != md5sum_expected) {
-      cli::cli_alert_danger("MD5 checksum mismatch. Please try downloading the file again.", .envir = environment())
+      cli::cli_abort("MD5 checksum mismatch. Please try downloading the file again.", .envir = environment())
       unlink(dest_file)
       return(NULL)
     } else {
