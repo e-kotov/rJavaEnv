@@ -33,7 +33,7 @@ java_download <- function(
 ) {
 
   # Download distribution and check MD5 checksum
-  download_dist_check_md5 <- function(url, dest_file, md5sum, md5sum_expectedm, quiet) {
+  download_dist_check_md5 <- function(url, dest_file, quiet) {
 
     curl::curl_download(url, dest_file, quiet = FALSE)
     curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
@@ -132,9 +132,9 @@ java_download <- function(
       cli::cli_inform("Removing existing installation.", .envir = environment())
       }
     file.remove(dest_file)
-    download_dist_check_md5(url, dest_file, md5sum, md5sum_expectedm, quiet)
+    download_dist_check_md5(url, dest_file, quiet)
   } else if (!file.exists(dest_file)) {
-    download_dist_check_md5(url, dest_file, md5sum, md5sum_expectedm, quiet)
+    download_dist_check_md5(url, dest_file, quiet)
   }
 
   return(dest_file)
