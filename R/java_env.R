@@ -331,8 +331,8 @@ java_check_version_system <- function(
 
   # extract Java version
   java_ver_string <- java_ver[[1]]
-  matches <- gregexpr('(?<=\\b(?:openjdk|java) version \")[0-9]{1,2}', java_ver_string, perl = TRUE)
-  major_java_ver <- regmatches(java_ver_string, matches)[[1]]
+  matches <- regexec('(openjdk|java) (version )?(\\\")?([0-9]{1,2})', java_ver_string)
+  major_java_ver <- regmatches(java_ver_string, matches)[[1]][5]
 
   # fix 1 to 8, as Java 8 prints "1.8"
   if (major_java_ver == "1") {
