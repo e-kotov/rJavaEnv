@@ -54,10 +54,14 @@
 <ul><li>
 <code>force</code> argument in <code><a href="../reference/java_download.html">java_download()</a></code>. When set to <code>TRUE</code>, allows to overwrite the distribution file if it already exist in the cache.</li>
 </ul></div>
+<div class="section level3">
+<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
+<ul><li>better command line <code>Java</code> detection (thanks to Jonas Lieth)</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.2" id="rjavaenv-022-2024-09-13">rJavaEnv 0.2.2 (2024-09-13)<a class="anchor" aria-label="anchor" href="#rjavaenv-022-2024-09-13"></a></h2><p class="text-muted">CRAN release: 2024-09-13</p>
-<ul><li><p>Hot fix: improve robustness of setting Java environment in the current session with either <code><a href="../reference/use_java.html">use_java()</a></code> or <code><a href="../reference/java_quick_install.html">java_quick_install()</a></code>. See bug fix below.</p></li>
+<ul><li><p>Hot fix: improve robustness of setting <code>Java</code> environment in the current session with either <code><a href="../reference/use_java.html">use_java()</a></code> or <code><a href="../reference/java_quick_install.html">java_quick_install()</a></code>. See bug fix below.</p></li>
 <li><p>Bug fix: Setting Java environment via <code><a href="https://rdrr.io/pkg/rJava/man/rJava-internal.html" class="external-link">rJava::.jniInitialized()</a></code> rendered impossible changing Java version for <code>rJava</code>-dependent packages, because it somehow pre-initialised <code>rJava</code></p></li>
 </ul></div>
     <div class="section level2">
