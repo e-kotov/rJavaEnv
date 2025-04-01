@@ -4,9 +4,13 @@
 
 - `force` argument in `java_download()`. When set to `TRUE`, allows to overwrite the distribution file if it already exist in the cache.
 
+## Improvements
+
+- better command line `Java` detection (thanks to Jonas Lieth)
+
 # rJavaEnv 0.2.2 (2024-09-13)
 
-* Hot fix: improve robustness of setting Java environment in the current session with either `use_java()` or `java_quick_install()`. See bug fix below.
+* Hot fix: improve robustness of setting `Java` environment in the current session with either `use_java()` or `java_quick_install()`. See bug fix below.
 
 * Bug fix: Setting Java environment via `rJava::.jniInitialized()` rendered impossible changing Java version for `rJava`-dependent packages, because it somehow pre-initialised `rJava`
 
