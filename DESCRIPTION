@@ -10,7 +10,7 @@ Authors@R: c(
            comment = "use_java feature suggestion and PR review"),
     person("Enrique", "Mondragon-Estrada", , "enriquemondragon@proton.me", role = "ctb",
            comment = c(ORCID = "0009-0004-5592-1728")),
-    person("Jonas", "Lieth", , "jonas.lieth@gesis.org", role = c("aut", "cre", "cph"),
+    person("Jonas", "Lieth", , "jonas.lieth@gesis.org", role = "ctb",
            comment = c(ORCID = "0000-0002-3451-3176"))
   )
 Description: Quickly install 'Java Development Kit (JDK)' without

@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/e-kotov/rJavaEnv",
   "issueTracker": "https://github.com/e-kotov/rJavaEnv/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.2.2",
+  "version": "0.2.2.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.4.1 (2024-06-14 ucrt)",
+  "runtimePlatform": "R version 4.4.3 (2025-02-28)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -50,6 +50,13 @@
       "familyName": "Mondragon-Estrada",
       "email": "enriquemondragon@proton.me",
       "@id": "https://orcid.org/0009-0004-5592-1728"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Jonas",
+      "familyName": "Lieth",
+      "email": "jonas.lieth@gesis.org",
+      "@id": "https://orcid.org/0000-0002-3451-3176"
     }
   ],
   "copyrightHolder": [
@@ -171,7 +178,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "224.631KB",
+  "fileSize": "351771.806KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",
