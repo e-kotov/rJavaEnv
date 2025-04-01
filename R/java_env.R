@@ -17,20 +17,20 @@
 #'   project_path = tempdir(),
 #'   autoset_java_env = FALSE
 #' )
-#' 
+#'
 #' # now manually set the JAVA_HOME and PATH environment variables in current session
 #' java_env_set(
 #'   where = "session",
 #'   java_home = java_home
 #' )
-#' 
+#'
 #' # or set JAVA_HOME and PATH in the spefific projects' .Rprofile
 #' java_env_set(
 #'   where = "session",
 #'   java_home = java_home,
 #'   project_path = tempdir()
 #' )
-#' 
+#'
 #' }
 java_env_set <- function(
   where = c("session", "both", "project"),
@@ -38,13 +38,13 @@ java_env_set <- function(
   project_path = NULL,
   quiet = FALSE
 ) {
-  
+
   where <- match.arg(where)
   checkmate::assertString(java_home)
   checkmate::assertFlag(quiet)
-  
-  
-  
+
+
+
   if (where %in% c("session", "both")) {
     java_env_set_session(java_home)
     if (!quiet) {
@@ -54,16 +54,16 @@ java_env_set <- function(
       ))
     }
   }
-  
+
   rje_consent_check()
   if (where %in% c("project", "both")) {
     # consistent with renv behavior for using
     # the current working directory by default
     # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
     project_path <- ifelse(is.null(project_path), getwd(), project_path)
-    
+
     java_env_set_rprofile(java_home, project_path = project_path)
-    
+
     if (!quiet) {
       cli::cli_alert_success(c(
         "Current R Project/Working Directory: ",
@@ -83,14 +83,14 @@ java_env_set <- function(
 #' @importFrom utils installed.packages
 #'
 java_env_set_session <- function(java_home) {
-  
+
   # check if rJava is installed and alread initialized
   if (any(utils::installed.packages()[, 1] == "rJava")) {
     if( "rJava" %in% loadedNamespaces() == TRUE ) {
       cli::cli_inform(c("!" = "You have `rJava` R package loaded in the current session. If you have already initialised it directly with ``rJava::.jinit()` or via your Java-dependent R package in the current session, you may not be able to switch to a different `Java` version unless you restart R. `Java` version can only be set once per session for packages that rely on `rJava`. Unless you restart the R session or run your code in a new R subprocess using `targets` or `callr`, the new `JAVA_HOME` and `PATH` will not take effect."))
     }
   }
-  
+
   Sys.setenv(JAVA_HOME = java_home)
 
   old_path <- Sys.getenv("PATH")
@@ -301,7 +301,7 @@ java_check_version_cmd <- function(
 #' @inheritParams java_check_version_cmd
 #' @return A `character` vector of length 1 containing the major Java version.
 #' @keywords internal
-#' 
+#'
 java_check_version_system <- function(
   quiet
 ) {
@@ -331,9 +331,9 @@ java_check_version_system <- function(
 
   # extract Java version
   java_ver_string <- java_ver[[1]]
-  matches <- gregexpr('(?<=openjdk version \\\")[0-9]{1,2}(?=\\.)', java_ver_string, perl = TRUE)
-  major_java_ver <- regmatches(java_ver_string, matches)[[1]]
-  
+  matches <- regexec('(openjdk|java) (version )?(\\\")?([0-9]{1,2})', java_ver_string)
+  major_java_ver <- regmatches(java_ver_string, matches)[[1]][5]
+
   # fix 1 to 8, as Java 8 prints "1.8"
   if (major_java_ver == "1") {
     major_java_ver <- "8"
@@ -361,7 +361,7 @@ java_env_unset <- function(
     quiet = FALSE
 ) {
   rje_consent_check()
-  
+
   # Resolve the project path
   # consistent with renv behavior
   # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
