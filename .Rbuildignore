@@ -25,3 +25,4 @@
 ^revdep$
 ^man/figures/card.png$
 ^tools$
+^\.editorconfig$
