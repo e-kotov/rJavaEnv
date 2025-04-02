@@ -5,23 +5,23 @@
     },
     "linux": {
       "x64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-x64-linux-jdk.tar.gz",
-      "arm64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-linux-jdk.tar.gz"
+      "aarch64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-linux-jdk.tar.gz"
     },
     "macos": {
       "x64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-x64-macos-jdk.tar.gz",
-      "arm64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-macos-jdk.tar.gz"
+      "aarch64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-macos-jdk.tar.gz"
     },
     "alpine-linux": {
       "x64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-x64-alpine-jdk.tar.gz",
-      "arm64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-alpine-jdk.tar.gz"
+      "aarch64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-alpine-jdk.tar.gz"
     },
     "amazon-linux": {
       "x64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-x64-al2-jdk.rpm",
-      "arm64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-al2-jdk.rpm"
+      "aarch64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-al2-jdk.rpm"
     },
     "amazon-linux-2023": {
       "x64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-x64-al2023-jdk.rpm",
-      "arm64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-al2023-jdk.rpm"
+      "aarch64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-al2023-jdk.rpm"
     }
   }
 }
