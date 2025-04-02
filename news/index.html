@@ -52,6 +52,8 @@
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li>
+<code>Java</code> version (currently still only for <code>Amazon Corretto</code>) is now determined dynamically using the official GitHub <code>json</code> with releases, so when new <code>Java</code> version becomes available, you will not be depenent on <code>rJavaEnv</code> to be updated. As a fallback, versions up to 24 are hardcoded.</li>
+<li>
 <code>force</code> argument in <code><a href="../reference/java_download.html">java_download()</a></code>. When set to <code>TRUE</code>, allows to overwrite the distribution file if it already exist in the cache.</li>
 </ul></div>
 <div class="section level3">
