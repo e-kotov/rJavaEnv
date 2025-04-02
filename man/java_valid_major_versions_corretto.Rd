@@ -33,3 +33,4 @@ Corretto GitHub endpoint and returns a data frame with details for all eligible 
 It leverages the existing \code{platform_detect()} function to infer the current operating
 system and architecture if these are not provided.
 }
+\keyword{internal}

@@ -20,6 +20,7 @@
 #' }
 #'
 #' @export
+#'
 java_valid_versions <- function(
   distribution = "Corretto",
   force = FALSE
@@ -79,6 +80,8 @@ java_valid_versions <- function(
 #' @param extension Optional character string specifying the desired file extension; defaults to \code{"tar.gz"}.
 #'
 #' @return A `character` vector of available major Corretto versions.
+#'
+#' @keywords internal
 #'
 java_valid_major_versions_corretto <- function(
   arch = NULL,
