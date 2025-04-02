@@ -38,28 +38,11 @@ test_that("fallback is used when the API call fails", {
     rJavaEnv.valid_versions_timestamp = NULL
   )
 
+  local_mocked_bindings(read_json = function(...) stop("Simulated API failure"), .package = "jsonlite")
+
   fallback <- getOption("rJavaEnv.fallback_valid_versions")
-
-  # Backup the original fromJSON function from the jsonlite namespace.
-  orig_fromJSON <- get("fromJSON", envir = asNamespace("jsonlite"))
-
-  # Temporarily override fromJSON to simulate an API failure.
-  unlockBinding("read_json", asNamespace("jsonlite"))
-  assign(
-    "read_json",
-    function(...) stop("Simulated API failure"),
-    envir = asNamespace("jsonlite")
-  )
-  on.exit(
-    {
-      assign("read_json", orig_fromJSON, envir = asNamespace("jsonlite"))
-      lockBinding("read_json", asNamespace("jsonlite"))
-    },
-    add = TRUE
-  )
-
   versions <- java_valid_versions(force = TRUE)
 
-  # When the API call fails, the fallback list should be returned.
+  ## When the API call fails, the fallback list should be returned.
   expect_equal(versions, fallback)
 })
