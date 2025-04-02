@@ -26,6 +26,8 @@ Other contributors:
 \itemize{
   \item Mauricio Vargas \email{mavargas11@uc.cl} (\href{https://orcid.org/0000-0003-1017-7574}{ORCID}) [contributor]
   \item Hadley Wickham \email{hadley@posit.co} (use_java feature suggestion and PR review) [contributor]
+  \item Enrique Mondragon-Estrada \email{enriquemondragon@proton.me} (\href{https://orcid.org/0009-0004-5592-1728}{ORCID}) [contributor]
+  \item Jonas Lieth \email{jonas.lieth@gesis.org} (\href{https://orcid.org/0000-0002-3451-3176}{ORCID}) [contributor]
 }
 
 }

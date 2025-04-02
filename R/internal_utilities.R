@@ -7,20 +7,22 @@
 platform_detect <- function(quiet = TRUE) {
   sys_info <- tolower(Sys.info())
 
-  os <- switch(sys_info["sysname"],
+  os <- switch(
+    sys_info["sysname"],
     "windows" = "windows",
     "linux" = "linux",
     "darwin" = "macos",
     stop(cli::cli_abort("Unsupported platform"))
   )
 
-  arch <- switch(sys_info["machine"],
+  arch <- switch(
+    sys_info["machine"],
     "x86-64" = "x64",
     "x86_64" = "x64",
     "i386" = "x86",
     "i686" = "x86",
-    "aarch64" = "arm64",
-    "arm64" = "arm64",
+    "aarch64" = "aarch64",
+    "arm64" = "aarch64",
     stop(cli::cli_abort("Unsupported architecture"))
   )
 
@@ -67,7 +69,10 @@ urls_test_all <- function() {
 
         try(
           {
-            response <- curl::curl_fetch_memory(url, handle = curl::new_handle(nobody = TRUE))
+            response <- curl::curl_fetch_memory(
+              url,
+              handle = curl::new_handle(nobody = TRUE)
+            )
             status <- response$status_code
           },
           silent = TRUE
@@ -113,9 +118,18 @@ java_version_check_rscript <- function(java_home) {
       Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 
       suppressWarnings(rJava::.jinit())
-      suppressWarnings(java_version <- rJava::.jcall("java.lang.System", "S", "getProperty", "java.version"))
+      suppressWarnings(
+        java_version <- rJava::.jcall(
+          "java.lang.System",
+          "S",
+          "getProperty",
+          "java.version"
+        )
+      )
 
-      message <- cli::format_message("rJava and other rJava/Java-based packages will use Java version: {.val {java_version}}")
+      message <- cli::format_message(
+        "rJava and other rJava/Java-based packages will use Java version: {.val {java_version}}"
+      )
 
       message
     },

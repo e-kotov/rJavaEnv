@@ -1,6 +1,6 @@
 #' Download a Java distribution
 #'
-#' @param version `Integer` or `character` vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", "11", "17", "21", "22", or 8, 11, 17, 21, or 22.
+#' @param version `Integer` or `character` vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", "11", "17", "21", "22", "23", "24", or 8, 11, 17, 21, 22, 23, 24 or any newer version if it is available for the selected distribution.
 #' @param distribution The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.
 #' @param cache_path The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
@@ -31,10 +31,8 @@ java_download <- function(
   force = FALSE,
   temp_dir = FALSE
 ) {
-
   # Download distribution and check MD5 checksum
   download_dist_check_md5 <- function(url, dest_file, quiet) {
-
     curl::curl_download(url, dest_file, quiet = FALSE)
     curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
 
@@ -45,7 +43,10 @@ java_download <- function(
     md5sum_expected <- readLines(dest_file_md5, warn = FALSE)
 
     if (md5sum != md5sum_expected) {
-      cli::cli_abort("MD5 checksum mismatch. Please try downloading the file again.", .envir = environment())
+      cli::cli_abort(
+        "MD5 checksum mismatch. Please try downloading the file again.",
+        .envir = environment()
+      )
       unlink(dest_file)
       return(NULL)
     } else {
@@ -75,7 +76,10 @@ java_download <- function(
   # Checks for the parameters
   checkmate::check_vector(version, len = 1)
   version <- as.character(version)
-  checkmate::assert_choice(version, getOption("rJavaEnv.valid_major_java_versions"))
+  checkmate::assert_choice(
+    as.character(version),
+    java_valid_versions()
+  )
 
   checkmate::assert_choice(distribution, valid_distributions)
 
@@ -101,15 +105,24 @@ java_download <- function(
   }
 
   if (!distribution %in% names(java_urls)) {
-    cli::cli_abort("Unsupported distribution: {.val {distribution}}", .envir = environment())
+    cli::cli_abort(
+      "Unsupported distribution: {.val {distribution}}",
+      .envir = environment()
+    )
   }
 
   if (!platform %in% names(java_urls[[distribution]])) {
-    cli::cli_abort("Unsupported platform: {.val {platform}}", .envir = environment())
+    cli::cli_abort(
+      "Unsupported platform: {.val {platform}}",
+      .envir = environment()
+    )
   }
 
   if (!arch %in% names(java_urls[[distribution]][[platform]])) {
-    cli::cli_abort("Unsupported architecture: {.val {arch}}", .envir = environment())
+    cli::cli_abort(
+      "Unsupported architecture: {.val {arch}}",
+      .envir = environment()
+    )
   }
 
   url_template <- java_urls[[distribution]][[platform]][[arch]]
@@ -120,17 +133,23 @@ java_download <- function(
   dest_file_md5 <- paste0(file.path(cache_path, basename(url_md5)), ".md5")
 
   if (!quiet) {
-    cli::cli_inform("Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}", .envir = environment())
+    cli::cli_inform(
+      "Downloading Java {version} ({distribution}) for {platform} {arch} to {dest_file}",
+      .envir = environment()
+    )
   }
 
   if (file.exists(dest_file) & !force) {
     if (!quiet) {
-      cli::cli_inform("File already exists. Skipping download.", .envir = environment())
+      cli::cli_inform(
+        "File already exists. Skipping download.",
+        .envir = environment()
+      )
     }
-  } else if(file.exists(dest_file) & force) {
+  } else if (file.exists(dest_file) & force) {
     if (!quiet) {
       cli::cli_inform("Removing existing installation.", .envir = environment())
-      }
+    }
     file.remove(dest_file)
     download_dist_check_md5(url, dest_file, quiet)
   } else if (!file.exists(dest_file)) {

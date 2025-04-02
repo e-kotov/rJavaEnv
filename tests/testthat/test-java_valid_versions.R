@@ -1,0 +1,65 @@
+test_that("java_valid_versions returns a character vector with required versions", {
+  skip_on_cran()
+  # Clear any cached values
+  options(
+    rJavaEnv.valid_versions_cache = NULL,
+    rJavaEnv.valid_versions_timestamp = NULL
+  )
+
+  # Retrieve Java versions
+  versions <- java_valid_versions()
+
+  # Verify the result is a character vector and contains "8" and "11"
+  expect_type(versions, "character")
+  expect_true("8" %in% versions)
+  expect_true("11" %in% versions)
+  expect_true("24" %in% versions)
+})
+
+test_that("force parameter bypasses the cache", {
+  # Set a fake cache in the options
+  fake_cache <- c("8", "11")
+  options(
+    rJavaEnv.valid_versions_cache = fake_cache,
+    rJavaEnv.valid_versions_timestamp = Sys.time()
+  )
+
+  # Force a refresh by setting force = TRUE.
+  versions_force <- java_valid_versions(force = TRUE)
+
+  # The returned value should not equal the fake cache.
+  expect_false(identical(versions_force, fake_cache))
+})
+
+test_that("fallback is used when the API call fails", {
+  # Clear the cache to force an API call.
+  options(
+    rJavaEnv.valid_versions_cache = NULL,
+    rJavaEnv.valid_versions_timestamp = NULL
+  )
+
+  fallback <- getOption("rJavaEnv.fallback_valid_versions")
+
+  # Backup the original fromJSON function from the jsonlite namespace.
+  orig_fromJSON <- get("fromJSON", envir = asNamespace("jsonlite"))
+
+  # Temporarily override fromJSON to simulate an API failure.
+  unlockBinding("read_json", asNamespace("jsonlite"))
+  assign(
+    "read_json",
+    function(...) stop("Simulated API failure"),
+    envir = asNamespace("jsonlite")
+  )
+  on.exit(
+    {
+      assign("read_json", orig_fromJSON, envir = asNamespace("jsonlite"))
+      lockBinding("read_json", asNamespace("jsonlite"))
+    },
+    add = TRUE
+  )
+
+  versions <- java_valid_versions(force = TRUE)
+
+  # When the API call fails, the fallback list should be returned.
+  expect_equal(versions, fallback)
+})

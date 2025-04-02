@@ -74,6 +74,7 @@ reference:
     - java_clear
   - title: "Other commands"
     contents:
+    - java_valid_versions
     - rje_consent
 
 
