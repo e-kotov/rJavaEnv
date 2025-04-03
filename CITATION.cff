@@ -35,6 +35,10 @@ authors:
   given-names: Egor
   email: kotov.egor@gmail.com
   orcid: https://orcid.org/0000-0001-6690-5345
+- family-names: Chan
+  given-names: Chung-hong
+  email: chainsawtiney@gmail.com
+  orcid: https://orcid.org/0000-0002-6232-7530
 preferred-citation:
   type: manual
   title: 'rJavaEnv: Java Environments for R Projects'

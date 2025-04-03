@@ -4,6 +4,8 @@ Version: 0.2.2.9000
 Authors@R: c(
     person("Egor", "Kotov", , "kotov.egor@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-6690-5345")),
+    person("Chung-hong", "Chan", , "chainsawtiney@gmail.com", role = "aut",
+           comment = c(ORCID = "0000-0002-6232-7530")),
     person("Mauricio", "Vargas", , "mavargas11@uc.cl", role = "ctb",
            comment = c(ORCID = "0000-0003-1017-7574")),
     person("Hadley", "Wickham", , "hadley@posit.co", role = "ctb",

@@ -28,6 +28,13 @@
       "familyName": "Kotov",
       "email": "kotov.egor@gmail.com",
       "@id": "https://orcid.org/0000-0001-6690-5345"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Chung-hong",
+      "familyName": "Chan",
+      "email": "chainsawtiney@gmail.com",
+      "@id": "https://orcid.org/0000-0002-6232-7530"
     }
   ],
   "contributor": [
@@ -178,7 +185,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "351771.806KB",
+  "fileSize": "351785.837KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",
