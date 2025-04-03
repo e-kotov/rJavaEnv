@@ -227,12 +227,13 @@ in progress).
 ## Limitations
 
 Currently, `rJavaEnv` only supports major `Java` versions such as 8, 11,
-17, 21, 22. The download and install functions ignore the minor version
-of the `Java` distribution and just downloads the latest stable
-subversion of the specified major version. This is done to simplify the
-process and avoid the need to update the package every time a new minor
-version of `Java` is released. For most users this should be sufficient,
-but this is substandard for full reproducibility.
+15 to 24 and any newer version. The download and install functions
+ignore the minor version of the `Java` distribution and just downloads
+the latest stable subversion of the specified major version. This is
+done to simplify the process and avoid the need to update the package
+every time a new minor version of `Java` is released. For most users
+this should be sufficient, but this is substandard for full
+reproducibility.
 
 The main limitation is that if you want to switch to another `Java`
 environment, you will most likely have to restart the current R session
