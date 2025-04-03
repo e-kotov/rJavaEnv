@@ -150,15 +150,17 @@ java_download <- function(
         .envir = environment()
       )
     }
-  } else if (file.exists(dest_file) & force) {
+    return(dest_file)
+  }
+
+  if (file.exists(dest_file) & force) {
     if (!quiet) {
       cli::cli_inform("Removing existing installation.", .envir = environment())
     }
     file.remove(dest_file)
-    download_dist_check_md5(url, dest_file, quiet)
-  } else if (!file.exists(dest_file)) {
-    download_dist_check_md5(url, dest_file, quiet)
   }
+
+  download_dist_check_md5(url, dest_file, quiet)
 
   return(dest_file)
 }
