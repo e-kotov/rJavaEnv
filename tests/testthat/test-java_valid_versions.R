@@ -38,7 +38,7 @@ test_that("fallback is used when the API call fails", {
     rJavaEnv.valid_versions_timestamp = NULL
   )
 
-  fallback <- getOption("rJavaEnv.fallback_valid_versions")
+  fallback <- java_valid_versions(force = TRUE)
 
   # Backup the original fromJSON function from the jsonlite namespace.
   orig_fromJSON <- get("fromJSON", envir = asNamespace("jsonlite"))

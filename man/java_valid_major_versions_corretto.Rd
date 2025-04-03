@@ -7,8 +7,7 @@
 java_valid_major_versions_corretto(
   arch = NULL,
   platform = NULL,
-  imageType = "jdk",
-  extension = "tar.gz"
+  imageType = "jdk"
 )
 }
 \arguments{
@@ -18,9 +17,7 @@ If \code{NULL}, it is inferred using \code{platform_detect()}.}
 \item{platform}{Optional character string for the operating system (e.g., "windows", "macos", "linux").
 If \code{NULL}, it is inferred using \code{platform_detect()}.}
 
-\item{imageType}{Optional character string to filter on; defaults to \code{"jdk"}.}
-
-\item{extension}{Optional character string specifying the desired file extension; defaults to \code{"tar.gz"}.}
+\item{imageType}{Optional character string to filter on; defaults to \code{"jdk"}. Can be set to \code{"jre"} for Windows Java Runtime Environment.}
 }
 \value{
 A \code{character} vector of available major Corretto versions.

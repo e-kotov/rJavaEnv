@@ -4,11 +4,19 @@
 \alias{java_valid_versions}
 \title{Retrieve Valid Java Versions}
 \usage{
-java_valid_versions(distribution = "Corretto", force = FALSE)
+java_valid_versions(
+  distribution = "Corretto",
+  platform = platform_detect()$os,
+  arch = platform_detect()$arch,
+  force = FALSE
+)
 }
 \arguments{
-\item{distribution}{Character. The Java distribution to use. If set to \code{"Oracle"}, the Oracle API is used.
-If set to \code{"Corretto"} (the default), an Amazon Corretto endpoint is used.}
+\item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
+
+\item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
+
+\item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
 
 \item{force}{Logical. If TRUE, forces a fresh API call even if a cached value exists. Defaults to FALSE.}
 }

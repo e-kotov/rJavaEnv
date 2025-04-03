@@ -16,7 +16,7 @@ java_download(
 )
 }
 \arguments{
-\item{version}{\code{Integer} or \code{character} vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", "11", "17", "21", "22", "23", "24", or 8, 11, 17, 21, 22, 23, 24 or any newer version if it is available for the selected distribution.}
+\item{version}{\code{Integer} or \code{character} vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", and "11" to "24" (or the same version numers in \code{integer}) or any newer version if it is available for the selected distribution. For \code{macOS} on \code{aarch64} architecture (Apple Silicion) certain \code{Java} versions are not available.}
 
 \item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
 

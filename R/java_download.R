@@ -1,6 +1,6 @@
 #' Download a Java distribution
 #'
-#' @param version `Integer` or `character` vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", "11", "17", "21", "22", "23", "24", or 8, 11, 17, 21, 22, 23, 24 or any newer version if it is available for the selected distribution.
+#' @param version `Integer` or `character` vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", and "11" to "24" (or the same version numers in `integer`) or any newer version if it is available for the selected distribution. For `macOS` on `aarch64` architecture (Apple Silicion) certain `Java` versions are not available.
 #' @param distribution The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.
 #' @param cache_path The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @param platform The platform for which to download the Java distribution. Defaults to the current platform.
@@ -78,7 +78,11 @@ java_download <- function(
   version <- as.character(version)
   checkmate::assert_choice(
     as.character(version),
-    java_valid_versions()
+    java_valid_versions(
+      distribution = distribution,
+      platform = platform,
+      arch = arch
+    )
   )
 
   checkmate::assert_choice(distribution, valid_distributions)
