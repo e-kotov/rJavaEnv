@@ -4,8 +4,8 @@
 #' The result is cached for 8 hours to avoid repeated API calls. If the API call fails (for example, due to a lack of internet connectivity),
 #' the function falls back to a pre-defined list of Java versions.
 #'
-#' @param distribution Character. The Java distribution to use. If set to `"Oracle"`, the Oracle API is used.
-#'   If set to `"Corretto"` (the default), an Amazon Corretto endpoint is used.
+#' @inheritParams java_download
+#'
 #' @param force Logical. If TRUE, forces a fresh API call even if a cached value exists. Defaults to FALSE.
 #'
 #' @return A character vector of valid Java versions.
@@ -23,6 +23,8 @@
 #'
 java_valid_versions <- function(
   distribution = "Corretto",
+  platform = platform_detect()$os,
+  arch = platform_detect()$arch,
   force = FALSE
 ) {
   # Define cache expiry time (in hours)
@@ -51,7 +53,10 @@ java_valid_versions <- function(
   new_versions <- switch(
     distribution,
     # "Oracle" = java_valid_versions_oracle(),
-    "Corretto" = java_valid_major_versions_corretto(),
+    "Corretto" = java_valid_major_versions_corretto(
+      platform = platform,
+      arch = arch
+    ),
     stop("Unsupported distribution")
   )
 
@@ -76,8 +81,7 @@ java_valid_versions <- function(
 #'   If \code{NULL}, it is inferred using \code{platform_detect()}.
 #' @param platform Optional character string for the operating system (e.g., "windows", "macos", "linux").
 #'   If \code{NULL}, it is inferred using \code{platform_detect()}.
-#' @param imageType Optional character string to filter on; defaults to \code{"jdk"}.
-#' @param extension Optional character string specifying the desired file extension; defaults to \code{"tar.gz"}.
+#' @param imageType Optional character string to filter on; defaults to \code{"jdk"}. Can be set to \code{"jre"} for Windows Java Runtime Environment.
 #'
 #' @return A `character` vector of available major Corretto versions.
 #'
@@ -86,8 +90,7 @@ java_valid_versions <- function(
 java_valid_major_versions_corretto <- function(
   arch = NULL,
   platform = NULL,
-  imageType = "jdk",
-  extension = "tar.gz"
+  imageType = "jdk"
 ) {
   # If platform or arch are not provided, detect them using the existing function.
   if (is.null(platform) || is.null(arch)) {
@@ -112,7 +115,8 @@ java_valid_major_versions_corretto <- function(
       names(eligible)
     },
     error = function(e) {
-      getOption("rJavaEnv.fallback_valid_versions")
+      platform_arch <- paste(platform, arch, sep = "_")
+      getOption(paste0("rJavaEnv.fallback_valid_versions_", platform_arch))
     }
   )
 
@@ -134,7 +138,7 @@ java_valid_major_versions_corretto <- function(
 #     },
 #     error = function(e) {
 #       # If the API call fails, use the fallback list stored in options.
-#       getOption("rJavaEnv.fallback_valid_versions")
+#       getOption("rJavaEnv.fallback_valid_versions_current_platform")
 #     }
 #   )
 # }

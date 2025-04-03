@@ -3,9 +3,18 @@
   "@graph": [
     {
       "type": "SoftwareSourceCode",
-      "author": {
-        "id": "https://orcid.org/0000-0001-6690-5345"
-      },
+      "author": [
+        {
+          "id": "https://orcid.org/0000-0002-6232-7530",
+          "type": "Person",
+          "email": "chainsawtiney@gmail.com",
+          "familyName": "Chan",
+          "givenName": "Chung-hong"
+        },
+        {
+          "id": "https://orcid.org/0000-0001-6690-5345"
+        }
+      ],
       "codeRepository": "https://github.com/e-kotov/rJavaEnv",
       "contributor": [
         {

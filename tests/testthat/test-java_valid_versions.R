@@ -38,9 +38,12 @@ test_that("fallback is used when the API call fails", {
     rJavaEnv.valid_versions_timestamp = NULL
   )
 
-  local_mocked_bindings(read_json = function(...) stop("Simulated API failure"), .package = "jsonlite")
+  local_mocked_bindings(
+    read_json = function(...) stop("Simulated API failure"),
+    .package = "jsonlite"
+  )
 
-  fallback <- getOption("rJavaEnv.fallback_valid_versions")
+  fallback <- getOption("rJavaEnv.fallback_valid_versions_current_platform")
   versions <- java_valid_versions(force = TRUE)
 
   ## When the API call fails, the fallback list should be returned.
