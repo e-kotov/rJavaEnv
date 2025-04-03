@@ -1,0 +1,62 @@
+digraph {
+  graph [rankdir=TB, splines=polyline]
+
+  // Align the starting nodes of each process horizontally
+  { rank = same; RU1; UJ1; ADV1; }
+
+  // Cluster: Regular Users (java_quick_install)
+  subgraph cluster_regular {
+    label = "";
+    style = filled;
+    color = lightgrey;
+    node [shape=box, style=filled, fillcolor=lavender];
+
+    RU1 [label="Regular User:\n Setup Java in the Project Folder"];
+    RU2 [label=<<B>rJavaEnv::java_quick_install()</B>>];
+    RU3 [label="Downloads, Unpacks, Installs Java,\nsets JAVA_HOME & PATH\n(in current R session &\nin current R profile folder via .Rprofile)"];
+    RU4 [label="Java Ready for Use"];
+    RU5 [label=<Delete java from project with<BR/><B>java_clear("project")</B> >];
+
+    RU1 -> RU2 -> RU3 -> RU4 -> RU5 ;
+  }
+
+  // Cluster: use_java() Workflow (for regular & advanced users)
+  subgraph cluster_use_java {
+    label = "";
+    style = filled;
+    color = lightblue;
+    node [shape=box, style=filled, fillcolor=lavender];
+
+    UJ1 [label="Regular/Advanced Users:\nQuickly set Java\nin the current R session only"];
+    UJ2 [label=<<B>rJavaEnv::use_java()</B>>];
+    UJ3 [label="Downloads, Unpacks, Installs Java,\nsets JAVA_HOME & PATH\nin current R session only"];
+    UJ4 [label="Java Set for Current Session"];
+    UJ5 [label="Restart R session to reset any changes"];
+
+    UJ1 -> UJ2 -> UJ3 -> UJ4 -> UJ5;
+  }
+
+  // Cluster: Advanced Users (individual functions)
+  subgraph cluster_advanced {
+    label = "";
+    style = filled;
+    color = lightgrey;
+    node [shape=box, style=filled, fillcolor=lavender];
+
+    ADV1 [label="Advanced Users:\nControl the Java setup at every step"];
+    ADV2 [label="Configure Cache\n(set rJavaEnv.cache_path)"];
+    ADV3 [label="Download Java Distribution\n(via java_download())"];
+    ADV4 [label="Unpack Distribution\n(via java_unpack())"];
+    ADV5 [label="Install into Project\n(via java_install())"];
+    ADV6 [label="Manually Set Environment\n(via java_env_set()/java_env_set_rprofile())"];
+    ADV7 [label="Validate Installation\n(via java_check_version_cmd()/rjava())"];
+    ADV8 [label="Manage Installations\n(via java_list(), java_clear(), java_env_unset())"];
+    ADV9 [label="Java Ready for Use"];
+
+    ADV1 -> ADV2 -> ADV3 -> ADV4 -> ADV5 -> ADV6 -> ADV7 -> ADV8 -> ADV9;
+  }
+
+  // Invisible edges to help align the start nodes across clusters
+  RU1 -> UJ1 [style=invis];
+  UJ1 -> ADV1 [style=invis];
+}
