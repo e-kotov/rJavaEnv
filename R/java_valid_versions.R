@@ -116,10 +116,7 @@ java_valid_major_versions_corretto <- function(
     },
     error = function(e) {
       platform_arch <- paste(platform, arch, sep = "_")
-      getOption(paste0(
-        "rJavaEnv.fallback_valid_versions_current_platform_",
-        platform_arch
-      ))
+      getOption(paste0("rJavaEnv.fallback_valid_versions_", platform_arch))
     }
   )
 

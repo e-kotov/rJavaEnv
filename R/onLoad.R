@@ -1,78 +1,13 @@
 .onLoad <- function(libname, pkgname) {
-  # Detect the current platform (OS and architecture)
-  platform <- platform_detect(quiet = TRUE)
-
-  # Select the fallback valid Java versions based on the detected platform
-  fallback_current <- switch(
-    paste(platform$os, platform$arch, sep = "_"),
-    "macos_aarch64" = c(
-      "8",
-      "11",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24"
-    ),
-    "macos_x64" = c(
-      "8",
-      "11",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24"
-    ),
-    "linux_aarch64" = c(
-      "8",
-      "11",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24"
-    ),
-    "linux_x64" = c(
-      "8",
-      "11",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24"
-    ),
-    stop("Unsupported platform/architecture combination")
-  )
-
-  # Get current options
+  # First, set all the base rJavaEnv options
   op <- options()
-
-  # Create list of rJavaEnv options including the current platform valid versions
   op.rJavaEnv <- list(
     # Default folder choice (in line with renv package)
     rJavaEnv.cache_path = tools::R_user_dir("rJavaEnv", which = "cache"),
     rJavaEnv.valid_versions_cache = NULL,
     rJavaEnv.valid_versions_timestamp = NULL,
     # Fallback lists for various platforms
-    rJavaEnv.fallback_valid_versions_current_platform_macos_aarch64 = c(
+    rJavaEnv.fallback_valid_versions_macos_aarch64 = c(
       "8",
       "11",
       "17",
@@ -84,21 +19,7 @@
       "23",
       "24"
     ),
-    rJavaEnv.fallback_valid_versions_current_platform_macos_x64 = c(
-      "8",
-      "11",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24"
-    ),
-    rJavaEnv.fallback_valid_versions_current_platform_linux_aarch64 = c(
+    rJavaEnv.fallback_valid_versions_macos_x64 = c(
       "8",
       "11",
       "15",
@@ -112,7 +33,7 @@
       "23",
       "24"
     ),
-    rJavaEnv.fallback_valid_versions_current_platform_linux_x64 = c(
+    rJavaEnv.fallback_valid_versions_linux_aarch64 = c(
       "8",
       "11",
       "15",
@@ -126,13 +47,61 @@
       "23",
       "24"
     ),
-    # Current platform valid versions
-    rJavaEnv.fallback_valid_versions_current_platform_current_platform = fallback_current
+    rJavaEnv.fallback_valid_versions_linux_x64 = c(
+      "8",
+      "11",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24"
+    ),
+    rJavaEnv.fallback_valid_versions_windows_x64 = c(
+      "8",
+      "11",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24"
+    ),
+    rJavaEnv.fallback_valid_versions_windows_x86 = c(
+      "8",
+      "11"
+    )
   )
 
-  # Only set the options that haven't been set yet
+  # Only set the options that haven't been defined yet
   toset <- !(names(op.rJavaEnv) %in% names(op))
   if (any(toset)) options(op.rJavaEnv[toset])
+
+  # Now, detect the current platform (OS and architecture)
+  platform <- platform_detect(quiet = TRUE)
+
+  # Build the option name dynamically based on platform$os and platform$arch.
+  # For example, for macOS on x64, this results in "rJavaEnv.fallback_valid_versions_macos_x64"
+  fallback_option_name <- paste0(
+    "rJavaEnv.fallback_valid_versions_",
+    platform$os,
+    "_",
+    platform$arch
+  )
+
+  # Retrieve the corresponding fallback list using getOption()
+  fallback_current <- getOption(fallback_option_name)
+
+  # Set the current platform valid versions option
+  options(rJavaEnv.fallback_valid_versions_current_platform = fallback_current)
 
   invisible()
 }
