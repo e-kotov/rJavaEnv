@@ -40,7 +40,7 @@ java_install <- function(
 
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
-  java_versions <- getOption("rJavaEnv.valid_major_java_versions")
+  java_versions <- java_valid_versions()
 
   # Extract information from the file name
   filename <- basename(java_distrib_path)
