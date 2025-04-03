@@ -203,7 +203,13 @@ The package has several core functions:
 9.  `java_clear()`
     - Removes all or some `Java` versions linked in the current project
       (or cached distributions or installations).
-10. `use_java()`
+
+10 `java_valid_versions()` \* Lists all valid major `Java` versions that
+can be downloaded and installed for either current automatically
+detected OS and CPU architecture or user-specified platform and
+architecture.
+
+11. `use_java()`
 
 - Same as `java_quick_install()`, but in a less intrusive way. Does not
   copy or link the `Java` installation folder from cache into the
