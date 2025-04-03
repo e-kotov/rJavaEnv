@@ -55,6 +55,7 @@
 <code>Java</code> version (currently still only for <code>Amazon Corretto</code>) is now determined dynamically using the official GitHub <code>json</code> with releases, so when new <code>Java</code> version becomes available, you will not be depenent on <code>rJavaEnv</code> to be updated. As a fallback, versions up to 24 are hardcoded.</li>
 <li>
 <code>force</code> argument in <code><a href="../reference/java_download.html">java_download()</a></code>. When set to <code>TRUE</code>, allows to overwrite the distribution file if it already exist in the cache.</li>
+<li>new function <code><a href="../reference/java_valid_versions.html">java_valid_versions()</a></code> allows to retrieve a list of all available <code>Java</code> versions for the current automatically detected OS and CPU architecture, or user-specified platform and architecture.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
@@ -97,7 +98,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://www.ekotov.pro" class="external-link">Egor Kotov</a>.</p>
+  <p>Developed by <a href="https://www.ekotov.pro" class="external-link">Egor Kotov</a>, Chung-hong Chan.</p>
 </div>
 
 <div class="pkgdown-footer-right">
