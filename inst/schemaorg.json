@@ -67,18 +67,27 @@
         "url": "https://cran.r-project.org"
       },
       "runtimePlatform": "R version 4.4.3 (2025-02-28)",
-      "version": "0.2.2.9000"
+      "version": "0.3.0"
     },
     {
       "id": "https://doi.org/10.32614/CRAN.package.rJavaEnv",
       "type": "SoftwareSourceCode",
-      "author": {
-        "id": "https://orcid.org/0000-0001-6690-5345",
-        "type": "Person",
-        "email": "kotov.egor@gmail.com",
-        "familyName": "Kotov",
-        "givenName": "Egor"
-      },
+      "author": [
+        {
+          "id": "https://orcid.org/0000-0001-6690-5345",
+          "type": "Person",
+          "email": "kotov.egor@gmail.com",
+          "familyName": "Kotov",
+          "givenName": "Egor"
+        },
+        {
+          "id": "https://orcid.org/0000-0002-6232-7530",
+          "type": "Person",
+          "email": "chainsawtiney@gmail.com",
+          "familyName": "Chan",
+          "givenName": "Chung-hong"
+        }
+      ],
       "name": "rJavaEnv: Java Environments for R Projects"
     }
   ]

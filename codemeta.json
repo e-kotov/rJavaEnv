@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/e-kotov/rJavaEnv",
   "issueTracker": "https://github.com/e-kotov/rJavaEnv/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.2.2.9000",
+  "version": "0.3.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -185,7 +185,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "351785.837KB",
+  "fileSize": "351786.753KB",
   "citation": [
     {
       "@type": "SoftwareSourceCode",
@@ -197,6 +197,13 @@
           "familyName": "Kotov",
           "email": "kotov.egor@gmail.com",
           "@id": "https://orcid.org/0000-0001-6690-5345"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Chung-hong",
+          "familyName": "Chan",
+          "email": "chainsawtiney@gmail.com",
+          "@id": "https://orcid.org/0000-0002-6232-7530"
         }
       ],
       "name": "rJavaEnv: Java Environments for R Projects",

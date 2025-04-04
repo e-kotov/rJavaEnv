@@ -8,7 +8,7 @@ message: 'To cite package "rJavaEnv" in publications use:'
 type: software
 license: MIT
 title: 'rJavaEnv: ''Java'' Environments for R Projects'
-version: 0.2.2.9000
+version: 0.3.0
 doi: 10.32614/CRAN.package.rJavaEnv
 identifiers:
 - type: doi
@@ -47,6 +47,10 @@ preferred-citation:
     given-names: Egor
     email: kotov.egor@gmail.com
     orcid: https://orcid.org/0000-0001-6690-5345
+  - family-names: Chan
+    given-names: Chung-hong
+    email: chainsawtiney@gmail.com
+    orcid: https://orcid.org/0000-0002-6232-7530
   year: '2024'
   url: https://github.com/e-kotov/rJavaEnv
   doi: 10.32614/CRAN.package.rJavaEnv
