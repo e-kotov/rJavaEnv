@@ -16,7 +16,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rJavaEnv</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,18 +48,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="rjavaenv-development-version">rJavaEnv (development version)<a class="anchor" aria-label="anchor" href="#rjavaenv-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.0" id="rjavaenv-030">rJavaEnv 0.3.0<a class="anchor" aria-label="anchor" href="#rjavaenv-030"></a></h2>
 <div class="section level3">
-<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>
-<code>Java</code> version (currently still only for <code>Amazon Corretto</code>) is now determined dynamically using the official GitHub <code>json</code> with releases, so when new <code>Java</code> version becomes available, you will not be depenent on <code>rJavaEnv</code> to be updated. As a fallback, versions up to 24 are hardcoded.</li>
-<li>
-<code>force</code> argument in <code><a href="../reference/java_download.html">java_download()</a></code>. When set to <code>TRUE</code>, allows to overwrite the distribution file if it already exist in the cache.</li>
-<li>new function <code><a href="../reference/java_valid_versions.html">java_valid_versions()</a></code> allows to retrieve a list of all available <code>Java</code> versions for the current automatically detected OS and CPU architecture, or user-specified platform and architecture.</li>
+<h3 id="new-features-0-3-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
+<ul><li><p><code>Java</code> version (currently still only for <code>Amazon Corretto</code>) is now determined dynamically using the official GitHub <code>json</code> with releases, so when new <code>Java</code> version becomes available, you will not be depenent on <code>rJavaEnv</code> to be updated. As a fallback, versions up to 24 are hardcoded.</p></li>
+<li><p>Added <code>force</code> argument to <code><a href="../reference/java_download.html">java_download()</a></code>. When set to <code>TRUE</code>, allows to overwrite the distribution file if it already exist in the cache. This save the trouble of deleting the cached file with <code><a href="../reference/java_clear.html">java_clear()</a></code> before re-downloading.</p></li>
+<li><p>Added a new function <code><a href="../reference/java_valid_versions.html">java_valid_versions()</a></code> allows to retrieve a list of all available <code>Java</code> versions for the current automatically detected OS and CPU architecture, or user-specified platform and architecture.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
-<ul><li>better command line <code>Java</code> detection (thanks to Jonas Lieth)</li>
+<h3 id="improvements-0-3-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-3-0"></a></h3>
+<ul><li><p>Better command line <code>Java</code> detection (thanks to Jonas Lieth)</p></li>
+<li><p>Test coverage is now 7.2%</p></li>
 </ul></div>
 </div>
     <div class="section level2">
