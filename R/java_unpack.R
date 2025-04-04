@@ -1,48 +1,51 @@
 #' Unpack a Java distribution file into cache directory
-#' 
+#'
 #' @description
 #' Unpack the Java distribution file into cache directory and return the path to the unpacked Java directory with Java binaries.
-#' 
-#' 
+#'
+#'
 #' @inheritParams java_install
 #' @inheritParams global_quiet_param
 #' @return A `character` vector containing of length 1 containing the path to the unpacked Java directory.
 #' @export
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' # set cache dir to temporary directory
 #' options(rJavaEnv.cache_path = tempdir())
-#' 
+#'
 #' # download Java 17 distrib and unpack it into cache dir
 #' java_17_distrib <- java_download(version = "17")
 #' java_home <- java_unpack(java_distrib_path = java_17_distrib)
-#' 
+#'
 #' # set the JAVA_HOME environment variable in the current session
 #' # to the cache dir without touching any files in the current project directory
 #' java_env_set(where = "session", java_home = java_home)
 #' }
-#' 
+#'
 java_unpack <- function(
   java_distrib_path,
   quiet = FALSE
 ) {
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
-  java_versions <- getOption("rJavaEnv.valid_major_java_versions")
+  java_versions <- java_valid_versions()
 
   # Extract information from the file name
   filename <- basename(java_distrib_path)
   parts <- strsplit(gsub("\\.tar\\.gz|\\.zip", "", filename), "-")[[1]]
 
   # Guess the version, architecture, and platform
-    version <- parts[parts %in% java_versions][1]
-    arch <- parts[parts %in% architectures][1]
-    platform <- parts[parts %in% platforms][1]
+  version <- parts[parts %in% java_versions][1]
+  arch <- parts[parts %in% architectures][1]
+  platform <- parts[parts %in% platforms][1]
 
-  if (is.na(version)) cli::cli_abort("Unable to detect Java version from filename.")
-  if (is.na(arch)) cli::cli_abort("Unable to detect architecture from filename.")
-  if (is.na(platform)) cli::cli_abort("Unable to detect platform from filename.")
+  if (is.na(version))
+    cli::cli_abort("Unable to detect Java version from filename.")
+  if (is.na(arch))
+    cli::cli_abort("Unable to detect architecture from filename.")
+  if (is.na(platform))
+    cli::cli_abort("Unable to detect platform from filename.")
 
   # Create the installation path in the package cache
   cache_path <- getOption("rJavaEnv.cache_path")
@@ -87,12 +90,19 @@ java_unpack <- function(
     }
 
     # Move the extracted files to the installation path
-    file.copy(list.files(extracted_dir, full.names = TRUE), installed_path, recursive = TRUE)
+    file.copy(
+      list.files(extracted_dir, full.names = TRUE),
+      installed_path,
+      recursive = TRUE
+    )
 
     # Clean up temporary directory
     unlink(temp_dir, recursive = TRUE)
   } else {
-    if (!quiet) cli::cli_inform("Java distribution {filename} already unpacked at {.path {installed_path}}")
+    if (!quiet)
+      cli::cli_inform(
+        "Java distribution {filename} already unpacked at {.path {installed_path}}"
+      )
   }
   return(installed_path)
 }
