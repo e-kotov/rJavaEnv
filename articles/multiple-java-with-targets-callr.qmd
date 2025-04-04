@@ -25,13 +25,17 @@ First, load the package and check the valid major versions of `Java`:
 
 ```{r}
 library(rJavaEnv)
-getOption("rJavaEnv.valid_major_java_versions")
+java_valid_versions()
 ```
 
 
 ```
-[1] "8"  "11" "17" "21" "22"
+[1] "8"  "11" "15" "16" "17" "18" "19" "20" "21" "22" "23" "24"
 ```
+
+::: {.callout-note}
+The available versions of `Java` depend on your OS and architecture, so you might see a shorter list on your system.
+:::
 
 Now select any two or three versions and run `use_java()`, checking every time that correct java was set in the current environment.
 
