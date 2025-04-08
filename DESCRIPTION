@@ -49,7 +49,8 @@ Imports:
 Suggests: 
     quarto,
     rJava,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    withr
 VignetteBuilder: 
     quarto
 Config/testthat/edition: 3
