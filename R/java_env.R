@@ -38,12 +38,9 @@ java_env_set <- function(
   project_path = NULL,
   quiet = FALSE
 ) {
-
   where <- match.arg(where)
   checkmate::assertString(java_home)
   checkmate::assertFlag(quiet)
-
-
 
   if (where %in% c("session", "both")) {
     java_env_set_session(java_home)
@@ -83,11 +80,12 @@ java_env_set <- function(
 #' @importFrom utils installed.packages
 #'
 java_env_set_session <- function(java_home) {
-
   # check if rJava is installed and alread initialized
   if (any(utils::installed.packages()[, 1] == "rJava")) {
-    if( "rJava" %in% loadedNamespaces() == TRUE ) {
-      cli::cli_inform(c("!" = "You have `rJava` R package loaded in the current session. If you have already initialised it directly with ``rJava::.jinit()` or via your Java-dependent R package in the current session, you may not be able to switch to a different `Java` version unless you restart R. `Java` version can only be set once per session for packages that rely on `rJava`. Unless you restart the R session or run your code in a new R subprocess using `targets` or `callr`, the new `JAVA_HOME` and `PATH` will not take effect."))
+    if ("rJava" %in% loadedNamespaces() == TRUE) {
+      cli::cli_inform(c(
+        "!" = "You have `rJava` R package loaded in the current session. If you have already initialised it directly with ``rJava::.jinit()` or via your Java-dependent R package in the current session, you may not be able to switch to a different `Java` version unless you restart R. `Java` version can only be set once per session for packages that rely on `rJava`. Unless you restart the R session or run your code in a new R subprocess using `targets` or `callr`, the new `JAVA_HOME` and `PATH` will not take effect."
+      ))
     }
   }
 
@@ -143,8 +141,6 @@ java_env_set_rprofile <- function(
 }
 
 
-
-
 #' Check Java Version with a Specified JAVA_HOME Using a Separate R Session
 #'
 #' This function sets the JAVA_HOME environment variable, initializes the JVM using rJava, and prints the Java version that would be used if the user sets the given JAVA_HOME in the current R session. This check is performed in a separate R session to avoid having to reload the current R session. The reason for this is that once Java is initialized in an R session, it cannot be uninitialized unless the current R session is restarted.
@@ -164,7 +160,9 @@ java_check_version_rjava <- function(
 ) {
   # Check if rJava is installed
   if (!requireNamespace("rJava", quietly = TRUE)) {
-    cli::cli_alert_danger("rJava package is not installed. You need to install rJava to use this function to check if rJava-based packages will work with the specified Java version.")
+    cli::cli_alert_danger(
+      "rJava package is not installed. You need to install rJava to use this function to check if rJava-based packages will work with the specified Java version."
+    )
     return(FALSE)
   }
 
@@ -175,7 +173,9 @@ java_check_version_rjava <- function(
       if (current_java_home == "") {
         cli::cli_inform("JAVA_HOME is not set.")
       } else {
-        cli::cli_inform("Using current session's JAVA_HOME: {.path {current_java_home}}")
+        cli::cli_inform(
+          "Using current session's JAVA_HOME: {.path {current_java_home}}"
+        )
       }
     }
     java_home <- current_java_home
@@ -186,7 +186,10 @@ java_check_version_rjava <- function(
   }
 
   # Get the code of the unexported function to use in a script
-  internal_function <- getFromNamespace("java_version_check_rscript", "rJavaEnv")
+  internal_function <- getFromNamespace(
+    "java_version_check_rscript",
+    "rJavaEnv"
+  )
   script_content <- paste(deparse(body(internal_function)), collapse = "\n")
 
   # Create a wrapper script that includes the function definition and calls it
@@ -200,9 +203,11 @@ java_check_version_rjava <- function(
   writeLines(wrapper_script, script_file)
 
   # Run the script in a separate R session and capture the output
-  output <- suppressWarnings(system2("Rscript",
+  output <- suppressWarnings(system2(
+    "Rscript",
     args = c(script_file, java_home),
-    stdout = TRUE, stderr = TRUE
+    stdout = TRUE,
+    stderr = TRUE
   ))
 
   # Delete the temporary script file
@@ -228,7 +233,11 @@ java_check_version_rjava <- function(
     if (!quiet) cli::cli_alert_danger("Failed to retrieve Java version.")
   }
 
-  matches <- gregexpr('(?<=Java version: \\\")[0-9]{1,2}(?=\\.)', output, perl = TRUE)
+  matches <- gregexpr(
+    '(?<=Java version: \\\")[0-9]{1,2}(?=\\.)',
+    output,
+    perl = TRUE
+  )
   major_java_ver <- regmatches(output, matches)[[1]]
   major_java_ver
 
@@ -276,7 +285,9 @@ java_check_version_cmd <- function(
 
   # Check if java executable exists in the PATH
   if (!nzchar(Sys.which("java"))) {
-    cli::cli_alert_danger("Java installation is not valid, Java executable not found.")
+    cli::cli_alert_danger(
+      "Java installation is not valid, Java executable not found."
+    )
     if (!is.null(java_home)) {
       Sys.setenv(JAVA_HOME = old_java_home)
     }
@@ -331,7 +342,10 @@ java_check_version_system <- function(
 
   # extract Java version
   java_ver_string <- java_ver[[1]]
-  matches <- regexec('(openjdk|java) (version )?(\\\")?([0-9]{1,2})', java_ver_string)
+  matches <- regexec(
+    '(openjdk|java) (version )?(\\\")?([0-9]{1,2})',
+    java_ver_string
+  )
   major_java_ver <- regmatches(java_ver_string, matches)[[1]][5]
 
   # fix 1 to 8, as Java 8 prints "1.8"
@@ -357,8 +371,8 @@ java_check_version_system <- function(
 #' java_env_unset(project_path = tempdir())
 #' }
 java_env_unset <- function(
-    project_path = NULL,
-    quiet = FALSE
+  project_path = NULL,
+  quiet = FALSE
 ) {
   rje_consent_check()
 
@@ -373,11 +387,15 @@ java_env_unset <- function(
     rprofile_content <- rprofile_content[!grepl("# rJavaEnv", rprofile_content)]
     writeLines(rprofile_content, con = rprofile_path)
     if (!quiet) {
-      cli::cli_inform("Removed JAVA_HOME settings from .Rprofile in '{.path {rprofile_path}}'")
+      cli::cli_inform(
+        "Removed JAVA_HOME settings from .Rprofile in '{.path {rprofile_path}}'"
+      )
     }
   } else {
     if (!quiet) {
-      cli::cli_inform(c("!" = "No .Rprofile found in the project directory: {.path project_path}"))
+      cli::cli_inform(c(
+        "!" = "No .Rprofile found in the project directory: {.path project_path}"
+      ))
     }
   }
 }
