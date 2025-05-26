@@ -203,8 +203,9 @@ java_check_version_rjava <- function(
   writeLines(wrapper_script, script_file)
 
   # Run the script in a separate R session and capture the output
+  rscript_path <- file.path(R.home("bin"), "Rscript")
   output <- suppressWarnings(system2(
-    "Rscript",
+    rscript_path,
     args = c(script_file, java_home),
     stdout = TRUE,
     stderr = TRUE
