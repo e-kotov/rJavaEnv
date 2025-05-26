@@ -234,13 +234,11 @@ java_check_version_rjava <- function(
     if (!quiet) cli::cli_alert_danger("Failed to retrieve Java version.")
   }
 
-  matches <- gregexpr(
-    '(?<=Java version: \\\")[0-9]{1,2}(?=\\.)',
-    output,
-    perl = TRUE
-  )
-  major_java_ver <- regmatches(output, matches)[[1]]
-  major_java_ver
+  major_java_ver <- sub('.*version: \\"([0-9]+).*', '\\1', output[1])
+  if (!nzchar(major_java_ver) || !grepl("^[0-9]+$", major_java_ver)) {
+    if (!quiet) cli::cli_alert_danger("Could not parse Java major version.")
+    return(FALSE)
+  }
 
   # fix 1 to 8, as Java 8 prints "1.8"
   if (major_java_ver == "1") {
