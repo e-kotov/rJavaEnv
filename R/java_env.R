@@ -139,7 +139,7 @@ java_env_set_session <- function(java_home) {
       jvm_lib_dir <- dirname(libjvm_path)
       r_lib_dir <- R.home("lib")
 
-      # 2. Set linker/loader paths, including R's own lib directory
+      # 2. Set runtime loader path (LD_LIBRARY_PATH)
       Sys.setenv(JAVA_LD_LIBRARY_PATH = jvm_lib_dir)
       old_ld_path <- Sys.getenv("LD_LIBRARY_PATH", unset = "")
       paths_to_prepend <- unique(c(jvm_lib_dir, r_lib_dir))
@@ -150,14 +150,25 @@ java_env_set_session <- function(java_home) {
       }
       Sys.setenv(LD_LIBRARY_PATH = new_ld_path)
 
-      # 3. Set LDFLAGS for compile-time linking
+      # 3. Set LDFLAGS for compile-time linking, including R's own LDFLAGS
       old_ldflags <- Sys.getenv("LDFLAGS", unset = "")
-      flags_to_prepend <- paste0("-L", unique(c(jvm_lib_dir, r_lib_dir)))
-      new_ldflags <- if (nzchar(old_ldflags)) {
-        paste(c(flags_to_prepend, old_ldflags), collapse = " ")
-      } else {
-        paste(flags_to_prepend, collapse = " ")
+      r_ldflags <- tryCatch(
+        system2(
+          file.path(R.home("bin"), "R"),
+          args = "CMD config LDFLAGS",
+          stdout = TRUE,
+          stderr = TRUE
+        ),
+        warning = function(w) "",
+        error = function(e) ""
+      )
+      if (is.null(r_ldflags)) {
+        r_ldflags <- ""
       }
+
+      flags_to_prepend <- c(paste0("-L", jvm_lib_dir), r_ldflags)
+      all_flags <- c(flags_to_prepend, old_ldflags)
+      new_ldflags <- paste(unique(all_flags[nzchar(all_flags)]), collapse = " ")
       Sys.setenv(LDFLAGS = new_ldflags)
 
       # 4. Set Java libs for the linker
@@ -269,9 +280,23 @@ java_env_set_rprofile <- function(
         unique(c(jvm_lib_dir, r_lib_dir)),
         collapse = .Platform$path.sep
       )
-      ldflags_to_prepend_str <- paste0(
-        "-L",
-        unique(c(jvm_lib_dir, r_lib_dir)),
+
+      r_ldflags <- tryCatch(
+        system2(
+          file.path(R.home("bin"), "R"),
+          args = "CMD config LDFLAGS",
+          stdout = TRUE,
+          stderr = TRUE
+        ),
+        warning = function(w) "",
+        error = function(e) ""
+      )
+      if (is.null(r_ldflags)) {
+        r_ldflags <- ""
+      }
+
+      ldflags_to_prepend_str <- paste(
+        c(paste0("-L", jvm_lib_dir), r_ldflags),
         collapse = " "
       )
 
