@@ -1,23 +1,21 @@
 # set Java environment ------------------------------------------------------------
 
-#' Set a minimal Java runtime environment
+#' Set the Java runtime or build environment
 #'
 #' @description
-#' Sets the essential `JAVA_HOME` and `PATH` environment variables for running Java-based packages. This function provides a minimal, safe configuration suitable for project-level `.Rprofile` files.
+#' Sets the essential `JAVA_HOME`, `PATH`, and system-specific library path for running Java-based packages.
 #'
-#' For compiling `rJava` from source, which requires a more comprehensive set of environment variables (like `LDFLAGS`, `LIBS`, etc.), please use the dedicated `java_set_build_env()` function.
+#' By default, it sets a minimal, safe runtime environment suitable for project `.Rprofile` files. For compiling `rJava` from source, set `setup_build_env = TRUE` to configure the necessary build tools in the **current R session only**.
 #'
 #' @param java_home The path to the desired `JAVA_HOME`.
 #' @param where Where to set the `JAVA_HOME`: "session", "project", or "both". Defaults to "session" and only updates the paths in the current R session. When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.
 #' @inheritParams global_quiet_param
 #' @inheritParams java_install
-#' @inheritParams java_env_set_session
-#' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
+#' @return Nothing. Sets environment variables.
 #' @export
-#' @seealso [java_set_build_env()]
 #' @examples
 #' \dontrun{
-#' # download, install Java 17
+#' # Download and install Java 17
 #' java_17_distrib <- java_download(version = "17", temp_dir = TRUE)
 #' java_home <- java_install(
 #'   java_distrib_path = java_17_distrib,
@@ -28,8 +26,9 @@
 #' # Set the minimal runtime environment in the current session
 #' java_env_set(where = "session", java_home = java_home)
 #'
-#' # Set the minimal runtime environment in the project's .Rprofile
-#' java_env_set(where = "project", java_home = java_home, project_path = tempdir())
+#' # Prepare the current session for building rJava from source
+#' java_env_set(where = "session", java_home = java_home, setup_build_env = TRUE)
+#' # Now you can run: install.packages("rJava", type = "source")
 #' }
 java_env_set <- function(
   where = c("session", "both", "project"),
@@ -48,8 +47,10 @@ java_env_set <- function(
     if (!quiet) {
       cli::cli_alert_success(c(
         "Current R Session: ",
-        "JAVA_HOME and PATH set to {.path {java_home}}",
-        if (setup_build_env) "and prepared for source package installation."
+        "Java environment set to {.path {java_home}}.",
+        if (setup_build_env) {
+          " Session is now configured for building `rJava` from source."
+        }
       ))
     }
   }
@@ -60,7 +61,7 @@ java_env_set <- function(
     # the current working directory by default
     # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
     project_path <- ifelse(is.null(project_path), getwd(), project_path)
-    # Always use minimal setup for .Rprofile to avoid conflicts
+    # Always use a minimal setup for .Rprofile to avoid conflicts
     java_env_set_rprofile(
       java_home,
       project_path = project_path,
@@ -69,85 +70,18 @@ java_env_set <- function(
     if (!quiet) {
       cli::cli_alert_success(c(
         "Current R Project/Working Directory: ",
-        "JAVA_HOME and PATH set to '{.path {java_home}}' in .Rprofile at '{.path {project_path}}'"
+        "Minimal Java runtime environment written to .Rprofile at '{.path {project_path}}'"
       ))
     }
   }
 
-  if (Sys.info()["sysname"] != "Windows" && !quiet) {
-    cli::cli_inform(c(
-      "i" = "To install `rJava` from source, first run `rJavaEnv::java_set_build_env()` and then `install.packages('rJava', type = 'source')`.",
-      " " = "To make this Java configuration permanent for all of R, you may need to reconfigure it.",
-      " " = "If you have admin rights, run the following in your terminal:",
-      " " = "{.code R CMD javareconf JAVA_HOME={java_home}}",
-      " " = "If you do not have admin rights, run:",
-      " " = "{.code R CMD javareconf JAVA_HOME={java_home} -e}"
-    ))
-  }
-
-  invisible(NULL)
-}
-
-#' Set the full environment for building rJava from source
-#'
-#' @description
-#' Configures the current R session and/or project `.Rprofile` with all the necessary environment variables (`LDFLAGS`, `LIBS`, `JAVA_CPPFLAGS`, etc.) required to successfully compile `rJava` from source using `install.packages("rJava", type = "source")`.
-#'
-#' **Warning**: Setting this environment in your `.Rprofile` is powerful but can potentially interfere with the installation of other source packages. It is generally safer to set this for the `"session"` only.
-#'
-#' @inheritParams java_env_set
-#' @return Nothing. Sets environment variables and prints an instructional message.
-#' @export
-#' @seealso [java_env_set()]
-#' @examples
-#' \dontrun{
-#' # Set the current session to prepare for building rJava from source
-#' java_set_build_env(where = "session", java_home = "/path/to/java/home")
-#' # Now you can run: install.packages("rJava", type = "source")
-#' }
-java_set_build_env <- function(
-  where = c("session", "both", "project"),
-  java_home,
-  project_path = NULL,
-  quiet = FALSE
-) {
-  where <- match.arg(where)
-  checkmate::assertString(java_home)
-  checkmate::assertFlag(quiet)
-
-  if (where %in% c("session", "both")) {
-    java_env_set_session(java_home, setup_build_env = TRUE)
-  }
-
-  rje_consent_check()
-  if (where %in% c("project", "both")) {
-    project_path <- ifelse(is.null(project_path), getwd(), project_path)
-    java_env_set_rprofile(
-      java_home,
-      project_path = project_path,
-      setup_build_env = TRUE
-    )
-  }
-
-  if (!quiet) {
+  if (setup_build_env && !quiet) {
     cli::cli_div(theme = list(rule = list(color = "blue")))
     cli::cli_rule(left = "Build Environment Ready")
-    cli::cli_alert_success(
-      "The R environment has been configured for installing `rJava` from source."
-    )
-    cli::cli_text("You can now run the following command:")
-    cli::cli_code('install.packages("rJava", type = "source")')
-    cli::cli_alert_info(
-      "Note: Some package repositories (like Posit Package Manager) may not serve source packages. If the installation fails or installs a binary, you may need to specify a different repository, e.g., the main CRAN mirror:"
-    )
+    cli::cli_alert_info("You can now install `rJava` from source by running:")
     cli::cli_code(
       'install.packages("rJava", type = "source", repos = "https://cloud.r-project.org")'
     )
-    if (where %in% c("project", "both")) {
-      cli::cli_alert_warning(
-        "The build environment has been written to your project's {.file .Rprofile}. This is powerful but may conflict with other source package installations. If you encounter issues, consider using this function with `where = \"session\"` instead."
-      )
-    }
     cli::cli_rule()
   }
 
@@ -162,95 +96,94 @@ java_set_build_env <- function(
 #' @param setup_build_env Logical. If TRUE, also sets build-specific variables.
 #' @keywords internal
 java_env_set_session <- function(java_home, setup_build_env = FALSE) {
-  # Check for loaded rJava namespace
+  # Set minimal runtime environment first
+  set_java_runtime_env_vars_session(java_home)
+
+  # Set comprehensive build environment if requested
+  if (setup_build_env) {
+    set_java_build_env_vars_session(java_home)
+  }
+}
+
+#' Set minimal Java runtime environment variables for the current session
+#' @param java_home The path to the desired JAVA_HOME.
+#' @keywords internal
+set_java_runtime_env_vars_session <- function(java_home) {
   if (
     any(utils::installed.packages()[, 1] == "rJava") &&
       "rJava" %in% loadedNamespaces()
   ) {
     cli::cli_inform(c(
-      "!" = "You have `rJava` R package loaded in the current session. If you have already initialised it directly with ``rJava::.jinit()` or via your Java-dependent R package in the current session, you may not be able to switch to a different `Java` version unless you restart R. `Java` version can only be set once per session for packages that rely on `rJava`. Unless you restart the R session or run your code in a new R subprocess using `targets` or `callr`, the new `JAVA_HOME` and `PATH` will not take effect."
+      "!" = "The `rJava` package is already loaded. You may need to restart the R session for environment changes to take full effect for `rJava`."
     ))
   }
 
-  # Set core Java variables
   Sys.setenv(JAVA_HOME = java_home)
-  Sys.setenv(JAVA = file.path(java_home, "bin", "java"))
-  Sys.setenv(JAVAC = file.path(java_home, "bin", "javac"))
-  Sys.setenv(JAR = file.path(java_home, "bin", "jar"))
-
-  # JAVAH is deprecated/removed in modern JDKs; set if it exists
-  javah_path <- file.path(java_home, "bin", "javah")
-  Sys.setenv(JAVAH = if (file.exists(javah_path)) javah_path else "")
-
-  # Update system PATH
   old_path <- Sys.getenv("PATH")
   new_path <- file.path(java_home, "bin")
   if (!grepl(new_path, old_path, fixed = TRUE)) {
     Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
   }
 
-  # On Unix-alikes, find libjvm and set the loader path
   if (.Platform$OS.type == "unix") {
-    lib_name <- .Platform$dynlib.ext
-    lib_pattern <- paste0("libjvm", lib_name, "$")
+    lib_name_ext <- .Platform$dynlib.ext
+    lib_pattern <- paste0("libjvm", lib_name_ext)
     all_files <- list.files(
       path = java_home,
       pattern = lib_pattern,
       recursive = TRUE,
       full.names = TRUE
     )
-    libjvm_path <- NULL
-    if (length(all_files) > 0) {
-      server_files <- all_files[grepl(
+    libjvm_path <- if (length(all_files) > 0) {
+      all_files[grepl(
         paste0("/server/", lib_pattern),
-        all_files
-      )]
-      libjvm_path <- if (length(server_files) > 0) {
-        server_files[1]
-      } else {
-        all_files[1]
-      }
+        all_files,
+        fixed = TRUE
+      )][1]
+    } else if (length(all_files) > 0) {
+      all_files[1]
+    } else {
+      NA
     }
 
-    if (!is.null(libjvm_path)) {
+    if (!is.na(libjvm_path)) {
       jvm_lib_dir <- dirname(libjvm_path)
-      r_lib_dir <- R.home("lib")
       loader_var <- if (Sys.info()["sysname"] == "Darwin") {
         "DYLD_LIBRARY_PATH"
       } else {
         "LD_LIBRARY_PATH"
       }
       old_ld_path <- Sys.getenv(loader_var, unset = "")
-      paths_to_prepend <- unique(c(jvm_lib_dir, r_lib_dir))
       new_ld_path <- if (nzchar(old_ld_path)) {
-        paste(c(paths_to_prepend, old_ld_path), collapse = .Platform$path.sep)
+        paste(jvm_lib_dir, old_ld_path, sep = .Platform$path.sep)
       } else {
-        paste(paths_to_prepend, collapse = .Platform$path.sep)
+        jvm_lib_dir
       }
       Sys.setenv(loader_var = new_ld_path)
       tryCatch(dyn.load(libjvm_path), error = function(e) {
         cli::cli_warn(
-          "Found {lib_name} at '{.path {libjvm_path}}' but failed to load it: {e$message}"
+          "Found {basename(libjvm_path)} at '{.path {libjvm_path}}' but failed to load it: {e$message}"
         )
       })
     } else {
       cli::cli_warn(
-        "Could not find libjvm within the provided JAVA_HOME: {.path {java_home}}"
+        "Could not find the Java Virtual Machine library (libjvm) within {.path {java_home}}"
       )
     }
   }
 }
 
-#' Set Java build environment variables for source installation
+#' Set Java build environment variables for the current session
 #' @param java_home The path to the desired JAVA_HOME.
 #' @keywords internal
-set_java_build_env_vars <- function(java_home) {
-  # This function is only for Unix-alikes (Linux, macOS)
+set_java_build_env_vars_session <- function(java_home) {
   if (.Platform$OS.type != "unix") {
+    cli::cli_alert_info(
+      "Source build environment setup is currently only implemented for macOS and Linux."
+    )
     return()
   }
 
-  # Set JAVA_CPPFLAGS for JNI headers
   os_specific_include <- if (Sys.info()["sysname"] == "Darwin") {
     "darwin"
   } else {
@@ -264,74 +197,54 @@ set_java_build_env_vars <- function(java_home) {
   )
   Sys.setenv(JAVA_CPPFLAGS = cpp_flags)
 
-  # Find libjvm and set all linker/loader variables
-  lib_name <- .Platform$dynlib.ext
-  lib_pattern <- paste0("libjvm", lib_name, "$")
+  lib_name_ext <- .Platform$dynlib.ext
+  lib_pattern <- paste0("libjvm", lib_name_ext)
   all_files <- list.files(
     path = java_home,
     pattern = lib_pattern,
     recursive = TRUE,
     full.names = TRUE
   )
-  libjvm_path <- NULL
-  if (length(all_files) > 0) {
-    server_files <- all_files[grepl(paste0("/server/", lib_pattern), all_files)]
-    libjvm_path <- if (length(server_files) > 0) {
-      server_files[1]
-    } else {
-      all_files[1]
-    }
+  libjvm_path <- if (length(all_files) > 0) {
+    all_files[grepl(paste0("/server/", lib_pattern), all_files, fixed = TRUE)][
+      1
+    ]
+  } else if (length(all_files) > 0) {
+    all_files[1]
+  } else {
+    NA
   }
 
-  if (is.null(libjvm_path)) {
+  if (is.na(libjvm_path)) {
+    cli::cli_warn(
+      "Could not find libjvm to set build environment; source installation may fail."
+    )
     return()
   }
 
   jvm_lib_dir <- dirname(libjvm_path)
   java_libs_str <- paste0("-L", jvm_lib_dir, " -ljvm")
-
-  # 1. Set JAVA_LIBS for rJava's main configure script
   Sys.setenv(JAVA_LIBS = java_libs_str)
 
-  # 2. Get R's base LDFLAGS and LIBS
-  r_cmd_path <- file.path(R.home("bin"), "R")
-  r_ldflags <- tryCatch(
-    system2(r_cmd_path, "CMD config LDFLAGS", stdout = TRUE, stderr = TRUE),
-    warning = function(w) "",
-    error = function(e) ""
-  )
-  r_libs <- tryCatch(
-    system2(r_cmd_path, "CMD config LIBS", stdout = TRUE, stderr = TRUE),
-    warning = function(w) "",
-    error = function(e) ""
-  )
-
-  # 3. Set OS-specific linker flags
   if (Sys.info()["sysname"] == "Darwin") {
-    # For macOS, PKG_LIBS and PKG_LDFLAGS are needed for the final link step
     Sys.setenv(PKG_LIBS = java_libs_str)
-    Sys.setenv(PKG_LDFLAGS = paste0("-Wl,-rpath,", jvm_lib_dir))
-    # General LDFLAGS are needed for the JRI configure step
-    new_ldflags <- paste(
-      c(
-        paste0("-L", jvm_lib_dir),
-        paste0("-Wl,-rpath,", jvm_lib_dir),
-        r_ldflags
-      ),
-      collapse = " "
+    pkg_ldflags_str <- paste0("-Wl,-rpath,", jvm_lib_dir)
+    Sys.setenv(PKG_LDFLAGS = pkg_ldflags_str)
+    existing_ldflags <- Sys.getenv("LDFLAGS", unset = "")
+    Sys.setenv(
+      LDFLAGS = paste(c(existing_ldflags, pkg_ldflags_str), collapse = " ")
     )
-    Sys.setenv(LDFLAGS = new_ldflags)
   } else {
     # Linux
-    # For Linux, setting LIBS is the most robust way
-    full_libs <- paste(c(java_libs_str, r_ldflags, r_libs), collapse = " ")
-    Sys.setenv(LIBS = full_libs)
+    existing_libs <- Sys.getenv("LIBS", unset = "")
+    Sys.setenv(LIBS = paste(c(java_libs_str, existing_libs), collapse = " "))
   }
 }
 
-#' Update the .Rprofile file in the project directory
-#' @inheritParams java_env_set_session
+#' Update the .Rprofile file with a minimal runtime environment
+#' @param java_home The path to the desired JAVA_HOME.
 #' @param project_path Path to the project directory.
+#' @param setup_build_env Logical. If TRUE, writes a comprehensive build environment.
 #' @keywords internal
 java_env_set_rprofile <- function(
   java_home,
@@ -358,9 +271,10 @@ java_env_set_rprofile <- function(
     "  } # rJavaEnv",
     "}) # rJavaEnv"
   )
+
   if (.Platform$OS.type == "unix") {
-    lib_name <- .Platform$dynlib.ext
-    lib_pattern <- paste0("libjvm", lib_name, "$")
+    lib_name_ext <- .Platform$dynlib.ext
+    lib_pattern <- paste0("libjvm", lib_name_ext)
     all_files <- list.files(
       path = java_home,
       pattern = lib_pattern,
@@ -368,19 +282,19 @@ java_env_set_rprofile <- function(
       full.names = TRUE
     )
     libjvm_path <- if (length(all_files) > 0) {
-      all_files[grepl(paste0("/server/", lib_pattern), all_files)][1]
+      all_files[grepl(
+        paste0("/server/", lib_pattern),
+        all_files,
+        fixed = TRUE
+      )][1]
     } else if (length(all_files) > 0) {
       all_files[1]
     } else {
-      NULL
+      NA
     }
-    if (!is.null(libjvm_path)) {
+
+    if (!is.na(libjvm_path)) {
       jvm_lib_dir <- dirname(libjvm_path)
-      r_lib_dir <- R.home("lib")
-      paths_to_prepend_str <- paste(
-        unique(c(jvm_lib_dir, r_lib_dir)),
-        collapse = .Platform$path.sep
-      )
       loader_var <- if (Sys.info()["sysname"] == "Darwin") {
         "DYLD_LIBRARY_PATH"
       } else {
@@ -391,69 +305,13 @@ java_env_set_rprofile <- function(
         "local({ # rJavaEnv",
         sprintf("  loader_var <- '%s' # rJavaEnv", loader_var),
         "  old_ld_path <- Sys.getenv(loader_var, unset = '') # rJavaEnv",
-        sprintf("  paths_to_prepend <- '%s' # rJavaEnv", paths_to_prepend_str),
-        "  new_ld_path <- if (nzchar(old_ld_path)) paste(paths_to_prepend, old_ld_path, sep = .Platform$path.sep) else paths_to_prepend # rJavaEnv",
+        sprintf("  jvm_lib_dir <- '%s' # rJavaEnv", jvm_lib_dir),
+        "  new_ld_path <- if (nzchar(old_ld_path)) paste(jvm_lib_dir, old_ld_path, sep = .Platform$path.sep) else jvm_lib_dir # rJavaEnv",
         "  Sys.setenv(loader_var = new_ld_path) # rJavaEnv",
         sprintf("  libjvm_path <- '%s' # rJavaEnv", libjvm_path),
         "  if (file.exists(libjvm_path)) { try(dyn.load(libjvm_path), silent = TRUE) } # rJavaEnv",
         "}) # rJavaEnv"
       )
-    }
-  }
-
-  # --- Build Block (only added if requested) ---
-  if (setup_build_env && .Platform$OS.type == "unix") {
-    os_specific_include <- if (Sys.info()["sysname"] == "Darwin") {
-      "darwin"
-    } else {
-      "linux"
-    }
-    cpp_flags <- paste0(
-      "-I",
-      file.path(java_home, "include"),
-      " -I",
-      file.path(java_home, "include", os_specific_include)
-    )
-    lines_to_add <- c(
-      lines_to_add,
-      sprintf("Sys.setenv(JAVA_CPPFLAGS = '%s') # rJavaEnv:Build", cpp_flags)
-    )
-    if (!is.null(libjvm_path)) {
-      jvm_lib_dir <- dirname(libjvm_path)
-      java_libs_str <- paste0("-L", jvm_lib_dir, " -ljvm")
-      lines_to_add <- c(
-        lines_to_add,
-        sprintf("Sys.setenv(JAVA_LIBS = '%s') # rJavaEnv:Build", java_libs_str)
-      )
-      if (Sys.info()["sysname"] == "Darwin") {
-        pkg_ldflags_str <- paste0("-Wl,-rpath,", jvm_lib_dir)
-        lines_to_add <- c(
-          lines_to_add,
-          sprintf("Sys.setenv(PKG_LIBS = '%s') # rJavaEnv:Build", java_libs_str)
-        )
-        lines_to_add <- c(
-          lines_to_add,
-          sprintf(
-            "Sys.setenv(PKG_LDFLAGS = '%s') # rJavaEnv:Build",
-            pkg_ldflags_str
-          )
-        )
-        lines_to_add <- c(
-          lines_to_add,
-          sprintf(
-            "Sys.setenv(LDFLAGS = paste(Sys.getenv('LDFLAGS'), '%s')) # rJavaEnv:Build",
-            pkg_ldflags_str
-          )
-        ) # Append to existing LDFLAGS
-      } else {
-        lines_to_add <- c(
-          lines_to_add,
-          sprintf(
-            "Sys.setenv(LIBS = paste(Sys.getenv('LIBS'), '%s')) # rJavaEnv:Build",
-            java_libs_str
-          )
-        ) # Append to existing LIBS
-      }
     }
   }
 
@@ -704,9 +562,6 @@ java_env_unset <- function(
 ) {
   rje_consent_check()
 
-  # Resolve the project path
-  # consistent with renv behavior
-  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
   rprofile_path <- file.path(project_path, ".Rprofile")
 
