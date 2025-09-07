@@ -101,46 +101,75 @@ java_env_set_session <- function(java_home) {
     }
   }
 
+  # Set core Java variables
   Sys.setenv(JAVA_HOME = java_home)
+  Sys.setenv(JAVA = file.path(java_home, "bin", "java"))
+  Sys.setenv(JAVAC = file.path(java_home, "bin", "javac"))
+  Sys.setenv(JAR = file.path(java_home, "bin", "jar"))
 
+  # JAVAH is deprecated/removed in modern JDKs; set if it exists
+  javah_path <- file.path(java_home, "bin", "javah")
+  Sys.setenv(JAVAH = if (file.exists(javah_path)) javah_path else "")
+
+  # Update system PATH
   old_path <- Sys.getenv("PATH")
   new_path <- file.path(java_home, "bin")
   Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 
-  # On Linux, find and dynamically load libjvm.so
+  # On Linux, set all required env vars for compilation and runtime
   if (Sys.info()["sysname"] == "Linux") {
+    # 1. Find libjvm.so
     all_files <- list.files(
       path = java_home,
       pattern = "libjvm.so$",
       recursive = TRUE,
       full.names = TRUE
     )
-
     libjvm_path <- NULL
     if (length(all_files) > 0) {
-      # Prefer the 'server' version if available
       server_files <- all_files[grepl("/server/libjvm.so$", all_files)]
-      if (length(server_files) > 0) {
-        libjvm_path <- server_files[1]
+      libjvm_path <- if (length(server_files) > 0) {
+        server_files[1]
       } else {
-        libjvm_path <- all_files[1]
+        all_files[1]
       }
     }
 
     if (!is.null(libjvm_path) && file.exists(libjvm_path)) {
-      tryCatch(
-        dyn.load(libjvm_path),
-        error = function(e) {
-          cli::cli_warn(
-            "Found libjvm.so at '{.path {libjvm_path}}' but failed to load it: {e$message}"
-          )
-        }
-      )
+      jvm_lib_dir <- dirname(libjvm_path)
+      # 2. Set linker/loader paths
+      Sys.setenv(JAVA_LD_LIBRARY_PATH = jvm_lib_dir)
+      old_ld_path <- Sys.getenv("LD_LIBRARY_PATH", unset = "")
+      new_ld_path <- paste(jvm_lib_dir, old_ld_path, sep = .Platform$path.sep)
+      Sys.setenv(LD_LIBRARY_PATH = new_ld_path)
+
+      # 3. Set Java libs for the linker
+      java_libs <- paste0("-L", jvm_lib_dir, " -ljvm")
+      Sys.setenv(JAVA_LIBS = java_libs)
+
+      # 4. Dynamically load the library for the current session
+      tryCatch(dyn.load(libjvm_path), error = function(e) {
+        cli::cli_warn(
+          "Found libjvm.so at '{.path {libjvm_path}}' but failed to load it: {e$message}"
+        )
+      })
     } else {
       cli::cli_warn(
         "Could not find libjvm.so within the provided JAVA_HOME: {.path {java_home}}"
       )
     }
+
+    # 5. Set C Pre-processor Flags for JNI headers
+    include_path <- file.path(java_home, "include")
+    include_linux_path <- file.path(java_home, "include", "linux")
+    cpp_flags <- ""
+    if (dir.exists(include_path)) {
+      cpp_flags <- paste0("-I", include_path)
+    }
+    if (dir.exists(include_linux_path)) {
+      cpp_flags <- paste(cpp_flags, paste0("-I", include_linux_path))
+    }
+    if (nzchar(cpp_flags)) Sys.setenv(JAVA_CPPFLAGS = cpp_flags)
   }
 }
 
@@ -158,27 +187,46 @@ java_env_set_rprofile <- function(
 ) {
   java_env_unset(quiet = TRUE)
 
-  # Resolve the project path
-  # consistent with renv behavior
-  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
   rprofile_path <- file.path(project_path, ".Rprofile")
 
-  # Normalize the path for Windows
-  if (.Platform$OS.type == "windows") {
-    java_home <- gsub("\\\\", "/", java_home)
-  }
+  # Normalize path for all OSes to avoid issues
+  java_home <- gsub("\\\\", "/", java_home)
 
+  # Pre-compute all paths and values to be written
   lines_to_add <- c(
     "# rJavaEnv begin: Manage JAVA_HOME",
     sprintf("Sys.setenv(JAVA_HOME = '%s') # rJavaEnv", java_home),
+    sprintf(
+      "Sys.setenv(JAVA = '%s') # rJavaEnv",
+      file.path(java_home, "bin", "java")
+    ),
+    sprintf(
+      "Sys.setenv(JAVAC = '%s') # rJavaEnv",
+      file.path(java_home, "bin", "javac")
+    ),
+    sprintf(
+      "Sys.setenv(JAR = '%s') # rJavaEnv",
+      file.path(java_home, "bin", "jar")
+    )
+  )
+
+  javah_path <- file.path(java_home, "bin", "javah")
+  javah_val <- if (file.exists(javah_path)) javah_path else ""
+  lines_to_add <- c(
+    lines_to_add,
+    sprintf("Sys.setenv(JAVAH = '%s') # rJavaEnv", javah_val)
+  )
+
+  lines_to_add <- c(
+    lines_to_add,
     "old_path <- Sys.getenv('PATH') # rJavaEnv",
     "new_path <- file.path(Sys.getenv('JAVA_HOME'), 'bin') # rJavaEnv",
     "Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep)) # rJavaEnv",
     "rm(old_path, new_path) # rJavaEnv"
   )
 
-  # On Linux, find the path to libjvm.so once and hardcode it into .Rprofile
+  # On Linux, pre-compute and hardcode all additional paths
   if (Sys.info()["sysname"] == "Linux") {
     all_files <- list.files(
       path = java_home,
@@ -186,7 +234,6 @@ java_env_set_rprofile <- function(
       recursive = TRUE,
       full.names = TRUE
     )
-
     libjvm_path <- NULL
     if (length(all_files) > 0) {
       server_files <- all_files[grepl("/server/libjvm.so$", all_files)]
@@ -198,21 +245,52 @@ java_env_set_rprofile <- function(
     }
 
     if (!is.null(libjvm_path)) {
-      # Normalize path for consistency in the file
-      libjvm_path_normalized <- gsub("\\\\", "/", libjvm_path)
-      dyn_load_line <- sprintf(
-        "if (file.exists('%s')) { try(dyn.load('%s'), silent = TRUE) } # rJavaEnv",
-        libjvm_path_normalized,
-        libjvm_path_normalized
+      libjvm_path <- gsub("\\\\", "/", libjvm_path)
+      jvm_lib_dir <- dirname(libjvm_path)
+
+      lines_to_add <- c(
+        lines_to_add,
+        sprintf(
+          "Sys.setenv(JAVA_LD_LIBRARY_PATH = '%s') # rJavaEnv",
+          jvm_lib_dir
+        ),
+        "old_ld_path <- Sys.getenv('LD_LIBRARY_PATH', unset = '') # rJavaEnv",
+        sprintf(
+          "new_ld_path <- paste('%s', old_ld_path, sep = .Platform$path.sep) # rJavaEnv",
+          jvm_lib_dir
+        ),
+        "Sys.setenv(LD_LIBRARY_PATH = new_ld_path) # rJavaEnv",
+        "rm(old_ld_path, new_ld_path) # rJavaEnv",
+        sprintf(
+          "Sys.setenv(JAVA_LIBS = '%s') # rJavaEnv",
+          paste0("-L", jvm_lib_dir, " -ljvm")
+        ),
+        sprintf(
+          "if (file.exists('%s')) { try(dyn.load('%s'), silent = TRUE) } # rJavaEnv",
+          libjvm_path,
+          libjvm_path
+        )
       )
-      lines_to_add <- c(lines_to_add, dyn_load_line)
+    }
+
+    include_path <- file.path(java_home, "include")
+    include_linux_path <- file.path(java_home, "include", "linux")
+    cpp_flags <- ""
+    if (dir.exists(include_path)) {
+      cpp_flags <- paste0("-I", include_path)
+    }
+    if (dir.exists(include_linux_path)) {
+      cpp_flags <- paste(cpp_flags, paste0("-I", include_linux_path))
+    }
+    if (nzchar(cpp_flags)) {
+      lines_to_add <- c(
+        lines_to_add,
+        sprintf("Sys.setenv(JAVA_CPPFLAGS = '%s') # rJavaEnv", cpp_flags)
+      )
     }
   }
 
-  lines_to_add <- c(
-    lines_to_add,
-    "# rJavaEnv end: Manage JAVA_HOME"
-  )
+  lines_to_add <- c(lines_to_add, "# rJavaEnv end: Manage JAVA_HOME")
 
   if (file.exists(rprofile_path)) {
     cat(lines_to_add, file = rprofile_path, append = TRUE, sep = "\n")
