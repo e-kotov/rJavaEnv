@@ -12,3 +12,4 @@ codemetar::write_codemeta(write_minimeta = T)
 
 # usethis::use_github_release()
 # usethis::use_dev_version(push = TRUE)
+rdocdump::rdd_to_txt(".", file = "private/rJavaEnv.txt")
