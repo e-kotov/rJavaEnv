@@ -4,7 +4,6 @@
 #'
 #' @param java_home The path to the desired `JAVA_HOME`.
 #' @param where Where to set the `JAVA_HOME`: "session", "project", or "both". Defaults to "session" and only updates the paths in the current R session. When "both" or "project" is selected, the function updates the .Rprofile file in the project directory to set the JAVA_HOME and PATH environment variables at the start of the R session.
-#' @param setup_java_build_env A logical indicating whether to set up the full environment for building Java-dependent packages from source. Defaults to `FALSE`.
 #' @inheritParams global_quiet_param
 #' @inheritParams java_install
 #' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
@@ -32,27 +31,19 @@
 #'   project_path = tempdir()
 #' )
 #'
-#' # Set up the full build environment for the current session
-#' java_env_set(
-#'   where = "session",
-#'   java_home = java_home,
-#'   setup_java_build_env = TRUE
-#' )
 #' }
 java_env_set <- function(
   where = c("session", "both", "project"),
   java_home,
   project_path = NULL,
-  quiet = FALSE,
-  setup_java_build_env = FALSE
+  quiet = FALSE
 ) {
   where <- match.arg(where)
-  checkmate::assert_string(java_home)
-  checkmate::assert_flag(quiet)
-  checkmate::assert_flag(setup_java_build_env)
+  checkmate::assertString(java_home)
+  checkmate::assertFlag(quiet)
 
   if (where %in% c("session", "both")) {
-    java_env_set_session(java_home, setup_java_build_env, quiet)
+    java_env_set_session(java_home)
     if (!quiet) {
       cli::cli_alert_success(c(
         "Current R Session: ",
@@ -63,8 +54,12 @@ java_env_set <- function(
 
   if (where %in% c("project", "both")) {
     rje_consent_check()
+    # consistent with renv behavior for using
+    # the current working directory by default
+    # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
     project_path <- ifelse(is.null(project_path), getwd(), project_path)
-    java_env_set_rprofile(java_home, project_path)
+
+    java_env_set_rprofile(java_home, project_path = project_path)
 
     if (!quiet) {
       cli::cli_alert_success(c(
@@ -81,28 +76,24 @@ java_env_set <- function(
 #' Set the JAVA_HOME and PATH environment variables for the current session
 #'
 #' @param java_home The path to the desired JAVA_HOME.
-#' @param setup_build_env A logical indicating whether to set up the build environment.
-#' @inheritParams global_quiet_param
 #' @keywords internal
 #' @importFrom utils installed.packages
 #'
-java_env_set_session <- function(java_home, setup_build_env, quiet = FALSE) {
+java_env_set_session <- function(java_home) {
+  # check if rJava is installed and alread initialized
   if (any(utils::installed.packages()[, 1] == "rJava")) {
-    if ("rJava" %in% loadedNamespaces()) {
+    if ("rJava" %in% loadedNamespaces() == TRUE) {
       cli::cli_inform(c(
-        "!" = "You have `rJava` loaded. To switch to a different Java version, you must restart R. A new `JAVA_HOME` will not take effect in the current session for `rJava`-dependent packages."
+        "!" = "You have `rJava` R package loaded in the current session. If you have already initialised it directly with ``rJava::.jinit()` or via your Java-dependent R package in the current session, you may not be able to switch to a different `Java` version unless you restart R. `Java` version can only be set once per session for packages that rely on `rJava`. Unless you restart the R session or run your code in a new R subprocess using `targets` or `callr`, the new `JAVA_HOME` and `PATH` will not take effect."
       ))
     }
   }
 
   Sys.setenv(JAVA_HOME = java_home)
+
   old_path <- Sys.getenv("PATH")
   new_path <- file.path(java_home, "bin")
   Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
-
-  if (setup_build_env) {
-    set_java_build_env_vars(java_home, quiet = quiet)
-  }
 }
 
 
@@ -119,9 +110,13 @@ java_env_set_rprofile <- function(
 ) {
   java_env_unset(quiet = TRUE, project_path = project_path)
 
+  # Resolve the project path
+  # consistent with renv behavior
+  # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
   rprofile_path <- file.path(project_path, ".Rprofile")
 
+  # Normalize the path for Windows
   if (.Platform$OS.type == "windows") {
     java_home <- gsub("\\\\", "/", java_home)
   }
@@ -142,7 +137,7 @@ java_env_set_rprofile <- function(
     writeLines(lines_to_add, con = rprofile_path)
   }
 
-  invisible(NULL)
+  return(invisible(NULL))
 }
 
 
@@ -274,7 +269,7 @@ java_check_version_cmd <- function(
 
   # Set JAVA_HOME in current session if specified
   if (!is.null(java_home)) {
-    java_env_set_session(java_home, setup_build_env = FALSE, quiet = quiet)
+    java_env_set_session(java_home)
   }
 
   # Get JAVA_HOME again and check if it's set
