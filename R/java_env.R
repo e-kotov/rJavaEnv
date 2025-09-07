@@ -150,11 +150,21 @@ java_env_set_session <- function(java_home) {
       }
       Sys.setenv(LD_LIBRARY_PATH = new_ld_path)
 
-      # 3. Set Java libs for the linker
+      # 3. Set LDFLAGS for compile-time linking
+      old_ldflags <- Sys.getenv("LDFLAGS", unset = "")
+      flags_to_prepend <- paste0("-L", unique(c(jvm_lib_dir, r_lib_dir)))
+      new_ldflags <- if (nzchar(old_ldflags)) {
+        paste(c(flags_to_prepend, old_ldflags), collapse = " ")
+      } else {
+        paste(flags_to_prepend, collapse = " ")
+      }
+      Sys.setenv(LDFLAGS = new_ldflags)
+
+      # 4. Set Java libs for the linker
       java_libs <- paste0("-L", jvm_lib_dir, " -ljvm")
       Sys.setenv(JAVA_LIBS = java_libs)
 
-      # 4. Dynamically load the library for the current session
+      # 5. Dynamically load the library for the current session
       tryCatch(dyn.load(libjvm_path), error = function(e) {
         cli::cli_warn(
           "Found libjvm.so at '{.path {libjvm_path}}' but failed to load it: {e$message}"
@@ -166,7 +176,7 @@ java_env_set_session <- function(java_home) {
       )
     }
 
-    # 5. Set C Pre-processor Flags for JNI headers
+    # 6. Set C Pre-processor Flags for JNI headers
     include_path <- file.path(java_home, "include")
     include_linux_path <- file.path(java_home, "include", "linux")
     cpp_flags <- ""
@@ -259,9 +269,15 @@ java_env_set_rprofile <- function(
         unique(c(jvm_lib_dir, r_lib_dir)),
         collapse = .Platform$path.sep
       )
+      ldflags_to_prepend_str <- paste0(
+        "-L",
+        unique(c(jvm_lib_dir, r_lib_dir)),
+        collapse = " "
+      )
 
       lines_to_add <- c(
         lines_to_add,
+        # Set LD_LIBRARY_PATH (for runtime)
         sprintf(
           "Sys.setenv(JAVA_LD_LIBRARY_PATH = '%s') # rJavaEnv",
           jvm_lib_dir
@@ -271,6 +287,13 @@ java_env_set_rprofile <- function(
         "new_ld_path <- if (nzchar(old_ld_path)) paste(paths_to_prepend, old_ld_path, sep = .Platform$path.sep) else paths_to_prepend # rJavaEnv",
         "Sys.setenv(LD_LIBRARY_PATH = new_ld_path) # rJavaEnv",
         "rm(old_ld_path, paths_to_prepend, new_ld_path) # rJavaEnv",
+        # Set LDFLAGS (for compile time)
+        "old_ldflags <- Sys.getenv('LDFLAGS', unset = '') # rJavaEnv",
+        sprintf("flags_to_prepend <- '%s' # rJavaEnv", ldflags_to_prepend_str),
+        "new_ldflags <- if (nzchar(old_ldflags)) paste(flags_to_prepend, old_ldflags, sep = ' ') else flags_to_prepend # rJavaEnv",
+        "Sys.setenv(LDFLAGS = new_ldflags) # rJavaEnv",
+        "rm(old_ldflags, flags_to_prepend, new_ldflags) # rJavaEnv",
+        # Set other variables
         sprintf(
           "Sys.setenv(JAVA_LIBS = '%s') # rJavaEnv",
           paste0("-L", jvm_lib_dir, " -ljvm")
