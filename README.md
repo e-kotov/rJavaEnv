@@ -47,12 +47,17 @@ working directory (via `.Rprofile`, with the user’s consent). Similar to
 what `{renv}` does for `R` packages, `{rJavaEnv}` allows different
 `Java` versions to be used across different projects, but can also be
 configured to allow multiple versions within the same project (e.g. with
-the help of `{targets}` package). **Note: there are a few extra steps
-for ‘Linux’ users, who don’t have any ‘Java’ previously installed in
-their system, and who prefer package installation from source, rather
-then installing binaries from ‘Posit Package Manager’. See
+the help of `{targets}` package). For users who need to install
+`{rJava}` or other `Java`-dependent packages from source, `{rJavaEnv}`
+will display a message with instructions on how to run
+`R CMD javareconf` to make the Java configuration permanent, but also
+provides a function `java_build_env_set()` that sets the environment
+variables in the current R session temporarily to allow installation of
+`{rJava}` from source without `R CMD javareconf`. On Linux, in addition
+to setting environment variables, `{rJavaEnv}` also dynamically loads
+`libjvm.so` to ensure `{rJava}` works correctly. See
 [documentation](https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html#note-linux)
-for details.**
+for more details.\*\*
 
 ## Install
 
@@ -132,7 +137,7 @@ rje_consent(provided = TRUE)
 
 ## Using `rJavaEnv` with `targets` and `callr`
 
-Just insert this line into the begining of any script that you run with
+Just insert this line at the top of any script that you run with
 `targets` or `callr`:
 
 ``` r
@@ -215,6 +220,11 @@ architecture.
   copy or link the `Java` installation folder from cache into the
   project directory and does not create or edit your `.Rprofile` file.
   Only sets requested java in the current R session.
+
+12. `java_build_env_set()` (and `java_build_env_unset()`)
+
+- Similar to `java_env_set()`, but specifically designed for setting
+  `Java` environment variables for building `rJava` from source.
 
 See more details on all the functions in the
 <a href="https://www.ekotov.pro/rJavaEnv/reference/index.html"
