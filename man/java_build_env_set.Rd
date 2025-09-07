@@ -25,7 +25,7 @@ Invisibly returns \code{NULL} after setting the environment variables.
 }
 \description{
 This function configures the current R session with the necessary environment
-variables to compile Java-dependent packages like 'rJava' from source.
+variables to compile Java-dependent packages like 'rJava' from source. \strong{Note: this function is still experimental.}
 }
 \examples{
 \dontrun{

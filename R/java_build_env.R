@@ -1,7 +1,7 @@
 #' Set up the environment for building R packages with Java dependencies from source
 #'
 #' This function configures the current R session with the necessary environment
-#' variables to compile Java-dependent packages like 'rJava' from source.
+#' variables to compile Java-dependent packages like 'rJava' from source. **Note: this function is still experimental.**
 #'
 #' @param java_home The path to the desired `JAVA_HOME`. Defaults to the value of the `JAVA_HOME` environment variable.
 #' @param where Where to set the build environment: "session", "project", or "both". Defaults to "session". When "both" or "project" is selected, the function updates the .Rprofile file in the project directory.
