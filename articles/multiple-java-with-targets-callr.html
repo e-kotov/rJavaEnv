@@ -59,6 +59,7 @@
 <li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
     <li><a class="dropdown-item" href="../articles/multiple-java-with-targets-callr.html">Multiple `Java` environments in one project with `targets` and `callr`</a></li>
     <li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
+    <li><a class="dropdown-item" href="../articles/install-rjava-from-source.html">Install `rJava` from source</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -153,7 +154,7 @@
 <code class="sourceCode R"><span><span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="../reference/use_java.html">use_java</a></span><span class="op">(</span><span class="st">"17"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>The first run of such script will have to go through the the process of downloading and unpacking the <code>Java</code> distribution. The second run will not need to download and unpacking and will be instant.</p>
-<p>If you need the runs to be instant from the first attempt, you can predownload and pre-install <code>Java</code> into cache folders using:</p>
+<p>If you need the runs to be instant from the first attempt, you can pre-download and pre-install <code>Java</code> into cache folders using:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">java_17_distrib</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_download.html">java_download</a></span><span class="op">(</span><span class="st">"17"</span><span class="op">)</span></span>

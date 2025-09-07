@@ -59,6 +59,7 @@
 <li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
     <li><a class="dropdown-item" href="../articles/multiple-java-with-targets-callr.html">Multiple `Java` environments in one project with `targets` and `callr`</a></li>
     <li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
+    <li><a class="dropdown-item" href="../articles/install-rjava-from-source.html">Install `rJava` from source</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -90,7 +91,7 @@
 
 
 
-    <p>This guide will walk you through downloading, installing, and managing <code>Java</code> environments for your R projects using the <code>rJavaEnv</code> package. We’ll cover setting up the environment, un-setting it, managing distributions, installing <code>Java</code>, and checking <code>Java</code> versions. For more advanced use refer to the vignettes on <a href="rJavaEnv-step-by-step.qmd">step-by-step fine-grained procedure to download, unpack, install and linke <code>Java</code></a> and <a href="multiple-java-with-targets-callr.qmd">vignette on using <code>rJavaEnv</code> with the <code>targets</code> and <code>callr</code> packages to manage multiple <code>Java</code> environments</a></p>
+    <p>This guide will walk you through downloading, installing, and managing <code>Java</code> environments for your R projects using the <code>rJavaEnv</code> package. We’ll cover setting up the environment, un-setting it, managing distributions, installing <code>Java</code>, and checking <code>Java</code> versions. For more advanced use refer to the vignettes on <a href="rJavaEnv-step-by-step.qmd">step-by-step fine-grained procedure to download, unpack, install and link <code>Java</code></a> and <a href="multiple-java-with-targets-callr.qmd">vignette on using <code>rJavaEnv</code> with the <code>targets</code> and <code>callr</code> packages to manage multiple <code>Java</code> environments</a></p>
 <section class="level3"><h3 id="quickly-download-and-install-java">1. Quickly Download and Install Java<a class="anchor" aria-label="anchor" href="#quickly-download-and-install-java"></a>
 </h3>
 <section class="level4"><h4 id="install-rjavaenv">
@@ -173,8 +174,12 @@ mixed mode, sharing)"
 [1] TRUE</code></pre>
 <section class="level4"><h4 id="note-linux">Note for Linux users<a class="anchor" aria-label="anchor" href="#note-linux"></a>
 </h4>
-<p>Note: if you are on a Linux system that did not have any <code>Java</code> version previoulsy installed and you are not using pre-build <code>R</code> package binaries (for example from ‘Posit Package Manager’) and instead install all <code>R</code> packages from source, after this step you may have to quit <code>R</code>, <a href="https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r" target="_blank" class="external-link">follow these steps</a> to set configure <code>Java</code> for <code>R</code>, and only then install <code>rJava</code>, as otherwise <code>rJava</code> cannot be built from source.*</p>
-</section></section><section class="level3"><h3 id="return-things-to-their-original-state">3. Return things to their original state<a class="anchor" aria-label="anchor" href="#return-things-to-their-original-state"></a>
+<p>On Linux, for the <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> package to work correctly, it’s not enough to just set the <code>JAVA_HOME</code> and <code>PATH</code> variables; the <code>libjvm.so</code> shared library must also be loaded. The <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> package handles this for you automatically in your current R session and also sets it in your project’s <code>.Rprofile</code> file.</p>
+<p>After you run <code><a href="../reference/java_quick_install.html">java_quick_install()</a></code> or <code><a href="../reference/java_env_set.html">java_env_set()</a></code>, rJavaEnv will also print a message with the necessary command to run in your terminal. This command, <code>R CMD javareconf</code>, tells R where to find the Java installation and configure the system accordingly.</p>
+<ul>
+<li><p>If you have administrator (sudo) rights, you can configure Java for all users on the system.</p></li>
+<li><p>If you don’t have admin rights, you can configure it just for your user account by adding the <code>-e</code> flag.</p></li>
+</ul></section></section><section class="level3"><h3 id="return-things-to-their-original-state">3. Return things to their original state<a class="anchor" aria-label="anchor" href="#return-things-to-their-original-state"></a>
 </h3>
 <section class="level4"><h4 id="unset-java">Unset <code>Java</code>
 <a class="anchor" aria-label="anchor" href="#unset-java"></a>
