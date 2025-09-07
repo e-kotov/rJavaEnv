@@ -10,7 +10,7 @@
 
 - `java_quick_install()` now also invisibly returns the path to `JAVA_HOME`.
 
-- Added `{rlang}` as a dependency, as `{cli}` uses it anyway for the functions that we use in `{rJavaEnv}`, but does not declare it as a dependency. Therefore this previusly might have caused annoyances to the users, as after installing `{rJavaEnv}` they could not use any of the functions until they installed `{rlang}` manually.
+- Added `{rlang}` as a dependency, as `{cli}` uses it anyway for the functions that we use in `{rJavaEnv}`, but does not declare it as a dependency. Therefore this previously might have caused annoyances to the users, as after installing `{rJavaEnv}` they could not use any of the functions until they installed `{rlang}` manually.
 
 # rJavaEnv 0.3.0
 
