@@ -1,4 +1,13 @@
 .onLoad <- function(libname, pkgname) {
+  # Proactively check for 'rlang' which is critical for 'cli' to function.
+  if (!requireNamespace("rlang", quietly = TRUE)) {
+    stop(
+      "The 'rlang' package is required by 'cli' and is essential for 'rJavaEnv' to work correctly.\n",
+      "Please install it by running: install.packages(\"rlang\")",
+      call. = FALSE
+    )
+  }
+
   # First, set all the base rJavaEnv options
   op <- options()
   op.rJavaEnv <- list(
@@ -83,7 +92,9 @@
 
   # Only set the options that haven't been defined yet
   toset <- !(names(op.rJavaEnv) %in% names(op))
-  if (any(toset)) options(op.rJavaEnv[toset])
+  if (any(toset)) {
+    options(op.rJavaEnv[toset])
+  }
 
   # Now, detect the current platform (OS and architecture)
   platform <- platform_detect(quiet = TRUE)
