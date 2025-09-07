@@ -200,6 +200,35 @@ java_env_set_session <- function(java_home) {
       cpp_flags <- paste(cpp_flags, paste0("-I", include_linux_path))
     }
     if (nzchar(cpp_flags)) Sys.setenv(JAVA_CPPFLAGS = cpp_flags)
+  } else if (Sys.info()["sysname"] == "Darwin") {
+    # Set JAVA_CPPFLAGS for JNI headers
+    cpp_flags <- paste0(
+      "-I",
+      file.path(java_home, "include"),
+      " -I",
+      file.path(java_home, "include", "darwin")
+    )
+    Sys.setenv(JAVA_CPPFLAGS = cpp_flags)
+
+    # Find libjvm and set JAVA_LIBS
+    libjvm_dir <- NULL
+    server_path <- file.path(java_home, "lib", "server", "libjvm.dylib")
+    client_path <- file.path(java_home, "lib", "client", "libjvm.dylib")
+
+    if (file.exists(server_path)) {
+      libjvm_dir <- dirname(server_path)
+    } else if (file.exists(client_path)) {
+      libjvm_dir <- dirname(client_path)
+    }
+
+    if (!is.null(libjvm_dir)) {
+      java_libs <- paste0("-L", libjvm_dir, " -ljvm")
+      Sys.setenv(JAVA_LIBS = java_libs)
+    } else {
+      cli::cli_warn(
+        "Could not find libjvm.dylib within the provided JAVA_HOME: {.path {java_home}}"
+      )
+    }
   }
 }
 
@@ -339,6 +368,37 @@ java_env_set_rprofile <- function(
       lines_to_add <- c(
         lines_to_add,
         sprintf("Sys.setenv(JAVA_CPPFLAGS = '%s') # rJavaEnv", cpp_flags)
+      )
+    }
+  } else if (Sys.info()["sysname"] == "Darwin") {
+    # Set JAVA_CPPFLAGS for JNI headers
+    cpp_flags <- paste0(
+      "-I",
+      file.path(java_home, "include"),
+      " -I",
+      file.path(java_home, "include", "darwin")
+    )
+    lines_to_add <- c(
+      lines_to_add,
+      sprintf("Sys.setenv(JAVA_CPPFLAGS = '%s') # rJavaEnv", cpp_flags)
+    )
+
+    # Find libjvm and set JAVA_LIBS
+    libjvm_dir <- NULL
+    server_path <- file.path(java_home, "lib", "server", "libjvm.dylib")
+    client_path <- file.path(java_home, "lib", "client", "libjvm.dylib")
+
+    if (file.exists(server_path)) {
+      libjvm_dir <- dirname(server_path)
+    } else if (file.exists(client_path)) {
+      libjvm_dir <- dirname(client_path)
+    }
+
+    if (!is.null(libjvm_dir)) {
+      java_libs <- paste0("-L", libjvm_dir, " -ljvm")
+      lines_to_add <- c(
+        lines_to_add,
+        sprintf("Sys.setenv(JAVA_LIBS = '%s') # rJavaEnv", java_libs)
       )
     }
   }
