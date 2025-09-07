@@ -228,7 +228,12 @@ java_env_set_session <- function(java_home) {
       # 1. Set JAVA_LIBS for rJava's main configure script
       Sys.setenv(JAVA_LIBS = paste0("-L", jvm_lib_dir, " -ljvm"))
 
-      # 2. Set runtime loader path (DYLD_LIBRARY_PATH) for interactive use
+      # 2. Set PKG_LIBS and PKG_LDFLAGS for the final link step of rJava.so
+      # This embeds the path to libjvm.dylib in rJava.so, solving the dyn.load issue.
+      Sys.setenv(PKG_LIBS = paste0("-L", jvm_lib_dir, " -ljvm"))
+      Sys.setenv(PKG_LDFLAGS = paste0("-Wl,-rpath,", jvm_lib_dir))
+
+      # 3. Set runtime loader path (DYLD_LIBRARY_PATH) for interactive use
       old_dyld_path <- Sys.getenv("DYLD_LIBRARY_PATH", unset = "")
       paths_to_prepend <- unique(c(jvm_lib_dir, r_lib_dir))
       new_dyld_path <- if (nzchar(old_dyld_path)) {
@@ -238,21 +243,13 @@ java_env_set_session <- function(java_home) {
       }
       Sys.setenv(DYLD_LIBRARY_PATH = new_dyld_path)
 
-      # 3. Get R's base LDFLAGS and LIBS to prepend to
+      # 4. Set LDFLAGS for the JRI compilation step's configure script
       r_cmd_path <- file.path(R.home("bin"), "R")
       r_ldflags <- tryCatch(
         system2(r_cmd_path, "CMD config LDFLAGS", stdout = TRUE, stderr = TRUE),
         warning = function(w) "",
         error = function(e) ""
       )
-      r_libs <- tryCatch(
-        system2(r_cmd_path, "CMD config LIBS", stdout = TRUE, stderr = TRUE),
-        warning = function(w) "",
-        error = function(e) ""
-      )
-
-      # 4. Set LDFLAGS to add a run-path (rpath) for the JRI compilation step
-      # This is the key fix for "cannot run C compiled programs" on macOS
       new_ldflags <- paste(
         c(
           paste0("-L", jvm_lib_dir),
@@ -263,14 +260,7 @@ java_env_set_session <- function(java_home) {
       )
       Sys.setenv(LDFLAGS = new_ldflags)
 
-      # 5. Set LIBS to ensure the linker finds libjvm
-      new_libs <- paste(
-        c(paste0("-L", jvm_lib_dir, " -ljvm"), r_libs),
-        collapse = " "
-      )
-      Sys.setenv(LIBS = new_libs)
-
-      # 6. Dynamically load the library for the current session
+      # 5. Dynamically load the library for the current session
       tryCatch(dyn.load(libjvm_path), error = function(e) {
         cli::cli_warn(
           "Found libjvm.dylib at '{.path {libjvm_path}}' but failed to load it: {e$message}"
@@ -461,40 +451,29 @@ java_env_set_rprofile <- function(
         warning = function(w) "",
         error = function(e) ""
       )
-      r_libs <- tryCatch(
-        system2(r_cmd_path, "CMD config LIBS", stdout = TRUE, stderr = TRUE),
-        warning = function(w) "",
-        error = function(e) ""
-      )
 
       java_libs_str <- paste0("-L", jvm_lib_dir, " -ljvm")
+      pkg_ldflags_str <- paste0("-Wl,-rpath,", jvm_lib_dir)
       new_ldflags_str <- paste(
-        c(
-          paste0("-L", jvm_lib_dir),
-          paste0("-Wl,-rpath,", jvm_lib_dir),
-          r_ldflags
-        ),
-        collapse = " "
-      )
-      new_libs_str <- paste(
-        c(paste0("-L", jvm_lib_dir, " -ljvm"), r_libs),
+        c(paste0("-L", jvm_lib_dir), pkg_ldflags_str, r_ldflags),
         collapse = " "
       )
 
       lines_to_add <- c(
         lines_to_add,
-        # Set JAVA_LIBS
+        # Set JAVA_LIBS for configure script
         sprintf("Sys.setenv(JAVA_LIBS = '%s') # rJavaEnv", java_libs_str),
+        # Set PKG_LIBS and PKG_LDFLAGS for final link
+        sprintf("Sys.setenv(PKG_LIBS = '%s') # rJavaEnv", java_libs_str),
+        sprintf("Sys.setenv(PKG_LDFLAGS = '%s') # rJavaEnv", pkg_ldflags_str),
         # Set DYLD_LIBRARY_PATH (for runtime)
         "old_dyld_path <- Sys.getenv('DYLD_LIBRARY_PATH', unset = '') # rJavaEnv",
         sprintf("paths_to_prepend <- '%s' # rJavaEnv", paths_to_prepend_str),
         "new_dyld_path <- if (nzchar(old_dyld_path)) paste(paths_to_prepend, old_dyld_path, sep = .Platform$path.sep) else paths_to_prepend # rJavaEnv",
         "Sys.setenv(DYLD_LIBRARY_PATH = new_dyld_path) # rJavaEnv",
         "rm(old_dyld_path, paths_to_prepend, new_dyld_path) # rJavaEnv",
-        # Set LDFLAGS (for compile time rpath)
+        # Set LDFLAGS (for JRI configure)
         sprintf("Sys.setenv(LDFLAGS = '%s') # rJavaEnv", new_ldflags_str),
-        # Set LIBS (for compile time)
-        sprintf("Sys.setenv(LIBS = '%s') # rJavaEnv", new_libs_str),
         # Dynamically load library
         sprintf(
           "if (file.exists('%s')) { try(dyn.load('%s'), silent = TRUE) } # rJavaEnv",
