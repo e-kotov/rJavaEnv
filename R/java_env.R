@@ -210,20 +210,59 @@ java_env_set_session <- function(java_home) {
     )
     Sys.setenv(JAVA_CPPFLAGS = cpp_flags)
 
-    # Find libjvm and set JAVA_LIBS
-    libjvm_dir <- NULL
+    # Find libjvm and set JAVA_LIBS, DYLD_LIBRARY_PATH, and LIBS
+    libjvm_path <- NULL
     server_path <- file.path(java_home, "lib", "server", "libjvm.dylib")
     client_path <- file.path(java_home, "lib", "client", "libjvm.dylib")
 
     if (file.exists(server_path)) {
-      libjvm_dir <- dirname(server_path)
+      libjvm_path <- server_path
     } else if (file.exists(client_path)) {
-      libjvm_dir <- dirname(client_path)
+      libjvm_path <- client_path
     }
 
-    if (!is.null(libjvm_dir)) {
-      java_libs <- paste0("-L", libjvm_dir, " -ljvm")
+    if (!is.null(libjvm_path)) {
+      jvm_lib_dir <- dirname(libjvm_path)
+      r_lib_dir <- R.home("lib")
+
+      # 1. Set JAVA_LIBS for rJava's configure script
+      java_libs <- paste0("-L", jvm_lib_dir, " -ljvm")
       Sys.setenv(JAVA_LIBS = java_libs)
+
+      # 2. Set runtime loader path (DYLD_LIBRARY_PATH)
+      old_dyld_path <- Sys.getenv("DYLD_LIBRARY_PATH", unset = "")
+      paths_to_prepend <- unique(c(jvm_lib_dir, r_lib_dir))
+      new_dyld_path <- if (nzchar(old_dyld_path)) {
+        paste(c(paths_to_prepend, old_dyld_path), collapse = .Platform$path.sep)
+      } else {
+        paste(paths_to_prepend, collapse = .Platform$path.sep)
+      }
+      Sys.setenv(DYLD_LIBRARY_PATH = new_dyld_path)
+
+      # 3. Construct and set LIBS for the linker, including R's own LIBS and LDFLAGS
+      r_cmd_path <- file.path(R.home("bin"), "R")
+      r_libs <- tryCatch(
+        system2(r_cmd_path, "CMD config LIBS", stdout = TRUE, stderr = TRUE),
+        warning = function(w) "",
+        error = function(e) ""
+      )
+      r_ldflags <- tryCatch(
+        system2(r_cmd_path, "CMD config LDFLAGS", stdout = TRUE, stderr = TRUE),
+        warning = function(w) "",
+        error = function(e) ""
+      )
+      full_libs <- paste(
+        c(paste0("-L", jvm_lib_dir), "-ljvm", r_ldflags, r_libs),
+        collapse = " "
+      )
+      Sys.setenv(LIBS = full_libs)
+
+      # 4. Dynamically load the library for the current session
+      tryCatch(dyn.load(libjvm_path), error = function(e) {
+        cli::cli_warn(
+          "Found libjvm.dylib at '{.path {libjvm_path}}' but failed to load it: {e$message}"
+        )
+      })
     } else {
       cli::cli_warn(
         "Could not find libjvm.dylib within the provided JAVA_HOME: {.path {java_home}}"
@@ -383,22 +422,61 @@ java_env_set_rprofile <- function(
       sprintf("Sys.setenv(JAVA_CPPFLAGS = '%s') # rJavaEnv", cpp_flags)
     )
 
-    # Find libjvm and set JAVA_LIBS
-    libjvm_dir <- NULL
+    # Find libjvm and set paths for JAVA_LIBS, DYLD_LIBRARY_PATH, LIBS
+    libjvm_path <- NULL
     server_path <- file.path(java_home, "lib", "server", "libjvm.dylib")
     client_path <- file.path(java_home, "lib", "client", "libjvm.dylib")
 
     if (file.exists(server_path)) {
-      libjvm_dir <- dirname(server_path)
+      libjvm_path <- server_path
     } else if (file.exists(client_path)) {
-      libjvm_dir <- dirname(client_path)
+      libjvm_path <- client_path
     }
 
-    if (!is.null(libjvm_dir)) {
-      java_libs <- paste0("-L", libjvm_dir, " -ljvm")
+    if (!is.null(libjvm_path)) {
+      libjvm_path <- gsub("\\\\", "/", libjvm_path)
+      jvm_lib_dir <- dirname(libjvm_path)
+      r_lib_dir <- R.home("lib")
+      paths_to_prepend_str <- paste(
+        unique(c(jvm_lib_dir, r_lib_dir)),
+        collapse = .Platform$path.sep
+      )
+
+      r_cmd_path <- file.path(R.home("bin"), "R")
+      r_libs <- tryCatch(
+        system2(r_cmd_path, "CMD config LIBS", stdout = TRUE, stderr = TRUE),
+        warning = function(w) "",
+        error = function(e) ""
+      )
+      r_ldflags <- tryCatch(
+        system2(r_cmd_path, "CMD config LDFLAGS", stdout = TRUE, stderr = TRUE),
+        warning = function(w) "",
+        error = function(e) ""
+      )
+      full_libs_str <- paste(
+        c(paste0("-L", jvm_lib_dir), "-ljvm", r_ldflags, r_libs),
+        collapse = " "
+      )
+      java_libs_str <- paste0("-L", jvm_lib_dir, " -ljvm")
+
       lines_to_add <- c(
         lines_to_add,
-        sprintf("Sys.setenv(JAVA_LIBS = '%s') # rJavaEnv", java_libs)
+        # Set JAVA_LIBS
+        sprintf("Sys.setenv(JAVA_LIBS = '%s') # rJavaEnv", java_libs_str),
+        # Set DYLD_LIBRARY_PATH (for runtime)
+        "old_dyld_path <- Sys.getenv('DYLD_LIBRARY_PATH', unset = '') # rJavaEnv",
+        sprintf("paths_to_prepend <- '%s' # rJavaEnv", paths_to_prepend_str),
+        "new_dyld_path <- if (nzchar(old_dyld_path)) paste(paths_to_prepend, old_dyld_path, sep = .Platform$path.sep) else paths_to_prepend # rJavaEnv",
+        "Sys.setenv(DYLD_LIBRARY_PATH = new_dyld_path) # rJavaEnv",
+        "rm(old_dyld_path, paths_to_prepend, new_dyld_path) # rJavaEnv",
+        # Set LIBS (for compile time)
+        sprintf("Sys.setenv(LIBS = '%s') # rJavaEnv", full_libs_str),
+        # Dynamically load library
+        sprintf(
+          "if (file.exists('%s')) { try(dyn.load('%s'), silent = TRUE) } # rJavaEnv",
+          libjvm_path,
+          libjvm_path
+        )
       )
     }
   }
