@@ -107,15 +107,38 @@ java_env_set_session <- function(java_home) {
   new_path <- file.path(java_home, "bin")
   Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 
-  # On Linux, dynamically load libjvm.so
+  # On Linux, find and dynamically load libjvm.so
   if (Sys.info()["sysname"] == "Linux") {
-    libjvm_path <- file.path(java_home, "lib", "server", "libjvm.so")
-    if (file.exists(libjvm_path)) {
+    all_files <- list.files(
+      path = java_home,
+      pattern = "libjvm.so$",
+      recursive = TRUE,
+      full.names = TRUE
+    )
+
+    libjvm_path <- NULL
+    if (length(all_files) > 0) {
+      # Prefer the 'server' version if available
+      server_files <- all_files[grepl("/server/libjvm.so$", all_files)]
+      if (length(server_files) > 0) {
+        libjvm_path <- server_files[1]
+      } else {
+        libjvm_path <- all_files[1]
+      }
+    }
+
+    if (!is.null(libjvm_path) && file.exists(libjvm_path)) {
       tryCatch(
         dyn.load(libjvm_path),
         error = function(e) {
-          cli::cli_warn("Failed to dynamically load libjvm.so: {e$message}")
+          cli::cli_warn(
+            "Found libjvm.so at '{.path {libjvm_path}}' but failed to load it: {e$message}"
+          )
         }
+      )
+    } else {
+      cli::cli_warn(
+        "Could not find libjvm.so within the provided JAVA_HOME: {.path {java_home}}"
       )
     }
   }
@@ -155,14 +178,35 @@ java_env_set_rprofile <- function(
     "rm(old_path, new_path) # rJavaEnv"
   )
 
-  # On Linux, also add dyn.load for libjvm.so
+  # On Linux, find the path to libjvm.so once and hardcode it into .Rprofile
   if (Sys.info()["sysname"] == "Linux") {
-    lines_to_add <- c(
-      lines_to_add,
-      "libjvm_path <- file.path(Sys.getenv('JAVA_HOME'), 'lib', 'server', 'libjvm.so') # rJavaEnv",
-      "if (file.exists(libjvm_path)) { dyn.load(libjvm_path) } # rJavaEnv",
-      "rm(libjvm_path) # rJavaEnv"
+    all_files <- list.files(
+      path = java_home,
+      pattern = "libjvm.so$",
+      recursive = TRUE,
+      full.names = TRUE
     )
+
+    libjvm_path <- NULL
+    if (length(all_files) > 0) {
+      server_files <- all_files[grepl("/server/libjvm.so$", all_files)]
+      libjvm_path <- if (length(server_files) > 0) {
+        server_files[1]
+      } else {
+        all_files[1]
+      }
+    }
+
+    if (!is.null(libjvm_path)) {
+      # Normalize path for consistency in the file
+      libjvm_path_normalized <- gsub("\\\\", "/", libjvm_path)
+      dyn_load_line <- sprintf(
+        "if (file.exists('%s')) { try(dyn.load('%s'), silent = TRUE) } # rJavaEnv",
+        libjvm_path_normalized,
+        libjvm_path_normalized
+      )
+      lines_to_add <- c(lines_to_add, dyn_load_line)
+    }
   }
 
   lines_to_add <- c(
