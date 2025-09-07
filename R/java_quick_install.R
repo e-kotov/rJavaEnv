@@ -3,12 +3,12 @@
 #' @inheritParams java_download
 #' @inheritParams java_install
 #' @inheritParams global_quiet_param
-#' @return Message indicating that Java was installed and set in the current working/project directory.
+#' @return Invisibly returns the path to the Java home directory. If quiet is set to `FALSE`, also prints a message indicating that Java was installed and set in the current working/project directory.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' # quick download, unpack, install and set in current working directory default Java version (21)
 #' java_quick_install(17, temp_dir = TRUE)
 #' }
@@ -47,11 +47,11 @@ java_quick_install <- function(
     quiet = quiet
   )
 
-  java_install(
+  java_home <- java_install(
     java_distrib_path,
     project_path = project_path,
     autoset_java_env = TRUE,
     quiet = quiet
   )
-  return(invisible(NULL))
+  return(invisible(java_home))
 }

@@ -2,16 +2,14 @@
 % Please edit documentation in R/java_env.R
 \name{java_env_set_session}
 \alias{java_env_set_session}
-\title{Set environment variables for the current session}
+\title{Set the JAVA_HOME and PATH environment variables for the current session}
 \usage{
-java_env_set_session(java_home, setup_build_env = FALSE)
+java_env_set_session(java_home)
 }
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME.}
-
-\item{setup_build_env}{Logical. If TRUE, also sets build-specific variables.}
 }
 \description{
-Set environment variables for the current session
+Set the JAVA_HOME and PATH environment variables for the current session
 }
 \keyword{internal}

@@ -30,7 +30,7 @@ java_quick_install(
 \item{temp_dir}{A logical. Whether the file should be saved in a temporary directory. Defaults to \code{FALSE}.}
 }
 \value{
-Message indicating that Java was installed and set in the current working/project directory.
+Invisibly returns the path to the Java home directory. If quiet is set to \code{FALSE}, also prints a message indicating that Java was installed and set in the current working/project directory.
 }
 \description{
 Download and install and set Java in current working/project directory
