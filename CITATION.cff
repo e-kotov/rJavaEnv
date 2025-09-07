@@ -8,28 +8,31 @@ message: 'To cite package "rJavaEnv" in publications use:'
 type: software
 license: MIT
 title: 'rJavaEnv: ''Java'' Environments for R Projects'
-version: 0.3.0
+version: 0.3.0.9000
 doi: 10.32614/CRAN.package.rJavaEnv
 identifiers:
 - type: doi
   value: 10.32614/CRAN.package.rJavaEnv
-abstract: 'Quickly install ''Java Development Kit (JDK)'' without administrative privileges
+abstract: Quickly install 'Java Development Kit (JDK)' without administrative privileges
   and set environment variables in current R session or project to solve common issues
-  with ''Java'' environment management in ''R''. Recommended to users of ''Java''/''rJava''-dependent
-  ''R'' packages such as ''r5r'', ''opentripplanner'', ''xlsx'', ''openNLP'', ''rWeka'',
-  ''RJDBC'', ''tabulapdf'', and many more. ''rJavaEnv'' prevents common problems like
-  ''Java'' not found, ''Java'' version conflicts, missing ''Java'' installations,
-  and the inability to install ''Java'' due to lack of administrative privileges.
-  ''rJavaEnv'' automates the download, installation, and setup of the ''Java'' on
-  a per-project basis by setting the relevant ''JAVA_HOME'' in the current ''R'' session
-  or the current working directory (via ''.Rprofile'', with the user''s consent).
-  Similar to what ''renv'' does for ''R'' packages, ''rJavaEnv'' allows different
-  ''Java'' versions to be used across different projects, but can also be configured
-  to allow multiple versions within the same project (e.g. with the help of ''targets''
-  package). Note: there are a few extra steps for ''Linux'' users, who don''t have
-  any ''Java'' previously installed in their system, and who prefer package installation
-  from source, rather then installing binaries from ''Posit Package Manager''. See
-  documentation for details.'
+  with 'Java' environment management in 'R'. Recommended to users of 'Java'/'rJava'-dependent
+  'R' packages such as 'r5r', 'opentripplanner', 'xlsx', 'openNLP', 'rWeka', 'RJDBC',
+  'tabulapdf', and many more. 'rJavaEnv' prevents common problems like 'Java' not
+  found, 'Java' version conflicts, missing 'Java' installations, and the inability
+  to install 'Java' due to lack of administrative privileges. 'rJavaEnv' automates
+  the download, installation, and setup of the 'Java' on a per-project basis by setting
+  the relevant 'JAVA_HOME' in the current 'R' session or the current working directory
+  (via '.Rprofile', with the user's consent). Similar to what 'renv' does for 'R'
+  packages, 'rJavaEnv' allows different 'Java' versions to be used across different
+  projects, but can also be configured to allow multiple versions within the same
+  project (e.g. with the help of 'targets' package). For users who need to install
+  'rJava' or other 'Java'-dependent packages from source, 'rJavaEnv' will display
+  a message with instructions on how to run 'R CMD javareconf' to make the 'Java'
+  configuration permanent, but also provides a function 'java_build_env_set' that
+  sets the environment variables in the current R session temporarily to allow installation
+  of 'rJava' from source without 'R CMD javareconf'. On 'Linux', in addition to setting
+  environment variables, 'rJavaEnv' also dynamically loads 'libjvm.so' to ensure 'rJava'
+  works correctly. See documentation for more details.
 authors:
 - family-names: Kotov
   given-names: Egor
@@ -132,6 +135,21 @@ references:
   year: '2025'
   doi: 10.32614/CRAN.package.jsonlite
 - type: software
+  title: rlang
+  abstract: 'rlang: Functions for Base Types and Core R and ''Tidyverse'' Features'
+  notes: Imports
+  url: https://rlang.r-lib.org
+  repository: https://CRAN.R-project.org/package=rlang
+  authors:
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@posit.co
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  year: '2025'
+  doi: 10.32614/CRAN.package.rlang
+- type: software
   title: utils
   abstract: 'R: A Language and Environment for Statistical Computing'
   notes: Imports
@@ -183,4 +201,29 @@ references:
   year: '2025'
   doi: 10.32614/CRAN.package.testthat
   version: '>= 3.0.0'
+- type: software
+  title: withr
+  abstract: 'withr: Run Code ''With'' Temporarily Modified Global State'
+  notes: Suggests
+  url: https://withr.r-lib.org
+  repository: https://CRAN.R-project.org/package=withr
+  authors:
+  - family-names: Hester
+    given-names: Jim
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@posit.co
+  - family-names: Müller
+    given-names: Kirill
+    email: krlmlr+r@mailbox.org
+  - family-names: Ushey
+    given-names: Kevin
+    email: kevinushey@gmail.com
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Chang
+    given-names: Winston
+  year: '2025'
+  doi: 10.32614/CRAN.package.withr
 

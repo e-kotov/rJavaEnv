@@ -30,11 +30,16 @@ Description: Quickly install 'Java Development Kit (JDK)' without
     Similar to what 'renv' does for 'R' packages, 'rJavaEnv' allows
     different 'Java' versions to be used across different projects, but
     can also be configured to allow multiple versions within the same
-    project (e.g.  with the help of 'targets' package). Note: there are a
-    few extra steps for 'Linux' users, who don't have any 'Java'
-    previously installed in their system, and who prefer package
-    installation from source, rather then installing binaries from 'Posit
-    Package Manager'. See documentation for details.
+    project (e.g.  with the help of 'targets' package). For users who need
+    to install 'rJava' or other 'Java'-dependent packages from source,
+    'rJavaEnv' will display a message with instructions on how to run 'R
+    CMD javareconf' to make the 'Java' configuration permanent, but also
+    provides a function 'java_build_env_set' that sets the environment
+    variables in the current R session temporarily to allow installation
+    of 'rJava' from source without 'R CMD javareconf'. On 'Linux', in
+    addition to setting environment variables, 'rJavaEnv' also dynamically
+    loads 'libjvm.so' to ensure 'rJava' works correctly.  See
+    documentation for more details.
 License: MIT + file LICENSE
 URL: https://github.com/e-kotov/rJavaEnv, https://www.ekotov.pro/rJavaEnv/
 BugReports: https://github.com/e-kotov/rJavaEnv/issues
@@ -45,6 +50,7 @@ Imports:
     cli,
     curl,
     jsonlite,
+    rlang,
     utils
 Suggests: 
     quarto,

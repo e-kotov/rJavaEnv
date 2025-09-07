@@ -1,5 +1,4 @@
 .onLoad <- function(libname, pkgname) {
-  # First, set all the base rJavaEnv options
   op <- options()
   op.rJavaEnv <- list(
     # Default folder choice (in line with renv package)
@@ -17,7 +16,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_macos_x64 = c(
       "8",
@@ -31,7 +31,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_linux_aarch64 = c(
       "8",
@@ -45,7 +46,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_linux_x64 = c(
       "8",
@@ -59,7 +61,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_windows_x64 = c(
       "8",
@@ -73,7 +76,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_windows_x86 = c(
       "8",
@@ -83,7 +87,9 @@
 
   # Only set the options that haven't been defined yet
   toset <- !(names(op.rJavaEnv) %in% names(op))
-  if (any(toset)) options(op.rJavaEnv[toset])
+  if (any(toset)) {
+    options(op.rJavaEnv[toset])
+  }
 
   # Now, detect the current platform (OS and architecture)
   platform <- platform_detect(quiet = TRUE)

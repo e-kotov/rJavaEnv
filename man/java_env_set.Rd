@@ -44,7 +44,7 @@ java_env_set(
 
 # or set JAVA_HOME and PATH in the spefific projects' .Rprofile
 java_env_set(
-  where = "session",
+  where = "project",
   java_home = java_home,
   project_path = tempdir()
 )

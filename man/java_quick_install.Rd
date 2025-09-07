@@ -15,7 +15,7 @@ java_quick_install(
 )
 }
 \arguments{
-\item{version}{\code{Integer} or \code{character} vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", and "11" to "24" (or the same version numers in \code{integer}) or any newer version if it is available for the selected distribution. For \code{macOS} on \code{aarch64} architecture (Apple Silicion) certain \code{Java} versions are not available.}
+\item{version}{\code{Integer} or \code{character} vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", and "11" to "24" (or the same version numbers in \code{integer}) or any newer version if it is available for the selected distribution. For \code{macOS} on \code{aarch64} architecture (Apple Silicon) certain \code{Java} versions are not available.}
 
 \item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
 
@@ -30,7 +30,7 @@ java_quick_install(
 \item{temp_dir}{A logical. Whether the file should be saved in a temporary directory. Defaults to \code{FALSE}.}
 }
 \value{
-Message indicating that Java was installed and set in the current working/project directory.
+Invisibly returns the path to the Java home directory. If quiet is set to \code{FALSE}, also prints a message indicating that Java was installed and set in the current working/project directory.
 }
 \description{
 Download and install and set Java in current working/project directory

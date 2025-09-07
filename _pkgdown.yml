@@ -66,6 +66,8 @@ reference:
     - java_install
     - java_env_set
     - java_env_unset
+    - java_build_env_set
+    - java_build_env_unset
   - title: "Manage files"
     desc: >
       Manage downloads, installs, and project-linked `Java` versions
@@ -86,3 +88,4 @@ articles:
   - rJavaEnv-step-by-step
   - multiple-java-with-targets-callr
   - why-rJavaEnv
+  - install-rjava-from-source
