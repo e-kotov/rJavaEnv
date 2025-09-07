@@ -69,6 +69,18 @@ java_env_set <- function(
     }
   }
 
+  if (Sys.info()["sysname"] == "Linux" && !quiet) {
+    cli::cli_inform(c(
+      "i" = "On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in the current session.",
+      " " = "To make this change permanent for installing rJava-dependent packages from source, you may need to reconfigure Java.",
+      " " = "See {.url https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r} for details.",
+      " " = "If you have admin rights, run the following in your terminal:",
+      " " = "{.code R CMD javareconf JAVA_HOME={java_home}}",
+      " " = "If you do not have admin rights, run:",
+      " " = "{.code R CMD javareconf JAVA_HOME={java_home} -e}"
+    ))
+  }
+
   invisible(NULL)
 }
 
@@ -94,6 +106,19 @@ java_env_set_session <- function(java_home) {
   old_path <- Sys.getenv("PATH")
   new_path <- file.path(java_home, "bin")
   Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
+
+  # On Linux, dynamically load libjvm.so
+  if (Sys.info()["sysname"] == "Linux") {
+    libjvm_path <- file.path(java_home, "lib", "server", "libjvm.so")
+    if (file.exists(libjvm_path)) {
+      tryCatch(
+        dyn.load(libjvm_path),
+        error = function(e) {
+          cli::cli_warn("Failed to dynamically load libjvm.so: {e$message}")
+        }
+      )
+    }
+  }
 }
 
 
@@ -127,7 +152,21 @@ java_env_set_rprofile <- function(
     "old_path <- Sys.getenv('PATH') # rJavaEnv",
     "new_path <- file.path(Sys.getenv('JAVA_HOME'), 'bin') # rJavaEnv",
     "Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep)) # rJavaEnv",
-    "rm(old_path, new_path) # rJavaEnv",
+    "rm(old_path, new_path) # rJavaEnv"
+  )
+
+  # On Linux, also add dyn.load for libjvm.so
+  if (Sys.info()["sysname"] == "Linux") {
+    lines_to_add <- c(
+      lines_to_add,
+      "libjvm_path <- file.path(Sys.getenv('JAVA_HOME'), 'lib', 'server', 'libjvm.so') # rJavaEnv",
+      "if (file.exists(libjvm_path)) { dyn.load(libjvm_path) } # rJavaEnv",
+      "rm(libjvm_path) # rJavaEnv"
+    )
+  }
+
+  lines_to_add <- c(
+    lines_to_add,
     "# rJavaEnv end: Manage JAVA_HOME"
   )
 
@@ -236,7 +275,9 @@ java_check_version_rjava <- function(
 
   major_java_ver <- sub('.*version: \\"([0-9]+).*', '\\1', output[1])
   if (!nzchar(major_java_ver) || !grepl("^[0-9]+$", major_java_ver)) {
-    if (!quiet) cli::cli_alert_danger("Could not parse Java major version.")
+    if (!quiet) {
+      cli::cli_alert_danger("Could not parse Java major version.")
+    }
     return(FALSE)
   }
 
@@ -273,7 +314,9 @@ java_check_version_cmd <- function(
   # Get JAVA_HOME again and check if it's set
   current_java_home <- Sys.getenv("JAVA_HOME")
   if (current_java_home == "") {
-    if (!quiet) cli::cli_inform(c("!" = "JAVA_HOME is not set."))
+    if (!quiet) {
+      cli::cli_inform(c("!" = "JAVA_HOME is not set."))
+    }
     if (!is.null(java_home)) {
       Sys.setenv(JAVA_HOME = old_java_home)
     }
