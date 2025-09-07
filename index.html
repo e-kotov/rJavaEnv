@@ -86,7 +86,7 @@
 
 
 <!-- badges: end -->
-<p>Quickly install <code>Java Development Kit (JDK)</code> without administrative privileges and set environment variables in current R session or project to solve common issues with ‘Java’ environment management in ‘R’. Recommended to users of <code>Java</code>/<a href="http://www.rforge.net/rJava/" class="external-link">rJava</a>-dependent <code>R</code> packages such as <a href="https://github.com/ipeaGIT/r5r" class="external-link">r5r</a>, <a href="https://docs.ropensci.org/opentripplanner" class="external-link">opentripplanner</a>, <a href="https://github.com/colearendt/xlsx" class="external-link">xlsx</a>, <code>{openNLP}</code>, <code>{rWeka}</code>, <a href="http://www.rforge.net/RJDBC/" class="external-link">RJDBC</a>, <a href="https://docs.ropensci.org/tabulapdf/" class="external-link">tabulapdf</a>, and many more. <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> prevents common problems like <code>Java</code> not found, <code>Java</code> version conflicts, missing <code>Java</code> installations, and the inability to install <code>Java</code> due to lack of administrative privileges. <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> automates the download, installation, and setup of the <code>Java</code> on a per-project basis by setting the relevant <code>JAVA_HOME</code> in the current <code>R</code> session or the current working directory (via <code>.Rprofile</code>, with the user’s consent). Similar to what <a href="https://rstudio.github.io/renv/" class="external-link">renv</a> does for <code>R</code> packages, <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> allows different <code>Java</code> versions to be used across different projects, but can also be configured to allow multiple versions within the same project (e.g. with the help of <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> package). <strong>Note: there are a few extra steps for ‘Linux’ users, who don’t have any ‘Java’ previously installed in their system, and who prefer package installation from source, rather then installing binaries from ‘Posit Package Manager’. See <a href="https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html#note-linux">documentation</a> for details.</strong></p>
+<p>Quickly install <code>Java Development Kit (JDK)</code> without administrative privileges and set environment variables in current R session or project to solve common issues with ‘Java’ environment management in ‘R’. Recommended to users of <code>Java</code>/<a href="http://www.rforge.net/rJava/" class="external-link">rJava</a>-dependent <code>R</code> packages such as <a href="https://github.com/ipeaGIT/r5r" class="external-link">r5r</a>, <a href="https://docs.ropensci.org/opentripplanner" class="external-link">opentripplanner</a>, <a href="https://github.com/colearendt/xlsx" class="external-link">xlsx</a>, <code>{openNLP}</code>, <code>{rWeka}</code>, <a href="http://www.rforge.net/RJDBC/" class="external-link">RJDBC</a>, <a href="https://docs.ropensci.org/tabulapdf/" class="external-link">tabulapdf</a>, and many more. <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> prevents common problems like <code>Java</code> not found, <code>Java</code> version conflicts, missing <code>Java</code> installations, and the inability to install <code>Java</code> due to lack of administrative privileges. <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> automates the download, installation, and setup of the <code>Java</code> on a per-project basis by setting the relevant <code>JAVA_HOME</code> in the current <code>R</code> session or the current working directory (via <code>.Rprofile</code>, with the user’s consent). Similar to what <a href="https://rstudio.github.io/renv/" class="external-link">renv</a> does for <code>R</code> packages, <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> allows different <code>Java</code> versions to be used across different projects, but can also be configured to allow multiple versions within the same project (e.g. with the help of <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> package). For users who need to install <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> or other <code>Java</code>-dependent packages from source, <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> will display a message with instructions on how to run <code>R CMD javareconf</code> to make the Java configuration permanent, but also provides a function <code><a href="reference/java_build_env_set.html">java_build_env_set()</a></code> that sets the environment variables in the current R session temporarily to allow installation of <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> from source without <code>R CMD javareconf</code>. On Linux, in addition to setting environment variables, <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> also dynamically loads <code>libjvm.so</code> to ensure <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> works correctly. See <a href="https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html#note-linux">documentation</a> for more details.**</p>
 <div class="section level2">
 <h2 id="install">Install<a class="anchor" aria-label="anchor" href="#install"></a>
 </h2>
@@ -130,7 +130,7 @@ Install the development version
 <h2 id="using-rjavaenv-with-targets-and-callr">Using <code>rJavaEnv</code> with <code>targets</code> and <code>callr</code>
 <a class="anchor" aria-label="anchor" href="#using-rjavaenv-with-targets-and-callr"></a>
 </h2>
-<p>Just insert this line into the begining of any script that you run with <code>targets</code> or <code>callr</code>:</p>
+<p>Just insert this line at the top of any script that you run with <code>targets</code> or <code>callr</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu"><a href="reference/use_java.html">use_java</a></span><span class="op">(</span><span class="st">"21"</span><span class="op">)</span></span></code></pre></div>
 <p>This acts exactly like <code><a href="reference/java_quick_install.html">java_quick_install()</a></code>, but only sets the environment variables in the current session and does not copy or link <code>Java</code> binaries into the project directory.</p>
@@ -153,67 +153,75 @@ Install the development version
 </h2>
 <p>The package has several core functions:</p>
 <ol style="list-style-type: decimal">
-<li>
-<code><a href="reference/java_quick_install.html">java_quick_install()</a></code>
+<li><code><a href="reference/java_quick_install.html">java_quick_install()</a></code></li>
+</ol>
 <ul>
 <li>Downloads, installs, and sets Java environment in the current working/project directory, all in one line of code.</li>
 </ul>
-</li>
-<li>
-<code><a href="reference/java_check_version_cmd.html">java_check_version_cmd()</a></code>
+<ol start="2" style="list-style-type: decimal">
+<li><code><a href="reference/java_check_version_cmd.html">java_check_version_cmd()</a></code></li>
+</ol>
 <ul>
 <li>Checks the installed Java version using terminal commands. For packages like <a href="https://github.com/ropensci/opentripplanner" target="_blank" class="external-link"><code>opentripplanner</code></a>, that performs Java calls using command line.</li>
 </ul>
-</li>
-<li>
-<code>java_version_check_rjava()</code>
+<ol start="3" style="list-style-type: decimal">
+<li><code>java_version_check_rjava()</code></li>
+</ol>
 <ul>
 <li>Checks the installed <code>Java</code> version using <code>rJava</code> in a separate R session. For <code>rJava</code>-dependent packages such as <a href="https://github.com/ipeaGIT/r5r" target="_blank" class="external-link"><code>r5r</code></a>.</li>
 </ul>
-</li>
-<li>
-<code><a href="reference/java_download.html">java_download()</a></code>
+<ol start="4" style="list-style-type: decimal">
+<li><code><a href="reference/java_download.html">java_download()</a></code></li>
+</ol>
 <ul>
 <li>Downloads a specified version and distribution of <code>Java</code>.</li>
 </ul>
-</li>
-<li>
-<code><a href="reference/java_install.html">java_install()</a></code>
+<ol start="5" style="list-style-type: decimal">
+<li><code><a href="reference/java_install.html">java_install()</a></code></li>
+</ol>
 <ul>
 <li>Installs a <code>Java</code> distribution file into current (or user-specified) project directory.</li>
 </ul>
-</li>
-<li>
-<code><a href="reference/java_env_set.html">java_env_set()</a></code>
+<ol start="6" style="list-style-type: decimal">
+<li><code><a href="reference/java_env_set.html">java_env_set()</a></code></li>
+</ol>
 <ul>
 <li>Sets the <code>JAVA_HOME</code> and <code>PATH</code> environment variables to a given path in current R session and/or in the <code>.Rprofile</code> file in the project directory.</li>
 </ul>
-</li>
-<li>
-<code><a href="reference/java_env_unset.html">java_env_unset()</a></code>
+<ol start="7" style="list-style-type: decimal">
+<li><code><a href="reference/java_env_unset.html">java_env_unset()</a></code></li>
+</ol>
 <ul>
 <li>Remove the <code>JAVA_HOME</code> and <code>PATH</code> environment variables from the <code>.Rrpofile</code> file in the project directory (but not in the current R session, please restart the session so that R picks up the system Java).</li>
 </ul>
-</li>
-<li>
-<code><a href="reference/java_list.html">java_list()</a></code>
+<ol start="8" style="list-style-type: decimal">
+<li><code><a href="reference/java_list.html">java_list()</a></code></li>
+</ol>
 <ul>
 <li>Lists all or some <code>Java</code> versions linked in the current project (or cached distributions or installations).</li>
 </ul>
-</li>
-<li>
-<code><a href="reference/java_clear.html">java_clear()</a></code>
+<ol start="9" style="list-style-type: decimal">
+<li><code><a href="reference/java_clear.html">java_clear()</a></code></li>
+</ol>
 <ul>
 <li>Removes all or some <code>Java</code> versions linked in the current project (or cached distributions or installations).</li>
 </ul>
-</li>
-</ol>
-<p>10 <code><a href="reference/java_valid_versions.html">java_valid_versions()</a></code> * Lists all valid major <code>Java</code> versions that can be downloaded and installed for either current automatically detected OS and CPU architecture or user-specified platform and architecture.</p>
+<p>10 <code><a href="reference/java_valid_versions.html">java_valid_versions()</a></code></p>
+<ul>
+<li>Lists all valid major <code>Java</code> versions that can be downloaded and installed for either current automatically detected OS and CPU architecture or user-specified platform and architecture.</li>
+</ul>
 <ol start="11" style="list-style-type: decimal">
 <li><code><a href="reference/use_java.html">use_java()</a></code></li>
 </ol>
 <ul>
 <li>Same as <code><a href="reference/java_quick_install.html">java_quick_install()</a></code>, but in a less intrusive way. Does not copy or link the <code>Java</code> installation folder from cache into the project directory and does not create or edit your <code>.Rprofile</code> file. Only sets requested java in the current R session.</li>
+</ul>
+<ol start="12" style="list-style-type: decimal">
+<li>
+<code><a href="reference/java_build_env_set.html">java_build_env_set()</a></code> (and <code><a href="reference/java_build_env_unset.html">java_build_env_unset()</a></code>)</li>
+</ol>
+<ul>
+<li>Similar to <code><a href="reference/java_env_set.html">java_env_set()</a></code>, but specifically designed for setting <code>Java</code> environment variables for building <code>rJava</code> from source.</li>
 </ul>
 <p>See more details on all the functions in the <a href="https://www.ekotov.pro/rJavaEnv/reference/index.html" target="_blank">Reference</a>.</p>
 <p>For detailed usage, see the <a href="https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html">Quick Start Vignette</a> (work in progress).</p>
