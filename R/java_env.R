@@ -150,25 +150,27 @@ java_env_set_session <- function(java_home) {
       }
       Sys.setenv(LD_LIBRARY_PATH = new_ld_path)
 
-      # 3. Construct and set LIBS for the linker, including R's own LIBS and LDFLAGS
+      # 3. Set LDFLAGS for compile-time linking, crucial for JRI
+      old_ldflags <- Sys.getenv("LDFLAGS", unset = "")
       r_cmd_path <- file.path(R.home("bin"), "R")
-      r_libs <- tryCatch(
-        system2(r_cmd_path, "CMD config LIBS", stdout = TRUE, stderr = TRUE),
-        warning = function(w) "",
-        error = function(e) ""
-      )
       r_ldflags <- tryCatch(
-        system2(r_cmd_path, "CMD config LDFLAGS", stdout = TRUE, stderr = TRUE),
+        system2(
+          r_cmd_path,
+          args = "CMD config LDFLAGS",
+          stdout = TRUE,
+          stderr = TRUE
+        ),
         warning = function(w) "",
         error = function(e) ""
       )
+      if (is.null(r_ldflags) || inherits(r_ldflags, "try-error")) {
+        r_ldflags <- ""
+      }
 
-      # Combine everything the linker needs
-      full_libs <- paste(
-        c(paste0("-L", jvm_lib_dir), "-ljvm", r_ldflags, r_libs),
-        collapse = " "
-      )
-      Sys.setenv(LIBS = full_libs)
+      flags_to_prepend <- paste0("-L", jvm_lib_dir)
+      all_flags <- c(flags_to_prepend, r_ldflags, old_ldflags)
+      new_ldflags <- paste(unique(all_flags[nzchar(all_flags)]), collapse = " ")
+      Sys.setenv(LDFLAGS = new_ldflags)
 
       # 4. Set Java libs for rJava's main configure script
       java_libs <- paste0("-L", jvm_lib_dir, " -ljvm")
@@ -281,20 +283,24 @@ java_env_set_rprofile <- function(
       )
 
       r_cmd_path <- file.path(R.home("bin"), "R")
-      r_libs <- tryCatch(
-        system2(r_cmd_path, "CMD config LIBS", stdout = TRUE, stderr = TRUE),
+      r_ldflags_str <- tryCatch(
+        paste(
+          system2(
+            r_cmd_path,
+            args = "CMD config LDFLAGS",
+            stdout = TRUE,
+            stderr = TRUE
+          ),
+          collapse = " "
+        ),
         warning = function(w) "",
         error = function(e) ""
       )
-      r_ldflags <- tryCatch(
-        system2(r_cmd_path, "CMD config LDFLAGS", stdout = TRUE, stderr = TRUE),
-        warning = function(w) "",
-        error = function(e) ""
-      )
-      full_libs_str <- paste(
-        c(paste0("-L", jvm_lib_dir), "-ljvm", r_ldflags, r_libs),
-        collapse = " "
-      )
+      if (is.null(r_ldflags_str) || inherits(r_ldflags_str, "try-error")) {
+        r_ldflags_str <- ""
+      }
+
+      flags_to_prepend_str <- paste0("-L", jvm_lib_dir)
 
       lines_to_add <- c(
         lines_to_add,
@@ -308,8 +314,14 @@ java_env_set_rprofile <- function(
         "new_ld_path <- if (nzchar(old_ld_path)) paste(paths_to_prepend, old_ld_path, sep = .Platform$path.sep) else paths_to_prepend # rJavaEnv",
         "Sys.setenv(LD_LIBRARY_PATH = new_ld_path) # rJavaEnv",
         "rm(old_ld_path, paths_to_prepend, new_ld_path) # rJavaEnv",
-        # Set LIBS (for compile time)
-        sprintf("Sys.setenv(LIBS = '%s') # rJavaEnv", full_libs_str),
+        # Set LDFLAGS (for compile time)
+        "old_ldflags <- Sys.getenv('LDFLAGS', unset = '') # rJavaEnv",
+        sprintf("r_ldflags <- '%s' # rJavaEnv", r_ldflags_str),
+        sprintf("flags_to_prepend <- '%s' # rJavaEnv", flags_to_prepend_str),
+        "all_flags <- c(flags_to_prepend, r_ldflags, old_ldflags) # rJavaEnv",
+        "new_ldflags <- paste(unique(all_flags[nzchar(all_flags)]), collapse = ' ') # rJavaEnv",
+        "Sys.setenv(LDFLAGS = new_ldflags) # rJavaEnv",
+        "rm(old_ldflags, r_ldflags, flags_to_prepend, all_flags, new_ldflags) # rJavaEnv",
         # Set other variables
         sprintf(
           "Sys.setenv(JAVA_LIBS = '%s') # rJavaEnv",
