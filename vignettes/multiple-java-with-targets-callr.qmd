@@ -97,7 +97,7 @@ rJavaEnv::use_java("17")
 
 The first run of such script will have to go through the the process of downloading and unpacking the `Java` distribution. The second run will not need to download and unpacking and will be instant.
 
-If you need the runs to be instant from the first attempt, you can predownload and pre-install `Java` into cache folders using:
+If you need the runs to be instant from the first attempt, you can pre-download and pre-install `Java` into cache folders using:
 
 ```{r}
 java_17_distrib <- java_download("17")

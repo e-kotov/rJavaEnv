@@ -1,5 +1,6 @@
 # before release
 # usethis::use_version("patch")
+# devtools::spell_check()
 usethis::use_tidy_description()
 cffr::cff_write()
 codemetar::write_codemeta(write_minimeta = T)
@@ -7,9 +8,8 @@ codemetar::write_codemeta(write_minimeta = T)
 # devtools::check(remote = TRUE, manual = TRUE)
 # devtools::check_win_devel()
 # revdepcheck::revdep_check(num_workers = 4)
-
 # devtools::submit_cran()
 
 # usethis::use_github_release()
 # usethis::use_dev_version(push = TRUE)
-rdocdump::rdd_to_txt(".", file = "private/rJavaEnv.txt")
+# rdocdump::rdd_to_txt(".", file = "private/rJavaEnv.txt")

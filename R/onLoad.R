@@ -1,14 +1,4 @@
 .onLoad <- function(libname, pkgname) {
-  # Proactively check for 'rlang' which is critical for 'cli' to function.
-  if (!requireNamespace("rlang", quietly = TRUE)) {
-    stop(
-      "The 'rlang' package is required by 'cli' and is essential for 'rJavaEnv' to work correctly.\n",
-      "Please install it by running: install.packages(\"rlang\")",
-      call. = FALSE
-    )
-  }
-
-  # First, set all the base rJavaEnv options
   op <- options()
   op.rJavaEnv <- list(
     # Default folder choice (in line with renv package)
@@ -26,7 +16,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_macos_x64 = c(
       "8",
@@ -40,7 +31,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_linux_aarch64 = c(
       "8",
@@ -54,7 +46,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_linux_x64 = c(
       "8",
@@ -68,7 +61,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_windows_x64 = c(
       "8",
@@ -82,7 +76,8 @@
       "21",
       "22",
       "23",
-      "24"
+      "24",
+      "25"
     ),
     rJavaEnv.fallback_valid_versions_windows_x86 = c(
       "8",
