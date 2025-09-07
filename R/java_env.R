@@ -137,10 +137,17 @@ java_env_set_session <- function(java_home) {
 
     if (!is.null(libjvm_path) && file.exists(libjvm_path)) {
       jvm_lib_dir <- dirname(libjvm_path)
-      # 2. Set linker/loader paths
+      r_lib_dir <- R.home("lib")
+
+      # 2. Set linker/loader paths, including R's own lib directory
       Sys.setenv(JAVA_LD_LIBRARY_PATH = jvm_lib_dir)
       old_ld_path <- Sys.getenv("LD_LIBRARY_PATH", unset = "")
-      new_ld_path <- paste(jvm_lib_dir, old_ld_path, sep = .Platform$path.sep)
+      paths_to_prepend <- unique(c(jvm_lib_dir, r_lib_dir))
+      new_ld_path <- if (nzchar(old_ld_path)) {
+        paste(c(paths_to_prepend, old_ld_path), collapse = .Platform$path.sep)
+      } else {
+        paste(paths_to_prepend, collapse = .Platform$path.sep)
+      }
       Sys.setenv(LD_LIBRARY_PATH = new_ld_path)
 
       # 3. Set Java libs for the linker
@@ -247,6 +254,11 @@ java_env_set_rprofile <- function(
     if (!is.null(libjvm_path)) {
       libjvm_path <- gsub("\\\\", "/", libjvm_path)
       jvm_lib_dir <- dirname(libjvm_path)
+      r_lib_dir <- R.home("lib")
+      paths_to_prepend_str <- paste(
+        unique(c(jvm_lib_dir, r_lib_dir)),
+        collapse = .Platform$path.sep
+      )
 
       lines_to_add <- c(
         lines_to_add,
@@ -255,12 +267,10 @@ java_env_set_rprofile <- function(
           jvm_lib_dir
         ),
         "old_ld_path <- Sys.getenv('LD_LIBRARY_PATH', unset = '') # rJavaEnv",
-        sprintf(
-          "new_ld_path <- paste('%s', old_ld_path, sep = .Platform$path.sep) # rJavaEnv",
-          jvm_lib_dir
-        ),
+        sprintf("paths_to_prepend <- '%s' # rJavaEnv", paths_to_prepend_str),
+        "new_ld_path <- if (nzchar(old_ld_path)) paste(paths_to_prepend, old_ld_path, sep = .Platform$path.sep) else paths_to_prepend # rJavaEnv",
         "Sys.setenv(LD_LIBRARY_PATH = new_ld_path) # rJavaEnv",
-        "rm(old_ld_path, new_ld_path) # rJavaEnv",
+        "rm(old_ld_path, paths_to_prepend, new_ld_path) # rJavaEnv",
         sprintf(
           "Sys.setenv(JAVA_LIBS = '%s') # rJavaEnv",
           paste0("-L", jvm_lib_dir, " -ljvm")
