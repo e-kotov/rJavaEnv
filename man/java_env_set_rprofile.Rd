@@ -4,12 +4,14 @@
 \alias{java_env_set_rprofile}
 \title{Update the .Rprofile file in the project directory}
 \usage{
-java_env_set_rprofile(java_home, project_path = NULL)
+java_env_set_rprofile(java_home, project_path = NULL, setup_build_env = FALSE)
 }
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME.}
 
-\item{project_path}{A \code{character} vector of length 1 containing the project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
+\item{project_path}{Path to the project directory.}
+
+\item{setup_build_env}{Logical. If TRUE, also sets build-specific variables.}
 }
 \description{
 Update the .Rprofile file in the project directory

@@ -2,12 +2,13 @@
 % Please edit documentation in R/java_env.R
 \name{java_env_set}
 \alias{java_env_set}
-\title{Set the \code{JAVA_HOME} and \code{PATH} environment variables to a given path}
+\title{Set a minimal Java runtime environment}
 \usage{
 java_env_set(
   where = c("session", "both", "project"),
   java_home,
   project_path = NULL,
+  setup_build_env = FALSE,
   quiet = FALSE
 )
 }
@@ -18,13 +19,17 @@ java_env_set(
 
 \item{project_path}{A \code{character} vector of length 1 containing the project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
 
+\item{setup_build_env}{Logical. If TRUE, also sets build-specific variables.}
+
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 Nothing. Sets the JAVA_HOME and PATH environment variables.
 }
 \description{
-Set the \code{JAVA_HOME} and \code{PATH} environment variables to a given path
+Sets the essential \code{JAVA_HOME} and \code{PATH} environment variables for running Java-based packages. This function provides a minimal, safe configuration suitable for project-level \code{.Rprofile} files.
+
+For compiling \code{rJava} from source, which requires a more comprehensive set of environment variables (like \code{LDFLAGS}, \code{LIBS}, etc.), please use the dedicated \code{java_set_build_env()} function.
 }
 \examples{
 \dontrun{
@@ -36,18 +41,13 @@ java_home <- java_install(
   autoset_java_env = FALSE
 )
 
-# now manually set the JAVA_HOME and PATH environment variables in current session
-java_env_set(
-  where = "session",
-  java_home = java_home
-)
+# Set the minimal runtime environment in the current session
+java_env_set(where = "session", java_home = java_home)
 
-# or set JAVA_HOME and PATH in the spefific projects' .Rprofile
-java_env_set(
-  where = "session",
-  java_home = java_home,
-  project_path = tempdir()
-)
-
+# Set the minimal runtime environment in the project's .Rprofile
+java_env_set(where = "project", java_home = java_home, project_path = tempdir())
 }
+}
+\seealso{
+\code{\link[=java_set_build_env]{java_set_build_env()}}
 }
