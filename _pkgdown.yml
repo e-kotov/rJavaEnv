@@ -57,6 +57,7 @@ reference:
     contents:
       - java_check_version_cmd
       - java_check_version_rjava
+      - java_get_home
   - title: "Fine-grained Control"
     desc: >
       Control every step of `Java` download, unpacking and installation
