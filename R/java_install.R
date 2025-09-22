@@ -1,4 +1,5 @@
 #' Install Java from a distribution file
+#' 
 #' @description
 #' Unpack Java distribution file into cache directory and link the installation into a project directory, optionally setting the `JAVA_HOME` and `PATH` environment variables to the Java version that was just installed.
 #'
