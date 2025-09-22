@@ -493,7 +493,7 @@ java_env_unset <- function(
 #' @examples
 #' java_get_home()
 java_get_home <- function() {
-  java_home <- Sys.getenv("java_get_home", unset = NA)
+  java_home <- Sys.getenv("JAVA_HOME", unset = NA)
   if (is.na(java_home) || java_home == "") {
     return("")
   }
