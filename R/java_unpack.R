@@ -5,6 +5,7 @@
 #'
 #'
 #' @inheritParams java_install
+#' @param force A logical. Whether to overwrite an existing installation. Defaults to `FALSE`.
 #' @inheritParams global_quiet_param
 #' @return A `character` vector containing of length 1 containing the path to the unpacked Java directory.
 #' @export
@@ -25,7 +26,8 @@
 #'
 java_unpack <- function(
   java_distrib_path,
-  quiet = FALSE
+  quiet = FALSE,
+  force = FALSE
 ) {
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
@@ -40,16 +42,28 @@ java_unpack <- function(
   arch <- parts[parts %in% architectures][1]
   platform <- parts[parts %in% platforms][1]
 
-  if (is.na(version))
+  if (is.na(version)) {
     cli::cli_abort("Unable to detect Java version from filename.")
-  if (is.na(arch))
+  }
+  if (is.na(arch)) {
     cli::cli_abort("Unable to detect architecture from filename.")
-  if (is.na(platform))
+  }
+  if (is.na(platform)) {
     cli::cli_abort("Unable to detect platform from filename.")
+  }
 
   # Create the installation path in the package cache
   cache_path <- getOption("rJavaEnv.cache_path")
   installed_path <- file.path(cache_path, "installed", platform, arch, version)
+
+  if (dir.exists(installed_path) && force) {
+    if (!quiet) {
+      cli::cli_inform(
+        "Forced re-installation. Removing existing installation at {.path {installed_path}}"
+      )
+    }
+    unlink(installed_path, recursive = TRUE)
+  }
 
   # Check if the distribution has already been unpacked
   if (!dir.exists(installed_path) || length(list.files(installed_path)) == 0) {
@@ -99,10 +113,11 @@ java_unpack <- function(
     # Clean up temporary directory
     unlink(temp_dir, recursive = TRUE)
   } else {
-    if (!quiet)
+    if (!quiet) {
       cli::cli_inform(
         "Java distribution {filename} already unpacked at {.path {installed_path}}"
       )
+    }
   }
   return(installed_path)
 }

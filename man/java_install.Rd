@@ -8,7 +8,8 @@ java_install(
   java_distrib_path,
   project_path = NULL,
   autoset_java_env = TRUE,
-  quiet = FALSE
+  quiet = FALSE,
+  force = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ java_install(
 \item{autoset_java_env}{A \code{logical} indicating whether to set the \code{JAVA_HOME} and \code{PATH} environment variables to the installed Java directory. Defaults to \code{TRUE}.}
 
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
+
+\item{force}{A logical. Whether to overwrite an existing installation. Defaults to \code{FALSE}.}
 }
 \value{
 The path to the installed Java directory.
