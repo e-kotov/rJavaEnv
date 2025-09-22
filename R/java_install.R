@@ -1,11 +1,11 @@
 #' Install Java from a distribution file
-#'
 #' @description
 #' Unpack Java distribution file into cache directory and link the installation into a project directory, optionally setting the `JAVA_HOME` and `PATH` environment variables to the Java version that was just installed.
 #'
 #' @param java_distrib_path A `character` vector of length 1 containing the path to the Java distribution file.
 #' @param project_path A `character` vector of length 1 containing the project directory where Java should be installed. If not specified or `NULL`, defaults to the current working directory.
 #' @param autoset_java_env A `logical` indicating whether to set the `JAVA_HOME` and `PATH` environment variables to the installed Java directory. Defaults to `TRUE`.
+#' @param force A logical. Whether to overwrite an existing installation. Defaults to `FALSE`.
 #' @inheritParams java_download
 #' @inheritParams global_quiet_param
 #' @return The path to the installed Java directory.
@@ -24,7 +24,8 @@ java_install <- function(
   java_distrib_path,
   project_path = NULL,
   autoset_java_env = TRUE,
-  quiet = FALSE
+  quiet = FALSE,
+  force = FALSE
 ) {
   rje_consent_check()
 
@@ -35,7 +36,8 @@ java_install <- function(
 
   installed_path <- java_unpack(
     java_distrib_path = java_distrib_path,
-    quiet = quiet
+    quiet = quiet,
+    force = force
   )
 
   platforms <- c("windows", "linux", "macos")
@@ -95,10 +97,11 @@ java_install <- function(
       silent = TRUE
     )
     if (!link_success) {
-      if (!quiet)
+      if (!quiet) {
         cli::cli_inform(
           "Junction creation failed. This is likely because the project directory is not on the same disk as the R package cache directory. Java files will instead be copied to {.path {project_version_path}}"
         )
+      }
       dir.create(project_version_path, recursive = TRUE)
       file.copy(
         installed_path,
@@ -106,8 +109,9 @@ java_install <- function(
         recursive = TRUE,
         overwrite = TRUE
       )
-      if (!quiet)
+      if (!quiet) {
         cli::cli_inform("Java copied to project {.path {project_version_path}}")
+      }
     }
   } else {
     tryCatch(
@@ -121,7 +125,9 @@ java_install <- function(
         if (!quiet) cli::cli_inform("Warning: {w}")
       },
       error = function(e) {
-        if (!quiet) cli::cli_inform("Error: {e}")
+        if (!quiet) {
+          cli::cli_inform("Error: {e}")
+        }
         dir.create(project_version_path, recursive = TRUE)
         file.copy(
           installed_path,
@@ -129,10 +135,11 @@ java_install <- function(
           recursive = TRUE,
           overwrite = TRUE
         )
-        if (!quiet)
+        if (!quiet) {
           cli::cli_inform(
             "Symlink creation failed. Files copied to {.path {project_version_path}}"
           )
+        }
       }
     )
   }
@@ -147,10 +154,11 @@ java_install <- function(
     )
   }
 
-  if (!quiet)
+  if (!quiet) {
     cli::cli_inform(
       "Java {version} ({filename}) for {platform} {arch} installed at {.path {installed_path}} and symlinked to {.path {project_version_path}}",
       .envir = environment()
     )
+  }
   return(installed_path)
 }

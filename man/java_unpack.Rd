@@ -4,12 +4,14 @@
 \alias{java_unpack}
 \title{Unpack a Java distribution file into cache directory}
 \usage{
-java_unpack(java_distrib_path, quiet = FALSE)
+java_unpack(java_distrib_path, quiet = FALSE, force = FALSE)
 }
 \arguments{
 \item{java_distrib_path}{A \code{character} vector of length 1 containing the path to the Java distribution file.}
 
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
+
+\item{force}{A logical. Whether to overwrite an existing installation. Defaults to \code{FALSE}.}
 }
 \value{
 A \code{character} vector containing of length 1 containing the path to the unpacked Java directory.
