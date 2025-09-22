@@ -485,3 +485,17 @@ java_env_unset <- function(
     }
   }
 }
+
+#' @title Get JAVA_HOME
+#' @description Get the current JAVA_HOME environment variable.
+#' @return The value of the JAVA_HOME environment variable.
+#' @export
+#' @examples
+#' java_get_home()
+java_get_home <- function() {
+  java_home <- Sys.getenv("JAVA_HOME", unset = NA)
+  if (is.na(java_home) || java_home == "") {
+    return("")
+  }
+  java_home
+}

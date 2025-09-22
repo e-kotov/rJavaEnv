@@ -6,6 +6,8 @@
 
 - New function `java_build_env_set()` that sets the environment (either temporarily in the current session or in `./.Rprofile` file of the current working directory) to build `rJava` from source on `macOS`, `Linux` and `Windows` platforms. It uses the current value of `JAVA_HOME` environment variable by default, so that it is more convenient to use after `java_quick_install()` or `use_java()` commands. After running `java_build_env_set()`, users can install `rJava` from source with `install.packages("rJava", type = "source")` without any additional configuration. However, users will still need some system dependencies, e.g. on Linux they will need: libpcre2-dev, libdeflate-dev, libzstd-dev, liblzma-dev, libbz2-dev, zlib1g-dev, libicu-dev. A system message with a suggested `apt-get` command is printed. On Windows, `Rtools` must be installed. On `macOS`, `Xcode Command Line Tools` must be installed. See the new vignette `Install 'rJava' from source` for more details.
 
+- New function `java_get_home()` to get currently set `JAVA_HOME`. This is just a shortcut to `Sys.getenv("JAVA_HOME")`, as it is faster to type and can be even faster then used with autocomplete.
+
 ## Improvements
 
 - `java_quick_install()` now also invisibly returns the path to `JAVA_HOME`.
