@@ -31,31 +31,6 @@ java_download <- function(
   force = FALSE,
   temp_dir = FALSE
 ) {
-  # Download distribution and check MD5 checksum
-  download_dist_check_md5 <- function(url, dest_file, quiet) {
-    curl::curl_download(url, dest_file, quiet = FALSE)
-    curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
-
-    if (!quiet) {
-      cli::cli_inform("Download completed.", .envir = environment())
-    }
-    md5sum <- tools::md5sum(dest_file)
-    md5sum_expected <- readLines(dest_file_md5, warn = FALSE)
-
-    if (md5sum != md5sum_expected) {
-      cli::cli_abort(
-        "MD5 checksum mismatch. Please try downloading the file again.",
-        .envir = environment()
-      )
-      unlink(dest_file)
-      return(NULL)
-    } else {
-      if (!quiet) {
-        cli::cli_inform("MD5 checksum verified.", .envir = environment())
-      }
-    }
-  }
-
   # override cache_path if temp_dir is set to TRUE
   if (temp_dir) {
     temp_dir <- tempdir()
@@ -160,7 +135,39 @@ java_download <- function(
     file.remove(dest_file)
   }
 
-  download_dist_check_md5(url, dest_file, quiet)
+  download_dist_with_md5_check(url, dest_file, url_md5, dest_file_md5, quiet)
 
   return(dest_file)
+}
+
+# Helper function to download a distribution and verify its MD5 checksum
+download_dist_with_md5_check <- function(
+  url,
+  dest_file,
+  url_md5,
+  dest_file_md5,
+  quiet
+) {
+  # Perform downloads
+  curl::curl_download(url, dest_file, quiet = FALSE)
+  curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
+
+  if (!quiet) {
+    cli::cli_inform("Download completed.")
+  }
+
+  # Verify checksum
+  md5sum_actual <- tools::md5sum(dest_file)
+  md5sum_expected <- readLines(dest_file_md5, warn = FALSE)
+
+  if (md5sum_actual != md5sum_expected) {
+    unlink(dest_file) # Clean up failed download
+    cli::cli_abort(
+      "MD5 checksum mismatch. Please try downloading the file again."
+    )
+  }
+
+  if (!quiet) {
+    cli::cli_inform("MD5 checksum verified.")
+  }
 }
