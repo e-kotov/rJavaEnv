@@ -1,5 +1,5 @@
 #' Install Java from a distribution file
-#' 
+#'
 #' @description
 #' Unpack Java distribution file into cache directory and link the installation into a project directory, optionally setting the `JAVA_HOME` and `PATH` environment variables to the Java version that was just installed.
 #'
@@ -121,6 +121,7 @@ java_install <- function(
           unlink(project_version_path, recursive = TRUE)
         }
         file.symlink(installed_path, project_version_path)
+        link_success <- TRUE # <--- THIS IS THE ONLY CHANGE
       },
       warning = function(w) {
         if (!quiet) cli::cli_inform("Warning: {w}")
