@@ -32,7 +32,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
-      RUN_JAVA_DOWNLOAD_TESTS: "true"
+      RUN_JAVA_DOWNLOAD_TESTS: "TRUE"
 
     steps:
       - uses: actions/checkout@v4
