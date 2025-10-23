@@ -1,0 +1,62 @@
+# GitHub Actions workflow to run the long-running live Java download tests.
+# This test downloads, installs, checks, and clears every supported Java version.
+# It is run on a schedule to avoid slowing down pull request checks.
+
+name: R Java Live Integration Tests
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  schedule:
+    # Runs at 00:00 UTC on Saturday.
+    # This corresponds to 1:00 AM in Berlin (CET, UTC+1) during standard time,
+    # and 2:00 AM (CEST, UTC+2) during daylight saving time.
+    - cron: '0 0 * * 6'
+
+jobs:
+  run-live-tests:
+    name: ${{ matrix.config.os }} (R ${{ matrix.config.r-version }})
+    runs-on: ${{ matrix.config.os }}
+
+    # Strategy to run jobs in parallel for all target platforms
+    strategy:
+      fail-fast: false # Important: Ensures all OS tests run even if one fails
+      matrix:
+        config:
+          - {os: windows-latest, r-version: 'release'}
+          - {os: macos-latest, r-version: 'release'}
+          - {os: ubuntu-latest, r-version: 'release'}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r-version }}
+          use-public-rspm: true
+
+      - name: Set up Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Install package dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::rJava
+            any::devtools
+            any::testthat
+            any::withr
+            any::cli
+
+      - name: Run live Java download and install tests
+        # This is the key step:
+        # 1. Set the environment variable to enable the test.
+        # 2. Run ONLY the specific test file using devtools::test_file().
+        env:
+          RUN_JAVA_DOWNLOAD_TESTS: "true"
+        run: |
+          devtools::test_file('tests/testthat/test-java_full-cycle-live.R')
+        shell: Rscript {0}
