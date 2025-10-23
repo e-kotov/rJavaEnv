@@ -19,9 +19,8 @@ jobs:
     name: ${{ matrix.config.os }} (R ${{ matrix.config.r-version }})
     runs-on: ${{ matrix.config.os }}
 
-    # Strategy to run jobs in parallel for all target platforms
     strategy:
-      fail-fast: false # Important: Ensures all OS tests run even if one fails
+      fail-fast: false
       matrix:
         config:
           - {os: windows-latest, r-version: 'release'}
@@ -41,18 +40,14 @@ jobs:
       - name: Set up Pandoc
         uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Install all package dependencies from DESCRIPTION
+      - name: Install package dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          # This installs Imports, Depends, LinkingTo, AND Suggests packages
-          dependencies: "soft" 
 
       - name: Run live Java download and install tests
-        # This is the key step:
-        # 1. Set the environment variable to enable the test.
-        # 2. Run ONLY the specific test file using devtools::test_file().
         env:
-          RUN_JAVA_DOWNLOAD_TESTS: "TRUE"
+          # This environment variable enables the specific test to run
+          RUN_JAVA_DOWNLOAD_TESTS: "true"
         run: |
-          devtools::test_file('tests/testthat/test-java_full-cycle-live.R')
+          # Use testthat::test_file() directly to avoid the devtools deprecation warning
+          testthat::test_file('tests/testthat/test-java_full-cycle-live.R')
         shell: Rscript {0}
