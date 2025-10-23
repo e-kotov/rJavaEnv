@@ -14,40 +14,43 @@ on:
     # and 2:00 AM (CEST, UTC+2) during daylight saving time.
     - cron: '0 0 * * 6'
 
+
 jobs:
-  run-live-tests:
-    name: ${{ matrix.config.os }} (R ${{ matrix.config.r-version }})
+  R-CMD-check:
     runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r-version: 'release'}
-          - {os: macos-latest, r-version: 'release'}
-          - {os: ubuntu-latest, r-version: 'release'}
+          - {os: macos-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,   r: 'release'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+      RUN_JAVA_DOWNLOAD_TESTS: "true"
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up R
-        uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
         with:
-          r-version: ${{ matrix.config.r-version }}
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Set up Pandoc
-        uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
 
-      - name: Install package dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-
-      - name: Run live Java download and install tests
-        env:
-          # This environment variable enables the specific test to run
-          RUN_JAVA_DOWNLOAD_TESTS: "true"
-        run: |
-          # Use testthat::test_file() directly to avoid the devtools deprecation warning
-          testthat::test_file('tests/testthat/test-java_full-cycle-live.R')
-        shell: Rscript {0}
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
