@@ -1,7 +1,6 @@
 test_that("full download, install, check, and clear cycle works for all versions", {
   # --- Test Configuration ---
   testthat::skip_on_cran()
-  testthat::skip_on_ci()
   # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS" = "1")
   skip_if_not(
     Sys.getenv("RUN_JAVA_DOWNLOAD_TESTS") == "TRUE",
