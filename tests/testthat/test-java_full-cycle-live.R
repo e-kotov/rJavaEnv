@@ -4,8 +4,8 @@ test_that("full download, install, check, and clear cycle works for all versions
   testthat::skip_on_ci()
   # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS" = "1")
   skip_if_not(
-    Sys.getenv("RUN_JAVA_DOWNLOAD_TESTS") == "1",
-    "Skipping real download test. Set RUN_JAVA_DOWNLOAD_TESTS='1' to run."
+    Sys.getenv("RUN_JAVA_DOWNLOAD_TESTS") == "TRUE",
+    "Skipping real download test. Set RUN_JAVA_DOWNLOAD_TESTS='TRUE' to run."
   )
 
   # --- 1. Setup a Self-Cleaning Temporary Environment ---

@@ -41,22 +41,18 @@ jobs:
       - name: Set up Pandoc
         uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Install package dependencies
+      - name: Install all package dependencies from DESCRIPTION
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          packages: |
-            any::rJava
-            any::devtools
-            any::testthat
-            any::withr
-            any::cli
+          # This installs Imports, Depends, LinkingTo, AND Suggests packages
+          dependencies: "soft" 
 
       - name: Run live Java download and install tests
         # This is the key step:
         # 1. Set the environment variable to enable the test.
         # 2. Run ONLY the specific test file using devtools::test_file().
         env:
-          RUN_JAVA_DOWNLOAD_TESTS: "true"
+          RUN_JAVA_DOWNLOAD_TESTS: "TRUE"
         run: |
           devtools::test_file('tests/testthat/test-java_full-cycle-live.R')
         shell: Rscript {0}
