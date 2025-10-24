@@ -59,6 +59,7 @@
 <div class="section level3">
 <h3 id="improvements-development-version">Improvements<a class="anchor" aria-label="anchor" href="#improvements-development-version"></a></h3>
 <ul><li><p>Download progress printing in <code><a href="../reference/java_download.html">java_download()</a></code> respects the <code>quiet</code> argument now (internally passing the value to <code><a href="https://jeroen.r-universe.dev/curl/reference/curl_download.html" class="external-link">curl::curl_download()</a></code>).</p></li>
+<li><p>More robust Java version detection in <code><a href="../reference/java_check_version_cmd.html">java_check_version_cmd()</a></code>.</p></li>
 <li><p><code><a href="../reference/java_quick_install.html">java_quick_install()</a></code> now also invisibly returns the path to <code>JAVA_HOME</code>.</p></li>
 <li><p>Added <a href="https://rlang.r-lib.org" class="external-link">rlang</a> as a dependency, as <a href="https://cli.r-lib.org" class="external-link">cli</a> uses it anyway for the functions that we use in <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a>, but does not declare it as a dependency. Therefore this previously might have caused annoyances to the users, as after installing <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> they could not use any of the functions until they installed <a href="https://rlang.r-lib.org" class="external-link">rlang</a> manually.</p></li>
 </ul></div>
