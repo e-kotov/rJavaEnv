@@ -4,6 +4,8 @@ test_that("full download, install, check, and clear cycle works for all versions
   # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS" = "TRUE")
   # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS_QUIET" = "FALSE")
   # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS_QUIET" = "TRUE")
+  # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS_QUIET_DOWNLOAD" = "FALSE")
+  # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS_QUIET_DOWNLOAD" = "TRUE")
   skip_if_not(
     Sys.getenv("RUN_JAVA_DOWNLOAD_TESTS") == "TRUE",
     "Skipping real download test. Set RUN_JAVA_DOWNLOAD_TESTS='TRUE' to run."
@@ -12,6 +14,11 @@ test_that("full download, install, check, and clear cycle works for all versions
     rj_quiet <- TRUE
   } else {
     rj_quiet <- FALSE
+  }
+  if (Sys.getenv("RUN_JAVA_DOWNLOAD_TESTS_QUIET_DOWNLOAD") == "TRUE") {
+    rj_dl_quiet <- TRUE
+  } else {
+    rj_dl_quiet <- FALSE
   }
 
   # --- 1. Setup a Self-Cleaning Temporary Environment ---
@@ -54,7 +61,7 @@ test_that("full download, install, check, and clear cycle works for all versions
     cli::cli_inform("-> Step 1: Downloading Java {java_version}...")
     downloaded_file <- java_download(
       version = java_version,
-      quiet = rj_quiet,
+      quiet = rj_dl_quiet,
       force = FALSE,
     )
     testthat::expect_true(file.exists(downloaded_file), info = context_info)
