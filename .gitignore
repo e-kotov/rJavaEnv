@@ -16,3 +16,9 @@ rjavaenv
 
 /.quarto/
 revdep
+.cache
+.config
+.jupyter
+.local
+.ipython
+.vscode
