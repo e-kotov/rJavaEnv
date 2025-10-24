@@ -12,6 +12,8 @@
 
 - Download progress printing in `java_download()` respects the `quiet` argument now (internally passing the value to `curl::curl_download()`).
 
+- More robust Java version detection in `java_check_version_cmd()`.
+
 - `java_quick_install()` now also invisibly returns the path to `JAVA_HOME`.
 
 - Added `{rlang}` as a dependency, as `{cli}` uses it anyway for the functions that we use in `{rJavaEnv}`, but does not declare it as a dependency. Therefore this previously might have caused annoyances to the users, as after installing `{rJavaEnv}` they could not use any of the functions until they installed `{rlang}` manually.
