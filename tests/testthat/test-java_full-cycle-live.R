@@ -1,11 +1,18 @@
 test_that("full download, install, check, and clear cycle works for all versions", {
   # --- Test Configuration ---
   testthat::skip_on_cran()
-  # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS" = "1")
+  # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS" = "TRUE")
+  # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS_QUIET" = "FALSE")
+  # Sys.setenv("RUN_JAVA_DOWNLOAD_TESTS_QUIET" = "TRUE")
   skip_if_not(
     Sys.getenv("RUN_JAVA_DOWNLOAD_TESTS") == "TRUE",
     "Skipping real download test. Set RUN_JAVA_DOWNLOAD_TESTS='TRUE' to run."
   )
+  if (Sys.getenv("RUN_JAVA_DOWNLOAD_TESTS_QUIET") == "TRUE") {
+    rj_quiet <- TRUE
+  } else {
+    rj_quiet <- FALSE
+  }
 
   # --- 1. Setup a Self-Cleaning Temporary Environment ---
   main_temp_dir <- tempfile(pattern = "rJavaEnv-full-test-")
@@ -28,7 +35,7 @@ test_that("full download, install, check, and clear cycle works for all versions
   # --- 2. Get the list of Java versions to test ---
   java_versions <- tryCatch(
     {
-      java_valid_versions()
+      java_valid_versions(force = TRUE)
     },
     error = function(e) {
       getOption("rJavaEnv.fallback_valid_versions_current_platform")
@@ -47,8 +54,8 @@ test_that("full download, install, check, and clear cycle works for all versions
     cli::cli_inform("-> Step 1: Downloading Java {java_version}...")
     downloaded_file <- java_download(
       version = java_version,
-      quiet = TRUE,
-      force = FALSE
+      quiet = rj_quiet,
+      force = FALSE,
     )
     testthat::expect_true(file.exists(downloaded_file), info = context_info)
 
@@ -58,7 +65,7 @@ test_that("full download, install, check, and clear cycle works for all versions
       java_distrib_path = downloaded_file,
       project_path = temp_project_dir,
       autoset_java_env = FALSE,
-      quiet = TRUE,
+      quiet = rj_quiet,
       force = FALSE
     )
     testthat::expect_true(dir.exists(java_home_path), info = context_info)
@@ -67,24 +74,40 @@ test_that("full download, install, check, and clear cycle works for all versions
     cli::cli_inform("-> Step 3: Verifying with java_check_version_cmd()...")
     cmd_version_result <- java_check_version_cmd(
       java_home = java_home_path,
-      quiet = TRUE
+      quiet = rj_quiet
     )
     testthat::expect_equal(
       cmd_version_result,
       java_version,
       info = context_info
     )
+    if (cmd_version_result == java_version) {
+      cli::cli_inform(
+        "Successfully verified Java {java_version} with command line."
+      )
+    } else {
+      cli::cli_alert_danger(
+        "Command line verification failed for Java {java_version}."
+      )
+    }
 
     cli::cli_inform("-> Step 4: Verifying with java_check_version_rjava()...")
     rjava_version_result <- java_check_version_rjava(
       java_home = java_home_path,
-      quiet = TRUE
+      quiet = rj_quiet
     )
     testthat::expect_equal(
       rjava_version_result,
       java_version,
       info = context_info
     )
+    if (rjava_version_result == java_version) {
+      cli::cli_inform("Successfully verified Java {java_version} with rJava.")
+    } else {
+      cli::cli_alert_danger(
+        "rJava verification failed for Java {java_version}."
+      )
+    }
 
     # --- Step D: Clean up within the loop to test java_clear() ---
     cli::cli_inform("-> Step 5: Clearing caches with java_clear()...")
