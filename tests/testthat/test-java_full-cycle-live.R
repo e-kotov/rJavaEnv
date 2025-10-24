@@ -71,7 +71,7 @@ test_that("full download, install, check, and clear cycle works for all versions
     java_home_path <- java_install(
       java_distrib_path = downloaded_file,
       project_path = temp_project_dir,
-      autoset_java_env = FALSE,
+      autoset_java_env = TRUE,
       quiet = rj_quiet,
       force = FALSE
     )
