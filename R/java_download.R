@@ -149,8 +149,8 @@ download_dist_with_md5_check <- function(
   quiet
 ) {
   # Perform downloads
-  curl::curl_download(url, dest_file, quiet = FALSE)
-  curl::curl_download(url_md5, dest_file_md5, quiet = TRUE)
+  curl::curl_download(url, dest_file, quiet = quiet)
+  curl::curl_download(url_md5, dest_file_md5, quiet = quiet)
 
   if (!quiet) {
     cli::cli_inform("Download completed.")
