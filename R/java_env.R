@@ -316,8 +316,8 @@ java_check_version_rjava <- function(
   } else {
     if (!quiet) cli::cli_alert_danger("Failed to retrieve Java version.")
   }
-
-  major_java_ver <- sub('.*version: \\"([0-9]+).*', '\\1', output[1])
+  cleaned_output <- cli::ansi_strip(output[1])
+  major_java_ver <- sub('.*version: \\"([0-9]+).*', '\\1', cleaned_output)
   if (!nzchar(major_java_ver) || !grepl("^[0-9]+$", major_java_ver)) {
     if (!quiet) {
       cli::cli_alert_danger("Could not parse Java major version.")
