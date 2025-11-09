@@ -1,0 +1,117 @@
+# Multiple `Java` environments in one project with `targets` and `callr`
+
+If you need to use multiple `Java` distribution versions in a single
+project, you can use a handy shortcut function
+[`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md)
+kindly [suggested by Hadley
+Wickham](https://github.com/e-kotov/rJavaEnv/issues/44).
+
+Essentialy,
+[`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md)
+does the same thing as
+[`java_quick_install()`](https://www.ekotov.pro/rJavaEnv/reference/java_quick_install.md),
+but in a less intrusive way. It downloads the distribution of the user
+requested major version of `Java`, unpacks it, also to the cache folder,
+but unlike
+[`java_quick_install()`](https://www.ekotov.pro/rJavaEnv/reference/java_quick_install.md),
+it does not copy or link the `Java` installation folder from cache into
+the project directory and does not create or edit your `.Rprofile` file.
+Instead, it just sets the environment in the current R script to the
+requested `Java` binaries in the cache folder. The download and
+unpacking only happens once, so each next run is practically instant, as
+the function only needs to set the environment in the current R script.
+
+## How to use `use_java()`
+
+Let’s illustrate this with a simple example.
+
+First, load the package and check the valid major versions of `Java`:
+
+``` r
+library(rJavaEnv)
+java_valid_versions()
+```
+
+    [1] "8"  "11" "15" "16" "17" "18" "19" "20" "21" "22" "23" "24"
+
+> **Note**
+>
+> The available versions of `Java` depend on your OS and architecture,
+> so you might see a shorter list on your system.
+
+Now select any two or three versions and run
+[`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md),
+checking every time that correct java was set in the current
+environment.
+
+``` r
+use_java("8")
+"8" == java_check_version_cmd(quiet = TRUE)
+"8" == java_check_version_rjava(quiet = TRUE)
+```
+
+    [1] TRUE
+    [1] TRUE
+
+``` r
+use_java(17)
+"17" == java_check_version_cmd(quiet = TRUE)
+"17" == java_check_version_rjava(quiet = TRUE)
+```
+
+    [1] TRUE
+    [1] TRUE
+
+``` r
+use_java(21)
+"21" == java_check_version_cmd(quiet = TRUE)
+"21" == java_check_version_rjava(quiet = TRUE)
+```
+
+    [1] TRUE
+    [1] TRUE
+
+You probably had to wait for a bit for the Java distribution to be
+downloaded and unpacked.
+
+However, now if you repeat the same commands, you will see that the
+correct `Java` version is set instantly, as downloading and unpacking
+are skipped.
+
+## How to use with `targets` and `callr`
+
+Both [`{targets}`](https://docs.ropensci.org/targets/) and
+[`{callr}`](https://callr.r-lib.org/) packages allow the user to run any
+R scripts in clean separate R sessions. This essentially allows the user
+to run multiple versions of `Java` in one project with `targets` and
+`callr`, mostly overcoming the issue of manually switching between
+`Java` versions in one project.
+
+One simple thing you can do if one of the scripts needs Java 8, and
+another one needs Java 17, is to insert
+[`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md) in
+beginning of the scripts that you run through `targets` or `callr` like
+so:
+
+``` r
+library(rJavaEnv)
+use_java("17")
+```
+
+Or:
+
+``` r
+rJavaEnv::use_java("17")
+```
+
+The first run of such script will have to go through the the process of
+downloading and unpacking the `Java` distribution. The second run will
+not need to download and unpacking and will be instant.
+
+If you need the runs to be instant from the first attempt, you can
+pre-download and pre-install `Java` into cache folders using:
+
+``` r
+java_17_distrib <- java_download("17")
+java_unpack(java_17_distrib)
+```

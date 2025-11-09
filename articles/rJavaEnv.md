@@ -1,0 +1,202 @@
+# Quick Start Guide: `Java` Setup for ‘R’ Projects
+
+This guide will walk you through downloading, installing, and managing
+`Java` environments for your R projects using the `rJavaEnv` package.
+We’ll cover setting up the environment, un-setting it, managing
+distributions, installing `Java`, and checking `Java` versions. For more
+advanced use refer to the vignettes on [step-by-step fine-grained
+procedure to download, unpack, install and link
+`Java`](https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv-step-by-step.qmd)
+and [vignette on using `rJavaEnv` with the `targets` and `callr`
+packages to manage multiple `Java`
+environments](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.qmd)
+
+### 1. Quickly Download and Install Java
+
+#### **Install `rJavaEnv`**
+
+Install `rJavaEnv` from CRAN:
+
+``` r
+install.packages("rJavaEnv")
+```
+
+Or install the latest version of `rJavaEnv` from R universe:
+
+``` r
+install.packages('rJavaEnv',
+  repos = c('https://e-kotov.r-universe.dev', 'https://cloud.r-project.org')
+)
+```
+
+#### **Quick Install `Java` JDK**
+
+Assume your project directory is currently in a temporary directory.
+Feel free to skip that, if you are already working in a desired project
+directory where you would like to install `Java`. In the example outputs
+below you will see paths that point to a temporary directory, but in a
+real project you would see your project directory instead.
+
+``` r
+project_dir <- tempdir()
+setwd(project_dir)
+```
+
+The first time you run any function that requires writing into your home
+space, you will be provided with a prompt warning you that the package
+may write to the package cache folder in your home directory, to your
+current project directory, as well as to the .Rprofile file in your
+project directory (or any directory you specify).
+
+To quickly install `Java` JDK 21 (which is also default, if not
+specified) in your current project directory and set the environment:
+
+``` r
+library(rJavaEnv)
+java_quick_install(version = 21)
+```
+
+**On first run, you will be asked for consent to change your environment
+variables and `.Rprofile` file in the current working/project directory.
+This only happens once.**
+
+The command above:
+
+- Downloads the `Java` distribution compatible with your OS and
+  architecture.
+
+- Installs `Java` in a cache directory.
+
+- Sets the `JAVA_HOME` and `PATH` environment variables for the current
+  session and project/working directory, so that any `Java`/`rJava`
+  dependent `R` package can use this requested `Java` version.
+
+Example expected output (on a Windows machine):
+
+    Consent has been granted and recorded.
+    Detected platform: windows
+    Detected architecture: x64
+    You can change the platform and architecture by specifying the `platform` and `arch` arguments.
+    Downloading Java 21 (Corretto) for windows x64 to C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/distrib/amazon-corretto-21-x64-windows-jdk.zip
+     [100%] Downloaded 201696048 bytes...
+    Download completed.
+    MD5 checksum verified.
+    v Current R Session: JAVA_HOME and PATH set to C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/21
+    v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/21' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/
+    RtmpuoG3xJ'
+    Java 21 (amazon-corretto-21-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/21 and symlinked to
+    C:/Users/user_name/AppData/Local/Temp/75/RtmpuoG3xJ/rjavaenv/windows/x64/21
+
+That is it. You can now use your `Java`/`rJava`-dependent `R` package.
+
+### 2. **Check `Java` installation**
+
+You can check if the newly installed `Java` will be correctly picked up
+by the `Java`/`rJava`-dependent `R` package that you are going to use
+with.
+
+For `R` packages that use `Java` via `rJava`-dependency
+(e.g. [`r5r`](https://github.com/ipeaGIT/r5r)), you can use the
+following command:
+
+``` r
+java_check_version_rjava()
+```
+
+Example expected output (on a Windows machine):
+
+    Using current session's JAVA_HOME: C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/21
+    With the user-specified JAVA_HOME rJava and other rJava/Java-based packages will use Java version: "21.0.4"
+    [1] TRUE
+
+For `R` packages that use `Java` from command line
+(e.g. [`opentripplanner`](https://github.com/ropensci/opentripplanner)),
+you can use the following command:
+
+``` r
+java_check_version_cmd()
+```
+
+Example expected output (on a Windows machine):
+
+    java_check_version_cmd()
+    JAVA_HOME: C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/21
+    Java path: /c/Users/user_name/AppData/Local/R/cache/R/rJavaEnv/installed/windows/x64/21/bin/java
+    Java version: "openjdk version \"21.0.4\" 2024-07-16 LTS OpenJDK Runtime Environment Corretto-21.0.4.7.1 (build 21.0.4+7-LTS) OpenJDK 64-Bit Server VM Corretto-21.0.4.7.1 (build 21.0.4+7-LTS,
+    mixed mode, sharing)"
+    [1] TRUE
+
+#### Note for Linux users
+
+On Linux, for the [rJava](http://www.rforge.net/rJava/) package to work
+correctly, it’s not enough to just set the `JAVA_HOME` and `PATH`
+variables; the `libjvm.so` shared library must also be loaded. The
+[rJavaEnv](https://github.com/e-kotov/rJavaEnv) package handles this for
+you automatically in your current R session and also sets it in your
+project’s `.Rprofile` file.
+
+After you run
+[`java_quick_install()`](https://www.ekotov.pro/rJavaEnv/reference/java_quick_install.md)
+or
+[`java_env_set()`](https://www.ekotov.pro/rJavaEnv/reference/java_env_set.md),
+rJavaEnv will also print a message with the necessary command to run in
+your terminal. This command, `R CMD javareconf`, tells R where to find
+the Java installation and configure the system accordingly.
+
+- If you have administrator (sudo) rights, you can configure Java for
+  all users on the system.
+
+- If you don’t have admin rights, you can configure it just for your
+  user account by adding the `-e` flag.
+
+### 3. Return things to their original state
+
+#### Unset `Java`
+
+Run the following code to unset the `Java` for the current working
+directory:
+
+``` r
+java_env_unset()
+```
+
+Example expected output (on a Windows machine):
+
+    Removed JAVA_HOME settings from .Rprofile in 'C:/Users/user_name/AppData/Local/Temp/75/RtmpuoG3xJ/.Rprofile'
+
+#### Delete `Java` from the project directory
+
+The line below clears all `Java` installations in the project directory:
+
+``` r
+java_clear("project", delete_all = TRUE)
+```
+
+Example expected output:
+
+    All Java symlinks in the project have been cleared.
+
+Now restart the current `R` session so that `R` picks up the system
+`Java` (or no `Java`, if it is not installed in the system).
+
+### 4. Complete Cleanup
+
+If you do not want to use `rJavaEnv` anymore, please clear the cache
+folders before removing the package:
+
+``` r
+java_clear("project", delete_all = TRUE)
+java_clear("installed", delete_all = TRUE)
+java_clear("distrib", delete_all = TRUE)
+```
+
+Also, clear the `.Rprofile` file in the projects there you used the
+package:
+
+``` r
+java_env_unset()
+```
+
+Now you can remove the package and restart the current `R` session so
+that `R` picks up the system `Java` (or no `Java`, if it is not
+installed in the system).
