@@ -20,3 +20,16 @@ java_build_env_unset(project_path = NULL, quiet = FALSE)
 
   A `logical` value indicating whether to suppress messages. Can be
   `TRUE` or `FALSE`.
+
+## Value
+
+Does not return a value. Invisibly returns `NULL`.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Remove Java build environment settings from the current project
+java_build_env_unset()
+} # }
+```
