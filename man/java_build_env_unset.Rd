@@ -11,6 +11,16 @@ java_build_env_unset(project_path = NULL, quiet = FALSE)
 
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
+\value{
+Does not return a value. Invisibly returns \code{NULL}.
+}
 \description{
 Unset the Java build environment variables in the project .Rprofile
+}
+\examples{
+\dontrun{
+# Remove Java build environment settings from the current project
+java_build_env_unset()
+}
+
 }
