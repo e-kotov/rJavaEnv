@@ -15,18 +15,28 @@ platform_detect <- function(quiet = TRUE) {
     stop(cli::cli_abort("Unsupported platform"))
   )
 
-  arch <- switch(
-    sys_info["machine"],
-    "x86-64" = "x64",
-    "x86_64" = "x64",
-    "i386" = "x86",
-    "i486" = "x86",
-    "i586" = "x86",
-    "i686" = "x86",
-    "aarch64" = "aarch64",
-    "arm64" = "aarch64",
-    stop(cli::cli_abort("Unsupported architecture"))
-  )
+  # NEW: Check R_ARCH first, then fall back to Sys.info()
+  r_arch_env <- Sys.getenv("R_ARCH")
+
+  if (r_arch_env == "/i386") {
+    arch <- "x86"
+  } else if (r_arch_env == "/x64") {
+    arch <- "x64"
+  } else {
+    # Fallback for non-Windows or when not in a build context
+    arch <- switch(
+      sys_info["machine"],
+      "x86-64" = "x64",
+      "x86_64" = "x64",
+      "i386" = "x86",
+      "i486" = "x86",
+      "i586" = "x86",
+      "i686" = "x86",
+      "aarch64" = "aarch64",
+      "arm64" = "aarch64",
+      stop(cli::cli_abort("Unsupported architecture"))
+    )
+  }
 
   if (isFALSE(quiet)) {
     cli::cli_inform("Detected platform: {os}")
@@ -35,7 +45,6 @@ platform_detect <- function(quiet = TRUE) {
 
   return(list(os = os, arch = arch))
 }
-
 
 #' Load Java URLs from JSON file
 #'
