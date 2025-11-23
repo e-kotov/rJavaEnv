@@ -10,18 +10,27 @@ test_that("java_install succeeds with symlink on Unix-like systems", {
   local_cache_path <- withr::local_tempdir(pattern = "cache")
   withr::local_options(rJavaEnv.cache_path = local_cache_path)
 
-  fake_distrib_path <- file.path(
-    local_cache_path,
-    "distrib",
-    "amazon-corretto-21-x64-linux-jdk.tar.gz"
-  )
+  # 1. Detect the current platform of the runner.
+  platform_info <- platform_detect(quiet = TRUE)
+  os <- platform_info$os
+  arch <- platform_info$arch
+
+  # 2. Construct a filename that matches the runner's OS.
+  fake_filename <- paste0("amazon-corretto-21-", arch, "-", os, "-jdk.tar.gz")
+  distrib_dir <- file.path(local_cache_path, "distrib")
+  dir.create(distrib_dir, recursive = TRUE)
+  fake_distrib_path <- file.path(distrib_dir, fake_filename)
+
+  # 3. CRITICAL: Create the empty dummy file for untar to find.
+  file.create(fake_distrib_path)
+
   # The global mock will generate the unpacked path based on the distrib path
   fake_unpacked_path <- java_unpack(fake_distrib_path)
   expected_symlink_path <- file.path(
     local_proj_path,
     "rjavaenv",
-    "linux",
-    "x64",
+    os,
+    arch,
     "21"
   )
 
@@ -42,11 +51,14 @@ test_that("java_install succeeds with symlink on Unix-like systems", {
     .package = "base"
   )
 
-  return_val <- java_install(
-    java_distrib_path = fake_distrib_path,
-    project_path = local_proj_path,
-    quiet = TRUE
-  )
+  # With the dummy file in place, this will now run silently without warnings.
+  expect_silent({
+    return_val <- java_install(
+      java_distrib_path = fake_distrib_path,
+      project_path = local_proj_path,
+      quiet = TRUE
+    )
+  })
 
   expect_equal(env_set_calls, 1)
   expect_equal(symlink_calls, 1)
@@ -63,11 +75,15 @@ test_that("java_install falls back to file.copy when symlink fails on Unix", {
   local_cache_path <- withr::local_tempdir()
   withr::local_options(rJavaEnv.cache_path = local_cache_path)
 
-  fake_distrib_path <- file.path(
-    local_cache_path,
-    "distrib",
-    "amazon-corretto-21-x64-linux-jdk.tar.gz"
-  )
+  platform_info <- platform_detect(quiet = TRUE)
+  os <- platform_info$os
+  arch <- platform_info$arch
+
+  fake_filename <- paste0("amazon-corretto-21-", arch, "-", os, "-jdk.tar.gz")
+  distrib_dir <- file.path(local_cache_path, "distrib")
+  dir.create(distrib_dir, recursive = TRUE)
+  fake_distrib_path <- file.path(distrib_dir, fake_filename)
+  file.create(fake_distrib_path)
 
   local_mocked_bindings(java_env_set = function(...) TRUE)
 
@@ -87,50 +103,46 @@ test_that("java_install falls back to file.copy when symlink fails on Unix", {
     .package = "base"
   )
 
-  java_install(
-    java_distrib_path = fake_distrib_path,
-    project_path = local_proj_path,
-    quiet = TRUE
+  expect_silent(
+    java_install(
+      java_distrib_path = fake_distrib_path,
+      project_path = local_proj_path,
+      quiet = TRUE
+    )
   )
 
   expect_equal(copy_calls, 1)
 })
-
-
 test_that("java_install respects autoset_java_env = FALSE", {
   local_proj_path <- withr::local_tempdir()
-  local_cache_path <- withr::local_tempdir()
-  withr::local_options(rJavaEnv.cache_path = local_cache_path)
+  # The path string itself doesn't matter, as we will mock the function that uses it.
+  fake_distrib_path <- "any/fake/path/jdk.tar.gz"
 
-  fake_distrib_path <- file.path(
-    local_cache_path,
-    "distrib",
-    "amazon-corretto-21-x64-linux-jdk.tar.gz"
-  )
-
-  # CORRECTED: Add an explicit mock for java_unpack for this test
-  # to prevent the real function from being called and issuing a warning.
+  # --- THE FIX ---
+  # Add a local mock for java_unpack(). This prevents the real function
+  # (and its call to utils::untar) from ever running.
+  # This isolates the test to only check the logic we care about.
   local_mocked_bindings(
     java_unpack = function(...) {
-      # Return a simple, predictable path string
-      "/mock/cache/path/installed/linux/x64/21"
+      # It just needs to return a plausible-looking path string.
+      "/mocked/unpacked/path"
     }
   )
 
-  # Mock file.symlink to succeed
+  # Mock file.symlink to prevent another potential side-effect
   local_mocked_bindings(
     file.symlink = function(...) TRUE,
     .package = "base"
   )
 
-  # Mock java_env_set to fail the test if it's ever called
+  # This mock remains the core of the test: fail if java_env_set is ever called.
   local_mocked_bindings(
     java_env_set = function(...) {
       stop("java_env_set should not have been called!")
     }
   )
 
-  # This test will now pass silently because java_unpack is properly mocked.
+  # Now, with java_unpack properly mocked, no warnings will be produced.
   expect_silent(
     java_install(
       java_distrib_path = fake_distrib_path,
@@ -151,11 +163,13 @@ test_that("java_install succeeds with mklink junction on Windows", {
   local_cache_path <- withr::local_tempdir()
   withr::local_options(rJavaEnv.cache_path = local_cache_path)
 
+  # This test is Windows-specific, so a hardcoded windows path is fine.
   fake_distrib_path <- file.path(
     local_cache_path,
     "distrib",
     "amazon-corretto-21-x64-windows-jdk.zip"
   )
+  # No need to create the file, as it doesn't call untar/unzip.
 
   local_mocked_bindings(java_env_set = function(...) TRUE)
 

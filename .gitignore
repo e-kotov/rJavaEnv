@@ -20,3 +20,5 @@ revdep
 .config
 .jupyter
 .local
+.ipython
+.vscode

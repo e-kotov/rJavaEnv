@@ -100,7 +100,14 @@ java_build_env_set <- function(
 #' Unset the Java build environment variables in the project .Rprofile
 #'
 #' @inheritParams java_env_unset
+#' @return Does not return a value. Invisibly returns `NULL`.
 #' @export
+#' @examples
+#' \dontrun{
+#' # Remove Java build environment settings from the current project
+#' java_build_env_unset()
+#' }
+#'
 java_build_env_unset <- function(project_path = NULL, quiet = FALSE) {
   rje_consent_check()
 
@@ -125,6 +132,7 @@ java_build_env_unset <- function(project_path = NULL, quiet = FALSE) {
       ))
     }
   }
+  invisible(NULL)
 }
 
 #' Helper function to set Java build environment variables
