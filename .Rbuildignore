@@ -27,3 +27,7 @@
 ^tools$
 ^\.editorconfig$
 ^revdep$
+^\.cache$
+^\.config$
+^\.local$
+^\.jupyter$

@@ -14,49 +14,45 @@ on:
     # and 2:00 AM (CEST, UTC+2) during daylight saving time.
     - cron: '0 0 * * 6'
 
+
 jobs:
-  run-live-tests:
-    name: ${{ matrix.config.os }} (R ${{ matrix.config.r-version }})
+  R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    # Strategy to run jobs in parallel for all target platforms
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
     strategy:
-      fail-fast: false # Important: Ensures all OS tests run even if one fails
+      fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r-version: 'release'}
-          - {os: macos-latest, r-version: 'release'}
-          - {os: ubuntu-latest, r-version: 'release'}
+          - {os: macos-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,   r: 'release'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+      RUN_JAVA_DOWNLOAD_TESTS: "TRUE"
+      RUN_JAVA_DOWNLOAD_TESTS_QUIET: "FALSE"
+      RUN_JAVA_DOWNLOAD_TESTS_QUIET_DOWNLOAD: "TRUE"
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up R
-        uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
         with:
-          r-version: ${{ matrix.config.r-version }}
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Set up Pandoc
-        uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Install package dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          packages: |
-            any::rJava
-            any::devtools
-            any::testthat
-            any::withr
-            any::cli
+          extra-packages: any::rcmdcheck
+          needs: check
 
-      - name: Run live Java download and install tests
-        # This is the key step:
-        # 1. Set the environment variable to enable the test.
-        # 2. Run ONLY the specific test file using devtools::test_file().
-        env:
-          RUN_JAVA_DOWNLOAD_TESTS: "true"
-        run: |
-          devtools::test_file('tests/testthat/test-java_full-cycle-live.R')
-        shell: Rscript {0}
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
