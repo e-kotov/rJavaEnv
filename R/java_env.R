@@ -242,7 +242,7 @@ java_check_version_rjava <- function(
   quiet = FALSE
 ) {
   # Check if rJava is installed
-  if (!requireNamespace("rJava", quietly = TRUE)) {
+  if (length(find.package("rJava", quiet = TRUE)) == 0) {
     cli::cli_alert_danger(
       "rJava package is not installed. You need to install rJava to use this function to check if rJava-based packages will work with the specified Java version."
     )
