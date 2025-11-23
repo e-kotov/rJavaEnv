@@ -119,6 +119,46 @@ java_version_check_rscript <- function(java_home) {
       new_path <- file.path(java_home, "bin")
       Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 
+      # On Linux, find and dynamically load libjvm.so
+      if (Sys.info()["sysname"] == "Linux") {
+        all_files <- list.files(
+          path = java_home,
+          pattern = "libjvm.so$",
+          recursive = TRUE,
+          full.names = TRUE
+        )
+
+        libjvm_path <- NULL
+        if (length(all_files) > 0) {
+          # Prefer the 'server' version if available
+          server_files <- all_files[grepl("/server/libjvm.so$", all_files)]
+          if (length(server_files) > 0) {
+            libjvm_path <- server_files[1]
+          } else {
+            libjvm_path <- all_files[1]
+          }
+        }
+
+        if (!is.null(libjvm_path) && file.exists(libjvm_path)) {
+          tryCatch(
+            dyn.load(libjvm_path),
+            error = function(e) {
+              # Use base message to avoid dependency issues in the isolated script
+              message(sprintf(
+                "Found libjvm.so at '%s' but failed to load it: %s",
+                libjvm_path,
+                e$message
+              ))
+            }
+          )
+        } else {
+          message(sprintf(
+            "Could not find libjvm.so within the provided JAVA_HOME: %s",
+            java_home
+          ))
+        }
+      }
+
       suppressWarnings(rJava::.jinit())
       suppressWarnings(
         java_version <- rJava::.jcall(
