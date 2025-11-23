@@ -24,8 +24,19 @@ test_that("java_install succeeds with symlink on Unix-like systems", {
   # 3. CRITICAL: Create the empty dummy file for untar to find.
   file.create(fake_distrib_path)
 
+  # Apply the mocks
+  mock_java_globals()
+
   # The global mock will generate the unpacked path based on the distrib path
-  fake_unpacked_path <- java_unpack(fake_distrib_path)
+  # Since we mocked java_unpack in the namespace but the attached version might be stale,
+  # we manually construct the expected path to match the mock's logic.
+  fake_unpacked_path <- file.path(
+    "/mock/cache/path",
+    "installed",
+    os,
+    arch,
+    "21"
+  )
   expected_symlink_path <- file.path(
     local_proj_path,
     "rjavaenv",
@@ -85,6 +96,7 @@ test_that("java_install falls back to file.copy when symlink fails on Unix", {
   fake_distrib_path <- file.path(distrib_dir, fake_filename)
   file.create(fake_distrib_path)
 
+  mock_java_globals()
   local_mocked_bindings(java_env_set = function(...) TRUE)
 
   local_mocked_bindings(
@@ -122,12 +134,7 @@ test_that("java_install respects autoset_java_env = FALSE", {
   # Add a local mock for java_unpack(). This prevents the real function
   # (and its call to utils::untar) from ever running.
   # This isolates the test to only check the logic we care about.
-  local_mocked_bindings(
-    java_unpack = function(...) {
-      # It just needs to return a plausible-looking path string.
-      "/mocked/unpacked/path"
-    }
-  )
+  mock_java_globals()
 
   # Mock file.symlink to prevent another potential side-effect
   local_mocked_bindings(
@@ -171,6 +178,7 @@ test_that("java_install succeeds with mklink junction on Windows", {
   )
   # No need to create the file, as it doesn't call untar/unzip.
 
+  mock_java_globals()
   local_mocked_bindings(java_env_set = function(...) TRUE)
 
   system2_args <- list()
