@@ -19,6 +19,11 @@ on:
 jobs:
   pkgcheck:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RUN_JAVA_DOWNLOAD_TESTS: "TRUE"
+      RUN_JAVA_DOWNLOAD_TESTS_QUIET: "FALSE"
+      RUN_JAVA_DOWNLOAD_TESTS_QUIET_DOWNLOAD: "TRUE"
     permissions:
       issues: write
     steps:
