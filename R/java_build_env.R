@@ -319,7 +319,7 @@ java_build_env_set_rprofile <- function(java_home, project_path) {
   rprofile_path <- file.path(project_path, ".Rprofile")
 
   if (.Platform$OS.type == "windows") {
-    java_home <- gsub("\\", "/", java_home)
+    java_home <- normalizePath(java_home, winslash = "/", mustWork = FALSE)
   }
 
   lines_to_add <- c(
