@@ -2,7 +2,7 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -15,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RUN_JAVA_DOWNLOAD_TESTS: "TRUE"
+      RUN_JAVA_DOWNLOAD_TESTS_QUIET: "FALSE"
+      RUN_JAVA_DOWNLOAD_TESTS_QUIET_DOWNLOAD: "TRUE"
 
     steps:
       - uses: actions/checkout@v4
