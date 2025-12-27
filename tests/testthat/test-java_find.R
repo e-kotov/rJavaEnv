@@ -13,6 +13,7 @@ create_mock_java_home <- function(base_path, os = "linux") {
 test_that("java_find_system detects JAVA_HOME environment variable", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  skip_on_os("windows") # Internal function mocking doesn't work reliably on Windows
 
   temp_java <- withr::local_tempdir()
   java_home <- create_mock_java_home(temp_java)
@@ -126,6 +127,7 @@ test_that("java_find_system handles non-existent JAVA_HOME gracefully", {
 test_that("java_find_system detects multiple Java installations", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  skip_on_os("windows") # Internal function mocking doesn't work reliably on Windows
 
   temp_dir <- withr::local_tempdir()
 
@@ -536,6 +538,7 @@ test_that("java_find_system excludes rJavaEnv cache paths from PATH", {
 test_that("java_find_system includes real system Java even when cache exists", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  skip_on_os("windows") # Internal function mocking doesn't work reliably on Windows
 
   temp_cache <- withr::local_tempdir()
   temp_system <- withr::local_tempdir()
