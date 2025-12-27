@@ -14,7 +14,7 @@ java_check_version_cmd(java_home = NULL, quiet = FALSE, .use_cache = FALSE)
 \item{.use_cache}{Logical. If \code{TRUE}, uses cached results for repeated calls with the same JAVA_HOME. If \code{FALSE} (default), forces a fresh check. Set to \code{TRUE} for performance in loops or repeated checks within the same session.}
 }
 \value{
-A \code{character} vector of length 1 containing the major Java version.
+A \code{character} vector of length 1 containing the major Java version, or \code{FALSE} if JAVA_HOME is not set or the Java executable cannot be found.
 }
 \description{
 Check installed Java version using terminal commands

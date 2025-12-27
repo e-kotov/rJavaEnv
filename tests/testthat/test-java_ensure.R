@@ -142,3 +142,35 @@ test_that("java_ensure handled rJava locking correctly (Strict vs Cmd modes)", {
     )
   })
 })
+
+test_that("java_ensure accepts .use_cache parameter", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+
+  # Setup mocks
+  local_mocked_bindings(
+    check_rjava_initialized = function(...) FALSE,
+    java_check_version_cmd = function(quiet = FALSE, .use_cache = FALSE, ...) {
+      # Verify .use_cache is passed through
+      expect_type(.use_cache, "logical")
+      "21"
+    },
+    java_find_system = function(quiet = TRUE, .use_cache = FALSE, ...) {
+      # Verify .use_cache is passed through
+      expect_type(.use_cache, "logical")
+      data.frame(
+        java_home = "/path/to/sys21",
+        version = "21",
+        is_default = TRUE,
+        stringsAsFactors = FALSE
+      )
+    },
+    .package = "rJavaEnv"
+  )
+
+  # Test with .use_cache = FALSE (default)
+  expect_true(java_ensure(21, quiet = TRUE, .use_cache = FALSE))
+
+  # Test with .use_cache = TRUE
+  expect_true(java_ensure(21, quiet = TRUE, .use_cache = TRUE))
+})

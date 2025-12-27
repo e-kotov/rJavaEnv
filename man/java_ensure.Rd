@@ -15,6 +15,7 @@ java_ensure(
   cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
+  .use_cache = FALSE,
   .check_rjava_fun = check_rjava_initialized,
   .rjava_ver_fun = java_check_current_rjava_version
 )
@@ -44,6 +45,38 @@ If \code{FALSE}, returns \code{FALSE} if the version is not found.}
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
+
+\item{.use_cache}{A \code{logical} value controlling caching behavior. If \code{FALSE} (default),
+performs a fresh check each time (safe, reflects current state). If \code{TRUE}, uses
+session-scoped cached results for performance in loops or repeated calls.
+
+\strong{Caching Behavior:}
+\itemize{
+\item Session-scoped: Cache is cleared when R restarts
+\item Key-based for version checks: Changes to JAVA_HOME create new cache entries
+\item System-wide for scanning: Always recalculates current default Java
+}
+
+\strong{Performance Benefits:}
+\itemize{
+\item First call: ~37-209ms (depending on operation)
+\item Cached calls: <1ms
+\item Prevents 30-100ms delays on every call in performance-critical code
+}
+
+\strong{When to Enable:}
+\itemize{
+\item Package initialization code (\code{.onLoad} or similar)
+\item Loops calling the same function multiple times
+\item Performance-critical paths with frequent version checks
+}
+
+\strong{When to Keep Default (FALSE):}
+\itemize{
+\item Interactive use (one-off checks)
+\item When you need current data reflecting recent Java installations
+\item General-purpose function calls that aren't time-critical
+}}
 
 \item{.check_rjava_fun}{Internal. Function to check if rJava is initialized.}
 

@@ -28,6 +28,7 @@
 #'   * `"cmd"`: Checks if the requested version can be enforced for command-line use. This ignores the state of `rJava` and allows setting the environment variables even if `rJava` is locked to a different version.
 #' @inheritParams global_quiet_param
 #' @inheritParams java_download
+#' @inheritParams global_use_cache_param
 #' @param .check_rjava_fun Internal. Function to check if rJava is initialized.
 #' @param .rjava_ver_fun Internal. Function to get the current rJava version.
 #'
@@ -65,6 +66,7 @@ java_ensure <- function(
   cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
+  .use_cache = FALSE,
   .check_rjava_fun = check_rjava_initialized,
   .rjava_ver_fun = java_check_current_rjava_version
 ) {
@@ -139,7 +141,7 @@ java_ensure <- function(
   }
 
   # 1. Check Active Session (Fastest) for non-rJava (JAVA_HOME based) checks
-  curr_ver_str <- java_check_version_cmd(quiet = TRUE)
+  curr_ver_str <- java_check_version_cmd(quiet = TRUE, .use_cache = .use_cache)
   if (!isFALSE(curr_ver_str)) {
     curr_ver_int <- as.integer(curr_ver_str)
     if (!is.na(curr_ver_int)) {
@@ -166,7 +168,7 @@ java_ensure <- function(
     # Scan for system Java with error handling
     system_javas <- tryCatch(
       {
-        java_find_system(quiet = TRUE)
+        java_find_system(quiet = TRUE, .use_cache = .use_cache)
       },
       error = function(e) {
         if (!quiet) {
