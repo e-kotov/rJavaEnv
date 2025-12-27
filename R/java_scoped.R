@@ -122,3 +122,94 @@ with_java_env <- function(version, code, ...) {
   local_java_env(version = version, ...)
   force(code)
 }
+
+#' Execute rJava code in a separate process with specific Java version
+#'
+#' Runs the provided function in a fresh R subprocess where `rJava` has not yet
+#' been loaded. This allows you to enforce a specific Java version for `rJava`
+#' operations without affecting the main R session or requiring a restart.
+#'
+#' This function requires the \pkg{callr} package.
+#'
+#' @inheritParams java_resolve
+#' @param func The function to execute in the subprocess.
+#' @param args A list of arguments to pass to `func`.
+#' @param libpath Optional character vector of library paths to use in the subprocess.
+#'   Defaults to `.libPaths()`.
+#'
+#' @return The result of `func`.
+#' @export
+#' @examples
+#' \dontrun{
+#' # Run a function using Java 21 in a subprocess
+#' result <- with_rjava_env(
+#'   version = 21,
+#'   func = function(x) {
+#'     library(rJava)
+#'     .jinit()
+#'     .jcall("java.lang.System", "S", "getProperty", "java.version")
+#'   },
+#'   args = list(x = 1)
+#' )
+#' print(result)
+#' }
+with_rjava_env <- function(
+  version,
+  func,
+  args = list(),
+  distribution = "Corretto",
+  install = TRUE,
+  accept_system_java = TRUE,
+  quiet = TRUE,
+  libpath = .libPaths()
+) {
+  if (!requireNamespace("callr", quietly = TRUE)) {
+    cli::cli_abort("Package {.pkg callr} is required for {.fn with_rjava_env}.")
+  }
+
+  # 1. Resolve Java path (Install/Find)
+  java_home <- java_resolve(
+    version = version,
+    distribution = distribution,
+    install = install,
+    accept_system_java = accept_system_java,
+    quiet = quiet
+  )
+
+  # 2. Define the environment variables for the subprocess
+  env_vars <- Sys.getenv() # Copy current env
+
+  # Update JAVA variables
+  env_vars["JAVA_HOME"] = java_home
+
+  # Prepend to PATH
+  java_bin <- file.path(java_home, "bin")
+  old_path <- env_vars["PATH"]
+  env_vars["PATH"] = paste(java_bin, old_path, sep = .Platform$path.sep)
+
+  # Linux specific: LD_LIBRARY_PATH for rJava
+  if (Sys.info()["sysname"] == "Linux") {
+    libjvm_path <- get_libjvm_path(java_home)
+    if (!is.null(libjvm_path)) {
+      jvm_lib_dir <- dirname(libjvm_path)
+      old_ld <- env_vars["LD_LIBRARY_PATH"]
+      if (is.na(old_ld)) {
+        old_ld <- ""
+      }
+      env_vars["LD_LIBRARY_PATH"] = paste(
+        jvm_lib_dir,
+        old_ld,
+        sep = .Platform$path.sep
+      )
+    }
+  }
+
+  # 3. Run in subprocess
+  callr::r(
+    func = func,
+    args = args,
+    libpath = libpath,
+    env = env_vars,
+    show = !quiet # Show output if not quiet
+  )
+}

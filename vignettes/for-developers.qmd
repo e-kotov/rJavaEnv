@@ -113,6 +113,57 @@ If your package calls `rJava` (or imports a package that does), you face a stric
 - You **cannot** set Java in your package's `.onLoad` or inside your functions. By the time your package loads, `{rJava}` is likely already initializing, or will initialize the moment you call it.
 - You **must** instruct users to set up Java **before** loading your package.
 
+### Pattern 1: The Guard (Recommended)
+
+Since you cannot fix the environment automatically after `rJava` loads, the best practice is to **detect issues immediately** and instruct the user.
+
+Add a check to your `.onLoad` function using `java_check_compatibility`.
+
+```r
+# In R/zzz.R
+.onLoad <- function(libname, pkgname) {
+  # Check if the active Java version is at least 21
+  # If not, warn the user and explain how to fix it via rJavaEnv
+  rJavaEnv::java_check_compatibility(version = 21, type = "min", action = "warn")
+}
+```
+
+**What the user sees:**
+If the user is running Java 8, they immediately see:
+```text
+Warning: Java version mismatch.
+Current loaded Java: 8
+Required Java: >= 21
+! Because rJava is already initialized, you must restart R to switch versions.
+  To fix this, restart R and run:
+  rJavaEnv::use_java(21)
+  BEFORE loading this package.
+```
+
+### Pattern 2: Process Isolation (Advanced)
+
+If you want to guarantee a specific Java environment without relying on the user's setup, you can run your `rJava` code in a subprocess. This bypasses the lock in the main session.
+
+**Requirements:**
+1. Add `callr` to `Suggests`.
+2. Your function must not rely on objects existing in the main session (stateless execution).
+
+```r
+#' Run a heavy calculation in a Java 21 subprocess
+#' @export
+run_heavy_calc <- function(data) {
+  rJavaEnv::with_rjava_env(
+    version = 21,
+    func = function(data) {
+      library(rJava)
+      # ... your logic here ...
+      return(result)
+    },
+    args = list(data = data)
+  )
+}
+```
+
 ### Strategy: "Inform and Guide"
 
 Your goal is to make the setup process as easy as possible for your users.
@@ -154,21 +205,6 @@ setup_java <- function() {
 }
 ```
 
-#### 4. Optional: Diagnostic Message in .onLoad
-
-You can check the environment in `.onLoad` and print a helpful message if Java is missing or incorrect, but **do not try to fix it there**.
-
-```r
-.onLoad <- function(libname, pkgname) {
-  # Check only (do not change env)
-  # Use quiet=TRUE to minimize noise
-  has_java <- rJavaEnv::java_check_version_cmd(quiet = TRUE, .use_cache = TRUE)
-  
-  if (isFALSE(has_java)) {
-    packageStartupMessage("Java not found! Run setup_java() and restart R.")
-  }
-}
-```
 
 ---
 
