@@ -150,15 +150,19 @@ java_env_set_session <- function(
       tryCatch(
         dyn.load(libjvm_path),
         error = function(e) {
-          cli::cli_warn(
-            "Found libjvm.so at '{.path {libjvm_path}}' but failed to load it: {e$message}"
-          )
+          if (!quiet) {
+            cli::cli_warn(
+              "Found libjvm.so at '{.path {libjvm_path}}' but failed to load it: {e$message}"
+            )
+          }
         }
       )
     } else {
-      cli::cli_warn(
-        "Could not find libjvm.so within the provided JAVA_HOME: {.path {java_home}}"
-      )
+      if (!quiet) {
+        cli::cli_warn(
+          "Could not find libjvm.so within the provided JAVA_HOME: {.path {java_home}}"
+        )
+      }
     }
   }
 }
