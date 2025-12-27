@@ -76,8 +76,11 @@ test_that("rje_consent handles user typing 'yes'", {
     rJavaEnv.cache_path = cache_dir
   ))
 
-  # Mock readline to return "yes"
-  local_mocked_bindings(readline = function(...) "yes", .package = "base")
+  # Mock readline wrapper
+  local_mocked_bindings(
+    rje_readline = function(prompt = "") "yes",
+    .package = "rJavaEnv"
+  )
 
   expect_message(
     result <- rje_consent(),
@@ -93,8 +96,11 @@ test_that("rje_consent handles user typing 'no'", {
     rJavaEnv.cache_path = cache_dir
   ))
 
-  # Mock readline to return "no"
-  local_mocked_bindings(readline = function(...) "no", .package = "base")
+  # Mock readline wrapper
+  local_mocked_bindings(
+    rje_readline = function(prompt = "") "no",
+    .package = "rJavaEnv"
+  )
 
   expect_error(
     rje_consent(),

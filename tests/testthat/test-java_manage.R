@@ -15,6 +15,8 @@ test_that("java_list dispatches correctly", {
 })
 
 test_that("java_clear (project) handles user input correctly", {
+  op <- options(rJavaEnv.interactive = TRUE)
+  on.exit(options(op), add = TRUE)
   # Setup fake project structure with proper depth
   proj_dir <- withr::local_tempdir()
   rjava_dir <- file.path(proj_dir, "rjavaenv", "linux", "x64", "17")
@@ -22,11 +24,16 @@ test_that("java_clear (project) handles user input correctly", {
   file.create(file.path(rjava_dir, "dummy_file"))
 
   # Mock consent
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
-  # Case 1: User says "no" (check=FALSE triggers yes/no prompt)
-  local_mocked_bindings(readline = function(...) "no", .package = "base")
-
+  # Case 1: User says "no"
+  local_mocked_bindings(
+    rje_readline = function(prompt = "") "no",
+    .package = "rJavaEnv"
+  )
   expect_message(
     java_clear("project", target_dir = proj_dir, check = FALSE),
     "No Java symlinks were cleared"
@@ -35,7 +42,10 @@ test_that("java_clear (project) handles user input correctly", {
   expect_true(dir.exists(rjava_dir))
 
   # Case 2: User says "yes"
-  local_mocked_bindings(readline = function(...) "yes", .package = "base")
+  local_mocked_bindings(
+    rje_readline = function(prompt = "") "yes",
+    .package = "rJavaEnv"
+  )
   expect_message(
     java_clear("project", target_dir = proj_dir, check = FALSE),
     "cleared"
@@ -46,6 +56,7 @@ test_that("java_clear (project) handles user input correctly", {
 })
 
 test_that("java_clear (distrib) deletes specific files via menu", {
+  withr::local_options(rJavaEnv.interactive = TRUE)
   cache_dir <- withr::local_tempdir()
   dist_dir <- file.path(cache_dir, "distrib")
   dir.create(dist_dir, recursive = TRUE)
@@ -56,14 +67,16 @@ test_that("java_clear (distrib) deletes specific files via menu", {
   file.create(f2)
 
   # Mock consent
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # User selects item "1" (check=TRUE triggers numbered menu)
-  local_mocked_bindings(readline = function(...) "1", .package = "base")
-
   # We must mock java_list_distrib_cache to return vector so the index works
   local_mocked_bindings(
     java_list_distrib_cache = function(...) c(f1, f2),
+    rje_readline = function(prompt = "") "1",
     .package = "rJavaEnv"
   )
 
@@ -79,27 +92,33 @@ test_that("java_clear deletes all when requested", {
   dir.create(inst_dir, recursive = TRUE)
   file.create(file.path(inst_dir, "folder1"))
 
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   java_clear("installed", target_dir = cache_dir, delete_all = TRUE)
   expect_length(list.files(inst_dir), 0)
 })
 
 test_that("java_clear (installed) handles numbered selection", {
+  withr::local_options(rJavaEnv.interactive = TRUE)
   cache_dir <- withr::local_tempdir()
   inst_dir <- file.path(cache_dir, "installed", "linux", "x64", "17")
   dir.create(inst_dir, recursive = TRUE)
   inst_dir2 <- file.path(cache_dir, "installed", "linux", "x64", "21")
   dir.create(inst_dir2, recursive = TRUE)
 
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # User selects item "1"
-  local_mocked_bindings(readline = function(...) "1", .package = "base")
-
   # Mock java_list_installed_cache to return expected paths
   local_mocked_bindings(
     java_list_installed_cache = function(...) c(inst_dir, inst_dir2),
+    rje_readline = function(prompt = "") "1",
     .package = "rJavaEnv"
   )
 
@@ -110,16 +129,23 @@ test_that("java_clear (installed) handles numbered selection", {
 })
 
 test_that("java_clear (project) handles 'all' option", {
+  withr::local_options(rJavaEnv.interactive = TRUE)
   proj_dir <- withr::local_tempdir()
   rjava_dir1 <- file.path(proj_dir, "rjavaenv", "linux", "x64", "17")
   rjava_dir2 <- file.path(proj_dir, "rjavaenv", "linux", "x64", "21")
   dir.create(rjava_dir1, recursive = TRUE)
   dir.create(rjava_dir2, recursive = TRUE)
 
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # User types "all"
-  local_mocked_bindings(readline = function(...) "all", .package = "base")
+  local_mocked_bindings(
+    rje_readline = function(prompt = "") "all",
+    .package = "rJavaEnv"
+  )
 
   java_clear("project", target_dir = proj_dir, check = TRUE)
 
@@ -128,8 +154,8 @@ test_that("java_clear (project) handles 'all' option", {
   expect_length(list.files(rjava_base, recursive = TRUE), 0)
 })
 
-test_that("java_clear cancels on invalid input",
-{
+test_that("java_clear cancels on invalid input", {
+  withr::local_options(rJavaEnv.interactive = TRUE)
   cache_dir <- withr::local_tempdir()
   dist_dir <- file.path(cache_dir, "distrib")
   dir.create(dist_dir, recursive = TRUE)
@@ -137,13 +163,15 @@ test_that("java_clear cancels on invalid input",
   f1 <- file.path(dist_dir, "java1.tar.gz")
   file.create(f1)
 
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # User enters "0" to cancel
-  local_mocked_bindings(readline = function(...) "0", .package = "base")
-
   local_mocked_bindings(
     java_list_distrib_cache = function(...) c(f1),
+    rje_readline = function(prompt = "") "0",
     .package = "rJavaEnv"
   )
 

@@ -127,6 +127,8 @@ test_that("java_build_env_unset removes only build-related lines", {
 })
 
 test_that("set_java_build_env_vars sets JAVA_HOME and PATH", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   java_home <- "/mock/java/home"
 
   # Mock installed.packages
@@ -160,6 +162,8 @@ test_that("set_java_build_env_vars sets JAVA_HOME and PATH", {
 })
 
 test_that("set_java_build_env_vars sets JAVAH when available", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   java_home <- "/mock/java/home"
   javah_path <- file.path(java_home, "bin", "javah")
 
@@ -195,6 +199,8 @@ test_that("set_java_build_env_vars sets JAVAH when available", {
 })
 
 test_that("set_java_build_env_vars handles missing javah", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   java_home <- "/mock/java/home"
 
   local_mocked_bindings(

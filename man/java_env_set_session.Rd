@@ -4,10 +4,14 @@
 \alias{java_env_set_session}
 \title{Set the JAVA_HOME and PATH environment variables for the current session}
 \usage{
-java_env_set_session(java_home)
+java_env_set_session(java_home, quiet = FALSE, ._skip_rjava_check = FALSE)
 }
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME.}
+
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
+
+\item{._skip_rjava_check}{Internal. If TRUE, skip the rJava initialization check.}
 }
 \description{
 Set the JAVA_HOME and PATH environment variables for the current session

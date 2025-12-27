@@ -6,16 +6,15 @@
 #' @return A data frame or character vector with the symlinked Java versions in the project directory.
 #' @keywords internal
 java_list_in_project <- function(
-    project_path = NULL,
-    output = c("data.frame", "vector"),
-    quiet = TRUE
-  ) {
-  
+  project_path = NULL,
+  output = c("data.frame", "vector"),
+  quiet = TRUE
+) {
   # Resolve the project path
   # consistent with renv behavior
   # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
-      
+
   output <- match.arg(output)
   java_symlink_dir <- file.path(project_path, "rjavaenv")
 
@@ -24,21 +23,27 @@ java_list_in_project <- function(
     return(invisible(NULL))
   }
 
-  
   # List directories up to the specified depth
   java_paths <- list.dirs(java_symlink_dir, recursive = TRUE, full.names = TRUE)
-  
-  java_paths <- java_paths[vapply(java_paths, function(x) {
-    length(strsplit(x, .Platform$file.sep)[[1]]) == length(strsplit(java_symlink_dir, .Platform$file.sep)[[1]]) + 3
-  }, logical(1))]
-  
+
+  java_paths <- java_paths[vapply(
+    java_paths,
+    function(x) {
+      length(strsplit(x, .Platform$file.sep)[[1]]) ==
+        length(strsplit(java_symlink_dir, .Platform$file.sep)[[1]]) + 3
+    },
+    logical(1)
+  )]
+
   if (length(java_paths) == 0) {
     cli::cli_alert_danger("No Java has been installed in the project.")
     return(invisible(NULL))
   }
-  
-  if (!quiet) cli::cli_inform("Contents of the Java symlinks in the project folder:")
-  
+
+  if (!quiet) {
+    cli::cli_inform("Contents of the Java symlinks in the project folder:")
+  }
+
   if (output == "vector") {
     return(unname(java_paths))
   } else if (output == "data.frame") {
@@ -49,7 +54,12 @@ java_list_in_project <- function(
       parts <- c(path = path, parts)
       return(parts)
     })
-    java_info_df <- do.call(rbind, lapply(java_info, function(info) as.data.frame(t(info), stringsAsFactors = FALSE)))
+    java_info_df <- do.call(
+      rbind,
+      lapply(java_info, function(info) {
+        as.data.frame(t(info), stringsAsFactors = FALSE)
+      })
+    )
     rownames(java_info_df) <- NULL
     return(java_info_df)
   }
@@ -61,15 +71,15 @@ java_list_in_project <- function(
 #' @param check Whether to list the symlinked Java versions before clearing them. Defaults to TRUE.
 #' @param delete_all Whether to delete all symlinks without prompting. Defaults to FALSE.
 #' @return A message indicating whether the symlinks were cleared or not.
-#' 
+#'
 #' @keywords internal
 java_clear_in_project <- function(
-    project_path = NULL,
-    check = TRUE,
-    delete_all = FALSE
+  project_path = NULL,
+  check = TRUE,
+  delete_all = FALSE
 ) {
   rje_consent_check()
-  
+
   # Resolve the project path
   # consistent with renv behavior
   # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
@@ -89,7 +99,10 @@ java_clear_in_project <- function(
   }
 
   if (check) {
-    symlinks <- java_list_in_project(project_path = project_path, output = "vector")
+    symlinks <- java_list_in_project(
+      project_path = project_path,
+      output = "vector"
+    )
     if (length(symlinks) == 0) {
       cli::cli_inform("No Java symlinks found to clear.")
       return(invisible(NULL))
@@ -100,8 +113,19 @@ java_clear_in_project <- function(
       cli::cli_inform("{i}: {symlinks[i]}")
     }
 
-    cli::cli_alert_info("Enter the number of the symlink to delete, 'all' to delete all, or '0' or any other character to cancel:")
-    response <- readline()
+    cli::cli_alert_info(
+      "Enter the number of the symlink to delete, 'all' to delete all, or '0' or any other character to cancel:"
+    )
+    if (getOption("rJavaEnv.interactive", interactive())) {
+      response <- rje_readline()
+    } else {
+      # If not interactive, we can't ask for input, so we effectively cancel (or error?)
+      # For safety in CI/check, we should probably output a message and do nothing unless forced.
+      cli::cli_alert_danger(
+        "Non-interactive session detected. Cannot request input. No action taken."
+      )
+      response <- "0"
+    }
 
     if (tolower(response) == "all") {
       unlink(file.path(java_symlink_dir, "*"), recursive = TRUE)
@@ -116,8 +140,17 @@ java_clear_in_project <- function(
       }
     }
   } else {
-    cli::cli_alert_info("Are you sure you want to clear all Java symlinks in the project? (yes/no)")
-    response <- readline()
+    cli::cli_alert_info(
+      "Are you sure you want to clear all Java symlinks in the project? (yes/no)"
+    )
+    if (getOption("rJavaEnv.interactive", interactive())) {
+      response <- rje_readline()
+    } else {
+      cli::cli_alert_danger(
+        "Non-interactive session detected. Cannot request input. No action taken."
+      )
+      response <- "no"
+    }
     if (tolower(response) == "yes") {
       unlink(file.path(java_symlink_dir, "*"), recursive = TRUE)
       cli::cli_inform("All Java symlinks in the project have been cleared.")

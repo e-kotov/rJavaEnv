@@ -141,7 +141,7 @@ java_build_env_unset <- function(project_path = NULL, quiet = FALSE) {
 #' @keywords internal
 set_java_build_env_vars <- function(java_home, quiet = FALSE) {
   # First, set the basic JAVA_HOME and PATH
-  java_env_set_session(java_home)
+  java_env_set_session(java_home, quiet = quiet)
 
   # Set core Java variables for build process
   Sys.setenv(JAVA = file.path(java_home, "bin", "java"))
@@ -153,21 +153,7 @@ set_java_build_env_vars <- function(java_home, quiet = FALSE) {
   # Platform-specific build flags
   if (Sys.info()["sysname"] == "Linux") {
     # Find libjvm.so
-    all_files <- list.files(
-      path = java_home,
-      pattern = "libjvm.so$",
-      recursive = TRUE,
-      full.names = TRUE
-    )
-    libjvm_path <- NULL
-    if (length(all_files) > 0) {
-      server_files <- all_files[grepl("/server/libjvm.so$", all_files)]
-      libjvm_path <- if (length(server_files) > 0) {
-        server_files[1]
-      } else {
-        all_files[1]
-      }
-    }
+    libjvm_path <- get_libjvm_path(java_home)
 
     if (!is.null(libjvm_path) && file.exists(libjvm_path)) {
       jvm_lib_dir <- dirname(libjvm_path)
@@ -243,15 +229,7 @@ set_java_build_env_vars <- function(java_home, quiet = FALSE) {
     )
 
     # Find libjvm.dylib
-    server_path <- file.path(java_home, "lib", "server", "libjvm.dylib")
-    client_path <- file.path(java_home, "lib", "client", "libjvm.dylib")
-    libjvm_path <- if (file.exists(server_path)) {
-      server_path
-    } else if (file.exists(client_path)) {
-      client_path
-    } else {
-      NULL
-    }
+    libjvm_path <- get_libjvm_path(java_home)
 
     if (!is.null(libjvm_path)) {
       jvm_lib_dir <- dirname(libjvm_path)

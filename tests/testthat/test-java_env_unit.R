@@ -2,6 +2,8 @@
 # Tests java_env_set and java_env_unset with mocked system calls
 
 test_that("java_env_set (session) sets JAVA_HOME in the environment", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   # Mock rje_consent_check to avoid interactive prompts
   local_mocked_bindings(
     rje_consent_check = function() TRUE,
@@ -62,7 +64,12 @@ test_that("java_env_set (project) writes to .Rprofile", {
     .package = "base"
   )
 
-  java_env_set(where = "project", java_home = "/mock/java", project_path = proj_dir, quiet = TRUE)
+  java_env_set(
+    where = "project",
+    java_home = "/mock/java",
+    project_path = proj_dir,
+    quiet = TRUE
+  )
 
   rprof <- file.path(proj_dir, ".Rprofile")
   expect_true(file.exists(rprof))
@@ -76,6 +83,8 @@ test_that("java_env_set (project) writes to .Rprofile", {
 })
 
 test_that("java_env_set (both) sets session and project", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   proj_dir <- withr::local_tempdir()
 
   local_mocked_bindings(
@@ -100,7 +109,12 @@ test_that("java_env_set (both) sets session and project", {
 
   java_home_mock <- "/mock/java"
   withr::with_envvar(c("PATH" = "/usr/bin"), {
-    java_env_set(where = "both", java_home = java_home_mock, project_path = proj_dir, quiet = TRUE)
+    java_env_set(
+      where = "both",
+      java_home = java_home_mock,
+      project_path = proj_dir,
+      quiet = TRUE
+    )
 
     # Check .Rprofile was created
     rprof <- file.path(proj_dir, ".Rprofile")

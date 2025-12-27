@@ -1,5 +1,6 @@
 test_that("java_valid_versions returns a character vector with required versions", {
   skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   # Clear any cached values
   options(
     rJavaEnv.valid_versions_cache = NULL,
@@ -17,6 +18,8 @@ test_that("java_valid_versions returns a character vector with required versions
 })
 
 test_that("force parameter bypasses the cache", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   # Set a fake cache in the options
   fake_cache <- c("8", "11")
   options(
@@ -32,6 +35,8 @@ test_that("force parameter bypasses the cache", {
 })
 
 test_that("fallback is used when the API call fails", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   # Clear the cache to force an API call.
   options(
     rJavaEnv.valid_versions_cache = NULL,

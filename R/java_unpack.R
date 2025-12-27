@@ -31,7 +31,8 @@ java_unpack <- function(
 ) {
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
-  java_versions <- java_valid_versions()
+  # Use fast, offline-safe list for parsing filenames
+  java_versions <- java_valid_versions_fast()
 
   # Extract information from the file name
   filename <- basename(java_distrib_path)

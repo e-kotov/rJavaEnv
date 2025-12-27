@@ -57,7 +57,9 @@ test_that("java_check_version_system regex extracts Java 21 version correctly", 
 
 test_that("java_version_check_rscript output parsing for version 17", {
   # Test the parsing of output from java_version_check_rscript
-  output <- c("rJava and other rJava/Java-based packages will use Java version: \"17.0.1\"")
+  output <- c(
+    "rJava and other rJava/Java-based packages will use Java version: \"17.0.1\""
+  )
   cleaned_output <- cli::ansi_strip(output[1])
   major_java_ver <- sub('.*version: \\"([0-9]+).*', '\\1', cleaned_output)
 
@@ -69,7 +71,9 @@ test_that("java_version_check_rscript output parsing for version 17", {
 })
 
 test_that("java_version_check_rscript output parsing for version 1.8", {
-  output <- c("rJava and other rJava/Java-based packages will use Java version: \"1.8.0\"")
+  output <- c(
+    "rJava and other rJava/Java-based packages will use Java version: \"1.8.0\""
+  )
   cleaned_output <- cli::ansi_strip(output[1])
   major_java_ver <- sub('.*version: \\"([0-9]+).*', '\\1', cleaned_output)
 
@@ -97,6 +101,9 @@ test_that("java_check_version_rjava silent behavior", {
 })
 
 test_that("java_check_version_cmd with quiet = TRUE doesn't throw", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+
   # When JAVA_HOME is not set and we don't provide a java_home
   withr::local_envvar(c("JAVA_HOME" = NA))
 
@@ -119,6 +126,8 @@ test_that("Sys.which mock works correctly", {
 })
 
 test_that("system2 mock can return version output", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   # Verify our mocking approach works for system2
   local_mocked_bindings(
     system2 = function(cmd, args = NULL, ...) {

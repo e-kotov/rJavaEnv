@@ -9,30 +9,29 @@
 #'
 #' Alternatively, you can set the following \R option
 #' (especially useful for non-interactive R sessions):
-#' 
+#'
 #' ```
 #' options(rJavaEnv.consent = TRUE)
 #' ```
 #' The function is based on the code of the `renv` package.
 #' Copyright 2023 Posit Software, PBC
 #' License: https://github.com/rstudio/renv/blob/main/LICENSE
-#' 
+#'
 #' @param provided Logical indicating if consent is already provided.
 #'  To provide consent in non-interactive \R sessions
 #'  use `rJavaEnv::rje_consent(provided = TRUE)`. Default is `FALSE`.
-#' 
+#'
 #' @return `TRUE` if consent is given, otherwise an error is raised.
-#' 
+#'
 #' @export
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' # to provide consent and prevent other functions from interrupting to get the consent
 #' rje_consent(provided = TRUE)
 #' }
-#' 
+#'
 rje_consent <- function(provided = FALSE) {
-
   # Check if consent is already given via environment variable
   if (getOption("rJavaEnv.consent", default = FALSE)) {
     cli::cli_inform("Consent for using rJavaEnv has already been provided.")
@@ -41,7 +40,11 @@ rje_consent <- function(provided = FALSE) {
 
   # Check if consent is already given via cache directory
   user_package_cache_path <- getOption("rJavaEnv.cache_path")
-  user_package_cache_path <- normalizePath(user_package_cache_path, winslash = "/", mustWork = FALSE)
+  user_package_cache_path <- normalizePath(
+    user_package_cache_path,
+    winslash = "/",
+    mustWork = FALSE
+  )
   if (dir.exists(user_package_cache_path)) {
     cli::cli_inform("Consent for using rJavaEnv has already been provided.")
     return(invisible(TRUE))
@@ -55,7 +58,7 @@ rje_consent <- function(provided = FALSE) {
 
   # Request user consent if not already provided
   if (!provided) {
-    response <- readline(prompt = "Your response: (yes/no) ")
+    response <- rje_readline(prompt = "Your response: (yes/no) ")
     provided <- tolower(response) %in% c("y", "yes", "yes.")
   }
 
@@ -78,11 +81,10 @@ rje_consent <- function(provided = FALSE) {
 #' The function is based on the code of the `renv` package.
 #' Copyright 2023 Posit Software, PBC
 #' License: https://github.com/rstudio/renv/blob/main/LICENSE
-#' 
+#'
 #' @return `TRUE` if consent is verified, otherwise an error is raised.
 #' @keywords internal
 rje_consent_check <- function() {
-
   # Check if explicit consent is given
   if (getOption("rJavaEnv.consent", FALSE)) {
     return(TRUE)
@@ -110,7 +112,7 @@ rje_consent_check <- function() {
 
 
 #' Helper for clean env var check
-#' 
+#'
 #' #' The function is based on the code of the `renv` package.
 #' Copyright 2023 Posit Software, PBC
 #' License: https://github.com/rstudio/renv/blob/main/LICENSE

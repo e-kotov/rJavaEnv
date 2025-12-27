@@ -6,9 +6,9 @@
 #' @return A data frame or character vector with the contents of the cache directory.
 #' @keywords internal
 java_list_installed_cache <- function(
-    output = c("data.frame", "vector"),
-    quiet = TRUE,
-    cache_path = getOption("rJavaEnv.cache_path")
+  output = c("data.frame", "vector"),
+  quiet = TRUE,
+  cache_path = getOption("rJavaEnv.cache_path")
 ) {
   output <- match.arg(output)
   installed_cache_path <- file.path(cache_path, "installed")
@@ -18,14 +18,25 @@ java_list_installed_cache <- function(
     return(character(0))
   }
 
-  if (!quiet) cli::cli_inform("Contents of the Java installations cache folder:")
+  if (!quiet) {
+    cli::cli_inform("Contents of the Java installations cache folder:")
+  }
 
   # List directories up to the specified depth
-  java_paths <- list.dirs(installed_cache_path, recursive = TRUE, full.names = TRUE)
+  java_paths <- list.dirs(
+    installed_cache_path,
+    recursive = TRUE,
+    full.names = TRUE
+  )
 
-  java_paths <- java_paths[vapply(java_paths, function(x) {
-    length(strsplit(x, .Platform$file.sep)[[1]]) == length(strsplit(installed_cache_path, .Platform$file.sep)[[1]]) + 3
-  }, logical(1))]
+  java_paths <- java_paths[vapply(
+    java_paths,
+    function(x) {
+      length(strsplit(x, .Platform$file.sep)[[1]]) ==
+        length(strsplit(installed_cache_path, .Platform$file.sep)[[1]]) + 3
+    },
+    logical(1)
+  )]
 
   if (length(java_paths) == 0) {
     return(character(0))
@@ -41,7 +52,12 @@ java_list_installed_cache <- function(
       parts <- c(path = path, parts)
       return(parts)
     })
-    java_info_df <- do.call(rbind, lapply(java_info, function(info) as.data.frame(t(info), stringsAsFactors = FALSE)))
+    java_info_df <- do.call(
+      rbind,
+      lapply(java_info, function(info) {
+        as.data.frame(t(info), stringsAsFactors = FALSE)
+      })
+    )
     rownames(java_info_df) <- NULL
     return(java_info_df)
   }
@@ -56,12 +72,12 @@ java_list_installed_cache <- function(
 #'
 #' @keywords internal
 java_clear_installed_cache <- function(
-    check = TRUE,
-    delete_all = FALSE,
-    cache_path = getOption("rJavaEnv.cache_path")
+  check = TRUE,
+  delete_all = FALSE,
+  cache_path = getOption("rJavaEnv.cache_path")
 ) {
   rje_consent_check()
-  
+
   installed_cache_path <- file.path(cache_path, "installed")
 
   if (!dir.exists(installed_cache_path)) {
@@ -76,7 +92,11 @@ java_clear_installed_cache <- function(
   }
 
   if (check) {
-    installations <- java_list_installed_cache(cache_path, quiet = FALSE, output = "vector")
+    installations <- java_list_installed_cache(
+      cache_path,
+      quiet = FALSE,
+      output = "vector"
+    )
     if (length(installations) == 0) {
       cli::cli_inform("No Java installations found to clear.")
       return(invisible(NULL))
@@ -87,8 +107,17 @@ java_clear_installed_cache <- function(
       cli::cli_inform("{i}: {installations[i]}")
     }
 
-    cli::cli_alert_info("Enter the number of the installation to delete, 'all' to delete all, or '0' or any other character to cancel:")
-    response <- readline()
+    cli::cli_alert_info(
+      "Enter the number of the installation to delete, 'all' to delete all, or '0' or any other character to cancel:"
+    )
+    if (getOption("rJavaEnv.interactive", interactive())) {
+      response <- rje_readline()
+    } else {
+      cli::cli_alert_danger(
+        "Non-interactive session detected. Cannot request input. No action taken."
+      )
+      response <- "0"
+    }
 
     if (tolower(response) == "all") {
       unlink(file.path(installed_cache_path, "*"), recursive = TRUE)
@@ -103,8 +132,17 @@ java_clear_installed_cache <- function(
       }
     }
   } else {
-    cli::cli_alert_info("Are you sure you want to clear the Java installations cache? (yes/no)")
-    response <- readline()
+    cli::cli_alert_info(
+      "Are you sure you want to clear the Java installations cache? (yes/no)"
+    )
+    if (getOption("rJavaEnv.interactive", interactive())) {
+      response <- rje_readline()
+    } else {
+      cli::cli_alert_danger(
+        "Non-interactive session detected. Cannot request input. No action taken."
+      )
+      response <- "no"
+    }
     if (tolower(response) == "yes") {
       unlink(file.path(installed_cache_path, "*"), recursive = TRUE)
       cli::cli_inform("Java installations cache cleared.")

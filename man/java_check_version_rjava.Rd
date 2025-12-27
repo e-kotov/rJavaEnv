@@ -4,12 +4,14 @@
 \alias{java_check_version_rjava}
 \title{Check Java Version with a Specified JAVA_HOME Using a Separate R Session}
 \usage{
-java_check_version_rjava(java_home = NULL, quiet = FALSE)
+java_check_version_rjava(java_home = NULL, quiet = FALSE, .use_cache = FALSE)
 }
 \arguments{
 \item{java_home}{Path to Java home directory. If NULL, the function uses the JAVA_HOME environment variable.}
 
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
+
+\item{.use_cache}{Logical. If \code{TRUE}, uses cached results for repeated calls with the same JAVA_HOME. If \code{FALSE} (default), forces a fresh check. Set to \code{TRUE} for performance in loops or repeated checks within the same session.}
 }
 \value{
 A \code{character} vector of length 1 containing the major Java version.

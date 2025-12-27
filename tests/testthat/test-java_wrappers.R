@@ -34,14 +34,22 @@ test_that("java_quick_install executes flow correctly", {
 })
 
 test_that("use_java executes flow correctly", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+
   # Mock dependencies
   local_mocked_bindings(
+    java_list_installed_cache = function(...) data.frame(),
     java_download = function(...) "mock_distrib_path",
     java_unpack = function(...) "mock_install_path",
     # Capture the arguments passed to java_env_set to verify logic
-    java_env_set = function(where, java_home, quiet) {
-      if (where != "session") stop("Wrong 'where' argument")
-      if (java_home != "mock_install_path") stop("Wrong 'java_home' argument")
+    java_env_set = function(where, java_home, quiet, ...) {
+      if (where != "session") {
+        stop("Wrong 'where' argument")
+      }
+      if (java_home != "mock_install_path") {
+        stop("Wrong 'java_home' argument")
+      }
       invisible(NULL)
     },
     java_valid_versions = function(...) c("8", "11", "17", "21"),
@@ -52,5 +60,8 @@ test_that("use_java executes flow correctly", {
   expect_silent(use_java(version = 17, quiet = TRUE))
 
   # Test message output when not quiet
-  expect_message(use_java(version = 17, quiet = FALSE), "Java version 17 was set")
+  expect_message(
+    use_java(version = 17, quiet = FALSE),
+    "Java version 17 was set"
+  )
 })

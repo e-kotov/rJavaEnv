@@ -31,3 +31,5 @@
 ^\.config$
 ^\.local$
 ^\.jupyter$
+^[.]?air[.]toml$
+^\.vscode$

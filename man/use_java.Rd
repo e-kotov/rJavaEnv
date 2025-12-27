@@ -10,7 +10,8 @@ use_java(
   cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  quiet = TRUE
+  quiet = TRUE,
+  ._skip_rjava_check = FALSE
 )
 }
 \arguments{
@@ -25,30 +26,60 @@ use_java(
 \item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
 
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
+
+\item{._skip_rjava_check}{Internal. If TRUE, skip the rJava initialization check.}
 }
 \value{
-\code{NULL}. Prints the message that Java was set in the current R session if \code{quiet} is set to \code{FALSE}.
+Logical. Returns \code{TRUE} invisibly on success. Prints status messages if \code{quiet} is set to \code{FALSE}.
 }
 \description{
-Using specified Java version, set the \code{JAVA_HOME} and \code{PATH} environment variables in the current R session. If Java distribtuion has not been downloaded yet, download it. If it was not installed into cache directory yet, install it there and then set the environment variables. This is intended as a quick and easy way to use different Java versions in R scripts that are in the same project, but require different Java versions. For example, one could use this in scripts that are called by \code{targets} package or \code{callr} package.
+Using specified Java version, set the \code{JAVA_HOME} and \code{PATH} environment variables in the current R session. If Java distribtuion has not been downloaded yet, download it. If it was not installed into cache directory yet, install it there and then set the environment variables. This function first checks if the requested version is already present in the \code{rJavaEnv} cache. If found, it sets the environment immediately without downloading. If not found, it downloads and unpacks the distribution.
+
+This is intended as a quick and easy way to use different Java versions in R scripts that are in the same project, but require different Java versions. For example, one could use this in scripts that are called by \code{targets} package or \code{callr} package.
 }
+\section{rJava Path-Locking}{
+
+\strong{Important for \strong{rJava} Users}: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and \strong{rJava} initialization.
+However, due to \strong{rJava}'s path-locking behavior when \code{\link[rJava]{.jinit}} is called
+(see \url{https://github.com/s-u/rJava/issues/25}, \url{https://github.com/s-u/rJava/issues/249}, and \url{https://github.com/s-u/rJava/issues/334}),
+this function must be called \strong{BEFORE} \code{\link[rJava]{.jinit}} is invoked. Once \code{\link[rJava]{.jinit}}
+initializes, the Java version is locked for that R session and cannot be changed without restarting R.
+
+\code{\link[rJava]{.jinit}} is invoked (and Java locked) when you:
+\itemize{
+\item Explicitly call \code{library(rJava)}
+\item Load any package that imports \strong{rJava} (which auto-loads it as a dependency)
+\item Even just use IDE autocomplete with \code{rJava::} (this triggers initialization!)
+\item Call any \strong{rJava}-dependent function
+}
+
+Once any of these happen, the Java version used by \strong{rJava} for that session is locked in.
+For command-line Java tools that don't use \strong{rJava}, this function can be called at any
+time to switch Java versions for subsequent system calls.
+}
+
 \examples{
 \dontrun{
 
 # set cache directory for Java to be in temporary directory
 options(rJavaEnv.cache_path = tempdir())
 
-# install and set Java 8 in current R session
-use_java(8)
-# check Java version
-"8" == java_check_version_cmd(quiet = TRUE)
-"8" == java_check_version_rjava(quiet = TRUE)
+# For end users: Install and set Java BEFORE loading rJava packages
+use_java(21)
+library(myRJavaPackage)  # Now uses Java 21
 
-# install and set Java 17 in current R session
+# For command-line Java tools (no rJava involved):
+# Can switch versions between system calls
+use_java(8)
+system2("java", "-version")  # Shows Java 8
 use_java(17)
-# check Java version
-"17" == java_check_version_cmd(quiet = TRUE)
-"17" == java_check_version_rjava(quiet = TRUE)
+system2("java", "-version")  # Shows Java 17
+
+# WARNING: Do NOT do this with rJava packages:
+# library(rJava)          # Initializes with system Java
+# use_java(21)            # Too late! rJava is already locked
+# rJava still uses the Java version from before use_java() call
 
 }
 

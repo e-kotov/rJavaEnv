@@ -31,9 +31,9 @@ test_that("java_env_set_session warns if rJava is already loaded", {
     .package = "base"
   )
 
-  # Expect the warning message
+  # Expect the warning message (using regex to match cli-formatted message)
   expect_message(
     rJavaEnv:::java_env_set_session(java_home = "/mock/java"),
-    "You have `rJava` R package loaded"
+    "You have.*rJava.*loaded"
   )
 })

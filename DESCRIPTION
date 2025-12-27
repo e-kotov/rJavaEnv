@@ -45,11 +45,12 @@ URL: https://github.com/e-kotov/rJavaEnv, https://www.ekotov.pro/rJavaEnv/
 BugReports: https://github.com/e-kotov/rJavaEnv/issues
 Depends: 
     R (>= 4.0)
-Imports: 
+Imports:
     checkmate,
     cli,
     curl,
     jsonlite,
+    memoise,
     rlang,
     utils
 Suggests: 
