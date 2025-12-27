@@ -464,12 +464,27 @@ java_check_version_cmd <- function(
       args = "-version",
       stdout = TRUE,
       stderr = TRUE,
-      timeout = 5
+      timeout = 10
     ),
     error = function(e) NULL
   )
 
-  if (is.null(java_ver)) {
+  # Check for timeout or empty result
+  # When system2 times out, it returns character(0) with status=124
+  # When it fails in other ways, it may return NULL
+  if (is.null(java_ver) || length(java_ver) == 0) {
+    # Restore original environment
+    if (!is.null(java_home)) {
+      Sys.setenv(JAVA_HOME = old_java_home)
+      Sys.setenv(PATH = old_path)
+    }
+    return(FALSE)
+  }
+
+  # Additional check for timeout status attribute
+  status_attr <- attr(java_ver, "status")
+  if (!is.null(status_attr) && status_attr == 124) {
+    # Explicit timeout detected (status 124)
     if (!is.null(java_home)) {
       Sys.setenv(JAVA_HOME = old_java_home)
       Sys.setenv(PATH = old_path)
