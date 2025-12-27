@@ -103,6 +103,7 @@ local_java_env <- function(
 #'
 #' @inheritParams local_java_env
 #' @param code The code to execute with the temporary Java environment.
+#' @param ... Additional arguments passed to `local_java_env()`.
 #' @return The result of executing `code`.
 #' @export
 #' @examples

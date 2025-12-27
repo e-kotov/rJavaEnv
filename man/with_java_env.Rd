@@ -10,6 +10,8 @@ with_java_env(version, code, ...)
 \item{version}{Integer or character. \strong{Required.} The Java version you need (e.g., 17, 21). This parameter must be specified explicitly; there is no default.}
 
 \item{code}{The code to execute with the temporary Java environment.}
+
+\item{...}{Additional arguments passed to \code{local_java_env()}.}
 }
 \value{
 The result of executing \code{code}.
