@@ -89,10 +89,17 @@ reference:
 
 
 articles:
-- title: Documentation
-  navbar: ~
-  contents:
-  - rJavaEnv-step-by-step
-  - multiple-java-with-targets-callr
-  - why-rJavaEnv
-  - install-rjava-from-source
+  - title: "Getting Started"
+    navbar: "Get started"
+    contents:
+      - rJavaEnv-step-by-step
+      - multiple-java-with-targets-callr
+  - title: "About rJavaEnv"
+    navbar: "About"
+    contents:
+      - why-rJavaEnv
+  - title: "Advanced Topics"
+    navbar: "Advanced"
+    contents:
+      - install-rjava-from-source
+      - for-developers
