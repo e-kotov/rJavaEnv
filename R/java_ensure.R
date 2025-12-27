@@ -81,7 +81,6 @@ java_ensure <- function(
   type <- match.arg(type)
   check_against <- match.arg(check_against)
   req_ver_int <- as.integer(version)
-  version <- as.character(version)
 
   # Handling rJava Path-Locking
   if (check_against == "rJava") {
@@ -111,11 +110,6 @@ java_ensure <- function(
               "rJava is locked to version {curr_rjava_ver}, which satisfies the requirement."
             )
           }
-          # If rJava is satisfied, we ideally also want JAVA_HOME to match,
-          # but the critical part is rJava. We proceed to check other sources
-          # (like system/cache) just to ensure environment variables are consistent
-          # if possible, OR just return TRUE since rJava works.
-          # Returning TRUE here is safest to avoid "setting" env vars that might confuse things.
           return(invisible(TRUE))
         } else {
           # Locked version FAILS requirement -> ERROR
@@ -134,222 +128,46 @@ java_ensure <- function(
         )
       }
     }
-  } else {
-    # check_against == "cmd"
-    # We essentially ignore rJava.
-    # No warnings about rJava, just proceed to ensure JAVA_HOME is set for CLI usage.
   }
+  # check_against == "cmd": We essentially ignore rJava.
 
-  # 1. Check Active Session (Fastest) for non-rJava (JAVA_HOME based) checks
-  curr_ver_str <- java_check_version_cmd(quiet = TRUE, .use_cache = .use_cache)
-  if (!isFALSE(curr_ver_str)) {
-    curr_ver_int <- as.integer(curr_ver_str)
-    if (!is.na(curr_ver_int)) {
-      if (
-        (type == "exact" && curr_ver_int == req_ver_int) ||
-          (type == "min" && curr_ver_int >= req_ver_int)
-      ) {
-        if (!quiet) {
-          cli::cli_alert_success(
-            "Active Java version {curr_ver_str} satisfies requirement."
-          )
-        }
-        return(invisible(TRUE))
-      }
-    }
-  }
-
-  # 2. Check System-wide Installations
-  if (accept_system_java) {
-    if (!quiet) {
-      cli::cli_alert_info("Checking system for existing Java installations...")
-    }
-
-    # Scan for system Java with error handling
-    system_javas <- tryCatch(
-      {
-        java_find_system(quiet = TRUE, .use_cache = .use_cache)
-      },
-      error = function(e) {
-        if (!quiet) {
-          cli::cli_warn("System Java scan failed: {e$message}")
-        }
-        data.frame(
-          java_home = character(),
-          version = character(),
-          is_default = logical()
-        )
-      }
-    )
-
-    # Collect all valid matches
-    valid_matches <- list()
-
-    if (nrow(system_javas) > 0) {
-      for (i in seq_len(nrow(system_javas))) {
-        home <- system_javas$java_home[i]
-        ver_str <- system_javas$version[i]
-
-        # Parse version safely
-        ver_int <- suppressWarnings(as.integer(ver_str))
-        if (is.na(ver_int)) {
-          next
-        }
-
-        # Check if this version meets requirements
-        is_match <- if (type == "exact") {
-          ver_int == req_ver_int
-        } else {
-          ver_int >= req_ver_int
-        }
-
-        if (is_match) {
-          valid_matches[[length(valid_matches) + 1]] <- list(
-            path = home,
-            version = ver_int,
-            is_default = system_javas$is_default[i]
-          )
-        }
-      }
-    }
-
-    # Select best match if any found
-    if (length(valid_matches) > 0) {
-      selected <- NULL
-
-      if (type == "exact") {
-        # Any match in valid_matches is already exact due to the filter above.
-        # Pick the first one (often default or first found).
-        selected <- valid_matches[[1]]
-      } else {
-        # Sort descending by version
-        sorted <- valid_matches[order(
-          sapply(valid_matches, `[[`, "version"),
-          decreasing = TRUE
-        )]
-        selected <- sorted[[1]]
-
-        if (!quiet && selected$version != req_ver_int) {
-          cli::cli_alert_info(
-            "Exact match not found. Using system Java {selected$version} (>= {version})"
-          )
-        }
-      }
-
-      if (!quiet) {
-        cli::cli_alert_success(
-          "Found valid system Java {selected$version} at {.path {selected$path}}"
-        )
-      }
-
-      ._java_env_set_impl(
-        where = "session",
-        java_home = selected$path,
-        quiet = quiet,
-        ._skip_rjava_check = TRUE
-      )
-      return(invisible(TRUE))
-    }
-  } else {
-    if (!quiet) {
-      cli::cli_alert_info(
-        "Skipping system Java check (accept_system_java = FALSE)."
-      )
-    }
-  }
-
-  # 3. Check Local Cache (rJavaEnv managed)
-  # Look for unpacked installations in the cache
-  cache_list <- java_list_installed_cache(
-    output = "data.frame",
-    quiet = TRUE,
-    cache_path = cache_path
-  )
-  found_path <- NULL
-
-  if (length(cache_list) > 0 && nrow(cache_list) > 0) {
-    # Ensure version column is integer for comparison
-    cache_list$ver_int <- suppressWarnings(as.integer(cache_list$version))
-
-    valid_candidates <- if (type == "exact") {
-      cache_list[which(cache_list$ver_int == req_ver_int), ]
-    } else {
-      cache_list[which(cache_list$ver_int >= req_ver_int), ]
-    }
-
-    if (nrow(valid_candidates) > 0) {
-      # Prefer exact match if available
-      preferred <- valid_candidates[valid_candidates$ver_int == req_ver_int, ]
-
-      if (nrow(preferred) > 0) {
-        found_path <- preferred$path[1]
-      } else {
-        # If type="min" and no exact match, pick the highest available version
-        valid_candidates <- valid_candidates[
-          order(valid_candidates$ver_int, decreasing = TRUE),
-        ]
-        found_path <- valid_candidates$path[1]
-
-        # Inform user that a newer version was selected
-        if (!quiet) {
-          cli::cli_alert_info(
-            "Exact match for Java {version} not found in cache. Using available newer version {valid_candidates$version[1]}."
-          )
-        }
-      }
-    }
-  }
-
-  if (!is.null(found_path)) {
-    if (!quiet) {
-      cli::cli_alert_info(
-        "Found cached Java at {.path {found_path}}. Setting environment..."
-      )
-    }
-    ._java_env_set_impl(
-      where = "session",
-      java_home = found_path,
+  # Resolve path using the pure function
+  found_path <- tryCatch(
+    java_resolve(
+      version = version,
+      type = type,
+      distribution = distribution,
+      install = install,
+      accept_system_java = accept_system_java,
       quiet = quiet,
-      ._skip_rjava_check = TRUE
-    )
-    return(invisible(TRUE))
-  }
+      cache_path = cache_path,
+      platform = platform,
+      arch = arch,
+      .use_cache = .use_cache
+    ),
+    error = function(e) {
+      # If java_resolve fails (e.g. not found and install=FALSE), return NULL
+      if (!quiet) {
+        cli::cli_alert_warning("Java resolution failed: {e$message}")
+      }
+      NULL
+    }
+  )
 
-  # 4. Download/Install (Network required)
-  if (!install) {
+  if (is.null(found_path)) {
     if (!quiet) {
-      cli::cli_alert_warning(
-        "Required Java version not found and install = FALSE."
-      )
+      cli::cli_alert_warning("Required Java version not found.")
     }
     return(invisible(FALSE))
   }
 
-  if (!quiet) {
-    cli::cli_alert_info(
-      "Java {version} not found in session, system, or cache. Attempting download..."
-    )
-  }
-
-  tryCatch(
-    {
-      # use_java handles the actual download/unpack/set logic
-      use_java(
-        version = version,
-        distribution = distribution,
-        cache_path = cache_path,
-        platform = platform,
-        arch = arch,
-        quiet = quiet,
-        ._skip_rjava_check = TRUE
-      )
-      return(invisible(TRUE))
-    },
-    error = function(e) {
-      if (!quiet) {
-        cli::cli_alert_danger("Failed to install/set Java: {e$message}")
-      }
-      return(invisible(FALSE))
-    }
+  # Set the environment
+  ._java_env_set_impl(
+    where = "session",
+    java_home = found_path,
+    quiet = quiet,
+    ._skip_rjava_check = TRUE # We checked this already if check_against="rJava"
   )
+
+  return(invisible(TRUE))
 }

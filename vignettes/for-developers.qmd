@@ -33,68 +33,66 @@ Your package has `Imports: rJava` or `Depends: rJava`, or executes code that use
 
 In this scenario, you have flexibility. The Java version is **not** locked by the R session. You can use different Java versions for different tasks or change them dynamically.
 
-However, `rJavaEnv::java_ensure()` modifies the global `JAVA_HOME` and `PATH` environment variables for the current R session. If you change these variables inside your function, you might accidentally affect other parts of the user's workflow.
+However, modifying the global `JAVA_HOME` and `PATH` environment variables might accidentally affect other parts of the user's workflow. To avoid this, you should use a **scoped** approach.
 
-### Strategy: Scoped execution "Set, Run, Reset"
+### Recommended Pattern: `local_java_env()`
 
-To use a specific Java version safely without polluting the user's global session, you should use a **scoped** approach.
+The `rJavaEnv` package provides a scoped helper that handles everything for you in one line. It ensures Java is installed, sets the environment for your function, and automatically cleans up afterwards.
 
-#### Recommended Pattern: Use `on.exit()`
-
-You can use `on.exit()` to ensure that environment variables are restored to their original state immediately after your function finishes (even if it errors).
+> [!WARNING]
+> **Do not use `local_java_env()` or `with_java_env()` if your package depends on rJava.**
+> rJava locks the JVM at initialization and cannot switch versions within a session.
+> For rJava packages, see Scenario B below.
 
 ```r
-#' Run my Java tool safely
+#' Run my Java tool (using system2)
 #' @export
-run_my_java_tool <- function(input_file) {
-  # 1. Capture the current "Safe State"
-  old_java_home <- Sys.getenv("JAVA_HOME")
-  old_path <- Sys.getenv("PATH")
-  
-  # 2. Schedule restoration immediately
-  # This ensures env vars are reset when this function exits
-  on.exit({
-    Sys.setenv(JAVA_HOME = old_java_home)
-    Sys.setenv(PATH = old_path)
-  }, add = TRUE)
-  
-  # 3. Set the required Java environment for this function scope
-  # This modifies the session, but only temporarily thanks to on.exit
-  # Use .use_cache = TRUE for performance in repeated calls
-  rJavaEnv::java_ensure(
-    version = 21, 
-    type = "min", 
-    install = FALSE, 
-    quiet = TRUE,
-    .use_cache = TRUE 
-  )
-  
-  # 4. Run your Java command
-  # The environment is now set up correctly for this call
-  system2("java", c("-jar", "my-tool.jar", "--input", input_file))
+run_my_tool <- function(input_file) {
+  rJavaEnv::local_java_env(version = 21)
+  system2("java", c("-jar", "tool.jar", input_file))
+} # Environment restored automatically here
+
+#' Run my Java tool (using processx)
+#' @export
+run_my_tool_px <- function(input_file) {
+  rJavaEnv::local_java_env(version = 21)
+  processx::run("java", c("-jar", "tool.jar", input_file))
 }
 ```
 
-This pattern ensures that:
-1.  Your tool always runs with the correct Java version (e.g., Java 21).
-2.  The user's global environment remains clean.
-3.  Other packages relying on different Java versions are not affected.
+This ensures that:
+1.  Your code runs with the correct Java version.
+2.  The user's `JAVA_HOME` is restored immediately after your function exits.
+3.  You don't need to write manual `on.exit()` cleanup code.
 
-#### Alternative: Using `withr`
+### Using `with_java_env()`
 
-If you already use the `{withr}` package, you can achieve the same effect more concisely using `withr::defer()`:
+If you prefer block-scoped execution:
 
 ```r
-run_my_java_tool <- function() {
-  # Automatically handle state restoration
-  withr::local_envvar(c("JAVA_HOME" = Sys.getenv("JAVA_HOME")))
-  # Note: restoring PATH is trickier with local_envvar as it merges, 
-  # so manual on.exit or a custom helper is often safer for PATH.
-  
-  # ... rest of logic
+# With system2
+rJavaEnv::with_java_env(version = 21, {
+  system2("java", "-version")
+})
+
+# With processx
+rJavaEnv::with_java_env(version = 21, {
+  processx::run("java", c("-jar", "tool.jar", "--help"))
+})
+```
+
+### Performance: Using `.use_cache`
+
+If your function calls Java multiple times (e.g., inside a loop), enable caching to avoid the 30-200ms overhead of version checks on each call:
+
+```r
+process_files <- function(files) {
+  for (f in files) {
+    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
+    processx::run("java", c("-jar", "processor.jar", f))
+  }
 }
 ```
-*Note: Because `rJavaEnv` modifies PATH by prepending, a manual `on.exit` (as shown above) is generally more robust for full restoration.*
 
 ### Controlling Whether to Use System Java
 
@@ -103,6 +101,7 @@ By default, `accept_system_java = TRUE`. `rJavaEnv` will first check if a suitab
 If you strictly require an isolated, reproducible environment (ignoring the user's system Java), set `accept_system_java = FALSE` and `install = TRUE`.
 
 ---
+
 
 # Scenario B: Packages Importing rJava
 

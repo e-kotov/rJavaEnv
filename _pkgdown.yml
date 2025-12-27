@@ -56,6 +56,13 @@ reference:
       Ensure a specific Java version is available and set
     contents:
       - java_ensure
+      - java_resolve
+  - title: "Scoped Java Environment"
+    desc: >
+      Temporarily set Java for the current scope (ideal for package developers)
+    contents:
+      - local_java_env
+      - with_java_env
   - title: "Check `Java` version"
     desc: >
       Check `Java` version with currently set environment
