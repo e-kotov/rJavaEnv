@@ -19,9 +19,16 @@ test_that("java_find_system detects JAVA_HOME environment variable", {
 
   withr::local_envvar(JAVA_HOME = java_home)
 
-  # Mock java_check_version_cmd
+  # Mock the internal implementation to avoid calling real java -version
   local_mocked_bindings(
-    java_check_version_cmd = function(java_home, quiet = TRUE) "17",
+    ._java_version_check_impl_original = function(java_home) {
+      list(
+        major_version = "17",
+        java_home = java_home,
+        java_path = "mock",
+        java_version_output = "mock"
+      )
+    },
     .package = "rJavaEnv"
   )
 
@@ -131,9 +138,16 @@ test_that("java_find_system detects multiple Java installations", {
   # Set JAVA_HOME to one of them
   withr::local_envvar(JAVA_HOME = java_17)
 
-  # Mock java_check_version_cmd
+  # Mock the internal implementation
   local_mocked_bindings(
-    java_check_version_cmd = function(java_home, quiet = TRUE) "17",
+    ._java_version_check_impl_original = function(java_home) {
+      list(
+        major_version = "17",
+        java_home = java_home,
+        java_path = "mock",
+        java_version_output = "mock"
+      )
+    },
     .package = "rJavaEnv"
   )
 
@@ -502,9 +516,16 @@ test_that("java_find_system includes real system Java even when cache exists", {
 
       withr::local_envvar(JAVA_HOME = system_java)
 
-      # Mock java_check_version_cmd to return a version
+      # Mock the internal implementation
       local_mocked_bindings(
-        java_check_version_cmd = function(java_home, quiet = TRUE) "17",
+        ._java_version_check_impl_original = function(java_home) {
+          list(
+            major_version = "17",
+            java_home = java_home,
+            java_path = "mock",
+            java_version_output = "mock"
+          )
+        },
         .package = "rJavaEnv"
       )
 

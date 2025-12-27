@@ -42,8 +42,8 @@ test_that("use_java executes flow correctly", {
     java_list_installed_cache = function(...) data.frame(),
     java_download = function(...) "mock_distrib_path",
     java_unpack = function(...) "mock_install_path",
-    # Capture the arguments passed to java_env_set to verify logic
-    java_env_set = function(where, java_home, quiet, ...) {
+    # Mock the internal implementation to avoid libjvm.so warnings
+    ._java_env_set_impl = function(where, java_home, quiet, ...) {
       if (where != "session") {
         stop("Wrong 'where' argument")
       }
