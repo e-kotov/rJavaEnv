@@ -51,6 +51,11 @@ reference:
       Just quickly set `Java` in the current project (for use with `targets`/`callr`)
     contents:
       - use_java
+  - title: "Ensure Required Java Version"
+    desc: >
+      Ensure a specific Java version is available and set
+    contents:
+      - java_ensure
   - title: "Check `Java` version"
     desc: >
       Check `Java` version with currently set environment
@@ -78,6 +83,7 @@ reference:
   - title: "Other commands"
     contents:
     - java_valid_versions
+    - java_find_system
     - rje_consent
 
 

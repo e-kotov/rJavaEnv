@@ -235,7 +235,7 @@ java_env_set_rprofile <- function(
 #' @inheritParams global_quiet_param
 #' @inheritParams java_check_version_cmd
 #' @param .use_cache Logical. If `TRUE`, uses cached results for repeated calls with the same JAVA_HOME. If `FALSE` (default), forces a fresh check. Set to `TRUE` for performance in loops or repeated checks within the same session.
-#' @return A `character` vector of length 1 containing the major Java version.
+#' @return A `character` vector of length 1 containing the major Java version, or `FALSE` if rJava is not installed or the version check fails.
 #' @examples
 #' \dontrun{
 #' java_check_version_rjava()
@@ -375,7 +375,7 @@ java_check_version_rjava <- function(
 #' @param java_home Path to Java home directory. If NULL, the function uses the JAVA_HOME environment variable.
 #' @inheritParams global_quiet_param
 #' @param .use_cache Logical. If `TRUE`, uses cached results for repeated calls with the same JAVA_HOME. If `FALSE` (default), forces a fresh check. Set to `TRUE` for performance in loops or repeated checks within the same session.
-#' @return A `character` vector of length 1 containing the major Java version.
+#' @return A `character` vector of length 1 containing the major Java version, or `FALSE` if JAVA_HOME is not set or the Java executable cannot be found.
 #'
 #' @section Performance:
 #' This function is memoised (cached) within the R session using the effective
