@@ -237,9 +237,16 @@ test_that("java_find_system uses correct executable name for OS", {
 
   withr::local_envvar(JAVA_HOME = temp_java)
 
-  # Mock java_check_version_cmd
+  # Mock the internal implementation
   local_mocked_bindings(
-    java_check_version_cmd = function(java_home, quiet = TRUE) "17",
+    ._java_version_check_impl_original = function(java_home) {
+      list(
+        major_version = "17",
+        java_home = java_home,
+        java_path = "mock",
+        java_version_output = "mock"
+      )
+    },
     .package = "rJavaEnv"
   )
 
@@ -283,7 +290,14 @@ test_that("java_find_system handles special characters in paths", {
 
   # Mock java_check_version_cmd
   local_mocked_bindings(
-    java_check_version_cmd = function(java_home, quiet = TRUE) "17",
+    ._java_version_check_impl_original = function(java_home) {
+      list(
+        major_version = "17",
+        java_home = java_home,
+        java_path = "mock",
+        java_version_output = "mock"
+      )
+    },
     .package = "rJavaEnv"
   )
 
@@ -333,7 +347,14 @@ test_that("java_find_system passes quiet=TRUE to platform_detect", {
       quiet_passed <<- quiet
       list(os = "linux", arch = "x64")
     },
-    java_check_version_cmd = function(java_home, quiet = TRUE) "17",
+    ._java_version_check_impl_original = function(java_home) {
+      list(
+        major_version = "17",
+        java_home = java_home,
+        java_path = "mock",
+        java_version_output = "mock"
+      )
+    },
     .package = "rJavaEnv"
   )
 
@@ -354,7 +375,14 @@ test_that("java_find_system passes quiet=FALSE to platform_detect", {
       quiet_passed <<- quiet
       list(os = "linux", arch = "x64")
     },
-    java_check_version_cmd = function(java_home, quiet = TRUE) "17",
+    ._java_version_check_impl_original = function(java_home) {
+      list(
+        major_version = "17",
+        java_home = java_home,
+        java_path = "mock",
+        java_version_output = "mock"
+      )
+    },
     .package = "rJavaEnv"
   )
 
@@ -401,7 +429,14 @@ test_that("java_find_system handles symlinks to Java installation", {
 
   # Mock java_check_version_cmd to return a version for the mock installation
   local_mocked_bindings(
-    java_check_version_cmd = function(java_home, quiet = TRUE) "17",
+    ._java_version_check_impl_original = function(java_home) {
+      list(
+        major_version = "17",
+        java_home = java_home,
+        java_path = "mock",
+        java_version_output = "mock"
+      )
+    },
     .package = "rJavaEnv"
   )
 
@@ -563,7 +598,14 @@ test_that("java_find_system handles symlinks to cache correctly", {
 
       # Mock java_check_version_cmd
       local_mocked_bindings(
-        java_check_version_cmd = function(java_home, quiet = TRUE) "11",
+        ._java_version_check_impl_original = function(java_home) {
+          list(
+            major_version = "11",
+            java_home = java_home,
+            java_path = "mock",
+            java_version_output = "mock"
+          )
+        },
         .package = "rJavaEnv"
       )
 
