@@ -279,7 +279,7 @@ java_find_system <- function(quiet = TRUE, .use_cache = FALSE) {
           default_java <- trimws(default_path[1])
         }
       },
-      silent = TRUE
+      error = function(e) NULL
     )
   } else {
     # On other platforms, check JAVA_HOME first, then PATH
@@ -319,7 +319,12 @@ java_find_system <- function(quiet = TRUE, .use_cache = FALSE) {
   }
 
   # Mark default Java and re-sort
-  scan_result$is_default <- scan_result$java_home == default_java
+  # Handle NULL default_java (comparison with NULL returns logical(0) which breaks assignment)
+  if (is.null(default_java)) {
+    scan_result$is_default <- FALSE
+  } else {
+    scan_result$is_default <- scan_result$java_home == default_java
+  }
 
   # Sort: default first (TRUE first), then by version (descending)
   sort_order <- order(
