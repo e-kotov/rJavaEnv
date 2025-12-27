@@ -17,7 +17,7 @@
 #' If rJava is already loaded, this function will warn you but will not prevent the
 #' environment variable change (which won't help rJava at that point).
 #'
-#' @param version Integer or character. **Required.** The Java version you need (e.g., 17, 21). This parameter must be specified explicitly; there is no default.
+#' @param version Integer or character. **Required.** The Java version you need (e.g., 17, 21). Defaults to `NULL`, which is invalid and will trigger a validation error; callers should always provide a non-`NULL` value explicitly.
 #' @param type Character. `"exact"` (default) checks for exact version match. `"min"` checks for version >= `version`.
 #' @param accept_system_java Logical. If `TRUE` (default), the function will scan the system for existing Java installations (using `JAVA_HOME`, `PATH`, and OS-specific locations). If a system Java matching the `version` and `type` requirements is found, it will be used. Set to `FALSE` to ignore system installations and strictly use an `rJavaEnv` managed version.
 #' @param install Logical. If `TRUE` (default), attempts to download/install if missing.
