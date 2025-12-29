@@ -21,7 +21,7 @@ java_ensure(
 )
 }
 \arguments{
-\item{version}{Integer or character. \strong{Required.} The Java version you need (e.g., 17, 21). This parameter must be specified explicitly; there is no default.}
+\item{version}{Integer or character. \strong{Required.} The Java version you need (e.g., 17, 21). Defaults to \code{NULL}, which is invalid and will trigger a validation error; callers should always provide a non-\code{NULL} value explicitly.}
 
 \item{type}{Character. \code{"exact"} (default) checks for exact version match. \code{"min"} checks for version >= \code{version}.}
 

@@ -151,18 +151,27 @@ If you want to guarantee a specific Java environment without relying on the user
 ```r
 #' Run a heavy calculation in a Java 21 subprocess
 #' @export
-run_heavy_calc <- function(data) {
+run_heavy_calc <- function(input_data) {
   rJavaEnv::with_rjava_env(
     version = 21,
-    func = function(data) {
-      library(rJava)
-      # ... your logic here ...
-      return(result)
+    func = function(df) {
+      rJava::.jinit()
+      # Process df using rJava...
+      nrow(df)  # Return actual result
     },
-    args = list(data = data)
+    args = list(df = input_data)
   )
 }
 ```
+
+### Choosing Between `use_java` and `java_ensure`
+
+| Function | Behavior | Best For |
+|----------|----------|----------|
+| `use_java(21)` | Sets exactly Java 21, downloads if missing | Interactive scripts |
+| `java_ensure(21, type = "min")` | Accepts any Java >= 21, checks system first | Package setup helpers |
+
+Use `java_ensure` in package code because it's more lenient and efficient.
 
 ### Strategy: "Inform and Guide"
 
@@ -223,6 +232,21 @@ rJavaEnv::java_check_version_cmd(quiet = TRUE, .use_cache = TRUE)
 ```
 
 The first call takes time (to verify the system state), but subsequent calls in the same session return in <1ms.
+
+# Debugging
+
+If Java setup isn't working as expected, use `quiet = FALSE` to see what `rJavaEnv` is checking:
+
+```r
+# See all resolution steps
+rJavaEnv::java_ensure(version = 21, quiet = FALSE)
+
+# Check what Java is currently active
+rJavaEnv::java_check_version_cmd(quiet = FALSE)
+
+# See all system Java installations
+rJavaEnv::java_find_system(quiet = FALSE)
+```
 
 ---
 

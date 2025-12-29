@@ -58,7 +58,12 @@ java_resolve <- function(
     }
     system_javas <- tryCatch(
       java_find_system(quiet = TRUE, .use_cache = .use_cache),
-      error = function(e) data.frame()
+      error = function(e) {
+        if (!quiet) {
+          cli::cli_alert_warning("System Java search failed: {e$message}")
+        }
+        data.frame()
+      }
     )
 
     valid_matches <- list()
