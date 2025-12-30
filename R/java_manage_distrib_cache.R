@@ -20,7 +20,9 @@ java_list_distrib_cache <- function(
     cli::cli_alert_danger("No Java distributions have been downloaded.")
     return(character(0))
   }
-  if (!quiet) cli::cli_inform("Contents of the Java distributions cache folder:")
+  if (!quiet) {
+    cli::cli_inform("Contents of the Java distributions cache folder:")
+  }
 
   java_distrs <- grep(
     "md5$",
@@ -40,8 +42,8 @@ java_list_distrib_cache <- function(
 #' Clear the Java distributions cache folder
 #'
 #' @param cache_path The cache directory to clear. Defaults to the user-specific data directory.
-#' @inheritParams java_clear
-#' @inheritParams java_download
+#' @param check Whether to list the contents of the cache directory before clearing it. Defaults to TRUE.
+#' @param delete_all Whether to delete all items without prompting. Defaults to FALSE.
 #' @return A message indicating whether the cache was cleared or not.
 #'
 #' @keywords internal
@@ -51,7 +53,7 @@ java_clear_distrib_cache <- function(
   delete_all = FALSE
 ) {
   rje_consent_check()
-  
+
   distrib_cache_path <- file.path(cache_path, "distrib")
 
   if (!dir.exists(distrib_cache_path)) {
@@ -68,7 +70,10 @@ java_clear_distrib_cache <- function(
   }
 
   if (check) {
-    distributions <- java_list_distrib_cache(output = "vector", cache_path = cache_path)
+    distributions <- java_list_distrib_cache(
+      output = "vector",
+      cache_path = cache_path
+    )
     if (length(distributions) == 0) {
       cli::cli_inform("No Java distributions found to clear.")
       return(invisible(NULL))
@@ -79,8 +84,17 @@ java_clear_distrib_cache <- function(
       cli::cli_inform("{i}: {distributions[i]}")
     }
 
-    cli::cli_alert_info("Enter the number of the distribution to delete, 'all' to delete all, or '0' or any other character to cancel:")
-    response <- readline()
+    cli::cli_alert_info(
+      "Enter the number of the distribution to delete, 'all' to delete all, or '0' or any other character to cancel:"
+    )
+    if (getOption("rJavaEnv.interactive", interactive())) {
+      response <- rje_readline()
+    } else {
+      cli::cli_alert_danger(
+        "Non-interactive session detected. Cannot request input. No action taken."
+      )
+      response <- "0"
+    }
 
     if (tolower(response) == "all") {
       unlink(file.path(distrib_cache_path, "*"), recursive = TRUE)
@@ -92,13 +106,24 @@ java_clear_distrib_cache <- function(
       } else {
         unlink(distributions[choice], recursive = TRUE)
         md5_file <- paste0(distributions[choice], "md5")
-        if(file.exists(md5_file)) unlink(md5_file)
+        if (file.exists(md5_file)) {
+          unlink(md5_file)
+        }
         cli::cli_inform("Java distribution {choice} has been cleared.")
       }
     }
   } else {
-    cli::cli_alert_info("Are you sure you want to clear the Java distributions cache? (yes/no)")
-    response <- readline()
+    cli::cli_alert_info(
+      "Are you sure you want to clear the Java distributions cache? (yes/no)"
+    )
+    if (getOption("rJavaEnv.interactive", interactive())) {
+      response <- rje_readline()
+    } else {
+      cli::cli_alert_danger(
+        "Non-interactive session detected. Cannot request input. No action taken."
+      )
+      response <- "no"
+    }
     if (tolower(response) == "yes") {
       unlink(file.path(distrib_cache_path, "*"), recursive = TRUE)
       cli::cli_inform("Java distributions cache cleared.")

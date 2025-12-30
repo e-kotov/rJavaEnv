@@ -51,14 +51,19 @@ java_download <- function(
   # Checks for the parameters
   checkmate::check_vector(version, len = 1)
   version <- as.character(version)
-  checkmate::assert_choice(
-    as.character(version),
-    java_valid_versions(
-      distribution = distribution,
-      platform = platform,
-      arch = arch
+
+  # Optimized validation: check fast list first, only hit network if needed
+  if (!version %in% java_valid_versions_fast()) {
+    # Version not in fast/offline list, check if it's a new version online
+    checkmate::assert_choice(
+      version,
+      java_valid_versions(
+        distribution = distribution,
+        platform = platform,
+        arch = arch
+      )
     )
-  )
+  }
 
   checkmate::assert_choice(distribution, valid_distributions)
 

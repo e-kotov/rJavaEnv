@@ -8,11 +8,13 @@ test_that("java_urls_load loads JSON correctly", {
 test_that("urls_test_all checks URLs without network", {
   # Mock internal loader to return small subset
   local_mocked_bindings(
-    java_urls_load = function() list(
-      TestDist = list(
-        linux = list(x64 = "http://example.com/jdk-{version}.tar.gz")
+    java_urls_load = function() {
+      list(
+        TestDist = list(
+          linux = list(x64 = "http://example.com/jdk-{version}.tar.gz")
+        )
       )
-    ),
+    },
     .package = "rJavaEnv"
   )
 
@@ -33,6 +35,30 @@ test_that("java_version_check_rscript function exists", {
   # base functions like Sys.setenv or list.files interferes with testthat's own operations.
   # Instead, we just verify the function exists and has correct structure.
 
-  expect_true(exists("java_version_check_rscript", where = asNamespace("rJavaEnv")))
+  expect_true(exists(
+    "java_version_check_rscript",
+    where = asNamespace("rJavaEnv")
+  ))
   expect_type(rJavaEnv:::java_version_check_rscript, "closure")
+})
+
+test_that("rje_readline passes prompt to base::readline", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+
+  # This test verifies the wrapper exists and is mockable
+  # We mock base::readline to capture the call
+  captured_prompt <- NULL
+  local_mocked_bindings(
+    readline = function(prompt = "") {
+      captured_prompt <<- prompt
+      "mocked_response"
+    },
+    .package = "base"
+  )
+
+  result <- rJavaEnv:::rje_readline(prompt = "Enter value: ")
+
+  expect_equal(captured_prompt, "Enter value: ")
+  expect_equal(result, "mocked_response")
 })

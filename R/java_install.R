@@ -43,7 +43,8 @@ java_install <- function(
 
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
-  java_versions <- java_valid_versions()
+  # Use fast, offline-safe list for parsing filenames
+  java_versions <- java_valid_versions_fast()
 
   # Extract information from the file name
   filename <- basename(java_distrib_path)
@@ -149,8 +150,8 @@ java_install <- function(
   # Write the JAVA_HOME to the .Rprofile and environment after installation
   if (autoset_java_env) {
     java_env_set(
-      installed_path,
       where = "both",
+      java_home = installed_path,
       quiet = quiet,
       project_path = project_path
     )

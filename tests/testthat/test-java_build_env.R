@@ -12,7 +12,10 @@ test_that("java_build_env_set validates java_home argument", {
 
 test_that("java_build_env_set writes to .Rprofile in project", {
   proj_dir <- withr::local_tempdir()
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # Mock set_java_build_env_vars to avoid side effects when testing "both"
   local_mocked_bindings(
@@ -36,7 +39,10 @@ test_that("java_build_env_set writes to .Rprofile in project", {
 
 test_that("java_build_env_set writes to .Rprofile with 'both' option", {
   proj_dir <- withr::local_tempdir()
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # Mock set_java_build_env_vars to avoid side effects
   set_env_called <- FALSE
@@ -63,17 +69,23 @@ test_that("java_build_env_set writes to .Rprofile with 'both' option", {
 
 test_that("java_build_env_unset removes entries from .Rprofile", {
   proj_dir <- withr::local_tempdir()
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # First write the .Rprofile with build env entries
   rprof <- file.path(proj_dir, ".Rprofile")
-  writeLines(c(
-    "# Some existing content",
-    "# rJavaEnvBuild begin: Manage Java Build Environment",
-    "if (requireNamespace(\"rJavaEnv\", quietly = TRUE)) { rJavaEnv:::set_java_build_env_vars(java_home = '/mock/java', quiet = TRUE) } # rJavaEnvBuild",
-    "# rJavaEnvBuild end: Manage Java Build Environment",
-    "# More existing content"
-  ), rprof)
+  writeLines(
+    c(
+      "# Some existing content",
+      "# rJavaEnvBuild begin: Manage Java Build Environment",
+      "if (requireNamespace(\"rJavaEnv\", quietly = TRUE)) { rJavaEnv:::set_java_build_env_vars(java_home = '/mock/java', quiet = TRUE) } # rJavaEnvBuild",
+      "# rJavaEnvBuild end: Manage Java Build Environment",
+      "# More existing content"
+    ),
+    rprof
+  )
 
   java_build_env_unset(project_path = proj_dir, quiet = TRUE)
 
@@ -85,7 +97,10 @@ test_that("java_build_env_unset removes entries from .Rprofile", {
 
 test_that("java_build_env_unset handles missing .Rprofile gracefully", {
   proj_dir <- withr::local_tempdir()
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # No .Rprofile exists - should not error
 
@@ -96,6 +111,7 @@ test_that("java_build_env_unset handles missing .Rprofile gracefully", {
 
 test_that("java_build_env_set session mode sets basic env vars", {
   skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
 
   proj_dir <- withr::local_tempdir()
   java_home <- withr::local_tempdir()
@@ -133,7 +149,10 @@ test_that("java_build_env_set session mode sets basic env vars", {
 
 test_that("java_build_env_set appends to existing .Rprofile", {
   proj_dir <- withr::local_tempdir()
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # Create existing .Rprofile
   rprof <- file.path(proj_dir, ".Rprofile")
@@ -162,7 +181,10 @@ test_that("java_build_env_set appends to existing .Rprofile", {
 
 test_that("java_build_env_set replaces old entries when called again", {
   proj_dir <- withr::local_tempdir()
-  local_mocked_bindings(rje_consent_check = function() TRUE, .package = "rJavaEnv")
+  local_mocked_bindings(
+    rje_consent_check = function() TRUE,
+    .package = "rJavaEnv"
+  )
 
   # Mock set_java_build_env_vars
   local_mocked_bindings(

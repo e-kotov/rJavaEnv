@@ -2,13 +2,13 @@
 #'
 #' @description
 #' This function lists one of the following:
-#' 
+#'
 #' * `project` - list the contents of the Java symlinked/copied in the current project or directory specified by `target_dir`
-#' 
+#'
 #'  * `distrib` - list the contents of the downloaded Java distributions cache in default location or specified by `target_dir`
-#' 
+#'
 #'  * `installed` - list the contents of the Java installations cache (unpacked distributions) in default location or specified by `target_dir`
-#' 
+#'
 #' @param type The type of cache to list: "distrib", "installed", or "project". Defaults to "project".
 #' @param output The format of the output: `data.frame`` or `vector``. Defaults to `data.frame`.
 #' @inheritParams global_quiet_param
@@ -22,12 +22,13 @@
 #' java_list("installed")
 #' java_list("distrib")
 #'}
-#' 
+#'
 java_list <- function(
-    type = c("project", "installed", "distrib"),
-    output = c("data.frame", "vector"),
-    quiet = TRUE,
-    target_dir = NULL) {
+  type = c("project", "installed", "distrib"),
+  output = c("data.frame", "vector"),
+  quiet = TRUE,
+  target_dir = NULL
+) {
   type <- match.arg(type)
   output <- match.arg(output)
 
@@ -40,11 +41,23 @@ java_list <- function(
   }
 
   if (type == "distrib") {
-    return(java_list_distrib_cache(output = output, quiet = quiet, cache_path = target_dir))
+    return(java_list_distrib_cache(
+      output = output,
+      quiet = quiet,
+      cache_path = target_dir
+    ))
   } else if (type == "installed") {
-    return(java_list_installed_cache(output = output, quiet = quiet, cache_path = target_dir))
+    return(java_list_installed_cache(
+      output = output,
+      quiet = quiet,
+      cache_path = target_dir
+    ))
   } else if (type == "project") {
-    return(java_list_in_project(output = output, quiet = quiet, project_path = target_dir))
+    return(java_list_in_project(
+      output = output,
+      quiet = quiet,
+      project_path = target_dir
+    ))
   }
 }
 
@@ -67,12 +80,13 @@ java_list <- function(
 #' }
 #'
 java_clear <- function(
-    type = c("project", "installed", "distrib"),
-    target_dir = NULL,
-    check = TRUE,
-    delete_all = FALSE) {
+  type = c("project", "installed", "distrib"),
+  target_dir = NULL,
+  check = TRUE,
+  delete_all = FALSE
+) {
   rje_consent_check()
-  
+
   type <- match.arg(type)
 
   if (is.null(target_dir)) {
@@ -84,10 +98,22 @@ java_clear <- function(
   }
 
   if (type == "distrib") {
-    java_clear_distrib_cache(cache_path = target_dir, check = check, delete_all = delete_all)
+    java_clear_distrib_cache(
+      cache_path = target_dir,
+      check = check,
+      delete_all = delete_all
+    )
   } else if (type == "installed") {
-    java_clear_installed_cache(cache_path = target_dir, check = check, delete_all = delete_all)
+    java_clear_installed_cache(
+      cache_path = target_dir,
+      check = check,
+      delete_all = delete_all
+    )
   } else if (type == "project") {
-    java_clear_in_project(project_path = target_dir, check = check, delete_all = delete_all)
+    java_clear_in_project(
+      project_path = target_dir,
+      check = check,
+      delete_all = delete_all
+    )
   }
 }

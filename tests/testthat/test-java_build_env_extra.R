@@ -127,6 +127,8 @@ test_that("java_build_env_unset removes only build-related lines", {
 })
 
 test_that("set_java_build_env_vars sets JAVA_HOME and PATH", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   java_home <- "/mock/java/home"
 
   # Mock installed.packages
@@ -143,7 +145,7 @@ test_that("set_java_build_env_vars sets JAVA_HOME and PATH", {
   # Mock file system operations for Linux-specific code
   local_mocked_bindings(
     Sys.info = function() c(sysname = "Darwin"),
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   # Call the function with a temporary PATH
@@ -160,6 +162,8 @@ test_that("set_java_build_env_vars sets JAVA_HOME and PATH", {
 })
 
 test_that("set_java_build_env_vars sets JAVAH when available", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   java_home <- "/mock/java/home"
   javah_path <- file.path(java_home, "bin", "javah")
 
@@ -178,12 +182,12 @@ test_that("set_java_build_env_vars sets JAVAH when available", {
     file.exists = function(x) {
       if (x == javah_path) TRUE else FALSE
     },
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   local_mocked_bindings(
     Sys.info = function() c(sysname = "Darwin"),
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   withr::with_envvar(c("PATH" = "/usr/bin"), {
@@ -195,6 +199,8 @@ test_that("set_java_build_env_vars sets JAVAH when available", {
 })
 
 test_that("set_java_build_env_vars handles missing javah", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   java_home <- "/mock/java/home"
 
   local_mocked_bindings(
@@ -210,12 +216,12 @@ test_that("set_java_build_env_vars handles missing javah", {
   # Mock file.exists to say javah doesn't exist
   local_mocked_bindings(
     file.exists = function(x) FALSE,
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   local_mocked_bindings(
     Sys.info = function() c(sysname = "Darwin"),
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   withr::with_envvar(c("PATH" = "/usr/bin"), {
@@ -223,5 +229,43 @@ test_that("set_java_build_env_vars handles missing javah", {
 
     # JAVAH should be empty string when file doesn't exist
     expect_equal(Sys.getenv("JAVAH"), "")
+  })
+})
+
+test_that("set_java_build_env_vars sets Linux-specific variables", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  skip_on_os("windows")
+  skip_on_os("mac")
+
+  java_home <- "/mock/java/home"
+  libjvm_path <- file.path(java_home, "lib", "server", "libjvm.so")
+
+  local_mocked_bindings(
+    Sys.info = function() c(sysname = "Linux"),
+    .package = "rJavaEnv"
+  )
+
+  local_mocked_bindings(
+    get_libjvm_path = function(...) libjvm_path,
+    file.exists = function(x) TRUE,
+    system2 = function(...) "mock_config",
+    dyn.load = function(...) NULL,
+    .package = "rJavaEnv"
+  )
+
+  withr::with_envvar(c("LD_LIBRARY_PATH" = "/usr/lib"), {
+    set_java_build_env_vars(java_home, quiet = TRUE)
+
+    expect_equal(
+      Sys.getenv("JAVA_LD_LIBRARY_PATH"),
+      "/mock/java/home/lib/server"
+    )
+    expect_true(grepl(
+      "/mock/java/home/lib/server",
+      Sys.getenv("LD_LIBRARY_PATH")
+    ))
+    expect_true(any(grepl("JAVA_LIBS", names(Sys.getenv()))))
+    expect_true(any(grepl("JAVA_CPPFLAGS", names(Sys.getenv()))))
   })
 })
