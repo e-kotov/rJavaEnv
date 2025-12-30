@@ -251,12 +251,21 @@
 #' @export
 java_find_system <- function(quiet = TRUE, .use_cache = FALSE) {
   # Get scan results (cached or fresh)
+  # When quiet=TRUE, suppress all warnings from the scan process
   if (.use_cache) {
     # Use a constant session ID since this should be cached for entire session
-    scan_result <- ._java_find_system_cached(quiet, "session_scan")
+    scan_result <- if (quiet) {
+      suppressWarnings(._java_find_system_cached(quiet, "session_scan"))
+    } else {
+      ._java_find_system_cached(quiet, "session_scan")
+    }
   } else {
     # Bypass cache - call scan implementation directly (for testing with mocks)
-    scan_result <- ._java_find_system_scan_impl(quiet)
+    scan_result <- if (quiet) {
+      suppressWarnings(._java_find_system_scan_impl(quiet))
+    } else {
+      ._java_find_system_scan_impl(quiet)
+    }
   }
 
   # If no results, return empty frame with correct structure
@@ -267,7 +276,11 @@ java_find_system <- function(quiet = TRUE, .use_cache = FALSE) {
   # Calculate is_default dynamically based on current JAVA_HOME
   # This part is never cached so it always reflects current state
   default_java <- NULL
-  os <- platform_detect(quiet = quiet)$os
+  os <- if (quiet) {
+    suppressWarnings(platform_detect(quiet = quiet)$os)
+  } else {
+    platform_detect(quiet = quiet)$os
+  }
 
   if (os == "macos") {
     # On macOS, /usr/libexec/java_home (without -V) returns the default
@@ -289,7 +302,11 @@ java_find_system <- function(quiet = TRUE, .use_cache = FALSE) {
     # On other platforms, check JAVA_HOME first, then PATH
     env_java <- Sys.getenv("JAVA_HOME")
     if (nzchar(env_java)) {
-      default_java <- normalizePath(env_java, winslash = "/", mustWork = FALSE)
+      default_java <- suppressWarnings(normalizePath(
+        env_java,
+        winslash = "/",
+        mustWork = FALSE
+      ))
     }
 
     # If JAVA_HOME not set, try to resolve from PATH
