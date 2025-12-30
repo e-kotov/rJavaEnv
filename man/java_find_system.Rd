@@ -41,3 +41,12 @@ Subsequent scans with \code{.use_cache = TRUE}: <1ms. The \code{is_default} flag
 calculated fresh to reflect current \code{JAVA_HOME}.
 }
 
+\examples{
+\dontrun{
+# List all system Java installations
+java_find_system()
+
+# Use cache for faster repeated calls if you are using it in your R package
+java_find_system(.use_cache = TRUE)
+}
+}

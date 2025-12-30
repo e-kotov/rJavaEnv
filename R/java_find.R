@@ -249,6 +249,14 @@
 #'
 #' @importFrom memoise memoise cache_memory
 #' @export
+#' @examples
+#' \dontrun{
+#' # List all system Java installations
+#' java_find_system()
+#'
+#' # Use cache for faster repeated calls if you are using it in your R package
+#' java_find_system(.use_cache = TRUE)
+#' }
 java_find_system <- function(quiet = TRUE, .use_cache = FALSE) {
   # Get scan results (cached or fresh)
   # When quiet=TRUE, suppress all warnings from the scan process
