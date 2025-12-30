@@ -19,6 +19,27 @@ Just quickly set `Java` in the current project (for use with
   Install specified Java version and set the `JAVA_HOME` and `PATH`
   environment variables in current R session
 
+## Ensure Required Java Version
+
+Ensure a specific Java version is available and set
+
+- [`java_ensure()`](https://www.ekotov.pro/rJavaEnv/reference/java_ensure.md)
+  : Ensure specific Java version is set
+- [`java_resolve()`](https://www.ekotov.pro/rJavaEnv/reference/java_resolve.md)
+  : Resolve path to specific Java version
+
+## Scoped Java Environment
+
+Temporarily set Java for the current scope (ideal for package
+developers)
+
+- [`local_java_env()`](https://www.ekotov.pro/rJavaEnv/reference/local_java_env.md)
+  : Set Java environment for the current scope
+- [`with_java_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_java_env.md)
+  : Execute code with a specific Java environment
+- [`with_rjava_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_rjava_env.md)
+  : Execute rJava code in a separate process with specific Java version
+
 ## Check `Java` version
 
 Check `Java` version with currently set environment
@@ -30,6 +51,8 @@ Check `Java` version with currently set environment
   Session
 - [`java_get_home()`](https://www.ekotov.pro/rJavaEnv/reference/java_get_home.md)
   : Get JAVA_HOME
+- [`java_check_compatibility()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_compatibility.md)
+  : Verify rJava Compatibility (Guard)
 
 ## Fine-grained Control
 
@@ -73,5 +96,7 @@ Manage downloads, installs, and project-linked `Java` versions
 
 - [`java_valid_versions()`](https://www.ekotov.pro/rJavaEnv/reference/java_valid_versions.md)
   : Retrieve Valid Java Versions
+- [`java_find_system()`](https://www.ekotov.pro/rJavaEnv/reference/java_find_system.md)
+  : Discover system-wide Java installations
 - [`rje_consent()`](https://www.ekotov.pro/rJavaEnv/reference/rje_consent.md)
   : Obtain User Consent for rJavaEnv

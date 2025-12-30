@@ -11,7 +11,7 @@ restarted.
 ## Usage
 
 ``` r
-java_check_version_rjava(java_home = NULL, quiet = FALSE)
+java_check_version_rjava(java_home = NULL, quiet = FALSE, .use_cache = FALSE)
 ```
 
 ## Arguments
@@ -26,9 +26,17 @@ java_check_version_rjava(java_home = NULL, quiet = FALSE)
   A `logical` value indicating whether to suppress messages. Can be
   `TRUE` or `FALSE`.
 
+- .use_cache:
+
+  Logical. If `TRUE`, uses cached results for repeated calls with the
+  same JAVA_HOME. If `FALSE` (default), forces a fresh check. Set to
+  `TRUE` for performance in loops or repeated checks within the same
+  session.
+
 ## Value
 
-A `character` vector of length 1 containing the major Java version.
+A `character` vector of length 1 containing the major Java version, or
+`FALSE` if rJava is not installed or the version check fails.
 
 ## Examples
 

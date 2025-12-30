@@ -113,3 +113,40 @@ library(rJavaEnv)
 use_java(21) # or whatever version you installed
 library(rJava)
 ```
+
+> **Order Matters: use_java() Before library(rJava)**
+>
+> The order of operations above is critical. You **must** call
+> `use_java(21)` (or
+> [`java_ensure()`](https://www.ekotov.pro/rJavaEnv/reference/java_ensure.md))
+> **BEFORE** loading [`library(rJava)`](http://www.rforge.net/rJava/).
+> This is because [rJava](http://www.rforge.net/rJava/) locks to the
+> `Java` version that is active when it first initializes (see [rJava
+> issues \#25](https://github.com/s-u/rJava/issues/25),
+> [\#249](https://github.com/s-u/rJava/issues/249), and
+> [\#334](https://github.com/s-u/rJava/issues/334)).
+>
+> If you load [rJava](http://www.rforge.net/rJava/) first without
+> setting the `Java` environment (or you call
+> [`library()`](https://rdrr.io/r/base/library.html) on any package that
+> depends on [rJava](http://www.rforge.net/rJava/) and imports it),
+> [rJava](http://www.rforge.net/rJava/) will use whatever system Java it
+> finds, and you cannot change it by calling
+> [`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md)
+> afterwards in the same session.
+>
+> **Correct order:**
+>
+> ``` r
+> library(rJavaEnv)
+> use_java(21)              # Set Java FIRST
+> library(rJava)            # Load rJava SECOND (uses Java 21)
+> ```
+>
+> **Incorrect order (won’t work):**
+>
+> ``` r
+> library(rJava)             # rJava loads and locks to system Java
+> library(rJavaEnv)
+> use_java(21)              # Too late! rJava is already locked
+> ```

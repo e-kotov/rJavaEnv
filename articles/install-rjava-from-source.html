@@ -56,10 +56,17 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
+<li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Get started</h6></li>
+    <li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
     <li><a class="dropdown-item" href="../articles/multiple-java-with-targets-callr.html">Multiple `Java` environments in one project with `targets` and `callr`</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>About</h6></li>
     <li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
     <li><a class="dropdown-item" href="../articles/install-rjava-from-source.html">Install `rJava` from source</a></li>
+    <li><a class="dropdown-item" href="../articles/for-developers.html">Using `rJavaEnv` in R Packages</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -154,6 +161,23 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/use_java.html">use_java</a></span><span class="op">(</span><span class="fl">21</span><span class="op">)</span> <span class="co"># or whatever version you installed</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.rforge.net/rJava/" class="external-link">rJava</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div>
+<blockquote>
+<p><strong>Order Matters: use_java() Before library(rJava)</strong></p>
+<p>The order of operations above is critical. You <strong>must</strong> call <code>use_java(21)</code> (or <code><a href="../reference/java_ensure.html">java_ensure()</a></code>) <strong>BEFORE</strong> loading <code><a href="http://www.rforge.net/rJava/" class="external-link">library(rJava)</a></code>. This is because <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> locks to the <code>Java</code> version that is active when it first initializes (see <a href="https://github.com/s-u/rJava/issues/25" class="external-link">rJava issues #25</a>, <a href="https://github.com/s-u/rJava/issues/249" class="external-link">#249</a>, and <a href="https://github.com/s-u/rJava/issues/334" class="external-link">#334</a>).</p>
+<p>If you load <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> first without setting the <code>Java</code> environment (or you call <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> on any package that depends on <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> and imports it), <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> will use whatever system Java it finds, and you cannot change it by calling <code><a href="../reference/use_java.html">use_java()</a></code> afterwards in the same session.</p>
+<p><strong>Correct order:</strong></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/use_java.html">use_java</a></span><span class="op">(</span><span class="fl">21</span><span class="op">)</span>              <span class="co"># Set Java FIRST</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.rforge.net/rJava/" class="external-link">rJava</a></span><span class="op">)</span>            <span class="co"># Load rJava SECOND (uses Java 21)</span></span></code></pre></div>
+<p><strong>Incorrect order (won’t work):</strong></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.rforge.net/rJava/" class="external-link">rJava</a></span><span class="op">)</span>             <span class="co"># rJava loads and locks to system Java</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/use_java.html">use_java</a></span><span class="op">(</span><span class="fl">21</span><span class="op">)</span>              <span class="co"># Too late! rJava is already locked</span></span></code></pre></div>
+</blockquote>
 </div>
 </section><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {

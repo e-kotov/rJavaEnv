@@ -28,10 +28,17 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Get started</h6></li>
+    <li><a class="dropdown-item" href="../articles/rJavaEnv-step-by-step.html">Step-by-step: Download, Install, and Setup `Java` for 'R' Projects</a></li>
     <li><a class="dropdown-item" href="../articles/multiple-java-with-targets-callr.html">Multiple `Java` environments in one project with `targets` and `callr`</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>About</h6></li>
     <li><a class="dropdown-item" href="../articles/why-rJavaEnv.html">Why rJavaEnv: the landscape of 'Java'-dependent R packages</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Advanced</h6></li>
     <li><a class="dropdown-item" href="../articles/install-rjava-from-source.html">Install `rJava` from source</a></li>
+    <li><a class="dropdown-item" href="../articles/for-developers.html">Using `rJavaEnv` in R Packages</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -80,6 +87,59 @@
         </dt>
         <dd>Install specified Java version and set the <code>JAVA_HOME</code> and <code>PATH</code> environment variables in current R session</dd>
       </dl></div><div class="section level2">
+      <h2 id="ensure-required-java-version">Ensure Required Java Version<a class="anchor" aria-label="anchor" href="#ensure-required-java-version"></a></h2>
+
+      <div class="section-desc"><p>Ensure a specific Java version is available and set</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="java_ensure.html">java_ensure()</a></code>
+
+        </dt>
+        <dd>Ensure specific Java version is set</dd>
+
+        <dt>
+
+          <code><a href="java_resolve.html">java_resolve()</a></code>
+
+        </dt>
+        <dd>Resolve path to specific Java version</dd>
+      </dl></div><div class="section level2">
+      <h2 id="scoped-java-environment">Scoped Java Environment<a class="anchor" aria-label="anchor" href="#scoped-java-environment"></a></h2>
+
+      <div class="section-desc"><p>Temporarily set Java for the current scope (ideal for package developers)</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="local_java_env.html">local_java_env()</a></code>
+
+        </dt>
+        <dd>Set Java environment for the current scope</dd>
+
+        <dt>
+
+          <code><a href="with_java_env.html">with_java_env()</a></code>
+
+        </dt>
+        <dd>Execute code with a specific Java environment</dd>
+
+        <dt>
+
+          <code><a href="with_rjava_env.html">with_rjava_env()</a></code>
+
+        </dt>
+        <dd>Execute rJava code in a separate process with specific Java version</dd>
+      </dl></div><div class="section level2">
       <h2 id="check-java-version">Check <code>Java</code> version<a class="anchor" aria-label="anchor" href="#check-java-version"></a></h2>
 
       <div class="section-desc"><p>Check <code>Java</code> version with currently set environment</p></div>
@@ -109,6 +169,13 @@
 
         </dt>
         <dd>Get JAVA_HOME</dd>
+
+        <dt>
+
+          <code><a href="java_check_compatibility.html">java_check_compatibility()</a></code>
+
+        </dt>
+        <dd>Verify rJava Compatibility (Guard)</dd>
       </dl></div><div class="section level2">
       <h2 id="fine-grained-control">Fine-grained Control<a class="anchor" aria-label="anchor" href="#fine-grained-control"></a></h2>
 
@@ -206,6 +273,13 @@
 
         </dt>
         <dd>Retrieve Valid Java Versions</dd>
+
+        <dt>
+
+          <code><a href="java_find_system.html">java_find_system()</a></code>
+
+        </dt>
+        <dd>Discover system-wide Java installations</dd>
 
         <dt>
 

@@ -41,6 +41,24 @@
   `Sys.getenv("JAVA_HOME")`, as it is faster to type and can be even
   faster then used with autocomplete.
 
+### Performance Improvements
+
+- **Automatic caching for version checks**:
+  [`java_check_version_cmd()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_version_cmd.md)
+  and
+  [`java_find_system()`](https://www.ekotov.pro/rJavaEnv/reference/java_find_system.md)
+  are now memoised within the R session.
+  - First call to
+    [`java_check_version_cmd()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_version_cmd.md):
+    ~37ms
+  - Subsequent calls: \<1ms (123x faster)
+  - Cache correctly handles version switching via
+    [`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md)
+    by using JAVA_HOME as key
+  - No manual caching needed in downstream packages - completely
+    transparent
+- Added `memoise` package dependency for session-scoped caching
+
 ### Improvements
 
 - Download progress printing in

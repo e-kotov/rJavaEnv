@@ -2,9 +2,10 @@
 
 This function retrieves a list of valid Java versions by querying an
 appropriate API endpoint based on the chosen distribution. The result is
-cached for 8 hours to avoid repeated API calls. If the API call fails
-(for example, due to a lack of internet connectivity), the function
-falls back to a pre-defined list of Java versions.
+cached across sessions via file cache (24 hours) and within a session in
+memory (8 hours) to avoid repeated API calls. If the API call fails (for
+example, due to a lack of internet connectivity), the function falls
+back to a pre-defined list of Java versions.
 
 ## Usage
 

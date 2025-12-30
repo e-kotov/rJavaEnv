@@ -2,12 +2,13 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  for-developers: for-developers.html
   install-rjava-from-source: install-rjava-from-source.html
   multiple-java-with-targets-callr: multiple-java-with-targets-callr.html
   rJavaEnv-step-by-step: rJavaEnv-step-by-step.html
   rJavaEnv: rJavaEnv.html
   why-rJavaEnv: why-rJavaEnv.html
-last_built: 2025-12-08T17:12Z
+last_built: 2025-12-30T20:56Z
 urls:
   reference: https://www.ekotov.pro/rJavaEnv/reference
   article: https://www.ekotov.pro/rJavaEnv/articles
