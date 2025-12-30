@@ -254,13 +254,6 @@ test_that("set_java_build_env_vars sets Linux-specific variables", {
     .package = "rJavaEnv"
   )
 
-  # Also need to mock some base functions that are called in the Linux block
-  local_mocked_bindings(
-    file.exists = function(x) TRUE,
-    dirname = function(x) "/mock/java/home/lib/server",
-    .package = "base"
-  )
-
   withr::with_envvar(c("LD_LIBRARY_PATH" = "/usr/lib"), {
     set_java_build_env_vars(java_home, quiet = TRUE)
 

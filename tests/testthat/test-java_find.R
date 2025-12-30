@@ -646,9 +646,7 @@ test_that("._java_find_system_cached returns cached result on second call", {
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
 
   # Reset cache for this test
-  if (exists(".java_find_system_cache", envir = asNamespace("rJavaEnv"))) {
-    assignInNamespace(".java_find_system_cache", NULL, ns = "rJavaEnv")
-  }
+  memoise::forget(rJavaEnv:::._java_find_system_cached)
 
   call_count <- 0
   mock_scan_result <- data.frame(
@@ -677,26 +675,27 @@ test_that("._java_find_system_cached returns cached result on second call", {
   expect_equal(result1, result2)
 })
 
-test_that("._java_find_system_cached respects .use_cache = FALSE", {
+test_that("java_find_system respects .use_cache = FALSE", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
-
-  # Reset cache for this test
-  if (exists(".java_find_system_cache", envir = asNamespace("rJavaEnv"))) {
-    assignInNamespace(".java_find_system_cache", NULL, ns = "rJavaEnv")
-  }
 
   call_count <- 0
   local_mocked_bindings(
     ._java_find_system_scan_impl = function(...) {
       call_count <<- call_count + 1
-      data.frame(java_home = "/mock", major_version = "21", is_default = TRUE)
+      data.frame(
+        java_home = "/mock",
+        version = "21",
+        is_default = TRUE,
+        stringsAsFactors = FALSE
+      )
     },
     .package = "rJavaEnv"
   )
 
-  rJavaEnv:::._java_find_system_cached()
-  rJavaEnv:::._java_find_system_cached()
+  # Should call scan_impl every time when .use_cache = FALSE
+  java_find_system(.use_cache = FALSE)
+  java_find_system(.use_cache = FALSE)
 
-  expect_equal(call_count, 1) # First call scans, second call uses memoised result
+  expect_equal(call_count, 2)
 })
