@@ -173,12 +173,22 @@ set_java_build_env_vars <- function(java_home, quiet = FALSE) {
       # Construct and set LIBS for the linker
       r_cmd_path <- file.path(R.home("bin"), "R")
       r_libs <- tryCatch(
-        system2(r_cmd_path, "CMD config LIBS", stdout = TRUE, stderr = TRUE),
+        system2(
+          r_cmd_path,
+          "CMD config LIBS",
+          stdout = TRUE,
+          stderr = TRUE
+        ),
         warning = function(w) "",
         error = function(e) ""
       )
       r_ldflags <- tryCatch(
-        system2(r_cmd_path, "CMD config LDFLAGS", stdout = TRUE, stderr = TRUE),
+        system2(
+          r_cmd_path,
+          "CMD config LDFLAGS",
+          stdout = TRUE,
+          stderr = TRUE
+        ),
         warning = function(w) "",
         error = function(e) ""
       )
@@ -255,7 +265,12 @@ set_java_build_env_vars <- function(java_home, quiet = FALSE) {
       # Set LDFLAGS for the JRI compilation step's configure script
       r_cmd_path <- file.path(R.home("bin"), "R")
       r_ldflags <- tryCatch(
-        system2(r_cmd_path, "CMD config LDFLAGS", stdout = TRUE, stderr = TRUE),
+        system2(
+          r_cmd_path,
+          "CMD config LDFLAGS",
+          stdout = TRUE,
+          stderr = TRUE
+        ),
         warning = function(w) "",
         error = function(e) ""
       )

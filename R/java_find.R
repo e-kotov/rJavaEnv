@@ -133,7 +133,11 @@
 
   # 4. Validation & Cleaning
   # Normalize first to ensure unique() handles backslash/forward-slash duplicates
-  candidates <- normalizePath(candidates, winslash = "/", mustWork = FALSE)
+  candidates <- suppressWarnings(normalizePath(
+    candidates,
+    winslash = "/",
+    mustWork = FALSE
+  ))
   candidates <- unique(candidates)
 
   # Filter out rJavaEnv cache paths - we only want true system installations

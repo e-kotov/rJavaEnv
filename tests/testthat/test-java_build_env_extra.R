@@ -145,7 +145,7 @@ test_that("set_java_build_env_vars sets JAVA_HOME and PATH", {
   # Mock file system operations for Linux-specific code
   local_mocked_bindings(
     Sys.info = function() c(sysname = "Darwin"),
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   # Call the function with a temporary PATH
@@ -182,12 +182,12 @@ test_that("set_java_build_env_vars sets JAVAH when available", {
     file.exists = function(x) {
       if (x == javah_path) TRUE else FALSE
     },
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   local_mocked_bindings(
     Sys.info = function() c(sysname = "Darwin"),
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   withr::with_envvar(c("PATH" = "/usr/bin"), {
@@ -216,12 +216,12 @@ test_that("set_java_build_env_vars handles missing javah", {
   # Mock file.exists to say javah doesn't exist
   local_mocked_bindings(
     file.exists = function(x) FALSE,
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   local_mocked_bindings(
     Sys.info = function() c(sysname = "Darwin"),
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   withr::with_envvar(c("PATH" = "/usr/bin"), {
@@ -243,7 +243,7 @@ test_that("set_java_build_env_vars sets Linux-specific variables", {
 
   local_mocked_bindings(
     Sys.info = function() c(sysname = "Linux"),
-    .package = "base"
+    .package = "rJavaEnv"
   )
 
   local_mocked_bindings(
