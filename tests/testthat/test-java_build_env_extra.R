@@ -231,3 +231,48 @@ test_that("set_java_build_env_vars handles missing javah", {
     expect_equal(Sys.getenv("JAVAH"), "")
   })
 })
+
+test_that("set_java_build_env_vars sets Linux-specific variables", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  skip_on_os("windows")
+  skip_on_os("mac")
+
+  java_home <- "/mock/java/home"
+  libjvm_path <- file.path(java_home, "lib", "server", "libjvm.so")
+
+  local_mocked_bindings(
+    Sys.info = function() c(sysname = "Linux"),
+    .package = "base"
+  )
+
+  local_mocked_bindings(
+    get_libjvm_path = function(...) libjvm_path,
+    file.exists = function(x) TRUE,
+    system2 = function(...) "mock_config",
+    dyn.load = function(...) NULL,
+    .package = "rJavaEnv"
+  )
+
+  # Also need to mock some base functions that are called in the Linux block
+  local_mocked_bindings(
+    file.exists = function(x) TRUE,
+    dirname = function(x) "/mock/java/home/lib/server",
+    .package = "base"
+  )
+
+  withr::with_envvar(c("LD_LIBRARY_PATH" = "/usr/lib"), {
+    set_java_build_env_vars(java_home, quiet = TRUE)
+
+    expect_equal(
+      Sys.getenv("JAVA_LD_LIBRARY_PATH"),
+      "/mock/java/home/lib/server"
+    )
+    expect_true(grepl(
+      "/mock/java/home/lib/server",
+      Sys.getenv("LD_LIBRARY_PATH")
+    ))
+    expect_true(any(grepl("JAVA_LIBS", names(Sys.envvar()))))
+    expect_true(any(grepl("JAVA_CPPFLAGS", names(Sys.envvar()))))
+  })
+})

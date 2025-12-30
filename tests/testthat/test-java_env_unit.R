@@ -188,3 +188,29 @@ test_that("java_env_set validates input", {
     "Assertion on 'java_home' failed"
   )
 })
+
+test_that("java_check_version_rjava handles missing rJava package", {
+  skip_on_cran()
+  skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+
+  local_mocked_bindings(
+    installed.packages = function() {
+      matrix(
+        character(0),
+        nrow = 0,
+        ncol = 2,
+        dimnames = list(NULL, c("Package", "Version"))
+      )
+    },
+    .package = "utils"
+  )
+  local_mocked_bindings(
+    find.package = function(...) character(0),
+    .package = "base"
+  )
+
+  expect_message(
+    java_check_version_rjava(java_home = "/some/path"),
+    "rJava package is not installed"
+  )
+})
