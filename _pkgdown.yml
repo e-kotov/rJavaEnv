@@ -63,6 +63,7 @@ reference:
     contents:
       - local_java_env
       - with_java_env
+      - with_rjava_env
   - title: "Check `Java` version"
     desc: >
       Check `Java` version with currently set environment
@@ -70,6 +71,7 @@ reference:
       - java_check_version_cmd
       - java_check_version_rjava
       - java_get_home
+      - java_check_compatibility
   - title: "Fine-grained Control"
     desc: >
       Control every step of `Java` download, unpacking and installation
