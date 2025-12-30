@@ -265,7 +265,7 @@ test_that("set_java_build_env_vars sets Linux-specific variables", {
       "/mock/java/home/lib/server",
       Sys.getenv("LD_LIBRARY_PATH")
     ))
-    expect_true(any(grepl("JAVA_LIBS", names(Sys.envvar()))))
-    expect_true(any(grepl("JAVA_CPPFLAGS", names(Sys.envvar()))))
+    expect_true(any(grepl("JAVA_LIBS", names(Sys.getenv()))))
+    expect_true(any(grepl("JAVA_CPPFLAGS", names(Sys.getenv()))))
   })
 })
