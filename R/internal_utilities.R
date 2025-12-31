@@ -267,6 +267,34 @@ is_rjavaenv_cache_path <- function(path) {
   return(startsWith(path_norm, cache_norm))
 }
 
+#' Resolve symlinks recursively on Unix systems
+#'
+#' @param path Character. Path to resolve.
+#' @param max_depth Integer. Maximum symlink depth to follow (default 10).
+#' @return Character. Resolved path (or original if not a symlink or on Windows).
+#' @keywords internal
+#' @noRd
+resolve_symlinks <- function(path, max_depth = 10L) {
+  if (.Platform$OS.type != "unix" || !nzchar(path)) {
+    return(path)
+  }
+
+  real_path <- path
+  for (i in seq_len(max_depth)) {
+    link <- Sys.readlink(real_path)
+    if (is.na(link) || !nzchar(link)) {
+      break
+    }
+    # Handle relative symlinks
+    if (!startsWith(link, "/")) {
+      link <- file.path(dirname(real_path), link)
+    }
+    real_path <- link
+  }
+
+  return(real_path)
+}
+
 #' Internal readline wrapper for testability
 #'
 #' Wraps base::readline() to enable mocking in tests without polluting public API.

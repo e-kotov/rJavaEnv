@@ -187,10 +187,8 @@ java_env_set_rprofile <- function(
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
   rprofile_path <- file.path(project_path, ".Rprofile")
 
-  # Normalize the path for Windows
-  if (.Platform$OS.type == "windows") {
-    java_home <- gsub("\\\\", "/", java_home)
-  }
+  # Normalize the path for consistency (especially on Windows)
+  java_home <- normalizePath(java_home, winslash = "/", mustWork = FALSE)
 
   lines_to_add <- c(
     "# rJavaEnv begin: Manage JAVA_HOME",
@@ -273,10 +271,11 @@ java_check_version_rjava <- function(
   }
 
   # Get check result (either cached or fresh)
-  cache_key <- Sys.getenv("JAVA_HOME")
+  # Use the effective java_home as cache key (what we're actually checking)
+  effective_java_home <- java_home
 
   if (.use_cache) {
-    data <- ._java_version_check_rjava_impl(java_home, cache_key)
+    data <- ._java_version_check_rjava_impl(java_home, effective_java_home)
   } else {
     # Bypass cache - call the implementation directly
     data <- ._java_version_check_rjava_impl_original(java_home)
@@ -400,10 +399,15 @@ java_check_version_cmd <- function(
   .use_cache = FALSE
 ) {
   # Get data (either cached or fresh)
-  cache_key <- Sys.getenv("JAVA_HOME")
+  # Use the effective java_home as cache key
+  effective_java_home <- if (is.null(java_home)) {
+    Sys.getenv("JAVA_HOME")
+  } else {
+    java_home
+  }
 
   if (.use_cache) {
-    data <- ._java_version_check_impl(java_home, cache_key)
+    data <- ._java_version_check_impl(java_home, effective_java_home)
   } else {
     # Bypass cache - call the implementation directly
     data <- ._java_version_check_impl_original(java_home)
