@@ -282,7 +282,7 @@ resolve_symlinks <- function(path, max_depth = 10L) {
   real_path <- path
   for (i in seq_len(max_depth)) {
     link <- Sys.readlink(real_path)
-    if (!nzchar(link)) {
+    if (is.na(link) || !nzchar(link)) {
       break
     }
     # Handle relative symlinks
