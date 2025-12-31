@@ -34,6 +34,25 @@ navbar:
   structure:
     left:  [intro, reference, articles, tutorials, news]
     right: [search, github, lightswitch]
+  components:
+    articles:
+      text: Articles
+      menu:
+        - text: "Getting Started"
+        - text: "Step-by-step Java Setup"
+          href: articles/rJavaEnv-step-by-step.html
+        - text: "Multiple Java with targets & callr"
+          href: articles/multiple-java-with-targets-callr.html
+        - text: "---"
+        - text: "About"
+        - text: "Why rJavaEnv?"
+          href: articles/why-rJavaEnv.html
+        - text: "---"
+        - text: "Advanced"
+        - text: "Install rJava from Source"
+          href: articles/install-rjava-from-source.html
+        - text: "Using rJavaEnv in Packages"
+          href: articles/for-developers.html
 
 home:
   title: 'rJavaEnv: `Java` Environments for R Projects'
@@ -99,16 +118,13 @@ reference:
 
 articles:
   - title: "Getting Started"
-    navbar: "Get started"
     contents:
       - rJavaEnv-step-by-step
       - multiple-java-with-targets-callr
   - title: "About rJavaEnv"
-    navbar: "About"
     contents:
       - why-rJavaEnv
   - title: "Advanced Topics"
-    navbar: "Advanced"
     contents:
       - install-rjava-from-source
       - for-developers
