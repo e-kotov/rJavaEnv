@@ -272,11 +272,7 @@ java_check_version_rjava <- function(
 
   # Get check result (either cached or fresh)
   # Use the effective java_home as cache key (what we're actually checking)
-  effective_java_home <- if (is.null(java_home)) {
-    Sys.getenv("JAVA_HOME")
-  } else {
-    java_home
-  }
+  effective_java_home <- java_home
 
   if (.use_cache) {
     data <- ._java_version_check_rjava_impl(java_home, effective_java_home)
