@@ -31,20 +31,7 @@
   # 2. PATH Lookup (Resolving Symlinks)
   java_bin <- Sys.which("java")
   if (nzchar(java_bin)) {
-    real_path <- java_bin
-    # Recursive symlink resolution for Linux (handles /etc/alternatives)
-    if (.Platform$OS.type == "unix") {
-      for (i in 1:10) {
-        link <- Sys.readlink(real_path)
-        if (!nzchar(link)) {
-          break
-        }
-        if (!startsWith(link, "/")) {
-          link <- file.path(dirname(real_path), link)
-        }
-        real_path <- link
-      }
-    }
+    real_path <- resolve_symlinks(java_bin)
     # If path ends in /bin/java, the grandparent dir is JAVA_HOME
     if (grepl("[/\\\\]bin[/\\\\]java(\\.exe)?$", real_path)) {
       candidates <- c(candidates, dirname(dirname(real_path)))
@@ -197,13 +184,6 @@
   # Set is_default to FALSE - it will be calculated by the caller
   result_df$is_default <- FALSE
 
-  # 7. Sort by version (descending only, since is_default is all FALSE)
-  sort_order <- order(
-    -as.numeric(result_df$version),
-    decreasing = TRUE
-  )
-  result_df <- result_df[sort_order, ]
-
   rownames(result_df) <- NULL
   return(result_df)
 }
@@ -321,20 +301,7 @@ java_find_system <- function(quiet = TRUE, .use_cache = FALSE) {
     if (is.null(default_java)) {
       java_bin <- Sys.which("java")
       if (nzchar(java_bin)) {
-        real_path <- java_bin
-        # Recursive symlink resolution
-        if (.Platform$OS.type == "unix") {
-          for (i in 1:10) {
-            link <- Sys.readlink(real_path)
-            if (!nzchar(link)) {
-              break
-            }
-            if (!startsWith(link, "/")) {
-              link <- file.path(dirname(real_path), link)
-            }
-            real_path <- link
-          }
-        }
+        real_path <- resolve_symlinks(java_bin)
         # Extract JAVA_HOME from /bin/java path
         if (grepl("[/\\\\]bin[/\\\\]java(\\.exe)?$", real_path)) {
           default_java <- normalizePath(
