@@ -78,51 +78,6 @@ test_that("full download, install, check, and clear cycle works for all versions
     testthat::expect_true(dir.exists(java_home_path), info = context_info)
 
     # --- Step C: Check and Verify ---
-    # --- Debug Information ---
-    # --- Debug Information ---
-    cat("DEBUG: Installed Path: ", java_home_path, "\n", file = stderr())
-    cat("DEBUG: Files in installed path (max 10):\n", file = stderr())
-    print(head(list.files(java_home_path, recursive = TRUE), 10))
-
-    cat(
-      "DEBUG: Current JAVA_HOME: ",
-      Sys.getenv("JAVA_HOME"),
-      "\n",
-      file = stderr()
-    )
-    cat("DEBUG: Sys.which('java'): ", Sys.which("java"), "\n", file = stderr())
-
-    bin_java <- file.path(java_home_path, "bin", "java")
-    if (file.exists(bin_java)) {
-      cat("DEBUG: bin/java found at ", bin_java, "\n", file = stderr())
-      cat(
-        "DEBUG: Running system2 directly on binary with explicit JAVA_HOME:\n",
-        file = stderr()
-      )
-      tryCatch(
-        {
-          # Explicitly set JAVA_HOME for this test call to be sure execution environment sees it
-          out <- system2(
-            bin_java,
-            "-version",
-            stdout = TRUE,
-            stderr = TRUE,
-            env = paste0("JAVA_HOME=", java_home_path)
-          )
-          cat(paste(out, collapse = "\n"), "\n", file = stderr())
-        },
-        error = function(e) {
-          cat("DEBUG: Execution failed: ", e$message, "\n", file = stderr())
-        }
-      )
-    } else {
-      cat("DEBUG: bin/java NOT found at ", bin_java, "\n", file = stderr())
-      # check contents/home
-      ch <- file.path(java_home_path, "Contents", "Home", "bin", "java")
-      if (file.exists(ch)) {
-        cat("DEBUG: Found at Contents/Home: ", ch, "\n", file = stderr())
-      }
-    }
 
     cli::cli_inform("-> Step 3: Verifying with java_check_version_cmd()...")
     cmd_version_result <- java_check_version_cmd(
