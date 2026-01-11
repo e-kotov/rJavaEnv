@@ -483,19 +483,31 @@ java_check_version_cmd <- function(
   # On macOS, the 'java' launcher stub dynamically loads libjvm.dylib.
   # If another JDK (e.g., system Temurin) is in the default library search path,
   # the launcher may load the wrong JVM library even if JAVA_HOME is set.
-  # We fix this by targetting DYLD_LIBRARY_PATH specifically for this subprocess.
+  # We fix this by targeting DYLD_LIBRARY_PATH specifically for this subprocess.
   # Note: We do NOT set DYLD_LIBRARY_PATH globally in java_env_set() because:
   # 1. rJava's .jinit() loads libjvm.dylib directly from path, bypassing the stub.
   # 2. Global DYLD_* vars are restricted by macOS SIP and can cause side effects.
-  env_vars <- character(0)
   if (Sys.info()[["sysname"]] == "Darwin" && !is.null(java_home)) {
-    lib_server <- file.path(java_home, "lib", "server")
-    if (dir.exists(lib_server)) {
-      env_vars <- c(
-        paste0("DYLD_LIBRARY_PATH=", lib_server),
-        paste0("JAVA_HOME=", java_home)
-      )
+    libjvm_path <- get_libjvm_path(java_home)
+    if (!is.null(libjvm_path)) {
+      lib_server <- dirname(libjvm_path)
+      old_dyld_path <- Sys.getenv("DYLD_LIBRARY_PATH", unset = NA)
+      if (is.na(old_dyld_path)) {
+        on.exit(Sys.unsetenv("DYLD_LIBRARY_PATH"), add = TRUE)
+      } else {
+        on.exit(Sys.setenv(DYLD_LIBRARY_PATH = old_dyld_path), add = TRUE)
+      }
+      Sys.setenv(DYLD_LIBRARY_PATH = lib_server)
     }
+
+    # Also temporarily set JAVA_HOME for this check
+    old_java_home <- Sys.getenv("JAVA_HOME", unset = NA)
+    if (is.na(old_java_home)) {
+      on.exit(Sys.unsetenv("JAVA_HOME"), add = TRUE)
+    } else {
+      on.exit(Sys.setenv(JAVA_HOME = old_java_home), add = TRUE)
+    }
+    Sys.setenv(JAVA_HOME = java_home)
   }
 
   java_ver <- tryCatch(
@@ -504,8 +516,7 @@ java_check_version_cmd <- function(
       args = "-version",
       stdout = TRUE,
       stderr = TRUE,
-      timeout = 10,
-      env = if (length(env_vars) > 0) env_vars else NULL
+      timeout = 30
     ),
     error = function(e) NULL
   )

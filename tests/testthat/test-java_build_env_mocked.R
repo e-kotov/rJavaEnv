@@ -109,12 +109,12 @@ test_that("java_build_env_set project mode outputs success message", {
   )
 
   expect_message(
-    java_build_env_set(
+    suppressWarnings(java_build_env_set(
       java_home = "/mock/java",
       where = "project",
       project_path = proj_dir,
       quiet = FALSE
-    ),
+    )),
     "Build environment set in .Rprofile"
   )
 })
