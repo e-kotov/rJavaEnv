@@ -455,24 +455,67 @@ java_check_version_cmd <- function(
     return(FALSE)
   }
 
-  # Check if java executable exists in the PATH
-  if (!nzchar(Sys.which("java"))) {
-    if (!is.null(java_home)) {
-      Sys.setenv(JAVA_HOME = old_java_home)
-      Sys.setenv(PATH = old_path)
+  # Get Java path - use explicit path if java_home is specified
+  if (!is.null(java_home)) {
+    # Direct check of the executable within the provided java_home
+    # This avoids Sys.which potentially picking up system shims (common on macOS)
+    # or other executables in the PATH
+
+    # Determine executable name based on OS
+    exe_name <- if (.Platform$OS.type == "windows") "java.exe" else "java"
+    java_bin_candidate <- file.path(java_home, "bin", exe_name)
+
+    if (file.exists(java_bin_candidate)) {
+      java_bin <- java_bin_candidate
+    } else {
+      # Fallback to failing if not found in the expected location
+      return(FALSE)
     }
-    return(FALSE)
+  } else {
+    java_bin <- Sys.which("java")
+    if (!nzchar(java_bin)) {
+      return(FALSE)
+    }
+  }
+  which_java <- java_bin
+
+  # On macOS, the 'java' launcher stub dynamically loads libjvm.dylib.
+  # If another JDK (e.g., system Temurin) is in the default library search path,
+  # the launcher may load the wrong JVM library even if JAVA_HOME is set.
+  # We fix this by targeting DYLD_LIBRARY_PATH specifically for this subprocess.
+  # Note: We do NOT set DYLD_LIBRARY_PATH globally in java_env_set() because:
+  # 1. rJava's .jinit() loads libjvm.dylib directly from path, bypassing the stub.
+  # 2. Global DYLD_* vars are restricted by macOS SIP and can cause side effects.
+  if (Sys.info()[["sysname"]] == "Darwin" && !is.null(java_home)) {
+    libjvm_path <- get_libjvm_path(java_home)
+    if (!is.null(libjvm_path)) {
+      lib_server <- dirname(libjvm_path)
+      old_dyld_path <- Sys.getenv("DYLD_LIBRARY_PATH", unset = NA)
+      if (is.na(old_dyld_path)) {
+        on.exit(Sys.unsetenv("DYLD_LIBRARY_PATH"), add = TRUE)
+      } else {
+        on.exit(Sys.setenv(DYLD_LIBRARY_PATH = old_dyld_path), add = TRUE)
+      }
+      Sys.setenv(DYLD_LIBRARY_PATH = lib_server)
+    }
+
+    # Also temporarily set JAVA_HOME for this check
+    saved_java_home_for_darwin <- Sys.getenv("JAVA_HOME", unset = NA)
+    if (is.na(saved_java_home_for_darwin)) {
+      on.exit(Sys.unsetenv("JAVA_HOME"), add = TRUE)
+    } else {
+      on.exit(Sys.setenv(JAVA_HOME = saved_java_home_for_darwin), add = TRUE)
+    }
+    Sys.setenv(JAVA_HOME = java_home)
   }
 
-  # Get Java path and version info (without printing)
-  which_java <- Sys.which("java")
   java_ver <- tryCatch(
     system2(
-      "java",
+      java_bin,
       args = "-version",
       stdout = TRUE,
       stderr = TRUE,
-      timeout = 10
+      timeout = 30
     ),
     error = function(e) NULL
   )

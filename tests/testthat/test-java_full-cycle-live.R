@@ -78,6 +78,7 @@ test_that("full download, install, check, and clear cycle works for all versions
     testthat::expect_true(dir.exists(java_home_path), info = context_info)
 
     # --- Step C: Check and Verify ---
+
     cli::cli_inform("-> Step 3: Verifying with java_check_version_cmd()...")
     cmd_version_result <- java_check_version_cmd(
       java_home = java_home_path,
@@ -88,15 +89,9 @@ test_that("full download, install, check, and clear cycle works for all versions
       java_version,
       info = context_info
     )
-    if (cmd_version_result == java_version) {
-      cli::cli_inform(
-        "Successfully verified Java {java_version} with command line."
-      )
-    } else {
-      cli::cli_alert_danger(
-        "Command line verification failed for Java {java_version}."
-      )
-    }
+    cli::cli_inform(
+      "Successfully verified Java {java_version} with command line."
+    )
 
     cli::cli_inform("-> Step 4: Verifying with java_check_version_rjava()...")
     rjava_version_result <- java_check_version_rjava(

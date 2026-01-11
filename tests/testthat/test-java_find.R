@@ -96,11 +96,24 @@ test_that("java_find_system normalizes paths", {
   messy_path <- paste0(java_home, "///")
   withr::local_envvar(JAVA_HOME = messy_path)
 
+  # Mock version check to accept the dummy java
+  local_mocked_bindings(
+    ._java_version_check_impl_original = function(java_home) {
+      list(
+        major_version = "17",
+        java_home = java_home,
+        java_path = "mock",
+        java_version_output = "mock"
+      )
+    },
+    .package = "rJavaEnv"
+  )
+
   result <- java_find_system(quiet = TRUE)
 
   # Result should be normalized (no trailing slashes for files)
   expect_false(any(grepl("//", result$java_home)))
-  expect_true(java_home %in% result$java_home)
+  expect_true(normalizePath(java_home, winslash = "/") %in% result$java_home)
 })
 
 test_that("java_find_system handles empty JAVA_HOME gracefully", {
