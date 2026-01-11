@@ -79,29 +79,48 @@ test_that("full download, install, check, and clear cycle works for all versions
 
     # --- Step C: Check and Verify ---
     # --- Debug Information ---
-    cli::cli_inform("DEBUG: Installed Path: {.path {java_home_path}}")
-    cli::cli_inform("DEBUG: Files in installed path (max 10):")
+    # --- Debug Information ---
+    cat("DEBUG: Installed Path: ", java_home_path, "\n", file = stderr())
+    cat("DEBUG: Files in installed path (max 10):\n", file = stderr())
     print(head(list.files(java_home_path, recursive = TRUE), 10))
+
+    cat(
+      "DEBUG: Current JAVA_HOME: ",
+      Sys.getenv("JAVA_HOME"),
+      "\n",
+      file = stderr()
+    )
+    cat("DEBUG: Sys.which('java'): ", Sys.which("java"), "\n", file = stderr())
 
     bin_java <- file.path(java_home_path, "bin", "java")
     if (file.exists(bin_java)) {
-      cli::cli_inform("DEBUG: bin/java found at {.path {bin_java}}")
-      cli::cli_inform("DEBUG: Running system2 directly on binary:")
+      cat("DEBUG: bin/java found at ", bin_java, "\n", file = stderr())
+      cat(
+        "DEBUG: Running system2 directly on binary with explicit JAVA_HOME:\n",
+        file = stderr()
+      )
       tryCatch(
         {
-          out <- system2(bin_java, "-version", stdout = TRUE, stderr = TRUE)
-          cli::cli_inform(paste(out, collapse = "\n"))
+          # Explicitly set JAVA_HOME for this test call to be sure execution environment sees it
+          out <- system2(
+            bin_java,
+            "-version",
+            stdout = TRUE,
+            stderr = TRUE,
+            env = paste0("JAVA_HOME=", java_home_path)
+          )
+          cat(paste(out, collapse = "\n"), "\n", file = stderr())
         },
         error = function(e) {
-          cli::cli_inform("DEBUG: Execution failed: {e$message}")
+          cat("DEBUG: Execution failed: ", e$message, "\n", file = stderr())
         }
       )
     } else {
-      cli::cli_inform("DEBUG: bin/java NOT found at {.path {bin_java}}")
+      cat("DEBUG: bin/java NOT found at ", bin_java, "\n", file = stderr())
       # check contents/home
       ch <- file.path(java_home_path, "Contents", "Home", "bin", "java")
       if (file.exists(ch)) {
-        cli::cli_inform("DEBUG: Found at Contents/Home: {.path {ch}}")
+        cat("DEBUG: Found at Contents/Home: ", ch, "\n", file = stderr())
       }
     }
 
