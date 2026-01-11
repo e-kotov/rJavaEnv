@@ -14,11 +14,11 @@ test_that("java_build_env_set session mode outputs success message", {
   )
 
   expect_message(
-    java_build_env_set(
+    suppressWarnings(java_build_env_set(
       java_home = "/mock/java",
       where = "session",
       quiet = FALSE
-    ),
+    )),
     "Build environment variables set"
   )
 })
