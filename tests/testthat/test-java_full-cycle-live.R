@@ -133,8 +133,28 @@ test_that("full download, install, check, and clear cycle works for all versions
       # Gather debug info for the failure message
       bin_java <- file.path(java_home_path, "bin", "java")
       if (!file.exists(bin_java)) {
-        # try macOS path
+        # try macOS path structure if unpacked differently
         bin_java <- file.path(java_home_path, "Contents", "Home", "bin", "java")
+      }
+
+      bin_md5 <- if (file.exists(bin_java)) {
+        tools::md5sum(bin_java)
+      } else {
+        "MISSING"
+      }
+      bin_size <- if (file.exists(bin_java)) file.info(bin_java)$size else 0
+
+      # Check system java for comparison
+      sys_java <- Sys.which("java")
+      sys_java_resolved <- if (nzchar(sys_java)) {
+        resolve_symlinks(sys_java)
+      } else {
+        "NOT FOUND"
+      }
+      sys_md5 <- if (file.exists(sys_java_resolved)) {
+        tools::md5sum(sys_java_resolved)
+      } else {
+        "N/A"
       }
 
       bin_out <- tryCatch(
@@ -143,11 +163,15 @@ test_that("full download, install, check, and clear cycle works for all versions
       )
 
       fail(sprintf(
-        "Java Version Mismatch!\nExpected: %s\nGot: %s\nJava Home Path: %s\nBinary Path: %s\nSys.getenv('JAVA_HOME'): %s\nDirect Binary Output:\n%s",
+        "Java Version Mismatch!\nExpected: %s\nGot: %s\nJava Home Path: %s\nBinary Path: %s (Size: %d, MD5: %s)\nSystem Java Target: %s (MD5: %s)\nSys.getenv('JAVA_HOME'): %s\nDirect Binary Output:\n%s",
         java_version,
         cmd_version_result,
         java_home_path,
         bin_java,
+        bin_size,
+        bin_md5,
+        sys_java_resolved,
+        sys_md5,
         Sys.getenv("JAVA_HOME"),
         paste(bin_out, collapse = "\n")
       ))
