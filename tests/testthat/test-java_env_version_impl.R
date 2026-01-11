@@ -9,6 +9,15 @@ test_that("._java_version_check_impl_original parses java -version output", {
   bin_dir <- file.path(temp_java, "bin")
   dir.create(bin_dir, recursive = TRUE)
 
+  # Create a dummy java binary so Sys.which finds it
+  # This is required for the new robust path detection logic
+  java_exe <- file.path(bin_dir, "java")
+  if (.Platform$OS.type == "windows") {
+    java_exe <- paste0(java_exe, ".exe")
+  }
+  file.create(java_exe)
+  Sys.chmod(java_exe, "755")
+
   # Mock system2 to return known version string
   local_mocked_bindings(
     system2 = function(command, args, ...) {
