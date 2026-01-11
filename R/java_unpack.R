@@ -108,6 +108,8 @@ java_unpack <- function(
     } else {
       extracted_dir <- extracted_root_dir
     }
+    cat("DEBUG: Extracted files in ", extracted_dir, ":\n", file = stderr())
+    print(list.files(extracted_dir, recursive = TRUE, max = 5))
 
     # Move the extracted files to the installation path
     file.copy(
