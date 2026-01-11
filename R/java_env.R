@@ -455,20 +455,40 @@ java_check_version_cmd <- function(
     return(FALSE)
   }
 
-  # Check if java executable exists in the PATH
-  if (!nzchar(Sys.which("java"))) {
-    if (!is.null(java_home)) {
+  # Get Java path - use explicit path if java_home is specified
+  if (!is.null(java_home)) {
+    # Use Sys.which to find the executable (handles extensions like .exe automatically)
+    # properly check if it exists in the provided java_home
+    withr::with_path(
+      file.path(java_home, "bin"),
+      {
+        java_bin <- Sys.which("java")
+      },
+      action = "prefix"
+    )
+
+    # Verify the found binary is actually inside the java_home
+    # This prevents edge cases where Sys.which might pick up system java if local bin is empty
+    java_bin_norm <- normalizePath(java_bin, winslash = "/", mustWork = FALSE)
+    java_home_norm <- normalizePath(java_home, winslash = "/", mustWork = FALSE)
+
+    if (!nzchar(java_bin) || !startsWith(java_bin_norm, java_home_norm)) {
+      # Fallback to failing if not found in the expected location
       Sys.setenv(JAVA_HOME = old_java_home)
       Sys.setenv(PATH = old_path)
+      return(FALSE)
     }
-    return(FALSE)
+  } else {
+    java_bin <- Sys.which("java")
+    if (!nzchar(java_bin)) {
+      return(FALSE)
+    }
   }
+  which_java <- java_bin
 
-  # Get Java path and version info (without printing)
-  which_java <- Sys.which("java")
   java_ver <- tryCatch(
     system2(
-      "java",
+      java_bin,
       args = "-version",
       stdout = TRUE,
       stderr = TRUE,
