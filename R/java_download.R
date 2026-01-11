@@ -111,7 +111,6 @@ java_download <- function(
 
   url_template <- java_urls[[distribution]][[platform]][[arch]]
   url <- gsub("\\{version\\}", version, url_template)
-  cat("DEBUG: java_download URL: ", url, "\n", file = stderr())
   url_md5 <- gsub("latest/", "latest_checksum/", url)
 
   dest_file <- file.path(cache_path, basename(url))

@@ -480,13 +480,32 @@ java_check_version_cmd <- function(
   }
   which_java <- java_bin
 
+  # On macOS, the 'java' launcher stub dynamically loads libjvm.dylib.
+  # If another JDK (e.g., system Temurin) is in the default library search path,
+  # the launcher may load the wrong JVM library even if JAVA_HOME is set.
+  # We fix this by targetting DYLD_LIBRARY_PATH specifically for this subprocess.
+  # Note: We do NOT set DYLD_LIBRARY_PATH globally in java_env_set() because:
+  # 1. rJava's .jinit() loads libjvm.dylib directly from path, bypassing the stub.
+  # 2. Global DYLD_* vars are restricted by macOS SIP and can cause side effects.
+  env_vars <- character(0)
+  if (Sys.info()[["sysname"]] == "Darwin" && !is.null(java_home)) {
+    lib_server <- file.path(java_home, "lib", "server")
+    if (dir.exists(lib_server)) {
+      env_vars <- c(
+        paste0("DYLD_LIBRARY_PATH=", lib_server),
+        paste0("JAVA_HOME=", java_home)
+      )
+    }
+  }
+
   java_ver <- tryCatch(
     system2(
       java_bin,
       args = "-version",
       stdout = TRUE,
       stderr = TRUE,
-      timeout = 10
+      timeout = 10,
+      env = if (length(env_vars) > 0) env_vars else NULL
     ),
     error = function(e) NULL
   )
