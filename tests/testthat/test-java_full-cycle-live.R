@@ -78,10 +78,37 @@ test_that("full download, install, check, and clear cycle works for all versions
     testthat::expect_true(dir.exists(java_home_path), info = context_info)
 
     # --- Step C: Check and Verify ---
+    # --- Debug Information ---
+    cli::cli_inform("DEBUG: Installed Path: {.path {java_home_path}}")
+    cli::cli_inform("DEBUG: Files in installed path (max 10):")
+    print(head(list.files(java_home_path, recursive = TRUE), 10))
+
+    bin_java <- file.path(java_home_path, "bin", "java")
+    if (file.exists(bin_java)) {
+      cli::cli_inform("DEBUG: bin/java found at {.path {bin_java}}")
+      cli::cli_inform("DEBUG: Running system2 directly on binary:")
+      tryCatch(
+        {
+          out <- system2(bin_java, "-version", stdout = TRUE, stderr = TRUE)
+          cli::cli_inform(paste(out, collapse = "\n"))
+        },
+        error = function(e) {
+          cli::cli_inform("DEBUG: Execution failed: {e$message}")
+        }
+      )
+    } else {
+      cli::cli_inform("DEBUG: bin/java NOT found at {.path {bin_java}}")
+      # check contents/home
+      ch <- file.path(java_home_path, "Contents", "Home", "bin", "java")
+      if (file.exists(ch)) {
+        cli::cli_inform("DEBUG: Found at Contents/Home: {.path {ch}}")
+      }
+    }
+
     cli::cli_inform("-> Step 3: Verifying with java_check_version_cmd()...")
     cmd_version_result <- java_check_version_cmd(
       java_home = java_home_path,
-      quiet = rj_quiet
+      quiet = FALSE # Force quiet=FALSE for debugging
     )
     testthat::expect_equal(
       cmd_version_result,
