@@ -129,20 +129,38 @@ test_that("full download, install, check, and clear cycle works for all versions
       java_home = java_home_path,
       quiet = FALSE # Force quiet=FALSE for debugging
     )
+    if (cmd_version_result != java_version) {
+      # Gather debug info for the failure message
+      bin_java <- file.path(java_home_path, "bin", "java")
+      if (!file.exists(bin_java)) {
+        # try macOS path
+        bin_java <- file.path(java_home_path, "Contents", "Home", "bin", "java")
+      }
+
+      bin_out <- tryCatch(
+        system2(bin_java, "-version", stdout = TRUE, stderr = TRUE),
+        error = function(e) paste("Execution failed:", e$message)
+      )
+
+      fail(sprintf(
+        "Java Version Mismatch!\nExpected: %s\nGot: %s\nJava Home Path: %s\nBinary Path: %s\nSys.getenv('JAVA_HOME'): %s\nDirect Binary Output:\n%s",
+        java_version,
+        cmd_version_result,
+        java_home_path,
+        bin_java,
+        Sys.getenv("JAVA_HOME"),
+        paste(bin_out, collapse = "\n")
+      ))
+    }
+
     testthat::expect_equal(
       cmd_version_result,
       java_version,
       info = context_info
     )
-    if (cmd_version_result == java_version) {
-      cli::cli_inform(
-        "Successfully verified Java {java_version} with command line."
-      )
-    } else {
-      cli::cli_alert_danger(
-        "Command line verification failed for Java {java_version}."
-      )
-    }
+    cli::cli_inform(
+      "Successfully verified Java {java_version} with command line."
+    )
 
     cli::cli_inform("-> Step 4: Verifying with java_check_version_rjava()...")
     rjava_version_result <- java_check_version_rjava(
