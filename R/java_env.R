@@ -456,7 +456,6 @@ java_check_version_cmd <- function(
   }
 
   # Get Java path - use explicit path if java_home is specified
-  # Get Java path - use explicit path if java_home is specified
   if (!is.null(java_home)) {
     # Direct check of the executable within the provided java_home
     # This avoids Sys.which potentially picking up system shims (common on macOS)
@@ -501,11 +500,11 @@ java_check_version_cmd <- function(
     }
 
     # Also temporarily set JAVA_HOME for this check
-    old_java_home <- Sys.getenv("JAVA_HOME", unset = NA)
-    if (is.na(old_java_home)) {
+    saved_java_home_for_darwin <- Sys.getenv("JAVA_HOME", unset = NA)
+    if (is.na(saved_java_home_for_darwin)) {
       on.exit(Sys.unsetenv("JAVA_HOME"), add = TRUE)
     } else {
-      on.exit(Sys.setenv(JAVA_HOME = old_java_home), add = TRUE)
+      on.exit(Sys.setenv(JAVA_HOME = saved_java_home_for_darwin), add = TRUE)
     }
     Sys.setenv(JAVA_HOME = java_home)
   }
