@@ -395,7 +395,7 @@ java_check_current_rjava_version <- function() {
   # Ignore hidden files like .DS_Store or AppleDouble files (._)
   all_files <- list.files(temp_dir, full.names = TRUE)
   extracted_dirs <- all_files[
-    dir.exists(all_files) & !grepl("^\\._|/\\._", basename(all_files))
+    dir.exists(all_files) & !grepl("^\\._", basename(all_files))
   ]
 
   if (length(extracted_dirs) == 0) {
