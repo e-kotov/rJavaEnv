@@ -130,6 +130,12 @@
   # Filter out rJavaEnv cache paths - we only want true system installations
   candidates <- Filter(function(x) !is_rjavaenv_cache_path(x), candidates)
 
+  # macOS-specific: Filter out /usr to avoid system stubs (like /usr/bin/java)
+  # which can cause timeouts and aren't real JDK homes
+  if (os == "macos") {
+    candidates <- Filter(function(x) x != "/usr", candidates)
+  }
+
   # Must contain bin/java to be valid - this prevents returning corrupted/empty JDK folders
   valid_homes <- Filter(
     function(x) {
