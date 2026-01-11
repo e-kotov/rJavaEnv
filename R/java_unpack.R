@@ -97,9 +97,14 @@ java_unpack <- function(
     }
 
     # Safely find the extracted directory
-    extracted_root_dir <- list.files(temp_dir, full.names = TRUE)[1]
+    extracted_root_dir <- ._find_extracted_dir(temp_dir)
+
     if (platform == "macos") {
       extracted_dir <- file.path(extracted_root_dir, "Contents", "Home")
+      # Some distributions might not have Contents/Home if they were prepared differently
+      if (!dir.exists(extracted_dir)) {
+        extracted_dir <- extracted_root_dir
+      }
     } else {
       extracted_dir <- extracted_root_dir
     }

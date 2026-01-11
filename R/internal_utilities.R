@@ -227,6 +227,8 @@ get_libjvm_path <- function(java_home) {
         recursive = TRUE,
         full.names = TRUE
       )
+      # Ignore AppleDouble files (._)
+      all_files <- all_files[!grepl("/\\._", all_files)]
       if (length(all_files) > 0) lib_path <- all_files[1]
     }
   }
@@ -382,4 +384,24 @@ java_check_current_rjava_version <- function() {
   # Handle 17 -> 17 case (parts[2] is "" and parts[3] is "17")
 
   return(major)
+}
+
+#' Find the actual extracted directory, ignoring hidden/metadata files
+#'
+#' @param temp_dir The directory where files were extracted.
+#' @return The path to the first non-hidden directory found.
+#' @keywords internal
+._find_extracted_dir <- function(temp_dir) {
+  # Ignore hidden files like .DS_Store or AppleDouble files (._)
+  all_files <- list.files(temp_dir, full.names = TRUE)
+  extracted_dirs <- all_files[
+    dir.exists(all_files) & !grepl("^\\._|/\\._", basename(all_files))
+  ]
+
+  if (length(extracted_dirs) == 0) {
+    cli::cli_abort(
+      "No directory found after unpacking the Java distribution at {.path {temp_dir}}"
+    )
+  }
+  return(extracted_dirs[1])
 }
