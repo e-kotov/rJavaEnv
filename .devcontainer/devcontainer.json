@@ -1,0 +1,20 @@
+{
+  "name": "rJavaEnv Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/r:latest",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "quarto.quarto",
+        "Posit.air-vscode",
+        "REditorSupport.r"
+      ]
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin"
+  }
+}
