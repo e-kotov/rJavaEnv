@@ -500,17 +500,15 @@ java_check_version_cmd <- function(
     return(FALSE)
   }
 
-  # Extract Java version
-  java_ver_string <- java_ver[[1]]
-  matches <- regexec(
-    '(openjdk|java) (version )?(\\\")?([0-9]{1,2})',
-    java_ver_string
-  )
-  major_java_ver <- regmatches(java_ver_string, matches)[[1]][5]
+  major_java_ver <- ._java_parse_version_output(java_ver)
 
-  # Fix 1 to 8, as Java 8 prints "1.8"
-  if (major_java_ver == "1") {
-    major_java_ver <- "8"
+  if (isFALSE(major_java_ver)) {
+    # Restore original environment
+    if (!is.null(java_home)) {
+      Sys.setenv(JAVA_HOME = old_java_home)
+      Sys.setenv(PATH = old_path)
+    }
+    return(FALSE)
   }
 
   # Restore original JAVA_HOME and PATH
@@ -592,4 +590,39 @@ java_get_home <- function() {
     return("")
   }
   java_home
+}
+
+#' Internal helper to parse java version output
+#' @noRd
+._java_parse_version_output <- function(java_ver) {
+  # Handle null/empty input
+  if (is.null(java_ver) || length(java_ver) == 0) {
+    return(FALSE)
+  }
+
+  # Extract Java version
+  # Iterate over all lines to find the version string
+  # This is needed because sometimes there is noise (e.g. "Picked up ...")
+  major_java_ver <- NULL
+  for (line in java_ver) {
+    matches <- regexec(
+      '^[[:space:]]*(openjdk|java)[[:space:]]+(version[[:space:]]+)?(")?([0-9]+)',
+      line
+    )
+    if (matches[[1]][1] != -1) {
+      major_java_ver <- regmatches(line, matches)[[1]][5]
+      break
+    }
+  }
+
+  if (is.null(major_java_ver)) {
+    return(FALSE)
+  }
+
+  # Fix 1 to 8, as Java 8 prints "1.8"
+  if (major_java_ver == "1") {
+    major_java_ver <- "8"
+  }
+
+  return(major_java_ver)
 }
