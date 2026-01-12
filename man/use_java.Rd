@@ -7,6 +7,7 @@
 use_java(
   version = NULL,
   distribution = "Corretto",
+  backend = getOption("rJavaEnv.backend", "native"),
   cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
@@ -15,15 +16,19 @@ use_java(
 )
 }
 \arguments{
-\item{version}{\code{Integer} or \code{character} vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", and "11" to "24" (or the same version numbers in \code{integer}) or any newer version if it is available for the selected distribution. For \code{macOS} on \code{aarch64} architecture (Apple Silicon) certain \code{Java} versions are not available.}
+\item{version}{Java version specification. Accepts:
+\itemize{
+\item \strong{Major version} (e.g., \code{21}, \code{17}): Downloads the latest release for that major version.
+\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Downloads the exact version.
+\item \strong{SDKMAN identifier} (e.g., \code{"25.0.1-amzn"}, \code{"24.0.2-open"}): Uses the SDKMAN
+backend automatically. When an identifier is detected, the \code{distribution} and \code{backend}
+arguments are \strong{ignored} and derived from the identifier. Find available identifiers
+in the \code{identifier} column of \code{\link{java_list_available}(backend = "sdkman")}.
+}}
 
-\item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
+\item{distribution}{The Java distribution to download. Defaults to "Corretto". Ignored if \code{version} is a SDKMAN identifier.}
 
-\item{cache_path}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
-
-\item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
-
-\item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
+\item{backend}{The download backend used (e.g., "native", "sdkman"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".}
 
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 

@@ -41,19 +41,19 @@ java_list <- function(
   }
 
   if (type == "distrib") {
-    return(java_list_distrib_cache(
+    return(java_list_distrib(
       output = output,
       quiet = quiet,
       cache_path = target_dir
     ))
   } else if (type == "installed") {
-    return(java_list_installed_cache(
+    return(java_list_installed(
       output = output,
       quiet = quiet,
       cache_path = target_dir
     ))
   } else if (type == "project") {
-    return(java_list_in_project(
+    return(java_list_project(
       output = output,
       quiet = quiet,
       project_path = target_dir
@@ -98,19 +98,19 @@ java_clear <- function(
   }
 
   if (type == "distrib") {
-    java_clear_distrib_cache(
+    java_clear_distrib(
       cache_path = target_dir,
       check = check,
       delete_all = delete_all
     )
   } else if (type == "installed") {
-    java_clear_installed_cache(
+    java_clear_installed(
       cache_path = target_dir,
       check = check,
       delete_all = delete_all
     )
   } else if (type == "project") {
-    java_clear_in_project(
+    java_clear_project(
       project_path = target_dir,
       check = check,
       delete_all = delete_all

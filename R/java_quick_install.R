@@ -2,6 +2,7 @@
 #'
 #' @inheritParams java_download
 #' @inheritParams java_install
+#' @inheritParams global_backend_param
 #' @inheritParams global_quiet_param
 #' @return Invisibly returns the path to the Java home directory. If quiet is set to `FALSE`, also prints a message indicating that Java was installed and set in the current working/project directory.
 #' @export
@@ -15,6 +16,7 @@
 java_quick_install <- function(
   version = 21,
   distribution = "Corretto",
+  backend = getOption("rJavaEnv.backend", "native"),
   project_path = NULL,
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
@@ -41,6 +43,7 @@ java_quick_install <- function(
   java_distrib_path <- java_download(
     version = version,
     distribution = distribution,
+    backend = backend,
     cache_path = cache_path,
     platform = platform,
     arch = arch,

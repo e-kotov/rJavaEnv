@@ -12,7 +12,7 @@ java_valid_versions(
 )
 }
 \arguments{
-\item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
+\item{distribution}{The Java distribution to download. One of "Corretto", "Temurin", or "Zulu". Defaults to "Corretto". Ignored if \code{version} is a SDKMAN identifier.}
 
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 

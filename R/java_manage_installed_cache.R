@@ -1,11 +1,11 @@
 #' List the contents of the Java installations cache folder
 #'
-#' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
-#' @param cache_path The cache directory to list. Defaults to the user-specific data directory. Not recommended to change.
+#' @inheritParams java_list
+#' @inheritParams java_download
 #' @inheritParams global_quiet_param
 #' @return A data frame or character vector with the contents of the cache directory.
-#' @keywords internal
-java_list_installed_cache <- function(
+#' @export
+java_list_installed <- function(
   output = c("data.frame", "vector"),
   quiet = TRUE,
   cache_path = getOption("rJavaEnv.cache_path")
@@ -22,18 +22,31 @@ java_list_installed_cache <- function(
     cli::cli_inform("Contents of the Java installations cache folder:")
   }
 
-  # List directories up to the specified depth
-  java_paths <- list.dirs(
+  # List all directories recursively
+  all_dirs <- list.dirs(
     installed_cache_path,
     recursive = TRUE,
     full.names = TRUE
   )
 
-  java_paths <- java_paths[vapply(
-    java_paths,
+  # Calculate depth relative to installed_cache_path
+  base_depth <- length(strsplit(installed_cache_path, .Platform$file.sep)[[1]])
+
+  # Find leaf directories (installations) - either depth 3 (legacy) or 5 (new)
+  # Legacy: platform/arch/version (depth 3)
+
+  # New: platform/arch/distribution/backend/version (depth 5)
+  java_paths <- all_dirs[vapply(
+    all_dirs,
     function(x) {
-      length(strsplit(x, .Platform$file.sep)[[1]]) ==
-        length(strsplit(installed_cache_path, .Platform$file.sep)[[1]]) + 3
+      depth <- length(strsplit(x, .Platform$file.sep)[[1]]) - base_depth
+      # Check if this looks like a version directory (leaf node)
+      # A version directory should contain bin/ or similar Java structure
+      is_version_dir <- depth %in%
+        c(3, 5) &&
+        (dir.exists(file.path(x, "bin")) ||
+          length(list.files(x, pattern = "^(bin|lib|conf|legal)$")) > 0)
+      return(is_version_dir)
     },
     logical(1)
   )]
@@ -47,10 +60,45 @@ java_list_installed_cache <- function(
   } else if (output == "data.frame") {
     java_info <- lapply(java_paths, function(path) {
       parts <- strsplit(path, .Platform$file.sep)[[1]]
-      parts <- parts[(length(parts) - 2):length(parts)]
-      names(parts) <- c("platform", "arch", "version")
-      parts <- c(path = path, parts)
-      return(parts)
+      rel_parts <- parts[(base_depth + 1):length(parts)]
+      depth <- length(rel_parts)
+
+      if (depth == 3) {
+        # Legacy structure: platform/arch/version
+        info <- c(
+          path = path,
+          platform = rel_parts[1],
+          arch = rel_parts[2],
+          distribution = "unknown",
+          backend = "unknown",
+          version = rel_parts[3]
+        )
+      } else if (depth == 5) {
+        # New structure: platform/arch/distribution/backend/version
+        info <- c(
+          path = path,
+          platform = rel_parts[1],
+          arch = rel_parts[2],
+          distribution = rel_parts[3],
+          backend = rel_parts[4],
+          version = rel_parts[5]
+        )
+      } else {
+        # Unknown structure, treat as legacy with unknown fields
+        info <- c(
+          path = path,
+          platform = if (length(rel_parts) >= 1) rel_parts[1] else "unknown",
+          arch = if (length(rel_parts) >= 2) rel_parts[2] else "unknown",
+          distribution = "unknown",
+          backend = "unknown",
+          version = if (length(rel_parts) >= 3) {
+            rel_parts[length(rel_parts)]
+          } else {
+            "unknown"
+          }
+        )
+      }
+      return(info)
     })
     java_info_df <- do.call(
       rbind,
@@ -65,13 +113,11 @@ java_list_installed_cache <- function(
 
 #' Clear the Java installations cache folder
 #'
-#' @param cache_path The cache directory to clear. Defaults to the user-specific data directory.
-#' @param check Whether to list the contents of the cache directory before clearing it. Defaults to TRUE.
-#' @param delete_all Whether to delete all installations without prompting. Defaults to FALSE.
+#' @inheritParams java_download
+#' @inheritParams java_clear
 #' @return A message indicating whether the cache was cleared or not.
-#'
-#' @keywords internal
-java_clear_installed_cache <- function(
+#' @export
+java_clear_installed <- function(
   check = TRUE,
   delete_all = FALSE,
   cache_path = getOption("rJavaEnv.cache_path")
@@ -92,10 +138,10 @@ java_clear_installed_cache <- function(
   }
 
   if (check) {
-    installations <- java_list_installed_cache(
-      cache_path,
+    installations <- java_list_installed(
+      output = "vector",
       quiet = FALSE,
-      output = "vector"
+      cache_path = cache_path
     )
     if (length(installations) == 0) {
       cli::cli_inform("No Java installations found to clear.")

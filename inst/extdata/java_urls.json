@@ -23,5 +23,21 @@
       "x64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-x64-al2023-jdk.rpm",
       "aarch64": "https://corretto.aws/downloads/latest/amazon-corretto-{version}-aarch64-al2023-jdk.rpm"
     }
+  },
+  "Temurin": {
+    "windows": {
+      "x64": "https://api.adoptium.net/v3/binary/latest/{version}/ga/windows/x64/jdk/hotspot/normal/eclipse"
+    },
+    "linux": {
+      "x64": "https://api.adoptium.net/v3/binary/latest/{version}/ga/linux/x64/jdk/hotspot/normal/eclipse",
+      "aarch64": "https://api.adoptium.net/v3/binary/latest/{version}/ga/linux/aarch64/jdk/hotspot/normal/eclipse"
+    },
+    "macos": {
+      "x64": "https://api.adoptium.net/v3/binary/latest/{version}/ga/mac/x64/jdk/hotspot/normal/eclipse",
+      "aarch64": "https://api.adoptium.net/v3/binary/latest/{version}/ga/mac/aarch64/jdk/hotspot/normal/eclipse"
+    }
+  },
+  "Zulu": {
+    "api_base": "https://api.azul.com/metadata/v1/zulu/packages/"
   }
 }

@@ -14,10 +14,12 @@ test_that("java_ensure prioritizes session, then system, then cache", {
       )
     },
     # Mock cache
-    java_list_installed_cache = function(...) {
+    java_list_installed = function(...) {
       data.frame(
         version = "11",
         path = "/path/to/cache11",
+        distribution = "Corretto",
+        backend = "native",
         stringsAsFactors = FALSE
       )
     },
@@ -57,8 +59,13 @@ test_that("java_ensure handles install = FALSE correctly", {
         is_default = logical()
       )
     },
-    java_list_installed_cache = function(...) {
-      data.frame(version = character(), path = character())
+    java_list_installed = function(...) {
+      data.frame(
+        version = character(),
+        path = character(),
+        distribution = character(),
+        backend = character()
+      )
     },
     .package = "rJavaEnv"
   )
@@ -77,7 +84,14 @@ test_that("java_ensure handled rJava locking correctly (Strict vs Cmd modes)", {
       ._java_env_set_impl = function(...) invisible(TRUE),
       use_java = function(...) invisible(TRUE),
       java_find_system = function(...) data.frame(),
-      java_list_installed_cache = function(...) data.frame(),
+      java_list_installed = function(...) {
+        data.frame(
+          version = character(),
+          path = character(),
+          distribution = character(),
+          backend = character()
+        )
+      },
       .package = "rJavaEnv"
     )
   }

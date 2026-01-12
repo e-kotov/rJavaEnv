@@ -1,7 +1,7 @@
 # Additional coverage tests for java_manage_distrib_cache.R
 
-# Test java_list_distrib_cache with vector output
-test_that("java_list_distrib_cache returns vector output", {
+# Test java_list_distrib with vector output
+test_that("java_list_distrib returns vector output", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -13,7 +13,7 @@ test_that("java_list_distrib_cache returns vector output", {
     "amazon-corretto-21-linux-x64.tar.gz.md5"
   ))
 
-  result <- java_list_distrib_cache(
+  result <- java_list_distrib(
     cache_path = cache_path,
     output = "vector",
     quiet = TRUE
@@ -26,8 +26,8 @@ test_that("java_list_distrib_cache returns vector output", {
   expect_false(any(grepl("\\.md5$", result)))
 })
 
-# Test java_list_distrib_cache with data.frame output
-test_that("java_list_distrib_cache returns data.frame output", {
+# Test java_list_distrib with data.frame output
+test_that("java_list_distrib returns data.frame output", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -38,7 +38,7 @@ test_that("java_list_distrib_cache returns data.frame output", {
     "amazon-corretto-17-macos-aarch64.tar.gz"
   ))
 
-  result <- java_list_distrib_cache(
+  result <- java_list_distrib(
     cache_path = cache_path,
     output = "data.frame",
     quiet = TRUE
@@ -48,8 +48,8 @@ test_that("java_list_distrib_cache returns data.frame output", {
   expect_true("java_distr_path" %in% names(result))
 })
 
-# Test java_list_distrib_cache with quiet = FALSE
-test_that("java_list_distrib_cache outputs message when quiet = FALSE", {
+# Test java_list_distrib with quiet = FALSE
+test_that("java_list_distrib outputs message when quiet = FALSE", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -58,7 +58,7 @@ test_that("java_list_distrib_cache outputs message when quiet = FALSE", {
   file.create(file.path(distrib_path, "amazon-corretto-21-linux-x64.tar.gz"))
 
   expect_message(
-    java_list_distrib_cache(
+    java_list_distrib(
       cache_path = cache_path,
       output = "vector",
       quiet = FALSE
@@ -67,11 +67,11 @@ test_that("java_list_distrib_cache outputs message when quiet = FALSE", {
   )
 })
 
-# Test java_list_distrib_cache when no distributions downloaded
-test_that("java_list_distrib_cache handles no distributions", {
+# Test java_list_distrib when no distributions downloaded
+test_that("java_list_distrib handles no distributions", {
   cache_path <- withr::local_tempdir()
 
-  result <- java_list_distrib_cache(
+  result <- java_list_distrib(
     cache_path = cache_path,
     output = "vector",
     quiet = TRUE
@@ -80,8 +80,8 @@ test_that("java_list_distrib_cache handles no distributions", {
   expect_equal(length(result), 0)
 })
 
-# Test java_clear_distrib_cache with delete_all = TRUE
-test_that("java_clear_distrib_cache with delete_all = TRUE clears all", {
+# Test java_clear_distrib with delete_all = TRUE
+test_that("java_clear_distrib with delete_all = TRUE clears all", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -95,7 +95,7 @@ test_that("java_clear_distrib_cache with delete_all = TRUE clears all", {
   file.create(file.path(distrib_path, "amazon-corretto-21-linux-x64.tar.gz"))
   file.create(file.path(distrib_path, "amazon-corretto-17-linux-x64.tar.gz"))
 
-  java_clear_distrib_cache(
+  java_clear_distrib(
     cache_path = cache_path,
     delete_all = TRUE
   )
@@ -103,8 +103,8 @@ test_that("java_clear_distrib_cache with delete_all = TRUE clears all", {
   expect_equal(length(list.files(distrib_path)), 0)
 })
 
-# Test java_clear_distrib_cache interactive - user enters "all"
-test_that("java_clear_distrib_cache interactive clears all when user enters 'all'", {
+# Test java_clear_distrib interactive - user enters "all"
+test_that("java_clear_distrib interactive clears all when user enters 'all'", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -124,7 +124,7 @@ test_that("java_clear_distrib_cache interactive clears all when user enters 'all
 
   withr::local_options(rJavaEnv.interactive = TRUE)
 
-  java_clear_distrib_cache(
+  java_clear_distrib(
     cache_path = cache_path,
     check = TRUE
   )
@@ -132,8 +132,8 @@ test_that("java_clear_distrib_cache interactive clears all when user enters 'all
   expect_equal(length(list.files(distrib_path)), 0)
 })
 
-# Test java_clear_distrib_cache interactive - user enters specific number
-test_that("java_clear_distrib_cache interactive clears specific distribution", {
+# Test java_clear_distrib interactive - user enters specific number
+test_that("java_clear_distrib interactive clears specific distribution", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -153,7 +153,7 @@ test_that("java_clear_distrib_cache interactive clears specific distribution", {
 
   withr::local_options(rJavaEnv.interactive = TRUE)
 
-  java_clear_distrib_cache(
+  java_clear_distrib(
     cache_path = cache_path,
     check = TRUE
   )
@@ -161,8 +161,8 @@ test_that("java_clear_distrib_cache interactive clears specific distribution", {
   expect_equal(length(list.files(distrib_path)), 0)
 })
 
-# Test java_clear_distrib_cache interactive - user cancels
-test_that("java_clear_distrib_cache interactive cancels on invalid input", {
+# Test java_clear_distrib interactive - user cancels
+test_that("java_clear_distrib interactive cancels on invalid input", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -182,7 +182,7 @@ test_that("java_clear_distrib_cache interactive cancels on invalid input", {
 
   withr::local_options(rJavaEnv.interactive = TRUE)
 
-  java_clear_distrib_cache(
+  java_clear_distrib(
     cache_path = cache_path,
     check = TRUE
   )
@@ -191,8 +191,8 @@ test_that("java_clear_distrib_cache interactive cancels on invalid input", {
   expect_equal(length(list.files(distrib_path)), 1)
 })
 
-# Test java_clear_distrib_cache check=FALSE with yes response
-test_that("java_clear_distrib_cache check=FALSE clears when user confirms", {
+# Test java_clear_distrib check=FALSE with yes response
+test_that("java_clear_distrib check=FALSE clears when user confirms", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -212,7 +212,7 @@ test_that("java_clear_distrib_cache check=FALSE clears when user confirms", {
 
   withr::local_options(rJavaEnv.interactive = TRUE)
 
-  java_clear_distrib_cache(
+  java_clear_distrib(
     cache_path = cache_path,
     check = FALSE
   )
@@ -220,8 +220,8 @@ test_that("java_clear_distrib_cache check=FALSE clears when user confirms", {
   expect_equal(length(list.files(distrib_path)), 0)
 })
 
-# Test java_clear_distrib_cache check=FALSE with no response
-test_that("java_clear_distrib_cache check=FALSE keeps files when user says no", {
+# Test java_clear_distrib check=FALSE with no response
+test_that("java_clear_distrib check=FALSE keeps files when user says no", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -241,7 +241,7 @@ test_that("java_clear_distrib_cache check=FALSE keeps files when user says no", 
 
   withr::local_options(rJavaEnv.interactive = TRUE)
 
-  java_clear_distrib_cache(
+  java_clear_distrib(
     cache_path = cache_path,
     check = FALSE
   )
@@ -249,8 +249,8 @@ test_that("java_clear_distrib_cache check=FALSE keeps files when user says no", 
   expect_equal(length(list.files(distrib_path)), 1)
 })
 
-# Test java_clear_distrib_cache deletes associated md5 file
-test_that("java_clear_distrib_cache deletes md5 file with distribution", {
+# Test java_clear_distrib deletes associated md5 file
+test_that("java_clear_distrib deletes md5 file with distribution", {
   cache_path <- withr::local_tempdir()
   distrib_path <- file.path(cache_path, "distrib")
   dir.create(distrib_path, recursive = TRUE)
@@ -273,7 +273,7 @@ test_that("java_clear_distrib_cache deletes md5 file with distribution", {
 
   withr::local_options(rJavaEnv.interactive = TRUE)
 
-  java_clear_distrib_cache(
+  java_clear_distrib(
     cache_path = cache_path,
     check = TRUE
   )

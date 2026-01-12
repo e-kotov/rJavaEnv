@@ -17,12 +17,14 @@ test_that("use_java returns early when version found in cache", {
   dir.create(installed_path, recursive = TRUE)
 
   local_mocked_bindings(
-    java_list_installed_cache = function(...) {
+    java_list_installed = function(...) {
       data.frame(
         path = dirname(dirname(installed_path)),
         version = "21",
         platform = "macos",
         arch = "aarch64",
+        distribution = "Corretto",
+        backend = "native",
         stringsAsFactors = FALSE
       )
     },
@@ -64,12 +66,14 @@ test_that("use_java cache hit outputs messages when quiet = FALSE", {
   dir.create(installed_path, recursive = TRUE)
 
   local_mocked_bindings(
-    java_list_installed_cache = function(...) {
+    java_list_installed = function(...) {
       data.frame(
         path = dirname(installed_path),
         version = "17",
         platform = "linux",
         arch = "x64",
+        distribution = "Corretto",
+        backend = "native",
         stringsAsFactors = FALSE
       )
     },
@@ -101,12 +105,14 @@ test_that("use_java downloads when version not in cache", {
   cache_path <- withr::local_tempdir()
 
   local_mocked_bindings(
-    java_list_installed_cache = function(...) {
+    java_list_installed = function(...) {
       data.frame(
         path = character(0),
         version = character(0),
         platform = character(0),
         arch = character(0),
+        distribution = character(0),
+        backend = character(0),
         stringsAsFactors = FALSE
       )
     },
@@ -154,12 +160,14 @@ test_that("use_java download path outputs success message", {
   cache_path <- withr::local_tempdir()
 
   local_mocked_bindings(
-    java_list_installed_cache = function(...) {
+    java_list_installed = function(...) {
       data.frame(
         path = character(0),
         version = character(0),
         platform = character(0),
         arch = character(0),
+        distribution = character(0),
+        backend = character(0),
         stringsAsFactors = FALSE
       )
     },

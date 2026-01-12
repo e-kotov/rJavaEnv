@@ -7,7 +7,15 @@
 with_java_env(version, code, ...)
 }
 \arguments{
-\item{version}{Integer or character. \strong{Required.} The Java version you need (e.g., 17, 21). Defaults to \code{NULL}, which is invalid and will trigger a validation error; callers should always provide a non-\code{NULL} value explicitly.}
+\item{version}{Java version specification. Accepts:
+\itemize{
+\item \strong{Major version} (e.g., \code{21}, \code{17}): Downloads the latest release for that major version.
+\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Downloads the exact version.
+\item \strong{SDKMAN identifier} (e.g., \code{"25.0.1-amzn"}, \code{"24.0.2-open"}): Uses the SDKMAN
+backend automatically. When an identifier is detected, the \code{distribution} and \code{backend}
+arguments are \strong{ignored} and derived from the identifier. Find available identifiers
+in the \code{identifier} column of \code{\link{java_list_available}(backend = "sdkman")}.
+}}
 
 \item{code}{The code to execute with the temporary Java environment.}
 

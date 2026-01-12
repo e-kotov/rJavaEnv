@@ -7,6 +7,7 @@
 java_download(
   version = 21,
   distribution = "Corretto",
+  backend = getOption("rJavaEnv.backend", "native"),
   cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
@@ -16,9 +17,20 @@ java_download(
 )
 }
 \arguments{
-\item{version}{\code{Integer} or \code{character} vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", and "11" to "24" (or the same version numbers in \code{integer}) or any newer version if it is available for the selected distribution. For \code{macOS} on \code{aarch64} architecture (Apple Silicon) certain \code{Java} versions are not available.}
+\item{version}{Java version specification. Accepts:
+\itemize{
+\item \strong{Major version} (e.g., \code{21}, \code{17}): Downloads the latest release for that major version.
+\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Downloads the exact version.
+\item \strong{SDKMAN identifier} (e.g., \code{"25.0.1-amzn"}, \code{"24.0.2-open"}): Uses the SDKMAN
+backend automatically. When an identifier is detected, the \code{distribution} and \code{backend}
+arguments are \strong{ignored} and derived from the identifier. Find available identifiers
+in the \code{identifier} column of \code{\link{java_list_available}(backend = "sdkman")}.
+}}
 
-\item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
+\item{distribution}{The Java distribution to download. One of "Corretto", "Temurin", or "Zulu". Defaults to "Corretto". Ignored if \code{version} is a SDKMAN identifier.}
+
+\item{backend}{Download backend to use. One of "native" (vendor APIs) or "sdkman".
+Defaults to "native". Can also be set globally via \code{options(rJavaEnv.backend = "sdkman")}.}
 
 \item{cache_path}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
 
@@ -46,5 +58,8 @@ java_download(version = "17", temp_dir = TRUE)
 
 # download default Java distribution (version 21)
 java_download(temp_dir = TRUE)
+
+# download using SDKMAN backend
+java_download(version = "21", backend = "sdkman", temp_dir = TRUE)
 }
 }

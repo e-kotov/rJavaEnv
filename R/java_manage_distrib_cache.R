@@ -1,13 +1,12 @@
 #' List the contents of the Java distributions cache folder
 #'
-#' @param output The format of the output: "data.frame" or "vector". Defaults to "data.frame".
 #' @inheritParams java_list
 #' @inheritParams java_download
 #' @inheritParams global_quiet_param
-#' @return A character vector with the contents of the cache directory.
+#' @return A data frame or character vector with the contents of the cache directory.
+#' @export
 #'
-#' @keywords internal
-java_list_distrib_cache <- function(
+java_list_distrib <- function(
   cache_path = getOption("rJavaEnv.cache_path"),
   output = c("data.frame", "vector"),
   quiet = TRUE
@@ -41,13 +40,12 @@ java_list_distrib_cache <- function(
 
 #' Clear the Java distributions cache folder
 #'
-#' @param cache_path The cache directory to clear. Defaults to the user-specific data directory.
-#' @param check Whether to list the contents of the cache directory before clearing it. Defaults to TRUE.
-#' @param delete_all Whether to delete all items without prompting. Defaults to FALSE.
+#' @inheritParams java_download
+#' @inheritParams java_clear
 #' @return A message indicating whether the cache was cleared or not.
+#' @export
 #'
-#' @keywords internal
-java_clear_distrib_cache <- function(
+java_clear_distrib <- function(
   cache_path = getOption("rJavaEnv.cache_path"),
   check = TRUE,
   delete_all = FALSE
@@ -70,7 +68,7 @@ java_clear_distrib_cache <- function(
   }
 
   if (check) {
-    distributions <- java_list_distrib_cache(
+    distributions <- java_list_distrib(
       output = "vector",
       cache_path = cache_path
     )

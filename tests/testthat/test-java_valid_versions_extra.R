@@ -70,32 +70,53 @@ test_that("java_valid_versions_fast fallback on stale cache file", {
 })
 
 # Test java_valid_versions session cache hit
+# Test java_valid_versions session cache hit
 test_that("java_valid_versions returns session cache when fresh", {
+  cache_key <- "Corretto_linux_x64"
+  val_list <- list()
+  val_list[[cache_key]] <- c("8", "11", "17", "21", "session_cached")
+
+  ts_list <- list()
+  ts_list[[cache_key]] <- Sys.time()
+
   withr::local_options(
-    rJavaEnv.valid_versions_cache = c("8", "11", "17", "21", "session_cached"),
-    rJavaEnv.valid_versions_timestamp = Sys.time()
+    rJavaEnv.valid_versions_cache_list = val_list,
+    rJavaEnv.valid_versions_timestamp_list = ts_list
   )
 
-  result <- java_valid_versions(force = FALSE)
+  result <- java_valid_versions(
+    distribution = "Corretto",
+    platform = "linux",
+    arch = "x64",
+    force = FALSE
+  )
 
   expect_true("session_cached" %in% result)
 })
 
 # Test java_valid_versions file cache hit
+# Test java_valid_versions file cache hit
 test_that("java_valid_versions uses file cache when session cache expired", {
   cache_path <- withr::local_tempdir()
-  cache_file <- file.path(cache_path, "valid_versions.json")
+  cache_key <- "Corretto_linux_x64"
+  cache_filename <- sprintf("valid_versions_%s.json", cache_key)
+  cache_file <- file.path(cache_path, cache_filename)
 
   withr::local_options(
-    rJavaEnv.valid_versions_cache = NULL,
-    rJavaEnv.valid_versions_timestamp = NULL,
+    rJavaEnv.valid_versions_cache_list = list(),
+    rJavaEnv.valid_versions_timestamp_list = list(),
     rJavaEnv.cache_path = cache_path
   )
 
   # Write a valid cache file
   jsonlite::write_json(c("8", "11", "17", "21", "file_cached"), cache_file)
 
-  result <- java_valid_versions(force = FALSE)
+  result <- java_valid_versions(
+    distribution = "Corretto",
+    platform = "linux",
+    arch = "x64",
+    force = FALSE
+  )
 
   expect_true("file_cached" %in% result)
 })

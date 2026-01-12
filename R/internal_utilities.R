@@ -57,7 +57,33 @@ java_urls_load <- function() {
   if (json_file == "") {
     cli::cli_abort("Configuration file not found")
   }
-  jsonlite::fromJSON(json_file, simplifyVector = FALSE)
+  RcppSimdJson::fload(json_file, max_simplify_lvl = "list")
+}
+
+#' Read JSON from a URL
+#'
+#' Helper function to read JSON from a URL using RcppSimdJson for fast parsing
+#'
+#' @param url URL to read JSON from
+#' @param max_simplify_lvl Simplification level (default: "data_frame")
+#' @return Parsed JSON object
+#' @keywords internal
+read_json_url <- function(url, max_simplify_lvl = "data_frame") {
+  content <- rawToChar(curl::curl_fetch_memory(url)$content)
+  RcppSimdJson::fparse(content, max_simplify_lvl = max_simplify_lvl)
+}
+
+#' Read lines from a URL or file
+#'
+#' Helper function to read lines, mainly for testability.
+#'
+#' @param path Path or URL
+#' @param warn Logical. Whether to warn.
+#' @return Character vector of lines
+#' @keywords internal
+#' @noRd
+rje_read_lines <- function(path, warn = FALSE) {
+  readLines(path, warn = warn)
 }
 
 #' Test all Java URLs

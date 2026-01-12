@@ -5,6 +5,8 @@
 #'
 #'
 #' @inheritParams java_install
+#' @param distribution The Java distribution name (e.g., "Corretto", "Temurin"). If NULL, attempts to read from attributes on java_distrib_path, otherwise defaults to "unknown".
+#' @param backend The download backend used (e.g., "native", "sdkman"). If NULL, attempts to read from attributes on java_distrib_path, otherwise defaults to "unknown".
 #' @param force A logical. Whether to overwrite an existing installation. Defaults to `FALSE`.
 #' @inheritParams global_quiet_param
 #' @return A `character` vector containing of length 1 containing the path to the unpacked Java directory.
@@ -26,6 +28,8 @@
 #'
 java_unpack <- function(
   java_distrib_path,
+  distribution = NULL,
+  backend = NULL,
   quiet = FALSE,
   force = FALSE
 ) {
@@ -38,24 +42,63 @@ java_unpack <- function(
   filename <- basename(java_distrib_path)
   parts <- strsplit(gsub("\\.tar\\.gz|\\.zip", "", filename), "-")[[1]]
 
-  # Guess the version, architecture, and platform
+  # Guess the version, architecture, and platform from filename
   version <- parts[parts %in% java_versions][1]
   arch <- parts[parts %in% architectures][1]
   platform <- parts[parts %in% platforms][1]
 
+  # Fall back to attributes if filename parsing fails
   if (is.na(version)) {
-    cli::cli_abort("Unable to detect Java version from filename.")
+    version <- attr(java_distrib_path, "version")
+    if (is.null(version)) {
+      cli::cli_abort(
+        "Unable to detect Java version from filename or attributes."
+      )
+    }
+    version <- as.character(version)
   }
   if (is.na(arch)) {
-    cli::cli_abort("Unable to detect architecture from filename.")
+    arch <- attr(java_distrib_path, "arch")
+    if (is.null(arch)) {
+      cli::cli_abort(
+        "Unable to detect architecture from filename or attributes."
+      )
+    }
   }
   if (is.na(platform)) {
-    cli::cli_abort("Unable to detect platform from filename.")
+    platform <- attr(java_distrib_path, "platform")
+    if (is.null(platform)) {
+      cli::cli_abort("Unable to detect platform from filename or attributes.")
+    }
   }
 
-  # Create the installation path in the package cache
+  # Resolve distribution: argument > attribute > "unknown"
+  if (is.null(distribution)) {
+    distribution <- attr(java_distrib_path, "distribution")
+    if (is.null(distribution)) {
+      distribution <- "unknown"
+    }
+  }
+
+  # Resolve backend: argument > attribute > "unknown"
+  if (is.null(backend)) {
+    backend <- attr(java_distrib_path, "backend")
+    if (is.null(backend)) {
+      backend <- "unknown"
+    }
+  }
+
+  # Create the installation path in the package cache (new structure)
   cache_path <- getOption("rJavaEnv.cache_path")
-  installed_path <- file.path(cache_path, "installed", platform, arch, version)
+  installed_path <- file.path(
+    cache_path,
+    "installed",
+    platform,
+    arch,
+    distribution,
+    backend,
+    version
+  )
 
   if (dir.exists(installed_path) && force) {
     if (!quiet) {

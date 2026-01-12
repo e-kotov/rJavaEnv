@@ -3,9 +3,9 @@
 test_that("java_list dispatches correctly", {
   # Mock the specific list functions
   local_mocked_bindings(
-    java_list_distrib_cache = function(...) "listed_distrib",
-    java_list_installed_cache = function(...) "listed_installed",
-    java_list_in_project = function(...) "listed_project",
+    java_list_distrib = function(...) "listed_distrib",
+    java_list_installed = function(...) "listed_installed",
+    java_list_project = function(...) "listed_project",
     .package = "rJavaEnv"
   )
 
@@ -75,7 +75,7 @@ test_that("java_clear (distrib) deletes specific files via menu", {
   # User selects item "1" (check=TRUE triggers numbered menu)
   # We must mock java_list_distrib_cache to return vector so the index works
   local_mocked_bindings(
-    java_list_distrib_cache = function(...) c(f1, f2),
+    java_list_distrib = function(...) c(f1, f2),
     rje_readline = function(prompt = "") "1",
     .package = "rJavaEnv"
   )
@@ -117,7 +117,7 @@ test_that("java_clear (installed) handles numbered selection", {
   # User selects item "1"
   # Mock java_list_installed_cache to return expected paths
   local_mocked_bindings(
-    java_list_installed_cache = function(...) c(inst_dir, inst_dir2),
+    java_list_installed = function(...) c(inst_dir, inst_dir2),
     rje_readline = function(prompt = "") "1",
     .package = "rJavaEnv"
   )
@@ -170,7 +170,7 @@ test_that("java_clear cancels on invalid input", {
 
   # User enters "0" to cancel
   local_mocked_bindings(
-    java_list_distrib_cache = function(...) c(f1),
+    java_list_distrib = function(...) c(f1),
     rje_readline = function(prompt = "") "0",
     .package = "rJavaEnv"
   )
