@@ -69,7 +69,7 @@ java_urls_load <- function() {
 #' @return Parsed JSON object
 #' @keywords internal
 read_json_url <- function(url, max_simplify_lvl = "data_frame") {
-  content <- rawToChar(curl::curl_fetch_memory(url)$content)
+  content <- rawToChar(rje_curl_fetch_memory(url)$content)
   RcppSimdJson::fparse(content, max_simplify_lvl = max_simplify_lvl)
 }
 
@@ -106,7 +106,7 @@ urls_test_all <- function() {
 
         try(
           {
-            response <- curl::curl_fetch_memory(
+            response <- rje_curl_fetch_memory(
               url,
               handle = curl::new_handle(nobody = TRUE)
             )
@@ -430,4 +430,15 @@ java_check_current_rjava_version <- function() {
     )
   }
   return(extracted_dirs[1])
+}
+
+#' Wrapper for curl::curl_fetch_memory for testability
+#'
+#' @param url URL to fetch
+#' @param handle curl handle
+#' @return Response object
+#' @keywords internal
+#' @noRd
+rje_curl_fetch_memory <- function(url, handle = curl::new_handle()) {
+  curl::curl_fetch_memory(url, handle = handle)
 }

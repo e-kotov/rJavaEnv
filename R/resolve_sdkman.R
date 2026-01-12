@@ -104,7 +104,7 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
   )
 
   # Follow redirect to get final URL
-  resp <- curl::curl_fetch_memory(broker_url)
+  resp <- rje_curl_fetch_memory(broker_url)
 
   # Extract final URL from response headers or body
   final_url <- if (!is.null(resp$url) && resp$url != broker_url) {
