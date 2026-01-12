@@ -9,6 +9,7 @@
 #' @inheritParams global_version_param
 #' @param distribution The Java distribution to download. Defaults to "Corretto". Ignored if `version` is a SDKMAN identifier.
 #' @inheritParams java_install
+#' @inheritParams java_download
 #' @inheritParams global_backend_param
 #' @inheritParams global_quiet_param
 #' @inheritParams global_sdkman_references

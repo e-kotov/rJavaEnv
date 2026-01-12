@@ -30,6 +30,12 @@ in the \code{identifier} column of \code{\link{java_list_available}(backend = "s
 
 \item{backend}{The download backend used (e.g., "native", "sdkman"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".}
 
+\item{cache_path}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
+
+\item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
+
+\item{arch}{The architecture for which to download the Java distribution. Defaults to the current architecture.}
+
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 
 \item{._skip_rjava_check}{Internal. If TRUE, skip the rJava initialization check.}

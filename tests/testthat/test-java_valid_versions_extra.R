@@ -22,7 +22,7 @@ test_that("java_valid_versions_fast uses file cache when session cache absent", 
   )
 
   # Write a valid cache file
-  jsonlite::write_json(c("8", "11", "17", "21", "42"), cache_file)
+  writeLines('["8", "11", "17", "21", "42"]', cache_file)
 
   result <- java_valid_versions_fast()
 
@@ -60,7 +60,7 @@ test_that("java_valid_versions_fast fallback on stale cache file", {
   )
 
   # Write a cache file and make it old
-  jsonlite::write_json(c("8", "11", "17", "21", "old"), cache_file)
+  writeLines('["8", "11", "17", "21", "old"]', cache_file)
   Sys.setFileTime(cache_file, Sys.time() - 25 * 60 * 60) # 25 hours ago
 
   result <- java_valid_versions_fast()
@@ -109,7 +109,7 @@ test_that("java_valid_versions uses file cache when session cache expired", {
   )
 
   # Write a valid cache file
-  jsonlite::write_json(c("8", "11", "17", "21", "file_cached"), cache_file)
+  writeLines('["8", "11", "17", "21", "file_cached"]', cache_file)
 
   result <- java_valid_versions(
     distribution = "Corretto",
@@ -160,7 +160,7 @@ test_that("java_valid_versions fetches from network when file cache expired", {
   )
 
   # Write a cache file and make it old
-  jsonlite::write_json(c("8", "11", "17", "21", "stale"), cache_file)
+  writeLines('["8", "11", "17", "21", "stale"]', cache_file)
   Sys.setFileTime(cache_file, Sys.time() - 25 * 60 * 60) # 25 hours ago
 
   result <- java_valid_versions(force = FALSE)
@@ -178,19 +178,35 @@ test_that("java_valid_versions saves results to session and file cache", {
   cache_path <- withr::local_tempdir()
 
   withr::local_options(
-    rJavaEnv.valid_versions_cache = NULL,
-    rJavaEnv.valid_versions_timestamp = NULL,
+    rJavaEnv.valid_versions_cache_list = NULL,
+    rJavaEnv.valid_versions_timestamp_list = NULL,
     rJavaEnv.cache_path = cache_path
   )
 
+  # Use fixed params via defaults or explicit if needed, but here defaults are fine
+  # provided we know what key they generate.
+  # By default: distribution="Corretto", platform=platform_detect()$os, arch=platform_detect()$arch
+
   result <- java_valid_versions(force = TRUE)
 
-  # Session cache should be populated
-  expect_equal(getOption("rJavaEnv.valid_versions_cache"), result)
-  expect_false(is.null(getOption("rJavaEnv.valid_versions_timestamp")))
+  plat <- platform_detect(quiet = TRUE)$os
+  arch <- platform_detect(quiet = TRUE)$arch
+  cache_key <- sprintf("Corretto_%s_%s", plat, arch)
 
-  # File cache should be created
-  expect_true(file.exists(file.path(cache_path, "valid_versions.json")))
+  # Session cache check
+  cache_list <- getOption("rJavaEnv.valid_versions_cache_list")
+  ts_list <- getOption("rJavaEnv.valid_versions_timestamp_list")
+
+  expect_false(is.null(cache_list[[cache_key]]))
+  expect_equal(cache_list[[cache_key]], result)
+  expect_false(is.null(ts_list[[cache_key]]))
+
+  # File cache check
+  expected_file <- file.path(
+    cache_path,
+    sprintf("valid_versions_%s.json", cache_key)
+  )
+  expect_true(file.exists(expected_file))
 })
 
 # Test java_valid_major_versions_corretto with explicit platform/arch
