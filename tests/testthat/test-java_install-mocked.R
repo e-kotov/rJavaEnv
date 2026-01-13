@@ -131,9 +131,10 @@ test_that("java_install falls back to file.copy when symlink fails on Unix", {
   expect_equal(copy_calls, 1)
 })
 test_that("java_install respects autoset_java_env = FALSE", {
+  skip_on_os("windows") # Uses Linux filename, not applicable on Windows
   local_proj_path <- withr::local_tempdir()
-  # The path string itself doesn't matter, as we will mock the function that uses it.
-  fake_distrib_path <- "any/fake/path/jdk.tar.gz"
+  # Use a valid-looking filename that can be properly parsed
+  fake_distrib_path <- "any/fake/path/amazon-corretto-21-x64-linux-jdk.tar.gz"
 
   # --- THE FIX ---
   # Add a local mock for java_unpack(). This prevents the real function

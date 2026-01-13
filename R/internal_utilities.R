@@ -417,6 +417,7 @@ java_check_current_rjava_version <- function() {
 #' @param temp_dir The directory where files were extracted.
 #' @return The path to the first non-hidden directory found.
 #' @keywords internal
+#' @noRd
 ._find_extracted_dir <- function(temp_dir) {
   # Ignore hidden files like .DS_Store or AppleDouble files (._)
   all_files <- list.files(temp_dir, full.names = TRUE)

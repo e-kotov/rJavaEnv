@@ -73,7 +73,8 @@ java_install <- function(
   arch <- parts[vapply(parts, function(x) x %in% architectures, logical(1))][1]
   platform <- parts[vapply(parts, function(x) x %in% platforms, logical(1))][1]
 
-  # Create a symlink in the project directory (new structure with distribution/backend)
+
+  # Create a symlink in the project directory
   project_version_path <- file.path(
     project_path,
     "rjavaenv",
