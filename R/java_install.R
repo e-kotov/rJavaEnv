@@ -73,22 +73,6 @@ java_install <- function(
   arch <- parts[vapply(parts, function(x) x %in% architectures, logical(1))][1]
   platform <- parts[vapply(parts, function(x) x %in% platforms, logical(1))][1]
 
-  # Validate detection results
-  if (is.na(version)) {
-    cli::cli_abort(
-      "Unable to detect Java version from filename {.file {filename}}. Please ensure the filename contains a valid version number."
-    )
-  }
-  if (is.na(arch)) {
-    cli::cli_abort(
-      "Unable to detect architecture from filename {.file {filename}}. Expected one of: {.val {architectures}}"
-    )
-  }
-  if (is.na(platform)) {
-    cli::cli_abort(
-      "Unable to detect platform from filename {.file {filename}}. Expected one of: {.val {platforms}}"
-    )
-  }
 
   # Create a symlink in the project directory
   project_version_path <- file.path(
