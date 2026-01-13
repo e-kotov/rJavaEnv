@@ -23,3 +23,8 @@ A data frame or character vector with the contents of the cache directory.
 \description{
 List the contents of the Java distributions cache folder
 }
+\examples{
+\donttest{
+  java_list_distrib()
+}
+}

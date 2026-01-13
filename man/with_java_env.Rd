@@ -35,7 +35,7 @@ See \code{local_java_env()} for details on why rJava is incompatible with scoped
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Using system2
 rJavaEnv::with_java_env(version = 21, {
   system2("java", "-version")

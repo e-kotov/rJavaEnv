@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' # download distribution of Java version 17
 #' java_download(version = "17", temp_dir = TRUE)

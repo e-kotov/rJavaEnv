@@ -236,7 +236,7 @@
 #' @importFrom memoise memoise cache_memory
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # List all system Java installations
 #' java_find_system()
 #'

@@ -51,7 +51,7 @@ The path to the downloaded Java distribution file.
 Download a Java distribution
 }
 \examples{
-\dontrun{
+\donttest{
 
 # download distribution of Java version 17
 java_download(version = "17", temp_dir = TRUE)

@@ -65,7 +65,7 @@ For rJava packages, use \code{java_ensure()} at the start of the R session inste
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Using system2
 my_tool_wrapper <- function() {
   rJavaEnv::local_java_env(version = 21)

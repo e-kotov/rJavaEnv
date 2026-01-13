@@ -69,11 +69,11 @@ java_valid_versions_fast <- function() {
 #' @return A character vector of valid Java versions.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Retrieve valid Java versions (cached if available) using Amazon Corretto endpoint
 #'   versions <- java_valid_versions()
 #'
-#'   # Force refresh the list of Java versions using the Oracle endpoint
+#'   # Force refresh the list of Java versions for Amazon Corretto
 #'   versions <- java_valid_versions(distribution = "Corretto", force = TRUE)
 #' }
 #'

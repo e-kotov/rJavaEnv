@@ -30,11 +30,11 @@ If the API call fails (for example, due to a lack of internet connectivity),
 the function falls back to a pre-defined list of Java versions.
 }
 \examples{
-\dontrun{
+\donttest{
   # Retrieve valid Java versions (cached if available) using Amazon Corretto endpoint
   versions <- java_valid_versions()
 
-  # Force refresh the list of Java versions using the Oracle endpoint
+  # Force refresh the list of Java versions for Amazon Corretto
   versions <- java_valid_versions(distribution = "Corretto", force = TRUE)
 }
 

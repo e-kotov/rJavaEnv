@@ -89,7 +89,7 @@ Finds or installs Java and returns the path to JAVA_HOME.
 This function does not modify any environment variables.
 }
 \examples{
-\dontrun{
+\donttest{
 # Get path to Java 21 (installing if necessary)
 path <- java_resolve(version = 21, install = TRUE)
 }

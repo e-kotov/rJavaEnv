@@ -9,7 +9,7 @@
 #' @return Character string (Path to JAVA_HOME)
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Get path to Java 21 (installing if necessary)
 #' path <- java_resolve(version = 21, install = TRUE)
 #' }

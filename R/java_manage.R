@@ -17,11 +17,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' java_list("project")
 #' java_list("installed")
 #' java_list("distrib")
-#'}
 #'
 java_list <- function(
   type = c("project", "installed", "distrib"),
@@ -73,10 +71,10 @@ java_list <- function(
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' java_clear("project", target_dir = tempdir())
-#' java_clear("installed", target_dir = tempdir())
-#' java_clear("distrib", target_dir = tempdir())
+#' if (interactive()) {
+#'   java_clear("project")
+#'   java_clear("installed")
+#'   java_clear("distrib")
 #' }
 #'
 java_clear <- function(

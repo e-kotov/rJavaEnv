@@ -59,7 +59,7 @@ time to switch Java versions for subsequent system calls.
 }
 
 \examples{
-\dontrun{
+\donttest{
 # download, install Java 17
 java_17_distrib <- java_download(version = "17", temp_dir = TRUE)
 java_home <- java_install(

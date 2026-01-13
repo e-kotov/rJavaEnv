@@ -19,13 +19,4 @@ Uses two-step detection:
 \item Fallback: Regex pattern for unknown future vendors
 }
 }
-\examples{
-\dontrun{
-is_sdkman_identifier("25.0.1-amzn")    # TRUE
-is_sdkman_identifier("26.ea.13-graal") # TRUE
-is_sdkman_identifier("21")             # FALSE
-is_sdkman_identifier("21.0.9")         # FALSE
-is_sdkman_identifier("21.0.9+10-LTS") # FALSE (uppercase suffix)
-}
-}
 \keyword{internal}

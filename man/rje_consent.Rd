@@ -34,7 +34,7 @@ Copyright 2023 Posit Software, PBC
 License: https://github.com/rstudio/renv/blob/main/LICENSE
 }
 \examples{
-\dontrun{
+\donttest{
 
 # to provide consent and prevent other functions from interrupting to get the consent
 rje_consent(provided = TRUE)

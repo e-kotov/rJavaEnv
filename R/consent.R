@@ -25,7 +25,7 @@
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' # to provide consent and prevent other functions from interrupting to get the consent
 #' rje_consent(provided = TRUE)

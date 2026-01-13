@@ -22,7 +22,7 @@
 #' @return Invisibly returns the path to the selected JAVA_HOME.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Using system2
 #' my_tool_wrapper <- function() {
 #'   rJavaEnv::local_java_env(version = 21)
@@ -107,7 +107,7 @@ local_java_env <- function(
 #' @return The result of executing `code`.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Using system2
 #' rJavaEnv::with_java_env(version = 21, {
 #'   system2("java", "-version")
@@ -140,7 +140,7 @@ with_java_env <- function(version, code, ...) {
 #' @return The result of `func`.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Run a function using Java 21 in a subprocess
 #' result <- with_rjava_env(
 #'   version = 21,

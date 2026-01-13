@@ -6,6 +6,10 @@
 #' @return A data frame or character vector with the contents of the cache directory.
 #' @export
 #'
+#' @examples
+#' \donttest{
+#'   java_list_distrib()
+#' }
 java_list_distrib <- function(
   cache_path = getOption("rJavaEnv.cache_path"),
   output = c("data.frame", "vector"),
@@ -44,6 +48,11 @@ java_list_distrib <- function(
 #' @inheritParams java_clear
 #' @return A message indicating whether the cache was cleared or not.
 #' @export
+#'
+#' @examples
+#' if (interactive()) {
+#'   java_clear_distrib()
+#' }
 #'
 java_clear_distrib <- function(
   cache_path = getOption("rJavaEnv.cache_path"),

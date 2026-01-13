@@ -5,6 +5,10 @@
 #' @inheritParams global_quiet_param
 #' @return A data frame or character vector with the symlinked Java versions in the project directory.
 #' @export
+#'
+#' @examples
+#' java_list_project(project_path)
+
 java_list_project <- function(
   project_path = NULL,
   output = c("data.frame", "vector"),
@@ -119,6 +123,12 @@ java_list_project <- function(
 #' @inheritParams java_clear
 #' @return A message indicating whether the symlinks were cleared or not.
 #' @export
+#'
+#' @examples
+#' if (interactive()) {
+#'   java_clear_project()
+#' }
+#'
 java_clear_project <- function(
   project_path = NULL,
   check = TRUE,

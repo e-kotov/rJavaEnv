@@ -19,3 +19,9 @@ A message indicating whether the symlinks were cleared or not.
 \description{
 Clear the Java versions symlinked in the current project
 }
+\examples{
+if (interactive()) {
+  java_clear_project()
+}
+
+}

@@ -43,12 +43,12 @@
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # For end users: Ensure Java 21 is ready BEFORE loading rJava packages
 #' library(rJavaEnv)
 #' java_ensure(version = 21, type = "min")
 #' # Now safe to load packages that depend on rJava
-#' library(myRJavaPackage)
+#' # library(myRJavaPackage)
 #'
 #' # For packages using command-line Java (not rJava):
 #' # Can use java_ensure() within functions to set Java before calling system tools

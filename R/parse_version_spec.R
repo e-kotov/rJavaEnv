@@ -38,15 +38,6 @@ known_sdkman_vendors <- function() {
 #' @param version Version string to check
 #' @return Logical
 #' @keywords internal
-#'
-#' @examples
-#' \dontrun{
-#' is_sdkman_identifier("25.0.1-amzn")    # TRUE
-#' is_sdkman_identifier("26.ea.13-graal") # TRUE
-#' is_sdkman_identifier("21")             # FALSE
-#' is_sdkman_identifier("21.0.9")         # FALSE
-#' is_sdkman_identifier("21.0.9+10-LTS") # FALSE (uppercase suffix)
-#' }
 is_sdkman_identifier <- function(version) {
   if (!grepl("-", version)) {
     return(FALSE)

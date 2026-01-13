@@ -25,7 +25,7 @@
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # List all available versions for current platform
 #' java_list_available()
 #'

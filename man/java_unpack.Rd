@@ -30,7 +30,7 @@ A \code{character} vector containing of length 1 containing the path to the unpa
 Unpack the Java distribution file into cache directory and return the path to the unpacked Java directory with Java binaries.
 }
 \examples{
-\dontrun{
+\donttest{
 
 # set cache dir to temporary directory
 options(rJavaEnv.cache_path = tempdir())

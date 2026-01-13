@@ -54,7 +54,7 @@ operations without affecting the main R session or requiring a restart.
 This function requires the \pkg{callr} package.
 }
 \examples{
-\dontrun{
+\donttest{
 # Run a function using Java 21 in a subprocess
 result <- with_rjava_env(
   version = 21,

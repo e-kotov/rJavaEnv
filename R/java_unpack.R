@@ -12,7 +12,7 @@
 #' @return A `character` vector containing of length 1 containing the path to the unpacked Java directory.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' # set cache dir to temporary directory
 #' options(rJavaEnv.cache_path = tempdir())

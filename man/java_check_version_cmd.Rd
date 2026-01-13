@@ -28,7 +28,7 @@ changes, creating a new cache entry. Cache is session-scoped.
 }
 
 \examples{
-\dontrun{
+\donttest{
 java_check_version_cmd()
 }
 

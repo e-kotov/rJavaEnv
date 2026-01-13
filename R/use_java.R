@@ -19,14 +19,14 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'
 #' # set cache directory for Java to be in temporary directory
 #' options(rJavaEnv.cache_path = tempdir())
 #'
 #' # For end users: Install and set Java BEFORE loading rJava packages
 #' use_java(21)
-#' library(myRJavaPackage)  # Now uses Java 21
+#' # library(myRJavaPackage)  # Now uses Java 21
 #'
 #' # For command-line Java tools (no rJava involved):
 #' # Can switch versions between system calls

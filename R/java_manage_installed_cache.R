@@ -5,6 +5,11 @@
 #' @inheritParams global_quiet_param
 #' @return A data frame or character vector with the contents of the cache directory.
 #' @export
+#'
+#' @examples
+#' # List the contents
+#' java_list_installed()
+#'
 java_list_installed <- function(
   output = c("data.frame", "vector"),
   quiet = TRUE,
@@ -117,6 +122,12 @@ java_list_installed <- function(
 #' @inheritParams java_clear
 #' @return A message indicating whether the cache was cleared or not.
 #' @export
+#'
+#' @examples
+#' if (interactive()) {
+#'   java_clear_installed()
+#' }
+#'
 java_clear_installed <- function(
   check = TRUE,
   delete_all = FALSE,

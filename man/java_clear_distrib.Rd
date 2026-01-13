@@ -23,3 +23,9 @@ A message indicating whether the cache was cleared or not.
 \description{
 Clear the Java distributions cache folder
 }
+\examples{
+if (interactive()) {
+  java_clear_distrib()
+}
+
+}

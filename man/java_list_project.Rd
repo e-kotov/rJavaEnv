@@ -23,3 +23,6 @@ A data frame or character vector with the symlinked Java versions in the project
 \description{
 List the Java versions symlinked in the current project
 }
+\examples{
+java_list_project(project_path)
+}
