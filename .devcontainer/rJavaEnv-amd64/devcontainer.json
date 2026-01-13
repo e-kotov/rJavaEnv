@@ -1,0 +1,24 @@
+{
+  "name": "rJavaEnv (amd64 - Fast Builds)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "platform": "linux/amd64",
+  "features": {
+    "ghcr.io/rocker-org/devcontainer-features/r-rig:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "quarto.quarto",
+        "Posit.air-vscode",
+        "REditorSupport.r"
+      ]
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "remoteEnv": {
+    "PKG_SYSREQS": "true"
+  }
+}

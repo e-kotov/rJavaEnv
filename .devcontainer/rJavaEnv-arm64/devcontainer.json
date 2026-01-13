@@ -1,0 +1,20 @@
+{
+  "name": "rJavaEnv (arm64 - Positron Compatible)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "features": {
+    "ghcr.io/rocker-org/devcontainer-features/r-rig:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "quarto.quarto",
+        "Posit.air-vscode",
+        "REditorSupport.r"
+      ]
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "remoteEnv": {
+    "PKG_SYSREQS": "true"
+  }
+}
