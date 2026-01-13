@@ -1,8 +1,8 @@
 {
-  "name": "rJavaEnv Dev Container",
-  "image": "mcr.microsoft.com/devcontainers/r:latest",
+  "name": "rJavaEnv (arm64 - Positron Compatible)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
   "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {}
+    "ghcr.io/rocker-org/devcontainer-features/r-rig:1": {}
   },
   "customizations": {
     "vscode": {
@@ -15,6 +15,6 @@
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin"
+    "PKG_SYSREQS": "true"
   }
 }

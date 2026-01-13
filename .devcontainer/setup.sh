@@ -28,7 +28,8 @@ echo "Installing Posit Air CLI version ${AIR_VERSION} for ${AIR_ARCH}..."
 TMP_DIR=$(mktemp -d)
 curl -LsSf "$URL" -o "${TMP_DIR}/${FILENAME}"
 tar -xzf "${TMP_DIR}/${FILENAME}" -C "$TMP_DIR"
-mv "${TMP_DIR}/air" "$INSTALL_DIR/air"
+# The tarball extracts a directory named air-${AIR_ARCH}-${PLATFORM}
+mv "${TMP_DIR}/air-${AIR_ARCH}-${PLATFORM}/air" "$INSTALL_DIR/air"
 rm -rf "$TMP_DIR"
 
 # Ensure air is on PATH for the remainder of this setup script.
