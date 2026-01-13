@@ -33,3 +33,6 @@
 ^\.jupyter$
 ^[.]?air[.]toml$
 ^\.vscode$
+^\.sync$
+^\.claude$
+^\.devcontainer$
