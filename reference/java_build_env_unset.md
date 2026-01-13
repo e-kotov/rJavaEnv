@@ -28,8 +28,8 @@ Does not return a value. Invisibly returns `NULL`.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 # Remove Java build environment settings from the current project
 java_build_env_unset()
-} # }
+#> ! No .Rprofile found in the project directory:
+#>   /home/runner/work/rJavaEnv/rJavaEnv/docs/reference
 ```

@@ -67,6 +67,7 @@ This is intended as a quick and easy way to use different Java versions in R scr
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">use_java</span><span class="op">(</span></span>
 <span>  version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  distribution <span class="op">=</span> <span class="st">"Corretto"</span>,</span>
+<span>  backend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"rJavaEnv.backend"</span>, <span class="st">"native"</span><span class="op">)</span>,</span>
 <span>  cache_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"rJavaEnv.cache_path"</span><span class="op">)</span>,</span>
 <span>  platform <span class="op">=</span> <span class="fu"><a href="platform_detect.html">platform_detect</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">os</span>,</span>
 <span>  arch <span class="op">=</span> <span class="fu"><a href="platform_detect.html">platform_detect</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">arch</span>,</span>
@@ -80,11 +81,21 @@ This is intended as a quick and easy way to use different Java versions in R scr
 
 
 <dl><dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p><code>Integer</code> or <code>character</code> vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", and "11" to "24" (or the same version numbers in <code>integer</code>) or any newer version if it is available for the selected distribution. For <code>macOS</code> on <code>aarch64</code> architecture (Apple Silicon) certain <code>Java</code> versions are not available.</p></dd>
+<dd><p>Java version specification. Accepts:</p><ul><li><p><strong>Major version</strong> (e.g., <code>21</code>, <code>17</code>): Downloads the latest release for that major version.</p></li>
+<li><p><strong>Specific version</strong> (e.g., <code>"21.0.9"</code>, <code>"11.0.29"</code>): Downloads the exact version.</p></li>
+<li><p><strong>SDKMAN identifier</strong> (e.g., <code>"25.0.1-amzn"</code>, <code>"24.0.2-open"</code>): Uses the SDKMAN
+backend automatically. When an identifier is detected, the <code>distribution</code> and <code>backend</code>
+arguments are <strong>ignored</strong> and derived from the identifier. Find available identifiers
+in the <code>identifier</code> column of <code><a href="java_list_available.html">java_list_available</a>(backend = "sdkman")</code>.</p></li>
+</ul></dd>
 
 
 <dt id="arg-distribution">distribution<a class="anchor" aria-label="anchor" href="#arg-distribution"></a></dt>
-<dd><p>The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only <a href="https://aws.amazon.com/corretto/" class="external-link">"Amazon Corretto"</a> is supported.</p></dd>
+<dd><p>The Java distribution to download. Defaults to "Corretto". Ignored if <code>version</code> is a SDKMAN identifier.</p></dd>
+
+
+<dt id="arg-backend">backend<a class="anchor" aria-label="anchor" href="#arg-backend"></a></dt>
+<dd><p>The download backend used (e.g., "native", "sdkman"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".</p></dd>
 
 
 <dt id="arg-cache-path">cache_path<a class="anchor" aria-label="anchor" href="#arg-cache-path"></a></dt>
@@ -115,18 +126,18 @@ This is intended as a quick and easy way to use different Java versions in R scr
     <h2 id="rjava-path-locking">rJava Path-Locking<a class="anchor" aria-label="anchor" href="#rjava-path-locking"></a></h2>
 
 
-<p><strong>Important for <strong>rJava</strong> Users</strong>: This function sets environment variables
-(JAVA_HOME, PATH) that affect both command-line Java tools and <strong>rJava</strong> initialization.
-However, due to <strong>rJava</strong>'s path-locking behavior when <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is called
+<p><strong>Important for rJava Users</strong>: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and rJava initialization.
+However, due to rJava's path-locking behavior when <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is called
 (see <a href="https://github.com/s-u/rJava/issues/25" class="external-link">https://github.com/s-u/rJava/issues/25</a>, <a href="https://github.com/s-u/rJava/issues/249" class="external-link">https://github.com/s-u/rJava/issues/249</a>, and <a href="https://github.com/s-u/rJava/issues/334" class="external-link">https://github.com/s-u/rJava/issues/334</a>),
 this function must be called <strong>BEFORE</strong> <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked. Once <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code>
 initializes, the Java version is locked for that R session and cannot be changed without restarting R.</p>
 <p><code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked (and Java locked) when you:</p><ul><li><p>Explicitly call <code><a href="http://www.rforge.net/rJava/" class="external-link">library(rJava)</a></code></p></li>
-<li><p>Load any package that imports <strong>rJava</strong> (which auto-loads it as a dependency)</p></li>
+<li><p>Load any package that imports rJava (which auto-loads it as a dependency)</p></li>
 <li><p>Even just use IDE autocomplete with <code>rJava::</code> (this triggers initialization!)</p></li>
-<li><p>Call any <strong>rJava</strong>-dependent function</p></li>
-</ul><p>Once any of these happen, the Java version used by <strong>rJava</strong> for that session is locked in.
-For command-line Java tools that don't use <strong>rJava</strong>, this function can be called at any
+<li><p>Call any rJava-dependent function</p></li>
+</ul><p>Once any of these happen, the Java version used by rJava for that session is locked in.
+For command-line Java tools that don't use rJava, this function can be called at any
 time to switch Java versions for subsequent system calls.</p>
     </div>
 
@@ -139,7 +150,7 @@ time to switch Java versions for subsequent system calls.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For end users: Install and set Java BEFORE loading rJava packages</span></span></span>
 <span class="r-in"><span><span class="fu">use_java</span><span class="op">(</span><span class="fl">21</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">myRJavaPackage</span><span class="op">)</span>  <span class="co"># Now uses Java 21</span></span></span>
+<span class="r-in"><span><span class="co"># library(myRJavaPackage)  # Now uses Java 21</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For command-line Java tools (no rJava involved):</span></span></span>
 <span class="r-in"><span><span class="co"># Can switch versions between system calls</span></span></span>

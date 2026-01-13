@@ -68,18 +68,18 @@
     <h2 id="rjava-path-locking">rJava Path-Locking<a class="anchor" aria-label="anchor" href="#rjava-path-locking"></a></h2>
 
 
-<p><strong>Important for <strong>rJava</strong> Users</strong>: This function sets environment variables
-(JAVA_HOME, PATH) that affect both command-line Java tools and <strong>rJava</strong> initialization.
-However, due to <strong>rJava</strong>'s path-locking behavior when <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is called
+<p><strong>Important for rJava Users</strong>: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and rJava initialization.
+However, due to rJava's path-locking behavior when <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is called
 (see <a href="https://github.com/s-u/rJava/issues/25" class="external-link">https://github.com/s-u/rJava/issues/25</a>, <a href="https://github.com/s-u/rJava/issues/249" class="external-link">https://github.com/s-u/rJava/issues/249</a>, and <a href="https://github.com/s-u/rJava/issues/334" class="external-link">https://github.com/s-u/rJava/issues/334</a>),
 this function must be called <strong>BEFORE</strong> <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked. Once <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code>
 initializes, the Java version is locked for that R session and cannot be changed without restarting R.</p>
 <p><code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked (and Java locked) when you:</p><ul><li><p>Explicitly call <code><a href="http://www.rforge.net/rJava/" class="external-link">library(rJava)</a></code></p></li>
-<li><p>Load any package that imports <strong>rJava</strong> (which auto-loads it as a dependency)</p></li>
+<li><p>Load any package that imports rJava (which auto-loads it as a dependency)</p></li>
 <li><p>Even just use IDE autocomplete with <code>rJava::</code> (this triggers initialization!)</p></li>
-<li><p>Call any <strong>rJava</strong>-dependent function</p></li>
-</ul><p>Once any of these happen, the Java version used by <strong>rJava</strong> for that session is locked in.
-For command-line Java tools that don't use <strong>rJava</strong>, this function can be called at any
+<li><p>Call any rJava-dependent function</p></li>
+</ul><p>Once any of these happen, the Java version used by rJava for that session is locked in.
+For command-line Java tools that don't use rJava, this function can be called at any
 time to switch Java versions for subsequent system calls.</p>
     </div>
 

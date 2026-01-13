@@ -20,6 +20,7 @@ versions. For example, one could use this in scripts that are called by
 use_java(
   version = NULL,
   distribution = "Corretto",
+  backend = getOption("rJavaEnv.backend", "native"),
   cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
@@ -32,18 +33,30 @@ use_java(
 
 - version:
 
-  `Integer` or `character` vector of length 1 for major version of Java
-  to download or install. If not specified, defaults to the latest LTS
-  version. Can be "8", and "11" to "24" (or the same version numbers in
-  `integer`) or any newer version if it is available for the selected
-  distribution. For `macOS` on `aarch64` architecture (Apple Silicon)
-  certain `Java` versions are not available.
+  Java version specification. Accepts:
+
+  - **Major version** (e.g., `21`, `17`): Downloads the latest release
+    for that major version.
+
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
+    exact version.
+
+  - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
+    the SDKMAN backend automatically. When an identifier is detected,
+    the `distribution` and `backend` arguments are **ignored** and
+    derived from the identifier. Find available identifiers in the
+    `identifier` column of
+    [`java_list_available`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)`(backend = "sdkman")`.
 
 - distribution:
 
-  The Java distribution to download. If not specified, defaults to
-  "Amazon Corretto". Currently only ["Amazon
-  Corretto"](https://aws.amazon.com/corretto/) is supported.
+  The Java distribution to download. Defaults to "Corretto". Ignored if
+  `version` is a SDKMAN identifier.
+
+- backend:
+
+  The download backend used (e.g., "native", "sdkman"). If NULL, uses
+  attributes from java_distrib_path or defaults to "unknown".
 
 - cache_path:
 
@@ -76,11 +89,11 @@ Logical. Returns `TRUE` invisibly on success. Prints status messages if
 
 ## rJava Path-Locking
 
-**Important for **rJava** Users**: This function sets environment
-variables (JAVA_HOME, PATH) that affect both command-line Java tools and
-**rJava** initialization. However, due to **rJava**'s path-locking
-behavior when [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is
-called (see <https://github.com/s-u/rJava/issues/25>,
+**Important for rJava Users**: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and rJava
+initialization. However, due to rJava's path-locking behavior when
+[`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is called (see
+<https://github.com/s-u/rJava/issues/25>,
 <https://github.com/s-u/rJava/issues/249>, and
 <https://github.com/s-u/rJava/issues/334>), this function must be called
 **BEFORE** [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is
@@ -93,18 +106,18 @@ Java locked) when you:
 
 - Explicitly call [`library(rJava)`](http://www.rforge.net/rJava/)
 
-- Load any package that imports **rJava** (which auto-loads it as a
+- Load any package that imports rJava (which auto-loads it as a
   dependency)
 
 - Even just use IDE autocomplete with `rJava::` (this triggers
   initialization!)
 
-- Call any **rJava**-dependent function
+- Call any rJava-dependent function
 
-Once any of these happen, the Java version used by **rJava** for that
-session is locked in. For command-line Java tools that don't use
-**rJava**, this function can be called at any time to switch Java
-versions for subsequent system calls.
+Once any of these happen, the Java version used by rJava for that
+session is locked in. For command-line Java tools that don't use rJava,
+this function can be called at any time to switch Java versions for
+subsequent system calls.
 
 ## Examples
 
@@ -116,7 +129,7 @@ options(rJavaEnv.cache_path = tempdir())
 
 # For end users: Install and set Java BEFORE loading rJava packages
 use_java(21)
-library(myRJavaPackage)  # Now uses Java 21
+# library(myRJavaPackage)  # Now uses Java 21
 
 # For command-line Java tools (no rJava involved):
 # Can switch versions between system calls

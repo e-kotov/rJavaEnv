@@ -82,8 +82,8 @@ This will:
 
 - create a symbolic link (for macOS and Linux) or junction (for Windows,
   if that fails, just copies the files)
-  **rjavaenv/`platform`/`processor_architecture`/`java_version`** in the
-  current directory/project to point to the cached installation;
+  **rjavaenv/`platform`/`processor_architecture`/`distribution`/`backend`/`java_version`**
+  in the current directory/project to point to the cached installation;
 
 - set the current session’s `JAVA_HOME` and `PATH` environment variables
   to point to the installed (symlinked) `Java` distribution;
@@ -106,6 +106,13 @@ function:
 
 ``` r
 rje_consent(provided = TRUE)
+```
+
+You can also specify a distribution different from the default
+“Corretto”:
+
+``` r
+rJavaEnv::java_quick_install(version = 17, distribution = "Temurin")
 ```
 
 ## Using `rJavaEnv` with `targets` and `callr`
@@ -132,9 +139,9 @@ If you do not want to use `rJavaEnv` anymore, please clear the cache
 folders before removing the package:
 
 ``` r
-java_clear("project", delete_all = TRUE)
-java_clear("installed", delete_all = TRUE)
-java_clear("distrib", delete_all = TRUE)
+java_clear_project(delete_all = TRUE)
+java_clear_installed(delete_all = TRUE)
+java_clear_distrib(delete_all = TRUE)
 ```
 
 Also, clear the `.Rprofile` file in the projects there you used the
@@ -188,12 +195,18 @@ The package has several core functions:
       R session, please restart the session so that R picks up the
       system Java).
 
-8.  [`java_list()`](https://www.ekotov.pro/rJavaEnv/reference/java_list.md)
+8.  `java_list_*()`
+    ([`java_list_project()`](https://www.ekotov.pro/rJavaEnv/reference/java_list_project.md),
+    [`java_list_installed()`](https://www.ekotov.pro/rJavaEnv/reference/java_list_installed.md),
+    [`java_list_distrib()`](https://www.ekotov.pro/rJavaEnv/reference/java_list_distrib.md))
 
     - Lists all or some `Java` versions linked in the current project
       (or cached distributions or installations).
 
-9.  [`java_clear()`](https://www.ekotov.pro/rJavaEnv/reference/java_clear.md)
+9.  `java_clear_*()`
+    ([`java_clear_project()`](https://www.ekotov.pro/rJavaEnv/reference/java_clear_project.md),
+    [`java_clear_installed()`](https://www.ekotov.pro/rJavaEnv/reference/java_clear_installed.md),
+    [`java_clear_distrib()`](https://www.ekotov.pro/rJavaEnv/reference/java_clear_distrib.md))
 
     - Removes all or some `Java` versions linked in the current project
       (or cached distributions or installations).
@@ -204,7 +217,13 @@ The package has several core functions:
       installed for either current automatically detected OS and CPU
       architecture or user-specified platform and architecture.
 
-11. [`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md)
+11. [`java_list_available()`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)
+
+    - Lists all installable Java versions from supported backends
+      (native vendor APIs or SDKMAN). Supports filtering by platform and
+      architecture.
+
+12. [`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md)
 
     - Same as
       [`java_quick_install()`](https://www.ekotov.pro/rJavaEnv/reference/java_quick_install.md),
@@ -213,7 +232,7 @@ The package has several core functions:
       not create or edit your `.Rprofile` file. Only sets requested java
       in the current R session.
 
-12. [`java_build_env_set()`](https://www.ekotov.pro/rJavaEnv/reference/java_build_env_set.md)
+13. [`java_build_env_set()`](https://www.ekotov.pro/rJavaEnv/reference/java_build_env_set.md)
     (and
     [`java_build_env_unset()`](https://www.ekotov.pro/rJavaEnv/reference/java_build_env_unset.md))
 

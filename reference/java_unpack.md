@@ -6,7 +6,13 @@ path to the unpacked Java directory with Java binaries.
 ## Usage
 
 ``` r
-java_unpack(java_distrib_path, quiet = FALSE, force = FALSE)
+java_unpack(
+  java_distrib_path,
+  distribution = NULL,
+  backend = NULL,
+  quiet = FALSE,
+  force = FALSE
+)
 ```
 
 ## Arguments
@@ -15,6 +21,18 @@ java_unpack(java_distrib_path, quiet = FALSE, force = FALSE)
 
   A `character` vector of length 1 containing the path to the Java
   distribution file.
+
+- distribution:
+
+  The Java distribution name (e.g., "Corretto", "Temurin"). If NULL,
+  attempts to read from attributes on java_distrib_path, otherwise
+  defaults to "unknown".
+
+- backend:
+
+  The download backend used (e.g., "native", "sdkman"). If NULL,
+  attempts to read from attributes on java_distrib_path, otherwise
+  defaults to "unknown".
 
 - quiet:
 

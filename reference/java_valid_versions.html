@@ -83,7 +83,7 @@ the function falls back to a pre-defined list of Java versions.</p>
 
 
 <dl><dt id="arg-distribution">distribution<a class="anchor" aria-label="anchor" href="#arg-distribution"></a></dt>
-<dd><p>The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only <a href="https://aws.amazon.com/corretto/" class="external-link">"Amazon Corretto"</a> is supported.</p></dd>
+<dd><p>The Java distribution to download. One of "Corretto", "Temurin", or "Zulu". Defaults to "Corretto". Ignored if <code>version</code> is a SDKMAN identifier.</p></dd>
 
 
 <dt id="arg-platform">platform<a class="anchor" aria-label="anchor" href="#arg-platform"></a></dt>
@@ -105,13 +105,13 @@ the function falls back to a pre-defined list of Java versions.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="co"># Retrieve valid Java versions (cached if available) using Amazon Corretto endpoint</span></span></span>
 <span class="r-in"><span>  <span class="va">versions</span> <span class="op">&lt;-</span> <span class="fu">java_valid_versions</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Force refresh the list of Java versions using the Oracle endpoint</span></span></span>
+<span class="r-in"><span>  <span class="co"># Force refresh the list of Java versions for Amazon Corretto</span></span></span>
 <span class="r-in"><span>  <span class="va">versions</span> <span class="op">&lt;-</span> <span class="fu">java_valid_versions</span><span class="op">(</span>distribution <span class="op">=</span> <span class="st">"Corretto"</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

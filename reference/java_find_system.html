@@ -114,13 +114,27 @@ calculated fresh to reflect current <code>JAVA_HOME</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># List all system Java installations</span></span></span>
 <span class="r-in"><span><span class="fu">java_find_system</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            java_home version is_default</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   /usr/lib/jvm/temurin-8-jdk-amd64       8      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  /usr/lib/jvm/temurin-11-jdk-amd64      11      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  /usr/lib/jvm/temurin-17-jdk-amd64      17      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 /usr/lib/jvm/java-21-openjdk-amd64      21      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  /usr/lib/jvm/temurin-21-jdk-amd64      21      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  /usr/lib/jvm/temurin-25-jdk-amd64      25      FALSE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use cache for faster repeated calls if you are using it in your R package</span></span></span>
 <span class="r-in"><span><span class="fu">java_find_system</span><span class="op">(</span>.use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            java_home version is_default</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   /usr/lib/jvm/temurin-8-jdk-amd64       8      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  /usr/lib/jvm/temurin-11-jdk-amd64      11      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  /usr/lib/jvm/temurin-17-jdk-amd64      17      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 /usr/lib/jvm/java-21-openjdk-amd64      21      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  /usr/lib/jvm/temurin-21-jdk-amd64      21      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  /usr/lib/jvm/temurin-25-jdk-amd64      25      FALSE</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

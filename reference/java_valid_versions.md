@@ -22,9 +22,9 @@ java_valid_versions(
 
 - distribution:
 
-  The Java distribution to download. If not specified, defaults to
-  "Amazon Corretto". Currently only ["Amazon
-  Corretto"](https://aws.amazon.com/corretto/) is supported.
+  The Java distribution to download. One of "Corretto", "Temurin", or
+  "Zulu". Defaults to "Corretto". Ignored if `version` is a SDKMAN
+  identifier.
 
 - platform:
 
@@ -48,11 +48,11 @@ A character vector of valid Java versions.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
   # Retrieve valid Java versions (cached if available) using Amazon Corretto endpoint
   versions <- java_valid_versions()
 
-  # Force refresh the list of Java versions using the Oracle endpoint
+  # Force refresh the list of Java versions for Amazon Corretto
   versions <- java_valid_versions(distribution = "Corretto", force = TRUE)
-} # }
+# }
 ```

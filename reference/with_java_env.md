@@ -13,10 +13,20 @@ with_java_env(version, code, ...)
 
 - version:
 
-  Integer or character. **Required.** The Java version you need (e.g.,
-  17, 21). Defaults to `NULL`, which is invalid and will trigger a
-  validation error; callers should always provide a non-`NULL` value
-  explicitly.
+  Java version specification. Accepts:
+
+  - **Major version** (e.g., `21`, `17`): Downloads the latest release
+    for that major version.
+
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
+    exact version.
+
+  - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
+    the SDKMAN backend automatically. When an identifier is detected,
+    the `distribution` and `backend` arguments are **ignored** and
+    derived from the identifier. Find available identifiers in the
+    `identifier` column of
+    [`java_list_available`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)`(backend = "sdkman")`.
 
 - code:
 
@@ -40,15 +50,15 @@ for details on why rJava is incompatible with scoped Java switching.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # Using system2
 rJavaEnv::with_java_env(version = 21, {
   system2("java", "-version")
 })
 
 # Using processx
-rJavaEnv::with_java_env(version = 21, {
-  processx::run("java", c("-jar", "tool.jar", "--help"))
-})
-} # }
+# rJavaEnv::with_java_env(version = 21, {
+#  processx::run("java", c("-jar", "tool.jar", "--help"))
+# })
+# }
 ```

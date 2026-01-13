@@ -24,7 +24,8 @@ install.packages("rJavaEnv")
 Or install the latest version of `rJavaEnv` from R universe:
 
 ``` r
-install.packages('rJavaEnv',
+install.packages(
+  'rJavaEnv',
   repos = c('https://e-kotov.r-universe.dev', 'https://cloud.r-project.org')
 )
 ```
@@ -89,7 +90,27 @@ Example expected output (on a Windows machine):
 
 That is it. You can now use your `Java`/`rJava`-dependent `R` package.
 
-### 2. **Check `Java` installation**
+### 2. **List Available Java Versions**
+
+To check which Java versions are available for download and
+installation, use:
+
+``` r
+java_list_available()
+```
+
+You can also list versions provided by different backends (e.g., SDKMAN)
+or for other platforms:
+
+``` r
+# List versions from SDKMAN
+java_list_available(backend = "sdkman")
+
+# List versions for all platforms (use with caution)
+java_list_available(platform = "all", arch = "all")
+```
+
+### 3. **Check `Java` installation**
 
 You can check if the newly installed `Java` will be correctly picked up
 by the `Java`/`rJava`-dependent `R` package that you are going to use
@@ -149,7 +170,7 @@ the Java installation and configure the system accordingly.
 - If you don’t have admin rights, you can configure it just for your
   user account by adding the `-e` flag.
 
-### 3. Return things to their original state
+### 4. Return things to their original state
 
 #### Unset `Java`
 
@@ -169,7 +190,7 @@ Example expected output (on a Windows machine):
 The line below clears all `Java` installations in the project directory:
 
 ``` r
-java_clear("project", delete_all = TRUE)
+java_clear_project(delete_all = TRUE)
 ```
 
 Example expected output:
@@ -179,15 +200,15 @@ Example expected output:
 Now restart the current `R` session so that `R` picks up the system
 `Java` (or no `Java`, if it is not installed in the system).
 
-### 4. Complete Cleanup
+### 5. Complete Cleanup
 
 If you do not want to use `rJavaEnv` anymore, please clear the cache
 folders before removing the package:
 
 ``` r
-java_clear("project", delete_all = TRUE)
-java_clear("installed", delete_all = TRUE)
-java_clear("distrib", delete_all = TRUE)
+java_clear_project(delete_all = TRUE)
+java_clear_installed(delete_all = TRUE)
+java_clear_distrib(delete_all = TRUE)
 ```
 
 Also, clear the `.Rprofile` file in the projects there you used the

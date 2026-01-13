@@ -72,7 +72,13 @@ code block, then restores the previous environment.</p>
 
 
 <dl><dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p>Integer or character. <strong>Required.</strong> The Java version you need (e.g., 17, 21). Defaults to <code>NULL</code>, which is invalid and will trigger a validation error; callers should always provide a non-<code>NULL</code> value explicitly.</p></dd>
+<dd><p>Java version specification. Accepts:</p><ul><li><p><strong>Major version</strong> (e.g., <code>21</code>, <code>17</code>): Downloads the latest release for that major version.</p></li>
+<li><p><strong>Specific version</strong> (e.g., <code>"21.0.9"</code>, <code>"11.0.29"</code>): Downloads the exact version.</p></li>
+<li><p><strong>SDKMAN identifier</strong> (e.g., <code>"25.0.1-amzn"</code>, <code>"24.0.2-open"</code>): Uses the SDKMAN
+backend automatically. When an identifier is detected, the <code>distribution</code> and <code>backend</code>
+arguments are <strong>ignored</strong> and derived from the identifier. Find available identifiers
+in the <code>identifier</code> column of <code><a href="java_list_available.html">java_list_available</a>(backend = "sdkman")</code>.</p></li>
+</ul></dd>
 
 
 <dt id="arg-code">code<a class="anchor" aria-label="anchor" href="#arg-code"></a></dt>
@@ -97,17 +103,17 @@ See <code><a href="local_java_env.html">local_java_env()</a></code> for details 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Using system2</span></span></span>
 <span class="r-in"><span><span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu">with_java_env</span><span class="op">(</span>version <span class="op">=</span> <span class="fl">21</span>, <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></span><span class="op">(</span><span class="st">"java"</span>, <span class="st">"-version"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using processx</span></span></span>
-<span class="r-in"><span><span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu">with_java_env</span><span class="op">(</span>version <span class="op">=</span> <span class="fl">21</span>, <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu">processx</span><span class="fu">::</span><span class="fu"><a href="http://processx.r-lib.org/reference/run.html" class="external-link">run</a></span><span class="op">(</span><span class="st">"java"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-jar"</span>, <span class="st">"tool.jar"</span>, <span class="st">"--help"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># rJavaEnv::with_java_env(version = 21, {</span></span></span>
+<span class="r-in"><span><span class="co">#  processx::run("java", c("-jar", "tool.jar", "--help"))</span></span></span>
+<span class="r-in"><span><span class="co"># })</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

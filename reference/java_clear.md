@@ -44,9 +44,9 @@ A message indicating whether the cache was cleared or not.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-java_clear("project", target_dir = tempdir())
-java_clear("installed", target_dir = tempdir())
-java_clear("distrib", target_dir = tempdir())
-} # }
+if (interactive()) {
+  java_clear("project")
+  java_clear("installed")
+  java_clear("distrib")
+}
 ```

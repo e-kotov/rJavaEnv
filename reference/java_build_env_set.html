@@ -99,21 +99,46 @@ variables to compile Java-dependent packages like 'rJava' from source. <strong>N
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Download and install Java 17</span></span></span>
 <span class="r-in"><span><span class="va">java_17_distrib</span> <span class="op">&lt;-</span> <span class="fu"><a href="java_download.html">java_download</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"17"</span>, temp_dir <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected platform: <span style="font-weight: bold;">linux</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected architecture: <span style="font-weight: bold;">x64</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> You can change the platform and architecture by specifying the `platform` and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `arch` arguments.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading Corretto Java 17...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Verifying sha256 checksum...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checksum verified.</span>
 <span class="r-in"><span><span class="va">java_home_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="java_install.html">java_install</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  java_distrib_path <span class="op">=</span> <span class="va">java_17_distrib</span>,</span></span>
 <span class="r-in"><span>  project_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  autoset_java_env <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># Manually set env</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Java NA (amazon-corretto-17.0.17.10.1-linux-x64.tar.gz) for linux x64 installed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> at <span style="color: #0000BB;">/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17</span> and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> symlinked to <span style="color: #0000BB;">/tmp/RtmpxvyniH/rjavaenv/linux/x64/Corretto/native/NA</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Set up the build environment in the current session</span></span></span>
 <span class="r-in"><span><span class="fu">java_build_env_set</span><span class="op">(</span>java_home <span class="op">=</span> <span class="va">java_home_path</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Build environment variables set for the current R session.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The environment is now set up to build Java-dependent packages from source.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   You can now run: `install.packages("rJava", type = "source")`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Please ensure your repository points to a source package repository (e.g.,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   https://cloud.r-project.org). Some repositories may serve pre-built binaries</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   even when `type = "source"` is specified.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>System dependencies required for building rJava from source on Linux.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> On Debian/Ubuntu, you may need to install: <span style="color: #0000BB;">libpcre2-dev</span>, <span style="color: #0000BB;">libdeflate-dev</span>,</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB;">libzstd-dev</span>, <span style="color: #0000BB;">liblzma-dev</span>, <span style="color: #0000BB;">libbz2-dev</span>, <span style="color: #0000BB;">zlib1g-dev</span>, and <span style="color: #0000BB;">libicu-dev</span>.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Example installation command for Debian/Ubuntu:</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   `sudo apt-get update &amp;&amp; sudo apt-get install -y --no-install-recommends</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   libpcre2-dev libdeflate-dev libzstd-dev liblzma-dev libbz2-dev zlib1g-dev</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   libicu-dev &amp;&amp; sudo rm -rf /var/lib/apt/lists/*`</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Now, install rJava from source</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rJava"</span>, type <span class="op">=</span> <span class="st">"source"</span>, repos <span class="op">=</span> <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Installing package into ‘/home/runner/work/_temp/Library’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (as ‘lib’ is unspecified)</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -125,11 +125,22 @@
 <pre><code><span><span class="st">"C:\\Users\\user_name\\AppData\\Local/R/cache/R/rJavaEnv"</span></span></code></pre>
 <p>Expected output (on a macOS machine):</p>
 <pre><code><span><span class="st">"/Users/user_name/Library/Caches/org.R-project.R/R/rJavaEnv"</span></span></code></pre>
-</section><section class="section level2"><h2 id="download-java-jdk-distributions">2. Download <code>Java</code> JDK distributions<a class="anchor" aria-label="anchor" href="#download-java-jdk-distributions"></a>
+</section><section class="section level2"><h2 id="list-available-java-versions">2. List available Java versions<a class="anchor" aria-label="anchor" href="#list-available-java-versions"></a>
+</h2>
+<p>Before downloading, you can check which versions are available. By default, <code>rJavaEnv</code> checks specific vendor APIs (Native backend), but it can also query SDKMAN.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># List versions from native backends (Corretto, Temurin, Zulu)</span></span>
+<span><span class="fu"><a href="../reference/java_list_available.html">java_list_available</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># List versions from SDKMAN</span></span>
+<span><span class="fu"><a href="../reference/java_list_available.html">java_list_available</a></span><span class="op">(</span>backend <span class="op">=</span> <span class="st">"sdkman"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</section><section class="section level2"><h2 id="download-java-jdk-distributions">3. Download <code>Java</code> JDK distributions<a class="anchor" aria-label="anchor" href="#download-java-jdk-distributions"></a>
 </h2>
 <p>To download a specific Java distribution, use the <code>java_download</code> function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">java_17_distr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_download.html">java_download</a></span><span class="op">(</span>version <span class="op">=</span> <span class="fl">17</span><span class="op">)</span></span>
 <span><span class="va">java_17_distr</span></span></code></pre></div>
 </div>
@@ -148,7 +159,7 @@ MD5 checksum verified.
 <p><code><a href="../reference/java_download.html">java_download()</a></code> also allows you to define the operating system and processor architecture with function arguments <code>platform</code> and <code>arch</code> (please see the function documentation using <code><a href="../reference/java_download.html">?rJavaEnv::java_download</a></code>). For example, this may be useful if you are packaging a Java distribution for Linux while using a Windows or macOS machine. This may also be useful if for some reason automatic OS and CPU detection fails.</p>
 <p>For example, this line above will download the <code>Amazon Corretto</code> <code>Java JDK</code> version 8 for x86-64 Linux, even though you may be running this code on aarch64 macOS or x86_64 Windows machine:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">java_8_linux64_distr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_download.html">java_download</a></span><span class="op">(</span></span>
 <span>  version <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>  platform <span class="op">=</span> <span class="st">"linux"</span>,</span>
@@ -163,12 +174,34 @@ Downloading Java 8 (Corretto) for linux x64 to C:\Users\user_name\AppData\Local/
  [100%] Downloaded 118096667 bytes...
 Download completed.
 MD5 checksum verified.</code></pre>
-</section><section class="section level2"><h2 id="manage-downloaded-java-jdk-distributions">3. Manage downloaded <code>Java</code> JDK distributions<a class="anchor" aria-label="anchor" href="#manage-downloaded-java-jdk-distributions"></a>
+<p>MD5 checksum verified.</p>
+<pre><code>
+## Using SDKMAN Backend
+
+You can also download distributions using the SDKMAN backend. Note that SDKMAN does not provide checksums for verification.
+
+
+::: {.cell}
+
+```{.r .cell-code}
+java_21_sdkman &lt;- java_download(
+  version = 21,
+  distribution = "Temurin",
+  backend = "sdkman"
+)</code></pre>
+<p>:::</p>
+<p>Example expected output:</p>
+<pre><code>Detected platform: windows
+Detected architecture: x64
+Downloading Temurin Java 21...
+ [100%] Downloaded 201696048 bytes...
+! Skipping checksum (unavailable for SDKMAN)</code></pre>
+</section><section class="section level2"><h2 id="manage-downloaded-java-jdk-distributions">4. Manage downloaded <code>Java</code> JDK distributions<a class="anchor" aria-label="anchor" href="#manage-downloaded-java-jdk-distributions"></a>
 </h2>
 <p>You can manage downloaded distributions with the <code>java_list</code> and <code>java_clear</code> functions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_list.html">java_list</a></span><span class="op">(</span><span class="st">"distrib"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_list_distrib.html">java_list_distrib</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Expected output (on a Windows machine):</p>
 <pre><code>java_distr_path
@@ -176,8 +209,8 @@ MD5 checksum verified.</code></pre>
 2 C:\\Users\\user_name\\AppData\\Local/R/cache/R/rJavaEnv/distrib/amazon-corretto-21-x64-windows-jdk.zip
 3 C:\\Users\\user_name\\AppData\\Local/R/cache/R/rJavaEnv/distrib/amazon-corretto-8-x64-linux-jdk.tar.gz</code></pre>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_clear.html">java_clear</a></span><span class="op">(</span><span class="st">"distrib"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_clear_distrib.html">java_clear_distrib</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Example expected output (on a Windows machine):</p>
 <pre><code>i Existing Java distributions:
@@ -187,126 +220,128 @@ MD5 checksum verified.</code></pre>
 i Enter the number of the distribution to delete, 'all' to delete all, or '0' or any other character to cancel:</code></pre>
 <p>You can also delete all downloaded distributions without consent with:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_clear.html">java_clear</a></span><span class="op">(</span><span class="st">"distrib"</span>, delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_clear_distrib.html">java_clear_distrib</a></span><span class="op">(</span>delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Example expected output:</p>
 <pre><code>Java distributions cache cleared.</code></pre>
-</section><section class="section level2"><h2 id="install-from-downloaded-java-jdk-distributions-into-current-project">4. Install from downloaded <code>Java</code> JDK distributions into current project<a class="anchor" aria-label="anchor" href="#install-from-downloaded-java-jdk-distributions-into-current-project"></a>
+</section><section class="section level2"><h2 id="install-from-downloaded-java-jdk-distributions-into-current-project">5. Install from downloaded <code>Java</code> JDK distributions into current project<a class="anchor" aria-label="anchor" href="#install-from-downloaded-java-jdk-distributions-into-current-project"></a>
 </h2>
 <p>As we have cleared all downloaded <code>Java</code> distributions, let us re-download a few of them:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">java_8_distr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_download.html">java_download</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span></span>
 <span><span class="va">java_17_distr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_download.html">java_download</a></span><span class="op">(</span><span class="fl">17</span><span class="op">)</span></span>
 <span><span class="va">java_22_distr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_download.html">java_download</a></span><span class="op">(</span><span class="fl">22</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Now that we have downloaded the <code>Java</code> distributions, we can install any one of them into the project. Installation in the context of <code>rJavaEnv</code> means extracting the distribution into the <code>installed</code> cache folder (which is in the same root cache directory as the zip archives of the distributions), and linking the files (via symlinks in <code>macOS</code> and <code>Linux</code>, and junctions in <code>Windows</code><a class="footnote-ref" role="doc-noteref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;In Windows, it is sometimes impossible to create junctions for files and folders. In this case, the &lt;code&gt;Java&lt;/code&gt; installation will have to be copied into the project folder, which will take some time. This behaviour is the same &lt;code&gt;renv&lt;/code&gt;’s for R packages and is an operating system limitation.&lt;/p&gt;"><sup>1</sup></a>). If we set the <code>autoset_java_env</code> argument to <code>FALSE</code> we will need to set the <code>JAVA_HOME</code> and <code>PATH</code> environment variables manually.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/java_install.html">java_install</a></span><span class="op">(</span></span>
 <span>  java_distrib_path <span class="op">=</span> <span class="va">java_17_distr</span>,</span>
-<span>  autoset_java_env <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span>  autoset_java_env <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Example expected output (on a Windows machine):</p>
-<pre><code>Java 17 (amazon-corretto-17-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/17 and symlinked to
-C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17</code></pre>
+<pre><code>Java 17 (amazon-corretto-17-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/17 and symlinked to
+C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17</code></pre>
 <p>If we did leave <code>autoset_java_env = TRUE</code> which is a default option, <code>install_java()</code> function would automatically set the <code>JAVA_HOME</code> and <code>PATH</code> environment variables manually in both the current <code>R</code> session and in the current project/working directory by writing a few lines into the <code>.Rprofile</code> file in the current working directory. This way each time you would start an R session, the <code>JAVA_HOME</code> and <code>PATH</code> environment variables would be set to the correct path to the installed <code>Java</code> distribution.</p>
 <p>Alternatively, you may want to not install <code>Java</code> into your project, but just unpack the distribution into the cache folder. For this, you can use the <code><a href="../reference/java_unpack.html">java_unpack()</a></code> function, passing it the path to the downloaded <code>Java</code> distribution from before:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">java_home</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_unpack.html">java_unpack</a></span><span class="op">(</span>java_distr_path <span class="op">=</span> <span class="va">java_8_distr</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p><code>java_unpack</code> will return full path to the unpacked <code>Java</code> distribution that you can use to set the environment variables in the section below using <code><a href="../reference/java_env_set.html">java_env_set()</a></code>.</p>
-</section><section class="section level2"><h2 id="manually-set-installed-java-environment">5. Manually set installed <code>Java</code> environment<a class="anchor" aria-label="anchor" href="#manually-set-installed-java-environment"></a>
+</section><section class="section level2"><h2 id="manually-set-installed-java-environment">6. Manually set installed <code>Java</code> environment<a class="anchor" aria-label="anchor" href="#manually-set-installed-java-environment"></a>
 </h2>
 <p>Let us install another downloaded <code>Java</code> distribution, this time with <code>autoset_java_env = TRUE</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/java_install.html">java_install</a></span><span class="op">(</span></span>
 <span>  java_distrib_path <span class="op">=</span> <span class="va">java_8_distr</span>,</span>
-<span>  autoset_java_env <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span>  autoset_java_env <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Expected output (on a Windows machine):</p>
-<pre><code>Java distribution amazon-corretto-8-x64-windows-jdk.zip already unpacked at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
-v Current R Session: JAVA_HOME and PATH set to C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
-v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
+<pre><code>Java distribution amazon-corretto-8-x64-windows-jdk.zip already unpacked at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8
+v Current R Session: JAVA_HOME and PATH set to C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8
+v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
 tmp0MasTW'
-Java 8 (amazon-corretto-8-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8 and symlinked to
-C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8</code></pre>
+Java 8 (amazon-corretto-8-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8 and symlinked to
+C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/8</code></pre>
 <p>We can now list the <code>Java</code> versions installed in the project directory:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_list.html">java_list</a></span><span class="op">(</span><span class="st">"project"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_list_project.html">java_list_project</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Expected output (on a Windows machine):</p>
-<pre><code>path platform arch version
-1 C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17  windows  x64      17
-2  C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8  windows  x64       8</code></pre>
+<pre><code>path platform arch distribution backend version
+1 C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17  windows  x64    Corretto  native      17
+2  C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/8  windows  x64    Corretto  native       8</code></pre>
 <p>We first installed Java 17 with <code>autoset_java_env = FALSE</code>, and then installed Java 8 with <code>autoset_java_env = TRUE</code>. If we check which version is currently set as the <code>JAVA_HOME</code> environment variable, we would get the second installed <code>Java</code> version, which is Java 8.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/java_check_version_cmd.html">java_check_version_cmd</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Expected output (on a Windows machine):</p>
-<pre><code>JAVA_HOME: C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
-Java path: /c/Users/user_name/AppData/Local/R/cache/R/rJavaEnv/installed/windows/x64/8/bin/java
+<pre><code>JAVA_HOME: C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8
+Java path: /c/Users/user_name/AppData/Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8/bin/java
 Java version: "openjdk version \"1.8.0_422\" OpenJDK Runtime Environment Corretto-8.422.05.1 (build 1.8.0_422-b05) OpenJDK 64-Bit Server VM Corretto-8.422.05.1 (build 25.422-b05, mixed mode)"
 [1] TRUE</code></pre>
 <p>To switch to Java 17 we need to manually set the <code>JAVA_HOME</code> and <code>PATH</code> environment variables with <code><a href="../reference/java_env_set.html">java_env_set()</a></code>. To identify which path to pass to <code><a href="../reference/java_env_set.html">java_env_set()</a></code>, we can use the <code>java_list("project")</code> function again:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_list.html">java_list</a></span><span class="op">(</span><span class="st">"project"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_list_project.html">java_list_project</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Expected output (on a Windows machine):</p>
-<pre><code>path platform arch version
-1 C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17  windows  x64      17
-2  C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8  windows  x64       8</code></pre>
+<pre><code>path platform arch distribution backend version
+1 C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17  windows  x64    Corretto  native      17
+2  C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/8  windows  x64    Corretto  native       8</code></pre>
 <p>As we can see, the Java 17 is currently number 1 in this list, so we save this path:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">java_home_17</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_list.html">java_list</a></span><span class="op">(</span><span class="st">"project"</span>, output <span class="op">=</span> <span class="st">"vector"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<div class="sourceCode cell-code" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">java_home_17</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/java_list_project.html">java_list_project</a></span><span class="op">(</span>output <span class="op">=</span> <span class="st">"vector"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="va">java_home_17</span></span></code></pre></div>
 </div>
 <p>Expected output (on a Windows machine):</p>
-<pre><code><span><span class="st">"C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17"</span></span></code></pre>
+<pre><code><span><span class="st">"C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17"</span></span></code></pre>
 <p>Now we can reuse this path in the <code><a href="../reference/java_env_set.html">java_env_set()</a></code> function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/java_env_set.html">java_env_set</a></span><span class="op">(</span>where <span class="op">=</span> <span class="st">"both"</span>, java_home <span class="op">=</span> <span class="va">java_home_17</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Expected output (on a Windows machine):</p>
-<pre><code>v Current R Session: JAVA_HOME and PATH set to C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
-v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
+<pre><code>v Current R Session: JAVA_HOME and PATH set to C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17
+v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
 tmp0MasTW'</code></pre>
 <p>And finally we can double check which version of <code>Java</code> is going to be picked up by the <code>Java</code>/<code>rJava</code>-dependent <code>R</code> package that you are going to use with:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/java_check_version_cmd.html">java_check_version_cmd</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># for pacakges that use Java via commandline, like opentripplanner</span></span>
 <span><span class="fu"><a href="../reference/java_check_version_rjava.html">java_check_version_rjava</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># for packages that use Java via `rJava`, like r5r</span></span></code></pre></div>
 </div>
 <p>Expected output (on a Windows machine):</p>
-<pre><code>JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
-Java path: /c/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17/bin/java
+<pre><code>JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17
+Java path: /c/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17/bin/java
 Java version: "openjdk version \"17.0.12\" 2024-07-16 LTS OpenJDK Runtime Environment Corretto-17.0.12.7.1 (build 17.0.12+7-LTS) OpenJDK 64-Bit Server VM Corretto-17.0.12.7.1 (build
 17.0.12+7-LTS, mixed mode, sharing)"
 [1] TRUE
 
-Using current session's JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
+Using current session's JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17
 With the user-specified JAVA_HOME rJava and other rJava/Java-based packages will use Java version: "17.0.12"
 [1] TRUE</code></pre>
-</section><section class="section level2"><h2 id="cleanup">6. Cleanup<a class="anchor" aria-label="anchor" href="#cleanup"></a>
+</section><section class="section level2"><h2 id="cleanup">7. Cleanup<a class="anchor" aria-label="anchor" href="#cleanup"></a>
 </h2>
 <p>If you do not want to use <code>rJavaEnv</code> anymore, please clear the cache folders before removing the package:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_clear.html">java_clear</a></span><span class="op">(</span><span class="st">"project"</span>, delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/java_clear.html">java_clear</a></span><span class="op">(</span><span class="st">"installed"</span>, delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/java_clear.html">java_clear</a></span><span class="op">(</span><span class="st">"distrib"</span>, delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/java_clear_project.html">java_clear_project</a></span><span class="op">(</span>delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/java_clear_installed.html">java_clear_installed</a></span><span class="op">(</span>delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/java_clear_distrib.html">java_clear_distrib</a></span><span class="op">(</span>delete_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <p>Also, clear the <code>.Rprofile</code> file in the projects there you used the package:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/java_env_unset.html">java_env_unset</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </section><script id="quarto-html-after-body" type="application/javascript">

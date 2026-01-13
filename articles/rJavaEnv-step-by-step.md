@@ -52,7 +52,21 @@ Expected output (on a macOS machine):
 
     "/Users/user_name/Library/Caches/org.R-project.R/R/rJavaEnv"
 
-## 2. Download `Java` JDK distributions
+## 2. List available Java versions
+
+Before downloading, you can check which versions are available. By
+default, `rJavaEnv` checks specific vendor APIs (Native backend), but it
+can also query SDKMAN.
+
+``` r
+# List versions from native backends (Corretto, Temurin, Zulu)
+java_list_available()
+
+# List versions from SDKMAN
+java_list_available(backend = "sdkman")
+```
+
+## 3. Download `Java` JDK distributions
 
 To download a specific Java distribution, use the `java_download`
 function:
@@ -118,13 +132,39 @@ Example expected output (on a Windows machine):
     Download completed.
     MD5 checksum verified.
 
-## 3. Manage downloaded `Java` JDK distributions
+MD5 checksum verified.
+
+    ## Using SDKMAN Backend
+
+    You can also download distributions using the SDKMAN backend. Note that SDKMAN does not provide checksums for verification.
+
+
+    ::: {.cell}
+
+    ```{.r .cell-code}
+    java_21_sdkman <- java_download(
+      version = 21,
+      distribution = "Temurin",
+      backend = "sdkman"
+    )
+
+:::
+
+Example expected output:
+
+    Detected platform: windows
+    Detected architecture: x64
+    Downloading Temurin Java 21...
+     [100%] Downloaded 201696048 bytes...
+    ! Skipping checksum (unavailable for SDKMAN)
+
+## 4. Manage downloaded `Java` JDK distributions
 
 You can manage downloaded distributions with the `java_list` and
 `java_clear` functions.
 
 ``` r
-java_list("distrib")
+java_list_distrib()
 ```
 
 Expected output (on a Windows machine):
@@ -135,7 +175,7 @@ Expected output (on a Windows machine):
     3 C:\\Users\\user_name\\AppData\\Local/R/cache/R/rJavaEnv/distrib/amazon-corretto-8-x64-linux-jdk.tar.gz
 
 ``` r
-java_clear("distrib")
+java_clear_distrib()
 ```
 
 Example expected output (on a Windows machine):
@@ -149,14 +189,14 @@ Example expected output (on a Windows machine):
 You can also delete all downloaded distributions without consent with:
 
 ``` r
-java_clear("distrib", delete_all = TRUE)
+java_clear_distrib(delete_all = TRUE)
 ```
 
 Example expected output:
 
     Java distributions cache cleared.
 
-## 4. Install from downloaded `Java` JDK distributions into current project
+## 5. Install from downloaded `Java` JDK distributions into current project
 
 As we have cleared all downloaded `Java` distributions, let us
 re-download a few of them:
@@ -179,13 +219,14 @@ distributions), and linking the files (via symlinks in `macOS` and
 ``` r
 java_install(
   java_distrib_path = java_17_distr,
-  autoset_java_env = FALSE)
+  autoset_java_env = FALSE
+)
 ```
 
 Example expected output (on a Windows machine):
 
-    Java 17 (amazon-corretto-17-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/17 and symlinked to
-    C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
+    Java 17 (amazon-corretto-17-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/17 and symlinked to
+    C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17
 
 If we did leave `autoset_java_env = TRUE` which is a default option,
 `install_java()` function would automatically set the `JAVA_HOME` and
@@ -212,7 +253,7 @@ that you can use to set the environment variables in the section below
 using
 [`java_env_set()`](https://www.ekotov.pro/rJavaEnv/reference/java_env_set.md).
 
-## 5. Manually set installed `Java` environment
+## 6. Manually set installed `Java` environment
 
 Let us install another downloaded `Java` distribution, this time with
 `autoset_java_env = TRUE`:
@@ -220,29 +261,30 @@ Let us install another downloaded `Java` distribution, this time with
 ``` r
 java_install(
   java_distrib_path = java_8_distr,
-  autoset_java_env = TRUE)
+  autoset_java_env = TRUE
+)
 ```
 
 Expected output (on a Windows machine):
 
-    Java distribution amazon-corretto-8-x64-windows-jdk.zip already unpacked at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
-    v Current R Session: JAVA_HOME and PATH set to C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
-    v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
+    Java distribution amazon-corretto-8-x64-windows-jdk.zip already unpacked at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8
+    v Current R Session: JAVA_HOME and PATH set to C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8
+    v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
     tmp0MasTW'
-    Java 8 (amazon-corretto-8-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8 and symlinked to
-    C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8
+    Java 8 (amazon-corretto-8-x64-windows-jdk.zip) for windows x64 installed at C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8 and symlinked to
+    C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/8
 
 We can now list the `Java` versions installed in the project directory:
 
 ``` r
-java_list("project")
+java_list_project()
 ```
 
 Expected output (on a Windows machine):
 
-    path platform arch version
-    1 C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17  windows  x64      17
-    2  C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8  windows  x64       8
+    path platform arch distribution backend version
+    1 C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17  windows  x64    Corretto  native      17
+    2  C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/8  windows  x64    Corretto  native       8
 
 We first installed Java 17 with `autoset_java_env = FALSE`, and then
 installed Java 8 with `autoset_java_env = TRUE`. If we check which
@@ -255,8 +297,8 @@ java_check_version_cmd()
 
 Expected output (on a Windows machine):
 
-    JAVA_HOME: C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/8
-    Java path: /c/Users/user_name/AppData/Local/R/cache/R/rJavaEnv/installed/windows/x64/8/bin/java
+    JAVA_HOME: C:\Users\user_name\AppData\Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8
+    Java path: /c/Users/user_name/AppData/Local/R/cache/R/rJavaEnv/installed/windows/x64/Corretto/native/8/bin/java
     Java version: "openjdk version \"1.8.0_422\" OpenJDK Runtime Environment Corretto-8.422.05.1 (build 1.8.0_422-b05) OpenJDK 64-Bit Server VM Corretto-8.422.05.1 (build 25.422-b05, mixed mode)"
     [1] TRUE
 
@@ -268,26 +310,26 @@ To identify which path to pass to
 we can use the `java_list("project")` function again:
 
 ``` r
-java_list("project")
+java_list_project()
 ```
 
 Expected output (on a Windows machine):
 
-    path platform arch version
-    1 C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17  windows  x64      17
-    2  C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/8  windows  x64       8
+    path platform arch distribution backend version
+    1 C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17  windows  x64    Corretto  native      17
+    2  C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/8  windows  x64    Corretto  native       8
 
 As we can see, the Java 17 is currently number 1 in this list, so we
 save this path:
 
 ``` r
-java_home_17 <- java_list("project", output = "vector")[1]
+java_home_17 <- java_list_project(output = "vector")[1]
 java_home_17
 ```
 
 Expected output (on a Windows machine):
 
-    "C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17"
+    "C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17"
 
 Now we can reuse this path in the
 [`java_env_set()`](https://www.ekotov.pro/rJavaEnv/reference/java_env_set.md)
@@ -299,8 +341,8 @@ java_env_set(where = "both", java_home = java_home_17)
 
 Expected output (on a Windows machine):
 
-    v Current R Session: JAVA_HOME and PATH set to C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
-    v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
+    v Current R Session: JAVA_HOME and PATH set to C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17
+    v Current R Project/Working Directory: JAVA_HOME and PATH set to 'C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17' in .Rprofile at 'C:/Users/user_name/AppData/Local/Temp/75/R
     tmp0MasTW'
 
 And finally we can double check which version of `Java` is going to be
@@ -314,25 +356,25 @@ java_check_version_rjava() # for packages that use Java via `rJava`, like r5r
 
 Expected output (on a Windows machine):
 
-    JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
-    Java path: /c/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17/bin/java
+    JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17
+    Java path: /c/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17/bin/java
     Java version: "openjdk version \"17.0.12\" 2024-07-16 LTS OpenJDK Runtime Environment Corretto-17.0.12.7.1 (build 17.0.12+7-LTS) OpenJDK 64-Bit Server VM Corretto-17.0.12.7.1 (build
     17.0.12+7-LTS, mixed mode, sharing)"
     [1] TRUE
 
-    Using current session's JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/17
+    Using current session's JAVA_HOME: C:/Users/user_name/AppData/Local/Temp/75/Rtmp0MasTW/rjavaenv/windows/x64/Corretto/native/17
     With the user-specified JAVA_HOME rJava and other rJava/Java-based packages will use Java version: "17.0.12"
     [1] TRUE
 
-## 6. Cleanup
+## 7. Cleanup
 
 If you do not want to use `rJavaEnv` anymore, please clear the cache
 folders before removing the package:
 
 ``` r
-java_clear("project", delete_all = TRUE)
-java_clear("installed", delete_all = TRUE)
-java_clear("distrib", delete_all = TRUE)
+java_clear_project(delete_all = TRUE)
+java_clear_installed(delete_all = TRUE)
+java_clear_distrib(delete_all = TRUE)
 ```
 
 Also, clear the `.Rprofile` file in the projects there you used the

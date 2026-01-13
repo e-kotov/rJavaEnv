@@ -30,8 +30,7 @@ from the project .Rprofile.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 # clear the JAVA_HOME and PATH environment variables in the specified project .Rprofile
 java_env_unset(project_path = tempdir())
-} # }
+#> Removed JAVA_HOME settings from .Rprofile in '/tmp/RtmpxvyniH/.Rprofile'
 ```

@@ -51,11 +51,25 @@ scan: ~209ms. Subsequent scans with `.use_cache = TRUE`: \<1ms. The
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # List all system Java installations
 java_find_system()
+#>                            java_home version is_default
+#> 1   /usr/lib/jvm/temurin-8-jdk-amd64       8      FALSE
+#> 2  /usr/lib/jvm/temurin-11-jdk-amd64      11      FALSE
+#> 3  /usr/lib/jvm/temurin-17-jdk-amd64      17      FALSE
+#> 4 /usr/lib/jvm/java-21-openjdk-amd64      21      FALSE
+#> 5  /usr/lib/jvm/temurin-21-jdk-amd64      21      FALSE
+#> 6  /usr/lib/jvm/temurin-25-jdk-amd64      25      FALSE
 
 # Use cache for faster repeated calls if you are using it in your R package
 java_find_system(.use_cache = TRUE)
-} # }
+#>                            java_home version is_default
+#> 1   /usr/lib/jvm/temurin-8-jdk-amd64       8      FALSE
+#> 2  /usr/lib/jvm/temurin-11-jdk-amd64      11      FALSE
+#> 3  /usr/lib/jvm/temurin-17-jdk-amd64      17      FALSE
+#> 4 /usr/lib/jvm/java-21-openjdk-amd64      21      FALSE
+#> 5  /usr/lib/jvm/temurin-21-jdk-amd64      21      FALSE
+#> 6  /usr/lib/jvm/temurin-25-jdk-amd64      25      FALSE
+# }
 ```

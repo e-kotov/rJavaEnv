@@ -24,10 +24,20 @@ with_rjava_env(
 
 - version:
 
-  Integer or character. **Required.** The Java version you need (e.g.,
-  17, 21). Defaults to `NULL`, which is invalid and will trigger a
-  validation error; callers should always provide a non-`NULL` value
-  explicitly.
+  Java version specification. Accepts:
+
+  - **Major version** (e.g., `21`, `17`): Downloads the latest release
+    for that major version.
+
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
+    exact version.
+
+  - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
+    the SDKMAN backend automatically. When an identifier is detected,
+    the `distribution` and `backend` arguments are **ignored** and
+    derived from the identifier. Find available identifiers in the
+    `identifier` column of
+    [`java_list_available`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)`(backend = "sdkman")`.
 
 - func:
 
@@ -40,6 +50,7 @@ with_rjava_env(
 - distribution:
 
   Character. The Java distribution to download. Defaults to "Corretto".
+  Ignored if `version` is a SDKMAN identifier.
 
 - install:
 
@@ -76,7 +87,7 @@ This function requires the callr package.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # Run a function using Java 21 in a subprocess
 result <- with_rjava_env(
   version = 21,
@@ -88,5 +99,6 @@ result <- with_rjava_env(
   args = list(x = 1)
 )
 print(result)
-} # }
+#> [1] "21.0.9"
+# }
 ```

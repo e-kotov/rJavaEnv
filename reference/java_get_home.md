@@ -16,5 +16,5 @@ The value of the JAVA_HOME environment variable.
 
 ``` r
 java_get_home()
-#> [1] "/usr/lib/jvm/temurin-17-jdk-amd64"
+#> [1] "/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17"
 ```

@@ -8,6 +8,7 @@ Download and install and set Java in current working/project directory
 java_quick_install(
   version = 21,
   distribution = "Corretto",
+  backend = getOption("rJavaEnv.backend", "native"),
   project_path = NULL,
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
@@ -20,18 +21,32 @@ java_quick_install(
 
 - version:
 
-  `Integer` or `character` vector of length 1 for major version of Java
-  to download or install. If not specified, defaults to the latest LTS
-  version. Can be "8", and "11" to "24" (or the same version numbers in
-  `integer`) or any newer version if it is available for the selected
-  distribution. For `macOS` on `aarch64` architecture (Apple Silicon)
-  certain `Java` versions are not available.
+  Java version specification. Accepts:
+
+  - **Major version** (e.g., `21`, `17`): Downloads the latest release
+    for that major version.
+
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
+    exact version.
+
+  - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
+    the SDKMAN backend automatically. When an identifier is detected,
+    the `distribution` and `backend` arguments are **ignored** and
+    derived from the identifier. Find available identifiers in the
+    `identifier` column of
+    [`java_list_available`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)`(backend = "sdkman")`.
 
 - distribution:
 
-  The Java distribution to download. If not specified, defaults to
-  "Amazon Corretto". Currently only ["Amazon
-  Corretto"](https://aws.amazon.com/corretto/) is supported.
+  The Java distribution to download. One of "Corretto", "Temurin", or
+  "Zulu". Defaults to "Corretto". Ignored if `version` is a SDKMAN
+  identifier.
+
+- backend:
+
+  Download backend to use. One of "native" (vendor APIs) or "sdkman".
+  Defaults to "native". Can also be set globally via
+  `options(rJavaEnv.backend = "sdkman")`.
 
 - project_path:
 
@@ -68,9 +83,37 @@ set in the current working/project directory.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 
 # quick download, unpack, install and set in current working directory default Java version (21)
 java_quick_install(17, temp_dir = TRUE)
-} # }
+#> Detected platform: linux
+#> Detected architecture: x64
+#> You can change the platform and architecture by specifying the `platform` and
+#> `arch` arguments.
+#> File already cached: amazon-corretto-17.0.17.10.1-linux-x64.tar.gz
+#> Java distribution amazon-corretto-17.0.17.10.1-linux-x64.tar.gz already
+#> unpacked at
+#> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
+#> ℹ You have rJava loaded in the current session. rJava gets locked to the Java version that was active when it was first initialized.rJava is initialized when you: (1) call `library(rJava)`, (2) load a package that imports rJava, (3) use IDE autocomplete with `rJava::`, or (4) call any rJava function.This path-locking is a limitation of rJava itself. See: https://github.com/s-u/rJava/issues/25, https://github.com/s-u/rJava/issues/249, and https://github.com/s-u/rJava/issues/334Unless you restart the R session or run your code in a new R subprocess (using targets or callr), the new `JAVA_HOME` and `PATH` will not take effect.
+#> ✔ Current R Session: JAVA_HOME and PATH set to /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
+#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/RtmpxvyniH/rJavaEnv_project'
+#> ℹ On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in
+#>   the current session.
+#>   To make this change permanent for installing rJava-dependent packages from
+#>   source, you may need to reconfigure Java.
+#>   See <https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r> for
+#>   details.
+#>   If you have admin rights, run the following in your terminal:
+#>   `R CMD javareconf
+#>   JAVA_HOME=/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17`
+#>   If you do not have admin rights, run:
+#>   `R CMD javareconf
+#>   JAVA_HOME=/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
+#>   -e`
+#> Java NA (amazon-corretto-17.0.17.10.1-linux-x64.tar.gz) for linux x64 installed
+#> at /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17 and
+#> symlinked to
+#> /tmp/RtmpxvyniH/rJavaEnv_project/rjavaenv/linux/x64/Corretto/native/NA
+# }
 ```

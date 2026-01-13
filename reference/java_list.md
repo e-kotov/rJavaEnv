@@ -54,9 +54,14 @@ cache or project directory.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 java_list("project")
+#> ✖ No Java has been installed in the project.
 java_list("installed")
+#>                                                                    path
+#> 1 /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
+#>   platform arch distribution backend version
+#> 1    linux  x64     Corretto  native      17
 java_list("distrib")
-} # }
+#> ✖ No Java distributions have been downloaded.
+#> character(0)
 ```

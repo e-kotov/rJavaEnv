@@ -23,10 +23,20 @@ local_java_env(
 
 - version:
 
-  Integer or character. **Required.** The Java version you need (e.g.,
-  17, 21). Defaults to `NULL`, which is invalid and will trigger a
-  validation error; callers should always provide a non-`NULL` value
-  explicitly.
+  Java version specification. Accepts:
+
+  - **Major version** (e.g., `21`, `17`): Downloads the latest release
+    for that major version.
+
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
+    exact version.
+
+  - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
+    the SDKMAN backend automatically. When an identifier is detected,
+    the `distribution` and `backend` arguments are **ignored** and
+    derived from the identifier. Find available identifiers in the
+    `identifier` column of
+    [`java_list_available`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)`(backend = "sdkman")`.
 
 - type:
 
@@ -36,6 +46,7 @@ local_java_env(
 - distribution:
 
   Character. The Java distribution to download. Defaults to "Corretto".
+  Ignored if `version` is a SDKMAN identifier.
 
 - install:
 
@@ -97,17 +108,17 @@ my_tool_wrapper <- function() {
 } # Environment restored automatically here
 
 # Using processx
-run_java_jar <- function(jar_path, args) {
-  rJavaEnv::local_java_env(version = 21)
-  processx::run("java", c("-jar", jar_path, args))
-}
+# run_java_jar <- function(jar_path, args) {
+#  rJavaEnv::local_java_env(version = 21)
+#  processx::run("java", c("-jar", jar_path, args))
+# }
 
 # With caching for repeated calls
-process_files <- function(files) {
-  for (f in files) {
-    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
-    processx::run("java", c("-jar", "processor.jar", f))
-  }
-}
+# process_files <- function(files) {
+#  for (f in files) {
+#    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
+#   processx::run("java", c("-jar", "processor.jar", f))
+#  }
+# }
 } # }
 ```

@@ -107,37 +107,63 @@ rJava initialization. See details for important information about rJava timing.<
     <h2 id="rjava-path-locking">rJava Path-Locking<a class="anchor" aria-label="anchor" href="#rjava-path-locking"></a></h2>
 
 
-<p><strong>Important for <strong>rJava</strong> Users</strong>: This function sets environment variables
-(JAVA_HOME, PATH) that affect both command-line Java tools and <strong>rJava</strong> initialization.
-However, due to <strong>rJava</strong>'s path-locking behavior when <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is called
+<p><strong>Important for rJava Users</strong>: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and rJava initialization.
+However, due to rJava's path-locking behavior when <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is called
 (see <a href="https://github.com/s-u/rJava/issues/25" class="external-link">https://github.com/s-u/rJava/issues/25</a>, <a href="https://github.com/s-u/rJava/issues/249" class="external-link">https://github.com/s-u/rJava/issues/249</a>, and <a href="https://github.com/s-u/rJava/issues/334" class="external-link">https://github.com/s-u/rJava/issues/334</a>),
 this function must be called <strong>BEFORE</strong> <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked. Once <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code>
 initializes, the Java version is locked for that R session and cannot be changed without restarting R.</p>
 <p><code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked (and Java locked) when you:</p><ul><li><p>Explicitly call <code><a href="http://www.rforge.net/rJava/" class="external-link">library(rJava)</a></code></p></li>
-<li><p>Load any package that imports <strong>rJava</strong> (which auto-loads it as a dependency)</p></li>
+<li><p>Load any package that imports rJava (which auto-loads it as a dependency)</p></li>
 <li><p>Even just use IDE autocomplete with <code>rJava::</code> (this triggers initialization!)</p></li>
-<li><p>Call any <strong>rJava</strong>-dependent function</p></li>
-</ul><p>Once any of these happen, the Java version used by <strong>rJava</strong> for that session is locked in.
-For command-line Java tools that don't use <strong>rJava</strong>, this function can be called at any
+<li><p>Call any rJava-dependent function</p></li>
+</ul><p>Once any of these happen, the Java version used by rJava for that session is locked in.
+For command-line Java tools that don't use rJava, this function can be called at any
 time to switch Java versions for subsequent system calls.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># download, install Java 17</span></span></span>
 <span class="r-in"><span><span class="va">java_17_distrib</span> <span class="op">&lt;-</span> <span class="fu"><a href="java_download.html">java_download</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"17"</span>, temp_dir <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected platform: <span style="font-weight: bold;">linux</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected architecture: <span style="font-weight: bold;">x64</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> You can change the platform and architecture by specifying the `platform` and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `arch` arguments.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> File already cached: amazon-corretto-17.0.17.10.1-linux-x64.tar.gz</span>
 <span class="r-in"><span><span class="va">java_home</span> <span class="op">&lt;-</span> <span class="fu"><a href="java_install.html">java_install</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  java_distrib_path <span class="op">=</span> <span class="va">java_17_distrib</span>,</span></span>
 <span class="r-in"><span>  project_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  autoset_java_env <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Java distribution amazon-corretto-17.0.17.10.1-linux-x64.tar.gz already</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> unpacked at</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Java NA (amazon-corretto-17.0.17.10.1-linux-x64.tar.gz) for linux x64 installed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> at <span style="color: #0000BB;">/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17</span> and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> symlinked to <span style="color: #0000BB;">/tmp/RtmpxvyniH/rjavaenv/linux/x64/Corretto/native/NA</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># now manually set the JAVA_HOME and PATH environment variables in current session</span></span></span>
 <span class="r-in"><span><span class="fu">java_env_set</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  where <span class="op">=</span> <span class="st">"session"</span>,</span></span>
 <span class="r-in"><span>  java_home <span class="op">=</span> <span class="va">java_home</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> You have <span style="color: #0000BB;">rJava</span> loaded in the current session. <span style="color: #0000BB;">rJava</span> gets locked to the Java version that was active when it was first initialized.<span style="color: #0000BB;">rJava</span> is initialized when you: (1) call `library(rJava)`, (2) load a package that imports <span style="color: #0000BB;">rJava</span>, (3) use IDE autocomplete with `rJava::`, or (4) call any <span style="color: #0000BB;">rJava</span> function.This path-locking is a limitation of <span style="color: #0000BB;">rJava</span> itself. See: https://github.com/s-u/rJava/issues/25, https://github.com/s-u/rJava/issues/249, and https://github.com/s-u/rJava/issues/334Unless you restart the R session or run your code in a new R subprocess (using <span style="color: #0000BB;">targets</span> or <span style="color: #0000BB;">callr</span>), the new `JAVA_HOME` and `PATH` will not take effect.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Current R Session: JAVA_HOME and PATH set to <span style="color: #0000BB;">/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   the current session.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   To make this change permanent for installing rJava-dependent packages from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   source, you may need to reconfigure Java.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   See <span style="color: #0000BB; font-style: italic;">&lt;https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r&gt;</span> for</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   details.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   If you have admin rights, run the following in your terminal:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   `R CMD javareconf</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   JAVA_HOME=/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   If you do not have admin rights, run:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   `R CMD javareconf</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   JAVA_HOME=/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   -e`</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># or set JAVA_HOME and PATH in the spefific projects' .Rprofile</span></span></span>
 <span class="r-in"><span><span class="fu">java_env_set</span><span class="op">(</span></span></span>
@@ -145,8 +171,22 @@ time to switch Java versions for subsequent system calls.</p>
 <span class="r-in"><span>  java_home <span class="op">=</span> <span class="va">java_home</span>,</span></span>
 <span class="r-in"><span>  project_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Current R Project/Working Directory: JAVA_HOME and PATH set to '<span style="color: #0000BB;">/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17</span>' in .Rprofile at '<span style="color: #0000BB;">/tmp/RtmpxvyniH</span>'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   the current session.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   To make this change permanent for installing rJava-dependent packages from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   source, you may need to reconfigure Java.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   See <span style="color: #0000BB; font-style: italic;">&lt;https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r&gt;</span> for</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   details.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   If you have admin rights, run the following in your terminal:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   `R CMD javareconf</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   JAVA_HOME=/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   If you do not have admin rights, run:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   `R CMD javareconf</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   JAVA_HOME=/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   -e`</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

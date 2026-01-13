@@ -8,16 +8,25 @@ Just quickly install `Java` in the current project
   : Download and install and set Java in current working/project
   directory
 
-## Quick Set
+## Quick Set & Discovery
 
-Just quickly set `Java` in the current project (for use with
-`targets`/`callr`)
+Quickly find available versions, check system for existing ones, and set
+`Java` in the current project
 
 - [`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md)
   :
 
   Install specified Java version and set the `JAVA_HOME` and `PATH`
   environment variables in current R session
+
+- [`java_list_available()`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)
+  : List Available Java Versions
+
+- [`java_find_system()`](https://www.ekotov.pro/rJavaEnv/reference/java_find_system.md)
+  : Discover system-wide Java installations
+
+- [`java_valid_versions()`](https://www.ekotov.pro/rJavaEnv/reference/java_valid_versions.md)
+  : Retrieve Valid Java Versions
 
 ## Ensure Required Java Version
 
@@ -40,9 +49,9 @@ developers)
 - [`with_rjava_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_rjava_env.md)
   : Execute rJava code in a separate process with specific Java version
 
-## Check `Java` version
+## Java Validation
 
-Check `Java` version with currently set environment
+Check `Java` version and compatibility with currently set environment
 
 - [`java_check_version_cmd()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_version_cmd.md)
   : Check installed Java version using terminal commands
@@ -83,20 +92,29 @@ Control every step of `Java` download, unpacking and installation
 - [`java_build_env_unset()`](https://www.ekotov.pro/rJavaEnv/reference/java_build_env_unset.md)
   : Unset the Java build environment variables in the project .Rprofile
 
-## Manage files
+## Cache Management
 
-Manage downloads, installs, and project-linked `Java` versions
+Manage cached downloads, installations, and project-linked `Java`
+versions
 
 - [`java_list()`](https://www.ekotov.pro/rJavaEnv/reference/java_list.md)
   : List the contents of the Java versions installed or cached
+- [`java_list_distrib()`](https://www.ekotov.pro/rJavaEnv/reference/java_list_distrib.md)
+  : List the contents of the Java distributions cache folder
+- [`java_list_installed()`](https://www.ekotov.pro/rJavaEnv/reference/java_list_installed.md)
+  : List the contents of the Java installations cache folder
+- [`java_list_project()`](https://www.ekotov.pro/rJavaEnv/reference/java_list_project.md)
+  : List the Java versions symlinked in the current project
 - [`java_clear()`](https://www.ekotov.pro/rJavaEnv/reference/java_clear.md)
   : Manage Java installations and distributions caches
+- [`java_clear_distrib()`](https://www.ekotov.pro/rJavaEnv/reference/java_clear_distrib.md)
+  : Clear the Java distributions cache folder
+- [`java_clear_installed()`](https://www.ekotov.pro/rJavaEnv/reference/java_clear_installed.md)
+  : Clear the Java installations cache folder
+- [`java_clear_project()`](https://www.ekotov.pro/rJavaEnv/reference/java_clear_project.md)
+  : Clear the Java versions symlinked in the current project
 
 ## Other commands
 
-- [`java_valid_versions()`](https://www.ekotov.pro/rJavaEnv/reference/java_valid_versions.md)
-  : Retrieve Valid Java Versions
-- [`java_find_system()`](https://www.ekotov.pro/rJavaEnv/reference/java_find_system.md)
-  : Discover system-wide Java installations
 - [`rje_consent()`](https://www.ekotov.pro/rJavaEnv/reference/rje_consent.md)
   : Obtain User Consent for rJavaEnv

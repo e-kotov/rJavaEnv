@@ -84,7 +84,13 @@ when the scope exits.</p>
 
 
 <dl><dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p>Integer or character. <strong>Required.</strong> The Java version you need (e.g., 17, 21). Defaults to <code>NULL</code>, which is invalid and will trigger a validation error; callers should always provide a non-<code>NULL</code> value explicitly.</p></dd>
+<dd><p>Java version specification. Accepts:</p><ul><li><p><strong>Major version</strong> (e.g., <code>21</code>, <code>17</code>): Downloads the latest release for that major version.</p></li>
+<li><p><strong>Specific version</strong> (e.g., <code>"21.0.9"</code>, <code>"11.0.29"</code>): Downloads the exact version.</p></li>
+<li><p><strong>SDKMAN identifier</strong> (e.g., <code>"25.0.1-amzn"</code>, <code>"24.0.2-open"</code>): Uses the SDKMAN
+backend automatically. When an identifier is detected, the <code>distribution</code> and <code>backend</code>
+arguments are <strong>ignored</strong> and derived from the identifier. Find available identifiers
+in the <code>identifier</code> column of <code><a href="java_list_available.html">java_list_available</a>(backend = "sdkman")</code>.</p></li>
+</ul></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
@@ -92,7 +98,7 @@ when the scope exits.</p>
 
 
 <dt id="arg-distribution">distribution<a class="anchor" aria-label="anchor" href="#arg-distribution"></a></dt>
-<dd><p>Character. The Java distribution to download. Defaults to "Corretto".</p></dd>
+<dd><p>Character. The Java distribution to download. Defaults to "Corretto". Ignored if <code>version</code> is a SDKMAN identifier.</p></dd>
 
 
 <dt id="arg-install">install<a class="anchor" aria-label="anchor" href="#arg-install"></a></dt>
@@ -148,18 +154,18 @@ For rJava packages, use <code><a href="java_ensure.html">java_ensure()</a></code
 <span class="r-in"><span><span class="op">}</span> <span class="co"># Environment restored automatically here</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using processx</span></span></span>
-<span class="r-in"><span><span class="va">run_java_jar</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">jar_path</span>, <span class="va">args</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu">local_java_env</span><span class="op">(</span>version <span class="op">=</span> <span class="fl">21</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">processx</span><span class="fu">::</span><span class="fu"><a href="http://processx.r-lib.org/reference/run.html" class="external-link">run</a></span><span class="op">(</span><span class="st">"java"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-jar"</span>, <span class="va">jar_path</span>, <span class="va">args</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># run_java_jar &lt;- function(jar_path, args) {</span></span></span>
+<span class="r-in"><span><span class="co">#  rJavaEnv::local_java_env(version = 21)</span></span></span>
+<span class="r-in"><span><span class="co">#  processx::run("java", c("-jar", jar_path, args))</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># With caching for repeated calls</span></span></span>
-<span class="r-in"><span><span class="va">process_files</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">files</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="kw">for</span> <span class="op">(</span><span class="va">f</span> <span class="kw">in</span> <span class="va">files</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="fu">rJavaEnv</span><span class="fu">::</span><span class="fu">local_java_env</span><span class="op">(</span>version <span class="op">=</span> <span class="fl">21</span>, .use_cache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="fu">processx</span><span class="fu">::</span><span class="fu"><a href="http://processx.r-lib.org/reference/run.html" class="external-link">run</a></span><span class="op">(</span><span class="st">"java"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-jar"</span>, <span class="st">"processor.jar"</span>, <span class="va">f</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">}</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># process_files &lt;- function(files) {</span></span></span>
+<span class="r-in"><span><span class="co">#  for (f in files) {</span></span></span>
+<span class="r-in"><span><span class="co">#    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)</span></span></span>
+<span class="r-in"><span><span class="co">#   processx::run("java", c("-jar", "processor.jar", f))</span></span></span>
+<span class="r-in"><span><span class="co">#  }</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

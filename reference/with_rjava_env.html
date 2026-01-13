@@ -84,7 +84,13 @@ operations without affecting the main R session or requiring a restart.</p>
 
 
 <dl><dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p>Integer or character. <strong>Required.</strong> The Java version you need (e.g., 17, 21). Defaults to <code>NULL</code>, which is invalid and will trigger a validation error; callers should always provide a non-<code>NULL</code> value explicitly.</p></dd>
+<dd><p>Java version specification. Accepts:</p><ul><li><p><strong>Major version</strong> (e.g., <code>21</code>, <code>17</code>): Downloads the latest release for that major version.</p></li>
+<li><p><strong>Specific version</strong> (e.g., <code>"21.0.9"</code>, <code>"11.0.29"</code>): Downloads the exact version.</p></li>
+<li><p><strong>SDKMAN identifier</strong> (e.g., <code>"25.0.1-amzn"</code>, <code>"24.0.2-open"</code>): Uses the SDKMAN
+backend automatically. When an identifier is detected, the <code>distribution</code> and <code>backend</code>
+arguments are <strong>ignored</strong> and derived from the identifier. Find available identifiers
+in the <code>identifier</code> column of <code><a href="java_list_available.html">java_list_available</a>(backend = "sdkman")</code>.</p></li>
+</ul></dd>
 
 
 <dt id="arg-func">func<a class="anchor" aria-label="anchor" href="#arg-func"></a></dt>
@@ -96,7 +102,7 @@ operations without affecting the main R session or requiring a restart.</p>
 
 
 <dt id="arg-distribution">distribution<a class="anchor" aria-label="anchor" href="#arg-distribution"></a></dt>
-<dd><p>Character. The Java distribution to download. Defaults to "Corretto".</p></dd>
+<dd><p>Character. The Java distribution to download. Defaults to "Corretto". Ignored if <code>version</code> is a SDKMAN identifier.</p></dd>
 
 
 <dt id="arg-install">install<a class="anchor" aria-label="anchor" href="#arg-install"></a></dt>
@@ -128,7 +134,7 @@ Defaults to <code><a href="https://rdrr.io/r/base/libPaths.html" class="external
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Run a function using Java 21 in a subprocess</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">with_rjava_env</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  version <span class="op">=</span> <span class="fl">21</span>,</span></span>
@@ -140,7 +146,8 @@ Defaults to <code><a href="https://rdrr.io/r/base/libPaths.html" class="external
 <span class="r-in"><span>  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "21.0.9"</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

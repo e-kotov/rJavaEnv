@@ -64,6 +64,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">java_download</span><span class="op">(</span></span>
 <span>  version <span class="op">=</span> <span class="fl">21</span>,</span>
 <span>  distribution <span class="op">=</span> <span class="st">"Corretto"</span>,</span>
+<span>  backend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"rJavaEnv.backend"</span>, <span class="st">"native"</span><span class="op">)</span>,</span>
 <span>  cache_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"rJavaEnv.cache_path"</span><span class="op">)</span>,</span>
 <span>  platform <span class="op">=</span> <span class="fu"><a href="platform_detect.html">platform_detect</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">os</span>,</span>
 <span>  arch <span class="op">=</span> <span class="fu"><a href="platform_detect.html">platform_detect</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">arch</span>,</span>
@@ -78,11 +79,22 @@
 
 
 <dl><dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p><code>Integer</code> or <code>character</code> vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", and "11" to "24" (or the same version numbers in <code>integer</code>) or any newer version if it is available for the selected distribution. For <code>macOS</code> on <code>aarch64</code> architecture (Apple Silicon) certain <code>Java</code> versions are not available.</p></dd>
+<dd><p>Java version specification. Accepts:</p><ul><li><p><strong>Major version</strong> (e.g., <code>21</code>, <code>17</code>): Downloads the latest release for that major version.</p></li>
+<li><p><strong>Specific version</strong> (e.g., <code>"21.0.9"</code>, <code>"11.0.29"</code>): Downloads the exact version.</p></li>
+<li><p><strong>SDKMAN identifier</strong> (e.g., <code>"25.0.1-amzn"</code>, <code>"24.0.2-open"</code>): Uses the SDKMAN
+backend automatically. When an identifier is detected, the <code>distribution</code> and <code>backend</code>
+arguments are <strong>ignored</strong> and derived from the identifier. Find available identifiers
+in the <code>identifier</code> column of <code><a href="java_list_available.html">java_list_available</a>(backend = "sdkman")</code>.</p></li>
+</ul></dd>
 
 
 <dt id="arg-distribution">distribution<a class="anchor" aria-label="anchor" href="#arg-distribution"></a></dt>
-<dd><p>The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only <a href="https://aws.amazon.com/corretto/" class="external-link">"Amazon Corretto"</a> is supported.</p></dd>
+<dd><p>The Java distribution to download. One of "Corretto", "Temurin", or "Zulu". Defaults to "Corretto". Ignored if <code>version</code> is a SDKMAN identifier.</p></dd>
+
+
+<dt id="arg-backend">backend<a class="anchor" aria-label="anchor" href="#arg-backend"></a></dt>
+<dd><p>Download backend to use. One of "native" (vendor APIs) or "sdkman".
+Defaults to "native". Can also be set globally via <code>options(rJavaEnv.backend = "sdkman")</code>.</p></dd>
 
 
 <dt id="arg-cache-path">cache_path<a class="anchor" aria-label="anchor" href="#arg-cache-path"></a></dt>
@@ -116,14 +128,69 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># download distribution of Java version 17</span></span></span>
 <span class="r-in"><span><span class="fu">java_download</span><span class="op">(</span>version <span class="op">=</span> <span class="st">"17"</span>, temp_dir <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected platform: <span style="font-weight: bold;">linux</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected architecture: <span style="font-weight: bold;">x64</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> You can change the platform and architecture by specifying the `platform` and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `arch` arguments.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> File already cached: amazon-corretto-17.0.17.10.1-linux-x64.tar.gz</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpxvyniH/rJavaEnv_cache/distrib/amazon-corretto-17.0.17.10.1-linux-x64.tar.gz"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"distribution")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Corretto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"backend")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "native"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"version")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "17"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"platform")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linux"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"arch")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x64"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># download default Java distribution (version 21)</span></span></span>
 <span class="r-in"><span><span class="fu">java_download</span><span class="op">(</span>temp_dir <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected platform: <span style="font-weight: bold;">linux</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected architecture: <span style="font-weight: bold;">x64</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> You can change the platform and architecture by specifying the `platform` and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `arch` arguments.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading Corretto Java 21...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Verifying sha256 checksum...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Checksum verified.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpxvyniH/rJavaEnv_cache/distrib/amazon-corretto-21.0.9.11.1-linux-x64.tar.gz"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"distribution")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Corretto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"backend")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "native"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"version")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "21"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"platform")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linux"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"arch")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x64"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># download using SDKMAN backend</span></span></span>
+<span class="r-in"><span><span class="fu">java_download</span><span class="op">(</span>version <span class="op">=</span> <span class="st">"21"</span>, backend <span class="op">=</span> <span class="st">"sdkman"</span>, temp_dir <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected platform: <span style="font-weight: bold;">linux</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Detected architecture: <span style="font-weight: bold;">x64</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> You can change the platform and architecture by specifying the `platform` and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `arch` arguments.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> SDKMAN backend: checksum verification unavailable</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Downloading Corretto Java 21...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Skipping checksum (unavailable for SDKMAN)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpxvyniH/rJavaEnv_cache/distrib/corretto-21-linux-x64.tar.gz"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"distribution")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Corretto"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"backend")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "sdkman"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"version")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "21"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"platform")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "linux"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"arch")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "x64"</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

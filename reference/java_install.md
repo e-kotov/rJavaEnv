@@ -11,6 +11,8 @@ was just installed.
 java_install(
   java_distrib_path,
   project_path = NULL,
+  distribution = NULL,
+  backend = NULL,
   autoset_java_env = TRUE,
   quiet = FALSE,
   force = FALSE
@@ -29,6 +31,16 @@ java_install(
   A `character` vector of length 1 containing the project directory
   where Java should be installed. If not specified or `NULL`, defaults
   to the current working directory.
+
+- distribution:
+
+  The Java distribution name (e.g., "Corretto", "Temurin"). If NULL,
+  uses attributes from java_distrib_path or defaults to "unknown".
+
+- backend:
+
+  The download backend used (e.g., "native", "sdkman"). If NULL, uses
+  attributes from java_distrib_path or defaults to "unknown".
 
 - autoset_java_env:
 

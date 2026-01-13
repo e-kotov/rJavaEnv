@@ -25,6 +25,7 @@ java_ensure(
   accept_system_java = TRUE,
   install = TRUE,
   distribution = "Corretto",
+  backend = getOption("rJavaEnv.backend", "native"),
   check_against = c("rJava", "cmd"),
   quiet = FALSE,
   cache_path = getOption("rJavaEnv.cache_path"),
@@ -40,10 +41,20 @@ java_ensure(
 
 - version:
 
-  Integer or character. **Required.** The Java version you need (e.g.,
-  17, 21). Defaults to `NULL`, which is invalid and will trigger a
-  validation error; callers should always provide a non-`NULL` value
-  explicitly.
+  Java version specification. Accepts:
+
+  - **Major version** (e.g., `21`, `17`): Downloads the latest release
+    for that major version.
+
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
+    exact version.
+
+  - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
+    the SDKMAN backend automatically. When an identifier is detected,
+    the `distribution` and `backend` arguments are **ignored** and
+    derived from the identifier. Find available identifiers in the
+    `identifier` column of
+    [`java_list_available`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)`(backend = "sdkman")`.
 
 - type:
 
@@ -67,6 +78,13 @@ java_ensure(
 - distribution:
 
   Character. The Java distribution to download. Defaults to "Corretto".
+  Ignored if `version` is a SDKMAN identifier.
+
+- backend:
+
+  Download backend to use. One of "native" (vendor APIs) or "sdkman".
+  Defaults to "native". Can also be set globally via
+  `options(rJavaEnv.backend = "sdkman")`.
 
 - check_against:
 
@@ -164,11 +182,11 @@ point).
 
 ## rJava Path-Locking
 
-**Important for **rJava** Users**: This function sets environment
-variables (JAVA_HOME, PATH) that affect both command-line Java tools and
-**rJava** initialization. However, due to **rJava**'s path-locking
-behavior when [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is
-called (see <https://github.com/s-u/rJava/issues/25>,
+**Important for rJava Users**: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and rJava
+initialization. However, due to rJava's path-locking behavior when
+[`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is called (see
+<https://github.com/s-u/rJava/issues/25>,
 <https://github.com/s-u/rJava/issues/249>, and
 <https://github.com/s-u/rJava/issues/334>), this function must be called
 **BEFORE** [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is
@@ -181,18 +199,18 @@ Java locked) when you:
 
 - Explicitly call [`library(rJava)`](http://www.rforge.net/rJava/)
 
-- Load any package that imports **rJava** (which auto-loads it as a
+- Load any package that imports rJava (which auto-loads it as a
   dependency)
 
 - Even just use IDE autocomplete with `rJava::` (this triggers
   initialization!)
 
-- Call any **rJava**-dependent function
+- Call any rJava-dependent function
 
-Once any of these happen, the Java version used by **rJava** for that
-session is locked in. For command-line Java tools that don't use
-**rJava**, this function can be called at any time to switch Java
-versions for subsequent system calls.
+Once any of these happen, the Java version used by rJava for that
+session is locked in. For command-line Java tools that don't use rJava,
+this function can be called at any time to switch Java versions for
+subsequent system calls.
 
 ## See also
 
@@ -204,12 +222,25 @@ use cases with `type` and `accept_system_java` parameters.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # For end users: Ensure Java 21 is ready BEFORE loading rJava packages
 library(rJavaEnv)
 java_ensure(version = 21, type = "min")
+#> ℹ Checking system for existing Java installations...
+#> ✔ Found valid system Java 25 at /usr/lib/jvm/temurin-25-jdk-amd64
+#> ✔ Current R Session: JAVA_HOME and PATH set to /usr/lib/jvm/temurin-25-jdk-amd64
+#> ℹ On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in
+#>   the current session.
+#>   To make this change permanent for installing rJava-dependent packages from
+#>   source, you may need to reconfigure Java.
+#>   See <https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r> for
+#>   details.
+#>   If you have admin rights, run the following in your terminal:
+#>   `R CMD javareconf JAVA_HOME=/usr/lib/jvm/temurin-25-jdk-amd64`
+#>   If you do not have admin rights, run:
+#>   `R CMD javareconf JAVA_HOME=/usr/lib/jvm/temurin-25-jdk-amd64 -e`
 # Now safe to load packages that depend on rJava
-library(myRJavaPackage)
+# library(myRJavaPackage)
 
 # For packages using command-line Java (not rJava):
 # Can use java_ensure() within functions to set Java before calling system tools
@@ -217,5 +248,5 @@ my_java_tool <- function() {
   java_ensure(version = 17)
   system2("java", c("-jar", "tool.jar"))
 }
-} # }
+# }
 ```

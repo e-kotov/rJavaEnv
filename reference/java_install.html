@@ -64,6 +64,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">java_install</span><span class="op">(</span></span>
 <span>  <span class="va">java_distrib_path</span>,</span>
 <span>  project_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  distribution <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  backend <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  autoset_java_env <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  force <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -80,6 +82,14 @@
 
 <dt id="arg-project-path">project_path<a class="anchor" aria-label="anchor" href="#arg-project-path"></a></dt>
 <dd><p>A <code>character</code> vector of length 1 containing the project directory where Java should be installed. If not specified or <code>NULL</code>, defaults to the current working directory.</p></dd>
+
+
+<dt id="arg-distribution">distribution<a class="anchor" aria-label="anchor" href="#arg-distribution"></a></dt>
+<dd><p>The Java distribution name (e.g., "Corretto", "Temurin"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".</p></dd>
+
+
+<dt id="arg-backend">backend<a class="anchor" aria-label="anchor" href="#arg-backend"></a></dt>
+<dd><p>The download backend used (e.g., "native", "sdkman"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".</p></dd>
 
 
 <dt id="arg-autoset-java-env">autoset_java_env<a class="anchor" aria-label="anchor" href="#arg-autoset-java-env"></a></dt>

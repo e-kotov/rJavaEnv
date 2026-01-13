@@ -10,6 +10,7 @@ java_resolve(
   version = NULL,
   type = c("exact", "min"),
   distribution = "Corretto",
+  backend = getOption("rJavaEnv.backend", "native"),
   install = TRUE,
   accept_system_java = TRUE,
   quiet = FALSE,
@@ -24,10 +25,20 @@ java_resolve(
 
 - version:
 
-  Integer or character. **Required.** The Java version you need (e.g.,
-  17, 21). Defaults to `NULL`, which is invalid and will trigger a
-  validation error; callers should always provide a non-`NULL` value
-  explicitly.
+  Java version specification. Accepts:
+
+  - **Major version** (e.g., `21`, `17`): Downloads the latest release
+    for that major version.
+
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
+    exact version.
+
+  - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
+    the SDKMAN backend automatically. When an identifier is detected,
+    the `distribution` and `backend` arguments are **ignored** and
+    derived from the identifier. Find available identifiers in the
+    `identifier` column of
+    [`java_list_available`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)`(backend = "sdkman")`.
 
 - type:
 
@@ -37,6 +48,13 @@ java_resolve(
 - distribution:
 
   Character. The Java distribution to download. Defaults to "Corretto".
+  Ignored if `version` is a SDKMAN identifier.
+
+- backend:
+
+  Download backend to use. One of "native" (vendor APIs) or "sdkman".
+  Defaults to "native". Can also be set globally via
+  `options(rJavaEnv.backend = "sdkman")`.
 
 - install:
 
@@ -119,8 +137,10 @@ Character string (Path to JAVA_HOME)
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # Get path to Java 21 (installing if necessary)
 path <- java_resolve(version = 21, install = TRUE)
-} # }
+#> ℹ Checking system for existing Java installations...
+#> ✔ Found valid system Java 21 at /usr/lib/jvm/java-21-openjdk-amd64
+# }
 ```

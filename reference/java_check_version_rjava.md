@@ -41,7 +41,9 @@ A `character` vector of length 1 containing the major Java version, or
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 java_check_version_rjava()
-} # }
+#> ✖ Failed to retrieve Java version.
+#> [1] FALSE
+# }
 ```

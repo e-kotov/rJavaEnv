@@ -91,6 +91,7 @@ is already detected, making it safe to use in scripts or package startup code
 <span>  accept_system_java <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  install <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  distribution <span class="op">=</span> <span class="st">"Corretto"</span>,</span>
+<span>  backend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"rJavaEnv.backend"</span>, <span class="st">"native"</span><span class="op">)</span>,</span>
 <span>  check_against <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rJava"</span>, <span class="st">"cmd"</span><span class="op">)</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cache_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"rJavaEnv.cache_path"</span><span class="op">)</span>,</span>
@@ -107,7 +108,13 @@ is already detected, making it safe to use in scripts or package startup code
 
 
 <dl><dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p>Integer or character. <strong>Required.</strong> The Java version you need (e.g., 17, 21). Defaults to <code>NULL</code>, which is invalid and will trigger a validation error; callers should always provide a non-<code>NULL</code> value explicitly.</p></dd>
+<dd><p>Java version specification. Accepts:</p><ul><li><p><strong>Major version</strong> (e.g., <code>21</code>, <code>17</code>): Downloads the latest release for that major version.</p></li>
+<li><p><strong>Specific version</strong> (e.g., <code>"21.0.9"</code>, <code>"11.0.29"</code>): Downloads the exact version.</p></li>
+<li><p><strong>SDKMAN identifier</strong> (e.g., <code>"25.0.1-amzn"</code>, <code>"24.0.2-open"</code>): Uses the SDKMAN
+backend automatically. When an identifier is detected, the <code>distribution</code> and <code>backend</code>
+arguments are <strong>ignored</strong> and derived from the identifier. Find available identifiers
+in the <code>identifier</code> column of <code><a href="java_list_available.html">java_list_available</a>(backend = "sdkman")</code>.</p></li>
+</ul></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
@@ -124,7 +131,12 @@ If <code>FALSE</code>, returns <code>FALSE</code> if the version is not found.</
 
 
 <dt id="arg-distribution">distribution<a class="anchor" aria-label="anchor" href="#arg-distribution"></a></dt>
-<dd><p>Character. The Java distribution to download. Defaults to "Corretto".</p></dd>
+<dd><p>Character. The Java distribution to download. Defaults to "Corretto". Ignored if <code>version</code> is a SDKMAN identifier.</p></dd>
+
+
+<dt id="arg-backend">backend<a class="anchor" aria-label="anchor" href="#arg-backend"></a></dt>
+<dd><p>Download backend to use. One of "native" (vendor APIs) or "sdkman".
+Defaults to "native". Can also be set globally via <code>options(rJavaEnv.backend = "sdkman")</code>.</p></dd>
 
 
 <dt id="arg-check-against">check_against<a class="anchor" aria-label="anchor" href="#arg-check-against"></a></dt>
@@ -191,18 +203,18 @@ environment variable change (which won't help rJava at that point).</p>
     <h2 id="rjava-path-locking">rJava Path-Locking<a class="anchor" aria-label="anchor" href="#rjava-path-locking"></a></h2>
 
 
-<p><strong>Important for <strong>rJava</strong> Users</strong>: This function sets environment variables
-(JAVA_HOME, PATH) that affect both command-line Java tools and <strong>rJava</strong> initialization.
-However, due to <strong>rJava</strong>'s path-locking behavior when <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is called
+<p><strong>Important for rJava Users</strong>: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and rJava initialization.
+However, due to rJava's path-locking behavior when <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is called
 (see <a href="https://github.com/s-u/rJava/issues/25" class="external-link">https://github.com/s-u/rJava/issues/25</a>, <a href="https://github.com/s-u/rJava/issues/249" class="external-link">https://github.com/s-u/rJava/issues/249</a>, and <a href="https://github.com/s-u/rJava/issues/334" class="external-link">https://github.com/s-u/rJava/issues/334</a>),
 this function must be called <strong>BEFORE</strong> <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked. Once <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code>
 initializes, the Java version is locked for that R session and cannot be changed without restarting R.</p>
 <p><code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked (and Java locked) when you:</p><ul><li><p>Explicitly call <code><a href="http://www.rforge.net/rJava/" class="external-link">library(rJava)</a></code></p></li>
-<li><p>Load any package that imports <strong>rJava</strong> (which auto-loads it as a dependency)</p></li>
+<li><p>Load any package that imports rJava (which auto-loads it as a dependency)</p></li>
 <li><p>Even just use IDE autocomplete with <code>rJava::</code> (this triggers initialization!)</p></li>
-<li><p>Call any <strong>rJava</strong>-dependent function</p></li>
-</ul><p>Once any of these happen, the Java version used by <strong>rJava</strong> for that session is locked in.
-For command-line Java tools that don't use <strong>rJava</strong>, this function can be called at any
+<li><p>Call any rJava-dependent function</p></li>
+</ul><p>Once any of these happen, the Java version used by rJava for that session is locked in.
+For command-line Java tools that don't use rJava, this function can be called at any
 time to switch Java versions for subsequent system calls.</p>
     </div>
     <div class="section level2">
@@ -214,12 +226,25 @@ including how to use <code>java_ensure()</code> in different scenarios and detai
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># For end users: Ensure Java 21 is ready BEFORE loading rJava packages</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">java_ensure</span><span class="op">(</span>version <span class="op">=</span> <span class="fl">21</span>, type <span class="op">=</span> <span class="st">"min"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Checking system for existing Java installations...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Found valid system Java 25 at <span style="color: #0000BB;">/usr/lib/jvm/temurin-25-jdk-amd64</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Current R Session: JAVA_HOME and PATH set to <span style="color: #0000BB;">/usr/lib/jvm/temurin-25-jdk-amd64</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   the current session.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   To make this change permanent for installing rJava-dependent packages from</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   source, you may need to reconfigure Java.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   See <span style="color: #0000BB; font-style: italic;">&lt;https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r&gt;</span> for</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   details.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   If you have admin rights, run the following in your terminal:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   `R CMD javareconf JAVA_HOME=/usr/lib/jvm/temurin-25-jdk-amd64`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   If you do not have admin rights, run:</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   `R CMD javareconf JAVA_HOME=/usr/lib/jvm/temurin-25-jdk-amd64 -e`</span>
 <span class="r-in"><span><span class="co"># Now safe to load packages that depend on rJava</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">myRJavaPackage</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># library(myRJavaPackage)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For packages using command-line Java (not rJava):</span></span></span>
 <span class="r-in"><span><span class="co"># Can use java_ensure() within functions to set Java before calling system tools</span></span></span>
@@ -227,7 +252,7 @@ including how to use <code>java_ensure()</code> in different scenarios and detai
 <span class="r-in"><span>  <span class="fu">java_ensure</span><span class="op">(</span>version <span class="op">=</span> <span class="fl">17</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2</a></span><span class="op">(</span><span class="st">"java"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-jar"</span>, <span class="st">"tool.jar"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
