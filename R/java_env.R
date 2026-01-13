@@ -20,7 +20,7 @@
 #' @return Nothing. Sets the JAVA_HOME and PATH environment variables.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # download, install Java 17
 #' java_17_distrib <- java_download(version = "17", temp_dir = TRUE)
 #' java_home <- java_install(
@@ -239,7 +239,7 @@ java_env_set_rprofile <- function(
 #' @param .use_cache Logical. If `TRUE`, uses cached results for repeated calls with the same JAVA_HOME. If `FALSE` (default), forces a fresh check. Set to `TRUE` for performance in loops or repeated checks within the same session.
 #' @return A `character` vector of length 1 containing the major Java version, or `FALSE` if rJava is not installed or the version check fails.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' java_check_version_rjava()
 #' }
 #'
@@ -389,7 +389,7 @@ java_check_version_rjava <- function(
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' java_check_version_cmd()
 #' }
 #'
@@ -587,10 +587,8 @@ java_check_version_cmd <- function(
 #' @export
 #' @return Nothing. Removes the JAVA_HOME and PATH environment variables settings from the project .Rprofile.
 #' @examples
-#' \dontrun{
 #' # clear the JAVA_HOME and PATH environment variables in the specified project .Rprofile
 #' java_env_unset(project_path = tempdir())
-#' }
 java_env_unset <- function(
   project_path = NULL,
   quiet = FALSE

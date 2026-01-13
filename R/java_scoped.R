@@ -30,18 +30,18 @@
 #' } # Environment restored automatically here
 #'
 #' # Using processx
-#' run_java_jar <- function(jar_path, args) {
-#'   rJavaEnv::local_java_env(version = 21)
-#'   processx::run("java", c("-jar", jar_path, args))
-#' }
+#' # run_java_jar <- function(jar_path, args) {
+#' #  rJavaEnv::local_java_env(version = 21)
+#' #  processx::run("java", c("-jar", jar_path, args))
+#' # }
 #'
 #' # With caching for repeated calls
-#' process_files <- function(files) {
-#'   for (f in files) {
-#'     rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
-#'     processx::run("java", c("-jar", "processor.jar", f))
-#'   }
-#' }
+#' # process_files <- function(files) {
+#' #  for (f in files) {
+#' #    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
+#' #   processx::run("java", c("-jar", "processor.jar", f))
+#' #  }
+#' # }
 #' }
 local_java_env <- function(
   version,
@@ -107,16 +107,16 @@ local_java_env <- function(
 #' @return The result of executing `code`.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Using system2
 #' rJavaEnv::with_java_env(version = 21, {
 #'   system2("java", "-version")
 #' })
 #'
 #' # Using processx
-#' rJavaEnv::with_java_env(version = 21, {
-#'   processx::run("java", c("-jar", "tool.jar", "--help"))
-#' })
+#' # rJavaEnv::with_java_env(version = 21, {
+#' #  processx::run("java", c("-jar", "tool.jar", "--help"))
+#' # })
 #' }
 with_java_env <- function(version, code, ...) {
   local_java_env(version = version, ...)
@@ -140,7 +140,7 @@ with_java_env <- function(version, code, ...) {
 #' @return The result of `func`.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Run a function using Java 21 in a subprocess
 #' result <- with_rjava_env(
 #'   version = 21,

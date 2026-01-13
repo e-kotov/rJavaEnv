@@ -65,11 +65,14 @@ reference:
       Just quickly install `Java` in the current project
     contents: 
     - java_quick_install
-  - title: "Quick Set"
+  - title: "Quick Set & Discovery"
     desc: >
-      Just quickly set `Java` in the current project (for use with `targets`/`callr`)
+      Quickly find available versions, check system for existing ones, and set `Java` in the current project
     contents:
       - use_java
+      - java_list_available
+      - java_find_system
+      - java_valid_versions
   - title: "Ensure Required Java Version"
     desc: >
       Ensure a specific Java version is available and set
@@ -83,9 +86,9 @@ reference:
       - local_java_env
       - with_java_env
       - with_rjava_env
-  - title: "Check `Java` version"
+  - title: "Java Validation"
     desc: >
-      Check `Java` version with currently set environment
+      Check `Java` version and compatibility with currently set environment
     contents:
       - java_check_version_cmd
       - java_check_version_rjava
@@ -102,16 +105,20 @@ reference:
     - java_env_unset
     - java_build_env_set
     - java_build_env_unset
-  - title: "Manage files"
+  - title: "Cache Management"
     desc: >
-      Manage downloads, installs, and project-linked `Java` versions
+      Manage cached downloads, installations, and project-linked `Java` versions
     contents:
     - java_list
+    - java_list_distrib
+    - java_list_installed
+    - java_list_project
     - java_clear
+    - java_clear_distrib
+    - java_clear_installed
+    - java_clear_project
   - title: "Other commands"
     contents:
-    - java_valid_versions
-    - java_find_system
     - rje_consent
 
 

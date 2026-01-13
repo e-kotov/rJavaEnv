@@ -4,10 +4,20 @@
 \alias{java_unpack}
 \title{Unpack a Java distribution file into cache directory}
 \usage{
-java_unpack(java_distrib_path, quiet = FALSE, force = FALSE)
+java_unpack(
+  java_distrib_path,
+  distribution = NULL,
+  backend = NULL,
+  quiet = FALSE,
+  force = FALSE
+)
 }
 \arguments{
 \item{java_distrib_path}{A \code{character} vector of length 1 containing the path to the Java distribution file.}
+
+\item{distribution}{The Java distribution name (e.g., "Corretto", "Temurin"). If NULL, attempts to read from attributes on java_distrib_path, otherwise defaults to "unknown".}
+
+\item{backend}{The download backend used (e.g., "native", "sdkman"). If NULL, attempts to read from attributes on java_distrib_path, otherwise defaults to "unknown".}
 
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 

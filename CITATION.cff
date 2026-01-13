@@ -81,7 +81,7 @@ references:
   institution:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
-  year: '2025'
+  year: '2026'
   version: '>= 4.0'
 - type: software
   title: checkmate
@@ -94,7 +94,7 @@ references:
     given-names: Michel
     email: michellang@gmail.com
     orcid: https://orcid.org/0000-0001-9754-0393
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.checkmate
 - type: software
   title: cli
@@ -106,7 +106,7 @@ references:
   - family-names: Csárdi
     given-names: Gábor
     email: gabor@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.cli
 - type: software
   title: curl
@@ -119,21 +119,64 @@ references:
     given-names: Jeroen
     email: jeroenooms@gmail.com
     orcid: https://orcid.org/0000-0002-4035-0289
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.curl
 - type: software
-  title: jsonlite
-  abstract: 'jsonlite: A Simple and Robust JSON Parser and Generator for R'
+  title: digest
+  abstract: 'digest: Create Compact Hash Digests of R Objects'
   notes: Imports
-  url: https://jeroen.r-universe.dev/jsonlite
-  repository: https://CRAN.R-project.org/package=jsonlite
+  url: https://eddelbuettel.github.io/digest/
+  repository: https://CRAN.R-project.org/package=digest
   authors:
-  - family-names: Ooms
-    given-names: Jeroen
-    email: jeroenooms@gmail.com
-    orcid: https://orcid.org/0000-0002-4035-0289
-  year: '2025'
-  doi: 10.32614/CRAN.package.jsonlite
+  - family-names: Eddelbuettel
+    given-names: Dirk
+    email: edd@debian.org
+    orcid: https://orcid.org/0000-0001-6419-907X
+  year: '2026'
+  doi: 10.32614/CRAN.package.digest
+- type: software
+  title: memoise
+  abstract: 'memoise: ''Memoisation'' of Functions'
+  notes: Imports
+  url: https://memoise.r-lib.org
+  repository: https://CRAN.R-project.org/package=memoise
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+  - family-names: Hester
+    given-names: Jim
+  - family-names: Chang
+    given-names: Winston
+    email: winston@rstudio.com
+  - family-names: Müller
+    given-names: Kirill
+    email: krlmlr+r@mailbox.org
+  - family-names: Cook
+    given-names: Daniel
+    email: danielecook@gmail.com
+  year: '2026'
+  doi: 10.32614/CRAN.package.memoise
+- type: software
+  title: RcppSimdJson
+  abstract: 'RcppSimdJson: ''Rcpp'' Bindings for the ''simdjson'' Header-Only Library
+    for ''JSON'' Parsing'
+  notes: Imports
+  url: https://github.com/eddelbuettel/rcppsimdjson/
+  repository: https://CRAN.R-project.org/package=RcppSimdJson
+  authors:
+  - family-names: Eddelbuettel
+    given-names: Dirk
+    email: edd@debian.org
+    orcid: https://orcid.org/0000-0001-6419-907X
+  - family-names: Knapp
+    given-names: Brendan
+    orcid: https://orcid.org/0000-0003-3284-4972
+  - family-names: Lemire
+    given-names: Daniel
+    orcid: https://orcid.org/0000-0003-3306-6922
+  year: '2026'
+  doi: 10.32614/CRAN.package.RcppSimdJson
 - type: software
   title: rlang
   abstract: 'rlang: Functions for Base Types and Core R and ''Tidyverse'' Features'
@@ -147,7 +190,7 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.rlang
 - type: software
   title: utils
@@ -158,53 +201,11 @@ references:
   institution:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
-  year: '2025'
-- type: software
-  title: quarto
-  abstract: 'quarto: R Interface to ''Quarto'' Markdown Publishing System'
-  notes: Suggests
-  url: https://quarto-dev.github.io/quarto-r/
-  repository: https://CRAN.R-project.org/package=quarto
-  authors:
-  - family-names: Allaire
-    given-names: JJ
-    email: jj@posit.co
-    orcid: https://orcid.org/0000-0003-0174-9868
-  - family-names: Dervieux
-    given-names: Christophe
-    email: cderv@posit.co
-    orcid: https://orcid.org/0000-0003-4474-2498
-  year: '2025'
-  doi: 10.32614/CRAN.package.quarto
-- type: software
-  title: rJava
-  abstract: 'rJava: Low-Level R to Java Interface'
-  notes: Suggests
-  url: http://www.rforge.net/rJava/
-  repository: https://CRAN.R-project.org/package=rJava
-  authors:
-  - family-names: Urbanek
-    given-names: Simon
-    email: simon.urbanek@r-project.org
-  year: '2025'
-  doi: 10.32614/CRAN.package.rJava
-- type: software
-  title: testthat
-  abstract: 'testthat: Unit Testing for R'
-  notes: Suggests
-  url: https://testthat.r-lib.org
-  repository: https://CRAN.R-project.org/package=testthat
-  authors:
-  - family-names: Wickham
-    given-names: Hadley
-    email: hadley@posit.co
-  year: '2025'
-  doi: 10.32614/CRAN.package.testthat
-  version: '>= 3.0.0'
+  year: '2026'
 - type: software
   title: withr
   abstract: 'withr: Run Code ''With'' Temporarily Modified Global State'
-  notes: Suggests
+  notes: Imports
   url: https://withr.r-lib.org
   repository: https://CRAN.R-project.org/package=withr
   authors:
@@ -224,6 +225,76 @@ references:
     email: hadley@posit.co
   - family-names: Chang
     given-names: Winston
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.withr
+- type: software
+  title: yaml
+  abstract: 'yaml: Methods to Convert R Data to YAML and Back'
+  notes: Imports
+  url: https://yaml.r-lib.org
+  repository: https://CRAN.R-project.org/package=yaml
+  authors:
+  - family-names: Stephens
+    given-names: Jeremy
+  - family-names: Simonov
+    given-names: Kirill
+  year: '2026'
+  doi: 10.32614/CRAN.package.yaml
+- type: software
+  title: callr
+  abstract: 'callr: Call R from R'
+  notes: Suggests
+  url: https://callr.r-lib.org
+  repository: https://CRAN.R-project.org/package=callr
+  authors:
+  - family-names: Csárdi
+    given-names: Gábor
+    email: csardi.gabor@gmail.com
+    orcid: https://orcid.org/0000-0001-7098-9676
+  - family-names: Chang
+    given-names: Winston
+  year: '2026'
+  doi: 10.32614/CRAN.package.callr
+- type: software
+  title: quarto
+  abstract: 'quarto: R Interface to ''Quarto'' Markdown Publishing System'
+  notes: Suggests
+  url: https://quarto-dev.github.io/quarto-r/
+  repository: https://CRAN.R-project.org/package=quarto
+  authors:
+  - family-names: Allaire
+    given-names: JJ
+    email: jj@posit.co
+    orcid: https://orcid.org/0000-0003-0174-9868
+  - family-names: Dervieux
+    given-names: Christophe
+    email: cderv@posit.co
+    orcid: https://orcid.org/0000-0003-4474-2498
+  year: '2026'
+  doi: 10.32614/CRAN.package.quarto
+- type: software
+  title: rJava
+  abstract: 'rJava: Low-Level R to Java Interface'
+  notes: Suggests
+  url: http://www.rforge.net/rJava/
+  repository: https://CRAN.R-project.org/package=rJava
+  authors:
+  - family-names: Urbanek
+    given-names: Simon
+    email: simon.urbanek@r-project.org
+  year: '2026'
+  doi: 10.32614/CRAN.package.rJava
+- type: software
+  title: testthat
+  abstract: 'testthat: Unit Testing for R'
+  notes: Suggests
+  url: https://testthat.r-lib.org
+  repository: https://CRAN.R-project.org/package=testthat
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  year: '2026'
+  doi: 10.32614/CRAN.package.testthat
+  version: '>= 3.0.0'
 

@@ -72,3 +72,46 @@ rjava_path_locking_note <- function() {
 global_use_cache_param <- function(.use_cache) {
   # this is just a placeholder for global .use_cache parameter
 }
+
+#' @title Global Version Parameter
+#'
+#' @description
+#' Documentation for the `version` parameter, used for specifying Java versions.
+#'
+#' @param version Java version specification. Accepts:
+#'   \itemize{
+#'     \item **Major version** (e.g., `21`, `17`): Downloads the latest release for that major version.
+#'     \item **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the exact version.
+#'     \item **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses the SDKMAN
+#'       backend automatically. When an identifier is detected, the `distribution` and `backend`
+#'       arguments are **ignored** and derived from the identifier. Find available identifiers
+#'       in the `identifier` column of \code{\link{java_list_available}(backend = "sdkman")}.
+#'   }
+#' @keywords internal
+global_version_param <- function(version) {
+  # this is just a placeholder for global version parameter
+}
+
+#' @title SDKMAN References
+#'
+#' @description
+#' Standard references for SDKMAN attribution.
+#'
+#' @references
+#' SDKMAN! - The Software Development Kit Manager: \url{https://github.com/sdkman}
+#' @keywords internal
+global_sdkman_references <- function() {
+  # this is just a placeholder for SDKMAN references
+}
+
+#' @title Global Backend Parameter
+#'
+#' @description
+#' Documentation for the `backend` parameter, used for specifying the download source.
+#'
+#' @param backend Download backend to use. One of "native" (vendor APIs) or "sdkman".
+#'   Defaults to "native". Can also be set globally via `options(rJavaEnv.backend = "sdkman")`.
+#' @keywords internal
+global_backend_param <- function(backend) {
+  # this is just a placeholder for global backend parameter
+}

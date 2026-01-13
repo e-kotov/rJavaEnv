@@ -16,11 +16,19 @@ local_java_env(
 )
 }
 \arguments{
-\item{version}{Integer or character. \strong{Required.} The Java version you need (e.g., 17, 21). Defaults to \code{NULL}, which is invalid and will trigger a validation error; callers should always provide a non-\code{NULL} value explicitly.}
+\item{version}{Java version specification. Accepts:
+\itemize{
+\item \strong{Major version} (e.g., \code{21}, \code{17}): Downloads the latest release for that major version.
+\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Downloads the exact version.
+\item \strong{SDKMAN identifier} (e.g., \code{"25.0.1-amzn"}, \code{"24.0.2-open"}): Uses the SDKMAN
+backend automatically. When an identifier is detected, the \code{distribution} and \code{backend}
+arguments are \strong{ignored} and derived from the identifier. Find available identifiers
+in the \code{identifier} column of \code{\link{java_list_available}(backend = "sdkman")}.
+}}
 
 \item{type}{Character. \code{"exact"} (default) checks for exact version match. \code{"min"} checks for version >= \code{version}.}
 
-\item{distribution}{Character. The Java distribution to download. Defaults to "Corretto".}
+\item{distribution}{Character. The Java distribution to download. Defaults to "Corretto". Ignored if \code{version} is a SDKMAN identifier.}
 
 \item{install}{Logical. If \code{TRUE} (default), attempts to download/install if missing.
 If \code{FALSE}, returns \code{FALSE} if the version is not found.}
@@ -65,17 +73,17 @@ my_tool_wrapper <- function() {
 } # Environment restored automatically here
 
 # Using processx
-run_java_jar <- function(jar_path, args) {
-  rJavaEnv::local_java_env(version = 21)
-  processx::run("java", c("-jar", jar_path, args))
-}
+# run_java_jar <- function(jar_path, args) {
+#  rJavaEnv::local_java_env(version = 21)
+#  processx::run("java", c("-jar", jar_path, args))
+# }
 
 # With caching for repeated calls
-process_files <- function(files) {
-  for (f in files) {
-    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
-    processx::run("java", c("-jar", "processor.jar", f))
-  }
-}
+# process_files <- function(files) {
+#  for (f in files) {
+#    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
+#   processx::run("java", c("-jar", "processor.jar", f))
+#  }
+# }
 }
 }

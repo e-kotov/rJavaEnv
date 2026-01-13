@@ -42,7 +42,7 @@ calculated fresh to reflect current \code{JAVA_HOME}.
 }
 
 \examples{
-\dontrun{
+\donttest{
 # List all system Java installations
 java_find_system()
 

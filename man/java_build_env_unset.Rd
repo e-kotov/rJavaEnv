@@ -18,9 +18,7 @@ Does not return a value. Invisibly returns \code{NULL}.
 Unset the Java build environment variables in the project .Rprofile
 }
 \examples{
-\dontrun{
 # Remove Java build environment settings from the current project
 java_build_env_unset()
-}
 
 }

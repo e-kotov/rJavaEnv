@@ -8,6 +8,7 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^\.sync$
 ^\.Rprofile$
 ^rjavaenv$
 ^private$

@@ -12,7 +12,7 @@ java_valid_versions(
 )
 }
 \arguments{
-\item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
+\item{distribution}{The Java distribution to download. One of "Corretto", "Temurin", or "Zulu". Defaults to "Corretto". Ignored if \code{version} is a SDKMAN identifier.}
 
 \item{platform}{The platform for which to download the Java distribution. Defaults to the current platform.}
 
@@ -30,11 +30,11 @@ If the API call fails (for example, due to a lack of internet connectivity),
 the function falls back to a pre-defined list of Java versions.
 }
 \examples{
-\dontrun{
+\donttest{
   # Retrieve valid Java versions (cached if available) using Amazon Corretto endpoint
   versions <- java_valid_versions()
 
-  # Force refresh the list of Java versions using the Oracle endpoint
+  # Force refresh the list of Java versions for Amazon Corretto
   versions <- java_valid_versions(distribution = "Corretto", force = TRUE)
 }
 

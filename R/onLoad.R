@@ -1,4 +1,15 @@
 .onLoad <- function(libname, pkgname) {
+  # Load YAML config
+  config_path <- system.file(
+    "extdata",
+    "java_config.yaml",
+    package = "rJavaEnv"
+  )
+  if (file.exists(config_path)) {
+    config <- yaml::read_yaml(config_path)
+    options(rJavaEnv.config = config)
+  }
+
   op <- options()
   op.rJavaEnv <- list(
     # Default folder choice (in line with renv package)
@@ -82,6 +93,29 @@
     rJavaEnv.fallback_valid_versions_windows_x86 = c(
       "8",
       "11"
+    ),
+    rJavaEnv.fallback_valid_versions_temurin = c(
+      "8",
+      "11",
+      "17",
+      "21",
+      "22",
+      "23",
+      "24",
+      "25"
+    ),
+    rJavaEnv.fallback_valid_versions_zulu = c(
+      "8",
+      "11",
+      "13",
+      "15",
+      "17",
+      "19",
+      "21",
+      "22",
+      "23",
+      "24",
+      "25"
     )
   )
 
@@ -110,4 +144,16 @@
   options(rJavaEnv.fallback_valid_versions_current_platform = fallback_current)
 
   invisible()
+}
+
+#' Access Java configuration from YAML
+#'
+#' Helper function to access configuration loaded from java_config.yaml
+#'
+#' @param key Optional key to retrieve specific config section. If NULL, returns entire config.
+#' @return Configuration value or NULL if not found
+#' @keywords internal
+java_config <- function(key = NULL) {
+  cfg <- getOption("rJavaEnv.config")
+  if (is.null(key)) cfg else cfg[[key]]
 }

@@ -18,8 +18,6 @@ Nothing. Removes the JAVA_HOME and PATH environment variables settings from the 
 Unset the JAVA_HOME and PATH environment variables in the project .Rprofile
 }
 \examples{
-\dontrun{
 # clear the JAVA_HOME and PATH environment variables in the specified project .Rprofile
 java_env_unset(project_path = tempdir())
-}
 }

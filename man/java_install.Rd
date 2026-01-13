@@ -7,6 +7,8 @@
 java_install(
   java_distrib_path,
   project_path = NULL,
+  distribution = NULL,
+  backend = NULL,
   autoset_java_env = TRUE,
   quiet = FALSE,
   force = FALSE
@@ -16,6 +18,10 @@ java_install(
 \item{java_distrib_path}{A \code{character} vector of length 1 containing the path to the Java distribution file.}
 
 \item{project_path}{A \code{character} vector of length 1 containing the project directory where Java should be installed. If not specified or \code{NULL}, defaults to the current working directory.}
+
+\item{distribution}{The Java distribution name (e.g., "Corretto", "Temurin"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".}
+
+\item{backend}{The download backend used (e.g., "native", "sdkman"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".}
 
 \item{autoset_java_env}{A \code{logical} indicating whether to set the \code{JAVA_HOME} and \code{PATH} environment variables to the installed Java directory. Defaults to \code{TRUE}.}
 

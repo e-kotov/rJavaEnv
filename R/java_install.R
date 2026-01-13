@@ -5,6 +5,8 @@
 #'
 #' @param java_distrib_path A `character` vector of length 1 containing the path to the Java distribution file.
 #' @param project_path A `character` vector of length 1 containing the project directory where Java should be installed. If not specified or `NULL`, defaults to the current working directory.
+#' @param distribution The Java distribution name (e.g., "Corretto", "Temurin"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".
+#' @param backend The download backend used (e.g., "native", "sdkman"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".
 #' @param autoset_java_env A `logical` indicating whether to set the `JAVA_HOME` and `PATH` environment variables to the installed Java directory. Defaults to `TRUE`.
 #' @param force A logical. Whether to overwrite an existing installation. Defaults to `FALSE`.
 #' @inheritParams java_download
@@ -24,6 +26,8 @@
 java_install <- function(
   java_distrib_path,
   project_path = NULL,
+  distribution = NULL,
+  backend = NULL,
   autoset_java_env = TRUE,
   quiet = FALSE,
   force = FALSE
@@ -35,8 +39,20 @@ java_install <- function(
   # https://github.com/rstudio/renv/blob/d6bced36afa0ad56719ca78be6773e9b4bbb078f/R/init.R#L69-L86
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
 
+  # Resolve distribution and backend from arguments or attributes
+  if (is.null(distribution)) {
+    distribution <- attr(java_distrib_path, "distribution")
+    if (is.null(distribution)) distribution <- "unknown"
+  }
+  if (is.null(backend)) {
+    backend <- attr(java_distrib_path, "backend")
+    if (is.null(backend)) backend <- "unknown"
+  }
+
   installed_path <- java_unpack(
     java_distrib_path = java_distrib_path,
+    distribution = distribution,
+    backend = backend,
     quiet = quiet,
     force = force
   )
@@ -80,6 +96,8 @@ java_install <- function(
     "rjavaenv",
     platform,
     arch,
+    distribution,
+    backend,
     version
   )
   if (!dir.exists(dirname(project_version_path))) {

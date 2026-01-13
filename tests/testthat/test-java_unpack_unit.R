@@ -5,8 +5,16 @@ test_that("java_unpack with force removes existing installation", {
   cache_path <- withr::local_tempdir()
   withr::local_options(rJavaEnv.cache_path = cache_path)
 
-  # Create fake existing installation
-  installed_path <- file.path(cache_path, "installed", "linux", "x64", "21")
+  # Create fake existing installation (new structure: platform/arch/distribution/backend/version)
+  installed_path <- file.path(
+    cache_path,
+    "installed",
+    "linux",
+    "x64",
+    "unknown",
+    "unknown",
+    "21"
+  )
   dir.create(installed_path, recursive = TRUE)
   file.create(file.path(installed_path, "old_file.txt"))
 
@@ -46,8 +54,16 @@ test_that("java_unpack with force outputs message when quiet = FALSE", {
   cache_path <- withr::local_tempdir()
   withr::local_options(rJavaEnv.cache_path = cache_path)
 
-  # Create fake existing installation
-  installed_path <- file.path(cache_path, "installed", "macos", "aarch64", "17")
+  # Create fake existing installation (new structure: platform/arch/distribution/backend/version)
+  installed_path <- file.path(
+    cache_path,
+    "installed",
+    "macos",
+    "aarch64",
+    "unknown",
+    "unknown",
+    "17"
+  )
   dir.create(installed_path, recursive = TRUE)
   file.create(file.path(installed_path, "existing.txt"))
 
@@ -86,8 +102,16 @@ test_that("java_unpack skips when already unpacked", {
   cache_path <- withr::local_tempdir()
   withr::local_options(rJavaEnv.cache_path = cache_path)
 
-  # Create fake existing installation with content
-  installed_path <- file.path(cache_path, "installed", "linux", "x64", "11")
+  # Create fake existing installation with content (new structure)
+  installed_path <- file.path(
+    cache_path,
+    "installed",
+    "linux",
+    "x64",
+    "unknown",
+    "unknown",
+    "11"
+  )
   dir.create(installed_path, recursive = TRUE)
   file.create(file.path(installed_path, "bin"))
 
@@ -180,8 +204,16 @@ test_that("java_unpack errors on unsupported file format", {
   cache_path <- withr::local_tempdir()
   withr::local_options(rJavaEnv.cache_path = cache_path)
 
-  # Create path for installed dir first
-  installed_path <- file.path(cache_path, "installed", "linux", "x64", "21")
+  # Create path for installed dir first (new structure)
+  installed_path <- file.path(
+    cache_path,
+    "installed",
+    "linux",
+    "x64",
+    "unknown",
+    "unknown",
+    "21"
+  )
 
   distrib_path <- file.path(cache_path, "amazon-corretto-21-linux-x64-jdk.dmg")
   file.create(distrib_path)

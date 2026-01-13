@@ -39,7 +39,7 @@ test_that("use_java executes flow correctly", {
 
   # Mock dependencies
   local_mocked_bindings(
-    java_list_installed_cache = function(...) data.frame(),
+    java_list_installed = function(...) data.frame(),
     java_download = function(...) "mock_distrib_path",
     java_unpack = function(...) "mock_install_path",
     # Mock the internal implementation to avoid libjvm.so warnings
