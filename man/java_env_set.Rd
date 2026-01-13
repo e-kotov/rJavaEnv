@@ -38,9 +38,9 @@ To use a different Java version with rJava-dependent packages, you must:
 
 \section{rJava Path-Locking}{
 
-\strong{Important for \strong{rJava} Users}: This function sets environment variables
-(JAVA_HOME, PATH) that affect both command-line Java tools and \strong{rJava} initialization.
-However, due to \strong{rJava}'s path-locking behavior when \code{\link[rJava]{.jinit}} is called
+\strong{Important for rJava Users}: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and rJava initialization.
+However, due to rJava's path-locking behavior when \code{\link[rJava]{.jinit}} is called
 (see \url{https://github.com/s-u/rJava/issues/25}, \url{https://github.com/s-u/rJava/issues/249}, and \url{https://github.com/s-u/rJava/issues/334}),
 this function must be called \strong{BEFORE} \code{\link[rJava]{.jinit}} is invoked. Once \code{\link[rJava]{.jinit}}
 initializes, the Java version is locked for that R session and cannot be changed without restarting R.
@@ -48,18 +48,18 @@ initializes, the Java version is locked for that R session and cannot be changed
 \code{\link[rJava]{.jinit}} is invoked (and Java locked) when you:
 \itemize{
 \item Explicitly call \code{library(rJava)}
-\item Load any package that imports \strong{rJava} (which auto-loads it as a dependency)
+\item Load any package that imports rJava (which auto-loads it as a dependency)
 \item Even just use IDE autocomplete with \code{rJava::} (this triggers initialization!)
-\item Call any \strong{rJava}-dependent function
+\item Call any rJava-dependent function
 }
 
-Once any of these happen, the Java version used by \strong{rJava} for that session is locked in.
-For command-line Java tools that don't use \strong{rJava}, this function can be called at any
+Once any of these happen, the Java version used by rJava for that session is locked in.
+For command-line Java tools that don't use rJava, this function can be called at any
 time to switch Java versions for subsequent system calls.
 }
 
 \examples{
-\dontrun{
+\donttest{
 # download, install Java 17
 java_17_distrib <- java_download(version = "17", temp_dir = TRUE)
 java_home <- java_install(

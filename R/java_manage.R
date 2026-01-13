@@ -17,11 +17,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' java_list("project")
 #' java_list("installed")
 #' java_list("distrib")
-#'}
 #'
 java_list <- function(
   type = c("project", "installed", "distrib"),
@@ -41,19 +39,19 @@ java_list <- function(
   }
 
   if (type == "distrib") {
-    return(java_list_distrib_cache(
+    return(java_list_distrib(
       output = output,
       quiet = quiet,
       cache_path = target_dir
     ))
   } else if (type == "installed") {
-    return(java_list_installed_cache(
+    return(java_list_installed(
       output = output,
       quiet = quiet,
       cache_path = target_dir
     ))
   } else if (type == "project") {
-    return(java_list_in_project(
+    return(java_list_project(
       output = output,
       quiet = quiet,
       project_path = target_dir
@@ -73,10 +71,10 @@ java_list <- function(
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' java_clear("project", target_dir = tempdir())
-#' java_clear("installed", target_dir = tempdir())
-#' java_clear("distrib", target_dir = tempdir())
+#' if (interactive()) {
+#'   java_clear("project")
+#'   java_clear("installed")
+#'   java_clear("distrib")
 #' }
 #'
 java_clear <- function(
@@ -98,19 +96,19 @@ java_clear <- function(
   }
 
   if (type == "distrib") {
-    java_clear_distrib_cache(
+    java_clear_distrib(
       cache_path = target_dir,
       check = check,
       delete_all = delete_all
     )
   } else if (type == "installed") {
-    java_clear_installed_cache(
+    java_clear_installed(
       cache_path = target_dir,
       check = check,
       delete_all = delete_all
     )
   } else if (type == "project") {
-    java_clear_in_project(
+    java_clear_project(
       project_path = target_dir,
       check = check,
       delete_all = delete_all

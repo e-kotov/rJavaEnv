@@ -49,11 +49,13 @@ Imports:
     checkmate,
     cli,
     curl,
-    jsonlite,
+    digest,
     memoise,
+    RcppSimdJson,
     rlang,
     utils,
-    withr
+    withr,
+    yaml
 Suggests: 
     callr,
     quarto,

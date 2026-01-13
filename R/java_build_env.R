@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Download and install Java 17
 #' java_17_distrib <- java_download(version = "17", temp_dir = TRUE)
 #' java_home_path <- java_install(
@@ -103,10 +103,8 @@ java_build_env_set <- function(
 #' @return Does not return a value. Invisibly returns `NULL`.
 #' @export
 #' @examples
-#' \dontrun{
 #' # Remove Java build environment settings from the current project
 #' java_build_env_unset()
-#' }
 #'
 java_build_env_unset <- function(project_path = NULL, quiet = FALSE) {
   rje_consent_check()

@@ -7,6 +7,7 @@
 use_java(
   version = NULL,
   distribution = "Corretto",
+  backend = getOption("rJavaEnv.backend", "native"),
   cache_path = getOption("rJavaEnv.cache_path"),
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
@@ -15,9 +16,19 @@ use_java(
 )
 }
 \arguments{
-\item{version}{\code{Integer} or \code{character} vector of length 1 for major version of Java to download or install. If not specified, defaults to the latest LTS version. Can be "8", and "11" to "24" (or the same version numbers in \code{integer}) or any newer version if it is available for the selected distribution. For \code{macOS} on \code{aarch64} architecture (Apple Silicon) certain \code{Java} versions are not available.}
+\item{version}{Java version specification. Accepts:
+\itemize{
+\item \strong{Major version} (e.g., \code{21}, \code{17}): Downloads the latest release for that major version.
+\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Downloads the exact version.
+\item \strong{SDKMAN identifier} (e.g., \code{"25.0.1-amzn"}, \code{"24.0.2-open"}): Uses the SDKMAN
+backend automatically. When an identifier is detected, the \code{distribution} and \code{backend}
+arguments are \strong{ignored} and derived from the identifier. Find available identifiers
+in the \code{identifier} column of \code{\link{java_list_available}(backend = "sdkman")}.
+}}
 
-\item{distribution}{The Java distribution to download. If not specified, defaults to "Amazon Corretto". Currently only \href{https://aws.amazon.com/corretto/}{"Amazon Corretto"} is supported.}
+\item{distribution}{The Java distribution to download. Defaults to "Corretto". Ignored if \code{version} is a SDKMAN identifier.}
+
+\item{backend}{The download backend used (e.g., "native", "sdkman"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".}
 
 \item{cache_path}{The destination directory to download the Java distribution to. Defaults to a user-specific data directory.}
 
@@ -39,9 +50,9 @@ This is intended as a quick and easy way to use different Java versions in R scr
 }
 \section{rJava Path-Locking}{
 
-\strong{Important for \strong{rJava} Users}: This function sets environment variables
-(JAVA_HOME, PATH) that affect both command-line Java tools and \strong{rJava} initialization.
-However, due to \strong{rJava}'s path-locking behavior when \code{\link[rJava]{.jinit}} is called
+\strong{Important for rJava Users}: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and rJava initialization.
+However, due to rJava's path-locking behavior when \code{\link[rJava]{.jinit}} is called
 (see \url{https://github.com/s-u/rJava/issues/25}, \url{https://github.com/s-u/rJava/issues/249}, and \url{https://github.com/s-u/rJava/issues/334}),
 this function must be called \strong{BEFORE} \code{\link[rJava]{.jinit}} is invoked. Once \code{\link[rJava]{.jinit}}
 initializes, the Java version is locked for that R session and cannot be changed without restarting R.
@@ -49,13 +60,13 @@ initializes, the Java version is locked for that R session and cannot be changed
 \code{\link[rJava]{.jinit}} is invoked (and Java locked) when you:
 \itemize{
 \item Explicitly call \code{library(rJava)}
-\item Load any package that imports \strong{rJava} (which auto-loads it as a dependency)
+\item Load any package that imports rJava (which auto-loads it as a dependency)
 \item Even just use IDE autocomplete with \code{rJava::} (this triggers initialization!)
-\item Call any \strong{rJava}-dependent function
+\item Call any rJava-dependent function
 }
 
-Once any of these happen, the Java version used by \strong{rJava} for that session is locked in.
-For command-line Java tools that don't use \strong{rJava}, this function can be called at any
+Once any of these happen, the Java version used by rJava for that session is locked in.
+For command-line Java tools that don't use rJava, this function can be called at any
 time to switch Java versions for subsequent system calls.
 }
 
@@ -67,7 +78,7 @@ options(rJavaEnv.cache_path = tempdir())
 
 # For end users: Install and set Java BEFORE loading rJava packages
 use_java(21)
-library(myRJavaPackage)  # Now uses Java 21
+# library(myRJavaPackage)  # Now uses Java 21
 
 # For command-line Java tools (no rJava involved):
 # Can switch versions between system calls

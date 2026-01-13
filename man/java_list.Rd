@@ -32,10 +32,8 @@ This function lists one of the following:
 }
 }
 \examples{
-\dontrun{
 java_list("project")
 java_list("installed")
 java_list("distrib")
-}
 
 }

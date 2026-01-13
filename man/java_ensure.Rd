@@ -10,6 +10,7 @@ java_ensure(
   accept_system_java = TRUE,
   install = TRUE,
   distribution = "Corretto",
+  backend = getOption("rJavaEnv.backend", "native"),
   check_against = c("rJava", "cmd"),
   quiet = FALSE,
   cache_path = getOption("rJavaEnv.cache_path"),
@@ -21,7 +22,15 @@ java_ensure(
 )
 }
 \arguments{
-\item{version}{Integer or character. \strong{Required.} The Java version you need (e.g., 17, 21). Defaults to \code{NULL}, which is invalid and will trigger a validation error; callers should always provide a non-\code{NULL} value explicitly.}
+\item{version}{Java version specification. Accepts:
+\itemize{
+\item \strong{Major version} (e.g., \code{21}, \code{17}): Downloads the latest release for that major version.
+\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Downloads the exact version.
+\item \strong{SDKMAN identifier} (e.g., \code{"25.0.1-amzn"}, \code{"24.0.2-open"}): Uses the SDKMAN
+backend automatically. When an identifier is detected, the \code{distribution} and \code{backend}
+arguments are \strong{ignored} and derived from the identifier. Find available identifiers
+in the \code{identifier} column of \code{\link{java_list_available}(backend = "sdkman")}.
+}}
 
 \item{type}{Character. \code{"exact"} (default) checks for exact version match. \code{"min"} checks for version >= \code{version}.}
 
@@ -30,7 +39,10 @@ java_ensure(
 \item{install}{Logical. If \code{TRUE} (default), attempts to download/install if missing.
 If \code{FALSE}, returns \code{FALSE} if the version is not found.}
 
-\item{distribution}{Character. The Java distribution to download. Defaults to "Corretto".}
+\item{distribution}{Character. The Java distribution to download. Defaults to "Corretto". Ignored if \code{version} is a SDKMAN identifier.}
+
+\item{backend}{Download backend to use. One of "native" (vendor APIs) or "sdkman".
+Defaults to "native". Can also be set globally via \code{options(rJavaEnv.backend = "sdkman")}.}
 
 \item{check_against}{Character. Controls which context validity the function checks against.
 \itemize{
@@ -106,9 +118,9 @@ environment variable change (which won't help rJava at that point).
 
 \section{rJava Path-Locking}{
 
-\strong{Important for \strong{rJava} Users}: This function sets environment variables
-(JAVA_HOME, PATH) that affect both command-line Java tools and \strong{rJava} initialization.
-However, due to \strong{rJava}'s path-locking behavior when \code{\link[rJava]{.jinit}} is called
+\strong{Important for rJava Users}: This function sets environment variables
+(JAVA_HOME, PATH) that affect both command-line Java tools and rJava initialization.
+However, due to rJava's path-locking behavior when \code{\link[rJava]{.jinit}} is called
 (see \url{https://github.com/s-u/rJava/issues/25}, \url{https://github.com/s-u/rJava/issues/249}, and \url{https://github.com/s-u/rJava/issues/334}),
 this function must be called \strong{BEFORE} \code{\link[rJava]{.jinit}} is invoked. Once \code{\link[rJava]{.jinit}}
 initializes, the Java version is locked for that R session and cannot be changed without restarting R.
@@ -116,23 +128,23 @@ initializes, the Java version is locked for that R session and cannot be changed
 \code{\link[rJava]{.jinit}} is invoked (and Java locked) when you:
 \itemize{
 \item Explicitly call \code{library(rJava)}
-\item Load any package that imports \strong{rJava} (which auto-loads it as a dependency)
+\item Load any package that imports rJava (which auto-loads it as a dependency)
 \item Even just use IDE autocomplete with \code{rJava::} (this triggers initialization!)
-\item Call any \strong{rJava}-dependent function
+\item Call any rJava-dependent function
 }
 
-Once any of these happen, the Java version used by \strong{rJava} for that session is locked in.
-For command-line Java tools that don't use \strong{rJava}, this function can be called at any
+Once any of these happen, the Java version used by rJava for that session is locked in.
+For command-line Java tools that don't use rJava, this function can be called at any
 time to switch Java versions for subsequent system calls.
 }
 
 \examples{
-\dontrun{
+\donttest{
 # For end users: Ensure Java 21 is ready BEFORE loading rJava packages
 library(rJavaEnv)
 java_ensure(version = 21, type = "min")
 # Now safe to load packages that depend on rJava
-library(myRJavaPackage)
+# library(myRJavaPackage)
 
 # For packages using command-line Java (not rJava):
 # Can use java_ensure() within functions to set Java before calling system tools

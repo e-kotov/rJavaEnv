@@ -110,8 +110,8 @@ This will:
 
 - create a symbolic link (for macOS and Linux) or junction (for Windows,
   if that fails, just copies the files)
-  **rjavaenv/`platform`/`processor_architecture`/`java_version`** in the
-  current directory/project to point to the cached installation;
+  **rjavaenv/`platform`/`processor_architecture`/`distribution`/`backend`/`java_version`**
+  in the current directory/project to point to the cached installation;
 
 - set the current session’s `JAVA_HOME` and `PATH` environment variables
   to point to the installed (symlinked) `Java` distribution;
@@ -133,6 +133,13 @@ and/or to prevent interruptions in non-interactive mode, you can use the
 
 ``` r
 rje_consent(provided = TRUE)
+```
+
+You can also specify a distribution different from the default
+“Corretto”:
+
+``` r
+rJavaEnv::java_quick_install(version = 17, distribution = "Temurin")
 ```
 
 ## Using `rJavaEnv` with `targets` and `callr`
@@ -158,9 +165,9 @@ If you do not want to use `rJavaEnv` anymore, please clear the cache
 folders before removing the package:
 
 ``` r
-java_clear("project", delete_all = TRUE)
-java_clear("installed", delete_all = TRUE)
-java_clear("distrib", delete_all = TRUE)
+java_clear_project(delete_all = TRUE)
+java_clear_installed(delete_all = TRUE)
+java_clear_distrib(delete_all = TRUE)
 ```
 
 Also, clear the `.Rprofile` file in the projects there you used the
@@ -216,12 +223,14 @@ The package has several core functions:
       R session, please restart the session so that R picks up the
       system Java).
 
-8.  `java_list()`
+8.  `java_list_*()` (`java_list_project()`, `java_list_installed()`,
+    `java_list_distrib()`)
 
     - Lists all or some `Java` versions linked in the current project
       (or cached distributions or installations).
 
-9.  `java_clear()`
+9.  `java_clear_*()` (`java_clear_project()`, `java_clear_installed()`,
+    `java_clear_distrib()`)
 
     - Removes all or some `Java` versions linked in the current project
       (or cached distributions or installations).
@@ -232,14 +241,20 @@ The package has several core functions:
       installed for either current automatically detected OS and CPU
       architecture or user-specified platform and architecture.
 
-11. `use_java()`
+11. `java_list_available()`
+
+    - Lists all installable Java versions from supported backends
+      (native vendor APIs or SDKMAN). Supports filtering by platform and
+      architecture.
+
+12. `use_java()`
 
     - Same as `java_quick_install()`, but in a less intrusive way. Does
       not copy or link the `Java` installation folder from cache into
       the project directory and does not create or edit your `.Rprofile`
       file. Only sets requested java in the current R session.
 
-12. `java_build_env_set()` (and `java_build_env_unset()`)
+13. `java_build_env_set()` (and `java_build_env_unset()`)
 
     - Similar to `java_env_set()`, but specifically designed for setting
       `Java` environment variables for building `rJava` from source.

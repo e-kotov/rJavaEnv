@@ -30,11 +30,14 @@ test_that("java_install succeeds with symlink on Unix-like systems", {
   # The global mock will generate the unpacked path based on the distrib path
   # Since we mocked java_unpack in the namespace but the attached version might be stale,
   # we manually construct the expected path to match the mock's logic.
+  # New structure: platform/arch/distribution/backend/version
   fake_unpacked_path <- file.path(
     "/mock/cache/path",
     "installed",
     os,
     arch,
+    "unknown",
+    "unknown",
     "21"
   )
   expected_symlink_path <- file.path(
@@ -42,6 +45,8 @@ test_that("java_install succeeds with symlink on Unix-like systems", {
     "rjavaenv",
     os,
     arch,
+    "unknown",
+    "unknown",
     "21"
   )
 

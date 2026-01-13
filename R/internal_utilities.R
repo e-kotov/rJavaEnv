@@ -57,7 +57,33 @@ java_urls_load <- function() {
   if (json_file == "") {
     cli::cli_abort("Configuration file not found")
   }
-  jsonlite::fromJSON(json_file, simplifyVector = FALSE)
+  RcppSimdJson::fload(json_file, max_simplify_lvl = "list")
+}
+
+#' Read JSON from a URL
+#'
+#' Helper function to read JSON from a URL using RcppSimdJson for fast parsing
+#'
+#' @param url URL to read JSON from
+#' @param max_simplify_lvl Simplification level (default: "data_frame")
+#' @return Parsed JSON object
+#' @keywords internal
+read_json_url <- function(url, max_simplify_lvl = "data_frame") {
+  content <- rawToChar(rje_curl_fetch_memory(url)$content)
+  RcppSimdJson::fparse(content, max_simplify_lvl = max_simplify_lvl)
+}
+
+#' Read lines from a URL or file
+#'
+#' Helper function to read lines, mainly for testability.
+#'
+#' @param path Path or URL
+#' @param warn Logical. Whether to warn.
+#' @return Character vector of lines
+#' @keywords internal
+#' @noRd
+rje_read_lines <- function(path, warn = FALSE) {
+  readLines(path, warn = warn)
 }
 
 #' Test all Java URLs
@@ -80,7 +106,7 @@ urls_test_all <- function() {
 
         try(
           {
-            response <- curl::curl_fetch_memory(
+            response <- rje_curl_fetch_memory(
               url,
               handle = curl::new_handle(nobody = TRUE)
             )
@@ -404,4 +430,15 @@ java_check_current_rjava_version <- function() {
     )
   }
   return(extracted_dirs[1])
+}
+
+#' Wrapper for curl::curl_fetch_memory for testability
+#'
+#' @param url URL to fetch
+#' @param handle curl handle
+#' @return Response object
+#' @keywords internal
+#' @noRd
+rje_curl_fetch_memory <- function(url, handle = curl::new_handle()) {
+  curl::curl_fetch_memory(url, handle = handle)
 }

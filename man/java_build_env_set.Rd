@@ -28,7 +28,7 @@ This function configures the current R session with the necessary environment
 variables to compile Java-dependent packages like 'rJava' from source. \strong{Note: this function is still experimental.}
 }
 \examples{
-\dontrun{
+\donttest{
 # Download and install Java 17
 java_17_distrib <- java_download(version = "17", temp_dir = TRUE)
 java_home_path <- java_install(

@@ -1,0 +1,79 @@
+# rJavaEnv Configuration
+
+# Platforms supported by rJavaEnv
+platforms:
+  supported:
+    - linux
+    - alpine-linux
+    - macos
+    - windows
+
+# API Endpoints
+endpoints:
+  # Amazon Corretto (Checkums provided in JSON)
+  Corretto:
+    index_url: "https://corretto.github.io/corretto-downloads/latest_links/indexmap_with_checksum.json"
+    
+  # Adoptium Temurin (Checksums in API response)
+  Temurin:
+    base_url: "https://api.adoptium.net/v3/assets/feature_releases"
+    
+  # Azul Zulu (Checksums require include_fields=sha256_hash)
+  Zulu:
+    base_url: "https://api.azul.com/metadata/v1/zulu/packages/"
+    
+  # SDKMAN (No checksums available)
+  SDKMAN:
+    candidates_url: "https://api.sdkman.io/2/candidates/java"
+    broker_url: "https://api.sdkman.io/2/broker/download/java"
+
+# SDKMAN Mapping (for backend="sdkman")
+sdkman:
+  platform_map:
+    linux: "linux"
+    alpine-linux: "linux" # SDKMAN handles musl dynamically or ignores it? (To verify)
+    macos: "darwin"
+    windows: "windows"
+  arch_map:
+    x64: "x64"
+    aarch64: "arm64" 
+  vendor_map:
+    Temurin: "tem"
+    Zulu: "zulu"
+    Corretto: "amzn"
+  vendor_reverse_map:
+    albba: "Alibaba Dragonwell"
+    amzn: "Corretto"
+    bisheng: "Huawei Bisheng"
+    gln: "Gluon"
+    graal: "GraalVM"
+    graalce: "GraalVM CE"
+    jbr: "JetBrains"
+    kona: "Tencent Kona"
+    librca: "Liberica"
+    mandrel: "Mandrel"
+    ms: "Microsoft"
+    nik: "Liberica NIK"
+    open: "OpenJDK"
+    oracle: "Oracle"
+    sapmchn: "SAP Machine"
+    sem: "Semeru"
+    tem: "Temurin"
+    trava: "Trava"
+    zulu: "Zulu"
+
+# Fallback Versions (used when API is unreachable)
+# Updated Jan 2026 based on availability
+fallback_versions:
+  Corretto:
+    default: ["8", "11", "17", "21", "25"]
+    macos_aarch64: ["8", "11", "17", "21", "25"]
+    
+  Temurin:
+    # Adoptium archives EOL releases; only LTS + recent supported
+    default: ["8", "11", "17", "21", "22", "23", "24", "25"]
+    macos_aarch64: ["11", "17", "21", "22", "23", "24", "25"] # No Java 8 on aarch64
+    
+  Zulu:
+    # Broader legacy support
+    default: ["8", "11", "13", "15", "17", "19", "21", "22", "23", "24", "25"]
