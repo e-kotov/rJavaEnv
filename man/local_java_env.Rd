@@ -65,7 +65,7 @@ For rJava packages, use \code{java_ensure()} at the start of the R session inste
 }
 
 \examples{
-\donttest{
+\dontrun{
 # Using system2
 my_tool_wrapper <- function() {
   rJavaEnv::local_java_env(version = 21)
@@ -73,17 +73,17 @@ my_tool_wrapper <- function() {
 } # Environment restored automatically here
 
 # Using processx
-run_java_jar <- function(jar_path, args) {
-  rJavaEnv::local_java_env(version = 21)
-  processx::run("java", c("-jar", jar_path, args))
-}
+# run_java_jar <- function(jar_path, args) {
+#  rJavaEnv::local_java_env(version = 21)
+#  processx::run("java", c("-jar", jar_path, args))
+# }
 
 # With caching for repeated calls
-process_files <- function(files) {
-  for (f in files) {
-    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
-    processx::run("java", c("-jar", "processor.jar", f))
-  }
-}
+# process_files <- function(files) {
+#  for (f in files) {
+#    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
+#   processx::run("java", c("-jar", "processor.jar", f))
+#  }
+# }
 }
 }

@@ -38,13 +38,12 @@ java_download <- function(
   temp_dir = FALSE
 ) {
   # Override cache_path if temp_dir is set to TRUE
+  # Override cache_path if temp_dir is set to TRUE
   if (temp_dir) {
-    temp_dir <- tempdir()
-    setwd(temp_dir)
-    if (!dir.exists("rJavaEnv_cache")) {
-      dir.create("rJavaEnv_cache", recursive = TRUE)
+    cache_path <- file.path(tempdir(), "rJavaEnv_cache")
+    if (!dir.exists(cache_path)) {
+      dir.create(cache_path, recursive = TRUE)
     }
-    cache_path <- file.path(temp_dir, "rJavaEnv_cache")
   }
 
   # Validate version

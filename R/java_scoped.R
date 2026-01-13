@@ -22,7 +22,7 @@
 #' @return Invisibly returns the path to the selected JAVA_HOME.
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Using system2
 #' my_tool_wrapper <- function() {
 #'   rJavaEnv::local_java_env(version = 21)
@@ -30,18 +30,18 @@
 #' } # Environment restored automatically here
 #'
 #' # Using processx
-#' run_java_jar <- function(jar_path, args) {
-#'   rJavaEnv::local_java_env(version = 21)
-#'   processx::run("java", c("-jar", jar_path, args))
-#' }
+#' # run_java_jar <- function(jar_path, args) {
+#' #  rJavaEnv::local_java_env(version = 21)
+#' #  processx::run("java", c("-jar", jar_path, args))
+#' # }
 #'
 #' # With caching for repeated calls
-#' process_files <- function(files) {
-#'   for (f in files) {
-#'     rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
-#'     processx::run("java", c("-jar", "processor.jar", f))
-#'   }
-#' }
+#' # process_files <- function(files) {
+#' #  for (f in files) {
+#' #    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
+#' #   processx::run("java", c("-jar", "processor.jar", f))
+#' #  }
+#' # }
 #' }
 local_java_env <- function(
   version,
@@ -114,9 +114,9 @@ local_java_env <- function(
 #' })
 #'
 #' # Using processx
-#' rJavaEnv::with_java_env(version = 21, {
-#'   processx::run("java", c("-jar", "tool.jar", "--help"))
-#' })
+#' # rJavaEnv::with_java_env(version = 21, {
+#' #  processx::run("java", c("-jar", "tool.jar", "--help"))
+#' # })
 #' }
 with_java_env <- function(version, code, ...) {
   local_java_env(version = version, ...)

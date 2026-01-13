@@ -26,16 +26,18 @@ java_quick_install <- function(
   rje_consent_check()
 
   if (temp_dir) {
-    temp_dir <- tempdir()
-    setwd(temp_dir)
-    if (!dir.exists("rJavaEnv_cache")) {
-      dir.create("rJavaEnv_cache", recursive = TRUE)
+    # Use session temp directory
+    temp_path <- tempdir()
+
+    cache_path <- file.path(temp_path, "rJavaEnv_cache")
+    if (!dir.exists(cache_path)) {
+      dir.create(cache_path, recursive = TRUE)
     }
-    cache_path <- file.path(temp_dir, "rJavaEnv_cache")
-    if (!dir.exists("rJavaEnv_project")) {
-      dir.create("rJavaEnv_project", recursive = TRUE)
+
+    project_path <- file.path(temp_path, "rJavaEnv_project")
+    if (!dir.exists(project_path)) {
+      dir.create(project_path, recursive = TRUE)
     }
-    project_path <- file.path(temp_dir, "rJavaEnv_project")
   } else {
     cache_path <- getOption("rJavaEnv.cache_path")
   }

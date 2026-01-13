@@ -19,7 +19,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'
 #' # set cache directory for Java to be in temporary directory
 #' options(rJavaEnv.cache_path = tempdir())

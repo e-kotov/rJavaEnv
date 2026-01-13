@@ -42,7 +42,7 @@ from the specified backend(s). It returns a unified data frame with
 version details, vendors, and checksum availability.
 }
 \examples{
-\donttest{
+\dontrun{
 # List all available versions for current platform
 java_list_available()
 

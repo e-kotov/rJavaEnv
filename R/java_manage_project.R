@@ -7,8 +7,9 @@
 #' @export
 #'
 #' @examples
-#' java_list_project(project_path)
-
+#' \donttest{
+#' java_list_project()
+#' }
 java_list_project <- function(
   project_path = NULL,
   output = c("data.frame", "vector"),

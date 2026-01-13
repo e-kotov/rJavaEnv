@@ -42,8 +42,8 @@ rJavaEnv::with_java_env(version = 21, {
 })
 
 # Using processx
-rJavaEnv::with_java_env(version = 21, {
-  processx::run("java", c("-jar", "tool.jar", "--help"))
-})
+# rJavaEnv::with_java_env(version = 21, {
+#  processx::run("java", c("-jar", "tool.jar", "--help"))
+# })
 }
 }
