@@ -15,6 +15,7 @@ test_that("java_valid_versions returns a character vector with required versions
   expect_true("8" %in% versions)
   expect_true("11" %in% versions)
   expect_true("24" %in% versions)
+  expect_true("26" %in% versions)
 })
 
 test_that("force parameter bypasses the cache", {
@@ -44,8 +45,8 @@ test_that("fallback is used when the API call fails", {
   )
 
   local_mocked_bindings(
-    read_json = function(...) stop("Simulated API failure"),
-    .package = "jsonlite"
+    read_json_url = function(...) stop("Simulated API failure"),
+    .package = "rJavaEnv"
   )
 
   fallback <- getOption("rJavaEnv.fallback_valid_versions_current_platform")
@@ -53,4 +54,7 @@ test_that("fallback is used when the API call fails", {
 
   ## When the API call fails, the fallback list should be returned.
   expect_equal(versions, fallback)
+  expect_true("26" %in% versions)
+  expect_true("50" %in% versions)
+  expect_true("100" %in% versions)
 })

@@ -17,106 +17,47 @@
     rJavaEnv.valid_versions_cache = NULL,
     rJavaEnv.valid_versions_timestamp = NULL,
     # Fallback lists for various platforms
-    rJavaEnv.fallback_valid_versions_macos_aarch64 = c(
-      "8",
-      "11",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25"
-    ),
-    rJavaEnv.fallback_valid_versions_macos_x64 = c(
-      "8",
-      "11",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25"
-    ),
-    rJavaEnv.fallback_valid_versions_linux_aarch64 = c(
-      "8",
-      "11",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25"
-    ),
-    rJavaEnv.fallback_valid_versions_linux_x64 = c(
-      "8",
-      "11",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25"
-    ),
-    rJavaEnv.fallback_valid_versions_windows_x64 = c(
-      "8",
-      "11",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25"
-    ),
+    rJavaEnv.fallback_valid_versions_macos_aarch64 = as.character(c(
+      8,
+      11,
+      17:100
+    )),
+    rJavaEnv.fallback_valid_versions_macos_x64 = as.character(c(
+      8,
+      11,
+      15:100
+    )),
+    rJavaEnv.fallback_valid_versions_linux_aarch64 = as.character(c(
+      8,
+      11,
+      17:100
+    )),
+    rJavaEnv.fallback_valid_versions_linux_x64 = as.character(c(
+      8,
+      11,
+      15:100
+    )),
+    rJavaEnv.fallback_valid_versions_windows_x64 = as.character(c(
+      8,
+      11,
+      15:100
+    )),
     rJavaEnv.fallback_valid_versions_windows_x86 = c(
       "8",
       "11"
     ),
-    rJavaEnv.fallback_valid_versions_temurin = c(
-      "8",
-      "11",
-      "17",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25"
-    ),
-    rJavaEnv.fallback_valid_versions_zulu = c(
-      "8",
-      "11",
-      "13",
-      "15",
-      "17",
-      "19",
-      "21",
-      "22",
-      "23",
-      "24",
-      "25"
-    )
+    rJavaEnv.fallback_valid_versions_temurin = as.character(c(
+      8,
+      11,
+      17:100
+    )),
+    rJavaEnv.fallback_valid_versions_zulu = as.character(c(
+      8,
+      11,
+      13,
+      15,
+      17:100
+    ))
   )
 
   # Only set the options that haven't been defined yet
