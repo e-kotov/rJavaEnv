@@ -50,9 +50,9 @@ java_check_version_cmd()
 #> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
 #> Java path:
 #> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17/bin/java
-#> Java version: "openjdk version \"17.0.17\" 2025-10-21 LTS OpenJDK Runtime
-#> Environment Corretto-17.0.17.10.1 (build 17.0.17+10-LTS) OpenJDK 64-Bit Server
-#> VM Corretto-17.0.17.10.1 (build 17.0.17+10-LTS, mixed mode, sharing)"
+#> Java version: "openjdk version \"17.0.18\" 2026-01-20 LTS OpenJDK Runtime
+#> Environment Corretto-17.0.18.9.1 (build 17.0.18+9-LTS) OpenJDK 64-Bit Server VM
+#> Corretto-17.0.18.9.1 (build 17.0.18+9-LTS, mixed mode, sharing)"
 #> [1] "17"
 # }
 ```

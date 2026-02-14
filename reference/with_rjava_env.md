@@ -99,6 +99,6 @@ result <- with_rjava_env(
   args = list(x = 1)
 )
 print(result)
-#> [1] "21.0.9"
+#> [1] "21.0.10"
 # }
 ```

@@ -91,13 +91,12 @@ java_quick_install(17, temp_dir = TRUE)
 #> Detected architecture: x64
 #> You can change the platform and architecture by specifying the `platform` and
 #> `arch` arguments.
-#> File already cached: amazon-corretto-17.0.17.10.1-linux-x64.tar.gz
-#> Java distribution amazon-corretto-17.0.17.10.1-linux-x64.tar.gz already
-#> unpacked at
-#> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
+#> File already cached: amazon-corretto-17.0.18.9.1-linux-x64.tar.gz
+#> Java distribution amazon-corretto-17.0.18.9.1-linux-x64.tar.gz already unpacked
+#> at /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
 #> ℹ You have rJava loaded in the current session. rJava gets locked to the Java version that was active when it was first initialized.rJava is initialized when you: (1) call `library(rJava)`, (2) load a package that imports rJava, (3) use IDE autocomplete with `rJava::`, or (4) call any rJava function.This path-locking is a limitation of rJava itself. See: https://github.com/s-u/rJava/issues/25, https://github.com/s-u/rJava/issues/249, and https://github.com/s-u/rJava/issues/334Unless you restart the R session or run your code in a new R subprocess (using targets or callr), the new `JAVA_HOME` and `PATH` will not take effect.
 #> ✔ Current R Session: JAVA_HOME and PATH set to /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
-#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/RtmpBxf86B/rJavaEnv_project'
+#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/RtmpZMc8LF/rJavaEnv_project'
 #> ℹ On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in
 #>   the current session.
 #>   To make this change permanent for installing rJava-dependent packages from
@@ -111,9 +110,9 @@ java_quick_install(17, temp_dir = TRUE)
 #>   `R CMD javareconf
 #>   JAVA_HOME=/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
 #>   -e`
-#> Java NA (amazon-corretto-17.0.17.10.1-linux-x64.tar.gz) for linux x64 installed
+#> Java NA (amazon-corretto-17.0.18.9.1-linux-x64.tar.gz) for linux x64 installed
 #> at /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17 and
 #> symlinked to
-#> /tmp/RtmpBxf86B/rJavaEnv_project/rjavaenv/linux/x64/Corretto/native/NA
+#> /tmp/RtmpZMc8LF/rJavaEnv_project/rjavaenv/linux/x64/Corretto/native/NA
 # }
 ```
