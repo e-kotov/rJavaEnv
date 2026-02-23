@@ -305,21 +305,39 @@ java_check_version_rjava <- function(
 
 # Original implementation (not memoised) - used when .use_cache = FALSE
 ._java_version_check_rjava_impl_original <- function(java_home = NULL) {
-  # Get the code of the unexported function to use in a script
-  internal_function <- getFromNamespace(
+  # Get the code of the unexported functions to use in a script
+  # On Linux, the script depends on get_libjvm_path() to avoid crashes in .jinit()
+  java_version_check_fn <- getFromNamespace(
     "java_version_check_rscript",
     "rJavaEnv"
   )
-  script_content <- paste(deparse(body(internal_function)), collapse = "\n")
+  get_libjvm_path_fn <- getFromNamespace("get_libjvm_path", "rJavaEnv")
 
-  # Create a wrapper script that includes the function definition and calls it
+  java_version_check_body <- paste(
+    deparse(body(java_version_check_fn)),
+    collapse = "\n"
+  )
+  get_libjvm_path_body <- paste(
+    deparse(body(get_libjvm_path_fn)),
+    collapse = "\n"
+  )
+
+  # Create a wrapper script that includes the function definitions and calls them
   # Capture current libPaths to ensure subprocess can find rJava in renv/packrat environments
   libs_code <- paste0(".libPaths(", deparse(as.character(.libPaths())), ")")
 
-  wrapper_script <- sprintf(
-    "%s\njava_version_check <- function(java_home) {\n%s\n}\n\nargs <- commandArgs(trailingOnly = TRUE)\nresult <- java_version_check(args[1])\ncat(result, sep = '\n')",
+  wrapper_script <- paste0(
     libs_code,
-    script_content
+    "\n\n",
+    "get_libjvm_path <- function(java_home) {\n",
+    get_libjvm_path_body,
+    "\n}\n\n",
+    "java_version_check <- function(java_home) {\n",
+    java_version_check_body,
+    "\n}\n\n",
+    "args <- commandArgs(trailingOnly = TRUE)\n",
+    "result <- java_version_check(args[1])\n",
+    "cat(result, sep = '\n')"
   )
 
   # Write the wrapper script to a temporary file
