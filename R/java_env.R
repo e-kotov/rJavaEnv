@@ -313,31 +313,32 @@ java_check_version_rjava <- function(
   )
   get_libjvm_path_fn <- getFromNamespace("get_libjvm_path", "rJavaEnv")
 
-  java_version_check_body <- paste(
-    deparse(body(java_version_check_fn)),
-    collapse = "\n"
-  )
-  get_libjvm_path_body <- paste(
-    deparse(body(get_libjvm_path_fn)),
-    collapse = "\n"
-  )
+  # Helper to deparse and collapse multi-line expressions
+  deparse_collapse <- function(x) {
+    paste(deparse(x, width.cutoff = 500), collapse = "\n")
+  }
+
+  java_version_check_body <- deparse_collapse(body(java_version_check_fn))
+  get_libjvm_path_body <- deparse_collapse(body(get_libjvm_path_fn))
+  libs_val <- deparse_collapse(as.character(.libPaths()))
 
   # Create a wrapper script that includes the function definitions and calls them
   # Capture current libPaths to ensure subprocess can find rJava in renv/packrat environments
-  libs_code <- paste0(".libPaths(", deparse(as.character(.libPaths())), ")")
-
   wrapper_script <- paste0(
-    libs_code,
-    "\n\n",
-    "get_libjvm_path <- function(java_home) {\n",
+    ".libPaths(",
+    libs_val,
+    ")\n\n",
+    "get_libjvm_path <- function(java_home) ",
     get_libjvm_path_body,
-    "\n}\n\n",
-    "java_version_check <- function(java_home) {\n",
+    "\n\n",
+    "java_version_check <- function(java_home) ",
     java_version_check_body,
-    "\n}\n\n",
+    "\n\n",
     "args <- commandArgs(trailingOnly = TRUE)\n",
-    "result <- java_version_check(args[1])\n",
-    "cat(result, sep = '\n')"
+    "if (length(args) > 0) {\n",
+    "  result <- java_version_check(args[1])\n",
+    "  cat(result, sep = '\n')\n",
+    "}"
   )
 
   # Write the wrapper script to a temporary file
