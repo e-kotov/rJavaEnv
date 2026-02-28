@@ -95,7 +95,7 @@ java_download(version = "17", temp_dir = TRUE)
 #> You can change the platform and architecture by specifying the `platform` and
 #> `arch` arguments.
 #> File already cached: amazon-corretto-17.0.18.9.1-linux-x64.tar.gz
-#> [1] "/tmp/RtmpZMc8LF/rJavaEnv_cache/distrib/amazon-corretto-17.0.18.9.1-linux-x64.tar.gz"
+#> [1] "/tmp/RtmpoeQtFr/rJavaEnv_cache/distrib/amazon-corretto-17.0.18.9.1-linux-x64.tar.gz"
 #> attr(,"distribution")
 #> [1] "Corretto"
 #> attr(,"backend")
@@ -116,7 +116,7 @@ java_download(temp_dir = TRUE)
 #> Downloading Corretto Java 21...
 #> Verifying sha256 checksum...
 #> Checksum verified.
-#> [1] "/tmp/RtmpZMc8LF/rJavaEnv_cache/distrib/amazon-corretto-21.0.10.7.1-linux-x64.tar.gz"
+#> [1] "/tmp/RtmpoeQtFr/rJavaEnv_cache/distrib/amazon-corretto-21.0.10.7.1-linux-x64.tar.gz"
 #> attr(,"distribution")
 #> [1] "Corretto"
 #> attr(,"backend")
@@ -137,7 +137,7 @@ java_download(version = "21", backend = "sdkman", temp_dir = TRUE)
 #> ! SDKMAN backend: checksum verification unavailable
 #> Downloading Corretto Java 21...
 #> ! Skipping checksum (unavailable for SDKMAN)
-#> [1] "/tmp/RtmpZMc8LF/rJavaEnv_cache/distrib/corretto-21-linux-x64.tar.gz"
+#> [1] "/tmp/RtmpoeQtFr/rJavaEnv_cache/distrib/corretto-21-linux-x64.tar.gz"
 #> attr(,"distribution")
 #> [1] "Corretto"
 #> attr(,"backend")
