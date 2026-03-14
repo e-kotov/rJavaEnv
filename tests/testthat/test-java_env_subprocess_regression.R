@@ -10,7 +10,10 @@ test_that("._java_version_check_rjava_impl_original prefers callr", {
       captured_libpath <<- libpath
       list(
         java_version = "21.0.8",
-        output = "rJava and other rJava/Java-based packages will use Java version: \"21.0.8\""
+        output = paste0(
+          "rJava and other rJava/Java-based packages will use ",
+          "Java version: \"21.0.8\""
+        )
       )
     },
     .package = "callr"
@@ -62,7 +65,9 @@ test_that("._java_version_check_rjava_impl_original falls back to Rscript", {
       if (file.exists(args[1])) {
         captured_script <<- readLines(args[1])
       }
-      "rJava and other rJava/Java-based packages will use Java version: \"21.0.8\""
+      c(
+        "rJava and other rJava/Java-based packages will use Java version: \"21\""
+      )
     },
     .package = "base"
   )
@@ -73,10 +78,10 @@ test_that("._java_version_check_rjava_impl_original falls back to Rscript", {
 
   expect_equal(result$major_version, "21")
   expect_equal(captured_env[["JAVA_HOME"]], "/mock/java")
-  expect_false(any(grepl("get_libjvm_path <- function", captured_script)))
   expect_equal(sum(grepl("java_version_check <- function", captured_script)), 1)
 
   script_text <- paste(captured_script, collapse = "\n")
   expect_true(grepl("\\.libPaths\\(c\\(", script_text))
   expect_true(grepl("/home/user/R/x86_64-pc-linux-gnu-library/4.5", script_text))
+  expect_false(any(grepl("get_libjvm_path <- function", captured_script)))
 })

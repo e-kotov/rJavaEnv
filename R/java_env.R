@@ -352,19 +352,16 @@ java_check_version_rjava <- function(
       }
     }
   }
-
   java_version_check_fn <- getFromNamespace(
     "java_version_check_rscript",
     "rJavaEnv"
   )
-
   deparse_collapse <- function(x) {
     paste(deparse(x, width.cutoff = 500), collapse = "\n")
   }
 
   java_version_check_body <- deparse_collapse(body(java_version_check_fn))
   libs_val <- deparse_collapse(as.character(.libPaths()))
-
   wrapper_script <- paste0(
     ".libPaths(",
     libs_val,
