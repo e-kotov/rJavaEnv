@@ -73,6 +73,63 @@ read_json_url <- function(url, max_simplify_lvl = "data_frame") {
   RcppSimdJson::fparse(content, max_simplify_lvl = max_simplify_lvl)
 }
 
+#' Build environment variables for a Java subprocess
+#'
+#' @param java_home Path to Java home directory.
+#' @param rjava Logical. Whether the subprocess will initialize rJava.
+#'
+#' @return Named character vector of environment variables.
+#' @keywords internal
+#' @noRd
+java_subprocess_env <- function(java_home, rjava = FALSE) {
+  checkmate::assert_string(java_home)
+  checkmate::assert_logical(rjava, len = 1)
+
+  env_vars <- Sys.getenv()
+  java_bin <- file.path(java_home, "bin")
+  old_path <- env_vars[["PATH"]]
+
+  env_vars["JAVA_HOME"] <- java_home
+  env_vars["PATH"] <- paste(java_bin, old_path, sep = .Platform$path.sep)
+
+  if (!isTRUE(rjava)) {
+    return(env_vars)
+  }
+
+  sysname <- Sys.info()[["sysname"]]
+  libjvm_path <- get_libjvm_path(java_home)
+  if (is.null(libjvm_path)) {
+    return(env_vars)
+  }
+
+  jvm_lib_dir <- dirname(libjvm_path)
+
+  if (identical(sysname, "Linux")) {
+    old_ld <- env_vars[["LD_LIBRARY_PATH"]]
+    if (is.na(old_ld)) {
+      old_ld <- ""
+    }
+    env_vars["JAVA_LD_LIBRARY_PATH"] <- jvm_lib_dir
+    env_vars["LD_LIBRARY_PATH"] <- if (nzchar(old_ld)) {
+      paste(jvm_lib_dir, old_ld, sep = .Platform$path.sep)
+    } else {
+      jvm_lib_dir
+    }
+  } else if (identical(sysname, "Darwin")) {
+    old_dyld <- env_vars[["DYLD_LIBRARY_PATH"]]
+    if (is.na(old_dyld)) {
+      old_dyld <- ""
+    }
+    env_vars["DYLD_LIBRARY_PATH"] <- if (nzchar(old_dyld)) {
+      paste(jvm_lib_dir, old_dyld, sep = .Platform$path.sep)
+    } else {
+      jvm_lib_dir
+    }
+  }
+
+  env_vars
+}
+
 #' Read lines from a URL or file
 #'
 #' Helper function to read lines, mainly for testability.
@@ -148,44 +205,9 @@ urls_test_all <- function() {
 java_version_check_rscript <- function(java_home) {
   result <- tryCatch(
     {
-      Sys.setenv(JAVA_HOME = java_home)
-
-      old_path <- Sys.getenv("PATH")
-      new_path <- file.path(java_home, "bin")
-      Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
-
-      # On Linux, find and dynamically load libjvm.so
-      if (Sys.info()["sysname"] == "Linux") {
-        libjvm_path <- get_libjvm_path(java_home)
-
-        if (!is.null(libjvm_path) && file.exists(libjvm_path)) {
-          tryCatch(
-            dyn.load(libjvm_path),
-            error = function(e) {
-              # Use base message to avoid dependency issues in the isolated script
-              message(sprintf(
-                "Found libjvm.so at '%s' but failed to load it: %s",
-                libjvm_path,
-                e$message
-              ))
-            }
-          )
-        } else {
-          message(sprintf(
-            "Could not find libjvm.so within the provided JAVA_HOME: %s",
-            java_home
-          ))
-        }
-      }
-
       suppressWarnings(rJava::.jinit())
-      suppressWarnings(
-        java_version <- rJava::.jcall(
-          "java.lang.System",
-          "S",
-          "getProperty",
-          "java.version"
-        )
+      java_version <- suppressWarnings(
+        rJava::.jcall("java.lang.System", "S", "getProperty", "java.version")
       )
 
       message <- cli::format_message(
@@ -200,6 +222,28 @@ java_version_check_rscript <- function(java_home) {
   )
 
   return(result)
+}
+
+#' Parse major Java version from a java.version string
+#'
+#' @param java_ver_str Character string containing Java version.
+#'
+#' @return Character scalar major version or NULL.
+#' @keywords internal
+#' @noRd
+parse_java_major_version <- function(java_ver_str) {
+  if (is.null(java_ver_str) || !nzchar(java_ver_str)) {
+    return(NULL)
+  }
+
+  matches <- regexec("^(1\\.)?([0-9]+)", java_ver_str)
+  parts <- regmatches(java_ver_str, matches)[[1]]
+
+  if (length(parts) < 3) {
+    return(NULL)
+  }
+
+  parts[3]
 }
 
 #' Find path to libjvm dynamic library
@@ -394,22 +438,7 @@ java_check_current_rjava_version <- function() {
     return(NULL)
   }
 
-  # Parse version: "1.8.0_..." -> "8", "17.0.1" -> "17"
-  matches <- regexec(
-    "^(1\\.)?([0-9]+)",
-    java_ver_str
-  )
-  parts <- regmatches(java_ver_str, matches)[[1]]
-
-  if (length(parts) < 3) {
-    return(NULL)
-  }
-
-  major <- parts[3]
-  # Handle 1.8 -> 8 case (parts[2] is "1." and parts[3] is "8")
-  # Handle 17 -> 17 case (parts[2] is "" and parts[3] is "17")
-
-  return(major)
+  parse_java_major_version(java_ver_str)
 }
 
 #' Find the actual extracted directory, ignoring hidden/metadata files

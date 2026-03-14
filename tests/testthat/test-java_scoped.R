@@ -77,6 +77,75 @@ test_that("with_rjava_env calls callr::r with correct environment", {
   expect_true(grepl("/mock/java/home/bin", captured_env[["PATH"]]))
 })
 
+test_that("java_subprocess_env configures Linux rJava loader variables", {
+  local_mocked_bindings(
+    Sys.info = function() c(sysname = "Linux"),
+    .package = "base"
+  )
+
+  local_mocked_bindings(
+    get_libjvm_path = function(...) "/mock/java/home/lib/server/libjvm.so",
+    .package = "rJavaEnv"
+  )
+
+  withr::with_envvar(c(PATH = "/usr/bin", LD_LIBRARY_PATH = "/usr/lib"), {
+    env_vars <- rJavaEnv:::java_subprocess_env("/mock/java/home", rjava = TRUE)
+
+    expect_equal(env_vars[["JAVA_HOME"]], "/mock/java/home")
+    expect_true(grepl("/mock/java/home/bin", env_vars[["PATH"]]))
+    expect_equal(
+      env_vars[["JAVA_LD_LIBRARY_PATH"]],
+      "/mock/java/home/lib/server"
+    )
+    expect_true(grepl("/mock/java/home/lib/server", env_vars[["LD_LIBRARY_PATH"]]))
+  })
+})
+
+test_that("java_subprocess_env configures macOS DYLD_LIBRARY_PATH for rJava", {
+  local_mocked_bindings(
+    Sys.info = function() c(sysname = "Darwin"),
+    .package = "base"
+  )
+
+  local_mocked_bindings(
+    get_libjvm_path = function(...) "/mock/java/home/lib/server/libjvm.dylib",
+    .package = "rJavaEnv"
+  )
+
+  withr::with_envvar(c(PATH = "/usr/bin", DYLD_LIBRARY_PATH = "/usr/lib"), {
+    env_vars <- rJavaEnv:::java_subprocess_env("/mock/java/home", rjava = TRUE)
+
+    expect_equal(env_vars[["JAVA_HOME"]], "/mock/java/home")
+    expect_true(grepl("/mock/java/home/bin", env_vars[["PATH"]]))
+    expect_true(grepl("/mock/java/home/lib/server", env_vars[["DYLD_LIBRARY_PATH"]]))
+  })
+})
+
+test_that("java_subprocess_env leaves Windows at JAVA_HOME and PATH only", {
+  local_mocked_bindings(
+    Sys.info = function() c(sysname = "Windows"),
+    .package = "base"
+  )
+
+  local_mocked_bindings(
+    get_libjvm_path = function(...) "C:/Java/bin/server/jvm.dll",
+    .package = "rJavaEnv"
+  )
+
+  withr::with_envvar(c(
+    PATH = "C:/Windows/System32",
+    LD_LIBRARY_PATH = "sentinel-ld",
+    DYLD_LIBRARY_PATH = "sentinel-dyld"
+  ), {
+    env_vars <- rJavaEnv:::java_subprocess_env("C:/Java", rjava = TRUE)
+
+    expect_equal(env_vars[["JAVA_HOME"]], "C:/Java")
+    expect_true(grepl("C:/Java/bin", env_vars[["PATH"]], fixed = TRUE))
+    expect_equal(env_vars[["LD_LIBRARY_PATH"]], "sentinel-ld")
+    expect_equal(env_vars[["DYLD_LIBRARY_PATH"]], "sentinel-dyld")
+  })
+})
+
 test_that("local_java_env uses cache when .use_cache = TRUE", {
   call_count <- 0
   local_mocked_bindings(

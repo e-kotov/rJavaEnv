@@ -1,9 +1,38 @@
-#' Test that java_check_version_rjava() correctly constructs the subprocess script
-#' without duplication issues when .libPaths() contains multiple paths.
+test_that("._java_version_check_rjava_impl_original prefers callr", {
+  skip_if_not_installed("callr")
 
-test_that("._java_version_check_rjava_impl_original handles multi-line .libPaths correctly", {
-  # Mock a scenario where .libPaths() has multiple long paths
-  # This previously caused duplication in paste0() because deparse() returned a vector.
+  captured_env <- NULL
+  captured_libpath <- NULL
+
+  local_mocked_bindings(
+    r = function(func, args = list(), libpath, env, show) {
+      captured_env <<- env
+      captured_libpath <<- libpath
+      list(
+        java_version = "21.0.8",
+        output = "rJava and other rJava/Java-based packages will use Java version: \"21.0.8\""
+      )
+    },
+    .package = "callr"
+  )
+
+  local_mocked_bindings(
+    java_subprocess_env = function(java_home, rjava = FALSE) {
+      c(JAVA_HOME = java_home, PATH = paste(java_home, "bin", sep = "/"))
+    },
+    .package = "rJavaEnv"
+  )
+
+  result <- rJavaEnv:::._java_version_check_rjava_impl_original(
+    java_home = "/mock/java"
+  )
+
+  expect_equal(result$major_version, "21")
+  expect_equal(captured_env[["JAVA_HOME"]], "/mock/java")
+  expect_equal(captured_libpath, .libPaths())
+})
+
+test_that("._java_version_check_rjava_impl_original falls back to Rscript", {
   mock_paths <- c(
     "/usr/lib/R/library",
     "/usr/local/lib/R/site-library",
@@ -11,63 +40,43 @@ test_that("._java_version_check_rjava_impl_original handles multi-line .libPaths
   )
 
   captured_script <- NULL
+  captured_env <- NULL
 
-  # Mock get_libjvm_path to return a simple known string
   local_mocked_bindings(
-    get_libjvm_path = function(...) "/mock/libjvm.so",
+    requireNamespace = function(pkg, quietly = TRUE) FALSE,
+    .package = "base"
+  )
+
+  local_mocked_bindings(
+    java_subprocess_env = function(java_home, rjava = FALSE) {
+      captured_env <<- c(JAVA_HOME = java_home, PATH = paste0(java_home, "/bin"))
+      captured_env
+    },
     .package = "rJavaEnv"
   )
 
   local_mocked_bindings(
     .libPaths = function(...) mock_paths,
-    system2 = function(command, args, ...) {
-      # The first argument in args is the script file path
+    system2 = function(command, args, stdout, stderr, timeout, env) {
+      captured_env <<- env
       if (file.exists(args[1])) {
         captured_script <<- readLines(args[1])
       }
-      # Return valid dummy output
-      return(c(
-        "rJava and other rJava/Java-based packages will use Java version: \"21\""
-      ))
+      "rJava and other rJava/Java-based packages will use Java version: \"21.0.8\""
     },
     .package = "base"
   )
 
-  # Call the internal function
   result <- rJavaEnv:::._java_version_check_rjava_impl_original(
     java_home = "/mock/java"
   )
 
-  # Assertions on the captured script
-  # Avoid expect_* functions that might trigger 'waldo' dependency issues.
-  # Using simple R logic that throws an error on failure, which testthat will catch.
-  if (is.null(captured_script)) {
-    stop("Captured script is NULL")
-  }
+  expect_equal(result$major_version, "21")
+  expect_equal(captured_env[["JAVA_HOME"]], "/mock/java")
+  expect_false(any(grepl("get_libjvm_path <- function", captured_script)))
+  expect_equal(sum(grepl("java_version_check <- function", captured_script)), 1)
 
-  # 1. Check for duplication of function definitions
-  def_count <- sum(grepl("java_version_check <- function", captured_script))
-  if (!identical(as.numeric(def_count), 1)) {
-    stop(sprintf(
-      "The function definition should appear exactly once, but found %d",
-      def_count
-    ))
-  }
-
-  # 2. Check that .libPaths() contains all paths in a valid call
   script_text <- paste(captured_script, collapse = "\n")
-  if (!grepl("\\.libPaths\\(c\\(", script_text)) {
-    stop("Should use c() for multiple library paths.")
-  }
-  if (!grepl("/home/user/R/x86_64-pc-linux-gnu-library/4.5", script_text)) {
-    stop("Last path should be present.")
-  }
-
-  # 3. Check for syntax errors (no stray commas at line ends from bad paste)
-  if (grepl(", \\)", script_text)) {
-    stop("Malformed closing parenthesis found.")
-  }
-
-  # Final verification: if we reached here, the test passed.
-  expect_silent(NULL)
+  expect_true(grepl("\\.libPaths\\(c\\(", script_text))
+  expect_true(grepl("/home/user/R/x86_64-pc-linux-gnu-library/4.5", script_text))
 })

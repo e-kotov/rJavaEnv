@@ -72,7 +72,7 @@ test_that("java_check_current_rjava_version returns NULL on rJava error", {
   expect_null(result)
 })
 
-test_that("java_version_check_rscript sets JAVA_HOME correctly", {
+test_that("java_version_check_rscript returns formatted version output", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
   skip_on_os("windows") # Different behavior
@@ -87,12 +87,6 @@ test_that("java_version_check_rscript sets JAVA_HOME correctly", {
     `.jinit` = function(...) 0,
     `.jcall` = function(...) "21.0.1",
     .package = "rJava"
-  )
-
-  # Mock get_libjvm_path to return NULL (no libjvm needed)
-  local_mocked_bindings(
-    get_libjvm_path = function(...) NULL,
-    .package = "rJavaEnv"
   )
 
   result <- rJavaEnv:::java_version_check_rscript(java_home)

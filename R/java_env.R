@@ -305,32 +305,70 @@ java_check_version_rjava <- function(
 
 # Original implementation (not memoised) - used when .use_cache = FALSE
 ._java_version_check_rjava_impl_original <- function(java_home = NULL) {
-  # Get the code of the unexported functions to use in a script
-  # On Linux, the script depends on get_libjvm_path() to avoid crashes in .jinit()
+  if (is.null(java_home) || !nzchar(java_home)) {
+    return(FALSE)
+  }
+
+  if (requireNamespace("callr", quietly = TRUE)) {
+    data <- tryCatch(
+      {
+        callr::r(
+          func = function() {
+            suppressWarnings(rJava::.jinit())
+            java_version <- suppressWarnings(
+              rJava::.jcall(
+                "java.lang.System",
+                "S",
+                "getProperty",
+                "java.version"
+              )
+            )
+
+            list(
+              java_version = java_version,
+              output = cli::format_message(
+                paste0(
+                  "rJava and other rJava/Java-based packages will use ",
+                  "Java version: {.val {java_version}}"
+                )
+              )
+            )
+          },
+          libpath = .libPaths(),
+          env = java_subprocess_env(java_home, rjava = TRUE),
+          show = FALSE
+        )
+      },
+      error = function(e) FALSE
+    )
+
+    if (!isFALSE(data)) {
+      major_java_ver <- parse_java_major_version(data$java_version)
+      if (!is.null(major_java_ver)) {
+        return(list(
+          major_version = major_java_ver,
+          output = data$output
+        ))
+      }
+    }
+  }
+
   java_version_check_fn <- getFromNamespace(
     "java_version_check_rscript",
     "rJavaEnv"
   )
-  get_libjvm_path_fn <- getFromNamespace("get_libjvm_path", "rJavaEnv")
 
-  # Helper to deparse and collapse multi-line expressions
   deparse_collapse <- function(x) {
     paste(deparse(x, width.cutoff = 500), collapse = "\n")
   }
 
   java_version_check_body <- deparse_collapse(body(java_version_check_fn))
-  get_libjvm_path_body <- deparse_collapse(body(get_libjvm_path_fn))
   libs_val <- deparse_collapse(as.character(.libPaths()))
 
-  # Create a wrapper script that includes the function definitions and calls them
-  # Capture current libPaths to ensure subprocess can find rJava in renv/packrat environments
   wrapper_script <- paste0(
     ".libPaths(",
     libs_val,
     ")\n\n",
-    "get_libjvm_path <- function(java_home) ",
-    get_libjvm_path_body,
-    "\n\n",
     "java_version_check <- function(java_home) ",
     java_version_check_body,
     "\n\n",
@@ -341,46 +379,42 @@ java_check_version_rjava <- function(
     "}"
   )
 
-  # Write the wrapper script to a temporary file
   script_file <- tempfile(fileext = ".R")
   writeLines(wrapper_script, script_file)
 
-  # Run the script in a separate R session and capture the output
-  rscript_path <- file.path(R.home("bin"), "Rscript")
-  output <- suppressWarnings(system2(
-    rscript_path,
-    args = c(script_file, java_home),
-    stdout = TRUE,
-    stderr = TRUE,
-    timeout = 5
-  ))
+  output <- tryCatch(
+    suppressWarnings(system2(
+      file.path(R.home("bin"), "Rscript"),
+      args = c(script_file, java_home),
+      stdout = TRUE,
+      stderr = TRUE,
+      timeout = 5,
+      env = java_subprocess_env(java_home, rjava = TRUE)
+    )),
+    error = function(e) character(0)
+  )
 
-  # Delete the temporary script file
   unlink(script_file)
 
-  # Process the output (no printing here)
   if (length(output) == 0 || any(grepl("error", tolower(output)))) {
     return(FALSE)
   }
 
   output <- paste(output, collapse = "\n")
   cleaned_output <- cli::ansi_strip(output)
-  major_java_ver <- sub('.*version: \\"([0-9]+).*', '\\1', cleaned_output)
+  version_matches <- regexec('version: \\"([^\\"]+)\\"', cleaned_output)
+  version_parts <- regmatches(cleaned_output, version_matches)[[1]]
+  java_version <- if (length(version_parts) > 1) version_parts[2] else NULL
+  major_java_ver <- parse_java_major_version(java_version)
 
-  if (!nzchar(major_java_ver) || !grepl("^[0-9]+$", major_java_ver)) {
+  if (is.null(major_java_ver)) {
     return(FALSE)
   }
 
-  # Fix 1 to 8, as Java 8 prints "1.8"
-  if (major_java_ver == "1") {
-    major_java_ver <- "8"
-  }
-
-  # Return structured data for printing in wrapper
-  return(list(
+  list(
     major_version = major_java_ver,
     output = output
-  ))
+  )
 }
 
 # Internal function: Spawn subprocess to check Java with rJava - this gets cached
