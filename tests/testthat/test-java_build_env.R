@@ -38,6 +38,8 @@ test_that("java_build_env_set writes to .Rprofile in project", {
 })
 
 test_that("java_build_env_set writes to .Rprofile with 'both' option", {
+  state <- new.env(parent = emptyenv())
+  state$set_env_called <- FALSE
   proj_dir <- withr::local_tempdir()
   local_mocked_bindings(
     rje_consent_check = function() TRUE,
@@ -45,10 +47,9 @@ test_that("java_build_env_set writes to .Rprofile with 'both' option", {
   )
 
   # Mock set_java_build_env_vars to avoid side effects
-  set_env_called <- FALSE
   local_mocked_bindings(
     set_java_build_env_vars = function(...) {
-      set_env_called <<- TRUE
+      state$set_env_called <- TRUE
       invisible(NULL)
     },
     .package = "rJavaEnv"
@@ -62,7 +63,7 @@ test_that("java_build_env_set writes to .Rprofile with 'both' option", {
   )
 
   # Check both session and project were affected
-  expect_true(set_env_called)
+  expect_true(state$set_env_called)
   rprof <- file.path(proj_dir, ".Rprofile")
   expect_true(file.exists(rprof))
 })

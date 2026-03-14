@@ -51,17 +51,17 @@ test_that("with_rjava_env requires callr package", {
 
 test_that("with_rjava_env calls callr::r with correct environment", {
   skip_if_not_installed("callr")
+  state <- new.env(parent = emptyenv())
+  state$captured_env <- NULL
 
   local_mocked_bindings(
     java_resolve = function(...) "/mock/java/home",
     .package = "rJavaEnv"
   )
 
-  # Mock callr::r to capture arguments
-  captured_env <- NULL
   local_mocked_bindings(
     r = function(func, args, libpath, env, show) {
-      captured_env <<- env
+      state$captured_env <- env
       func()
     },
     .package = "callr"
@@ -73,8 +73,8 @@ test_that("with_rjava_env calls callr::r with correct environment", {
     quiet = TRUE
   )
 
-  expect_equal(captured_env[["JAVA_HOME"]], "/mock/java/home")
-  expect_true(grepl("/mock/java/home/bin", captured_env[["PATH"]]))
+  expect_equal(state$captured_env[["JAVA_HOME"]], "/mock/java/home")
+  expect_true(grepl("/mock/java/home/bin", state$captured_env[["PATH"]]))
 })
 
 test_that("java_subprocess_env configures Linux rJava loader variables", {
@@ -147,10 +147,11 @@ test_that("java_subprocess_env leaves Windows at JAVA_HOME and PATH only", {
 })
 
 test_that("local_java_env uses cache when .use_cache = TRUE", {
-  call_count <- 0
+  state <- new.env(parent = emptyenv())
+  state$call_count <- 0
   local_mocked_bindings(
     java_resolve = function(..., .use_cache = FALSE) {
-      call_count <<- call_count + 1
+      state$call_count <- state$call_count + 1
       "/mock/java/home"
     },
     .package = "rJavaEnv"
@@ -161,7 +162,7 @@ test_that("local_java_env uses cache when .use_cache = TRUE", {
     rJavaEnv::local_java_env(version = 21, .use_cache = TRUE, quiet = TRUE)
   })
 
-  first_count <- call_count
+  first_count <- state$call_count
 
   # Second call - java_resolve should still be called but with .use_cache = TRUE
   local({
@@ -169,5 +170,5 @@ test_that("local_java_env uses cache when .use_cache = TRUE", {
   })
 
   # Both calls happen, but .use_cache = TRUE is passed through
-  expect_equal(call_count, 2)
+  expect_equal(state$call_count, 2)
 })

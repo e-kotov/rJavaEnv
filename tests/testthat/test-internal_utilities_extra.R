@@ -45,13 +45,14 @@ test_that("java_version_check_rscript function exists", {
 test_that("rje_readline passes prompt to base::readline", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  state <- new.env(parent = emptyenv())
+  state$captured_prompt <- NULL
 
   # This test verifies the wrapper exists and is mockable
   # We mock base::readline to capture the call
-  captured_prompt <- NULL
   local_mocked_bindings(
     readline = function(prompt = "") {
-      captured_prompt <<- prompt
+      state$captured_prompt <- prompt
       "mocked_response"
     },
     .package = "base"
@@ -59,6 +60,6 @@ test_that("rje_readline passes prompt to base::readline", {
 
   result <- rJavaEnv:::rje_readline(prompt = "Enter value: ")
 
-  expect_equal(captured_prompt, "Enter value: ")
+  expect_equal(state$captured_prompt, "Enter value: ")
   expect_equal(result, "mocked_response")
 })

@@ -30,6 +30,8 @@ test_that("java_env_set project mode creates .Rprofile", {
 
 # Test java_env_set with both mode
 test_that("java_env_set both mode sets session and writes .Rprofile", {
+  state <- new.env(parent = emptyenv())
+  state$session_set <- FALSE
   proj_dir <- withr::local_tempdir()
 
   local_mocked_bindings(
@@ -37,10 +39,9 @@ test_that("java_env_set both mode sets session and writes .Rprofile", {
     .package = "rJavaEnv"
   )
 
-  session_set <- FALSE
   local_mocked_bindings(
     java_env_set_session = function(...) {
-      session_set <<- TRUE
+      state$session_set <- TRUE
       invisible(NULL)
     },
     .package = "rJavaEnv"
@@ -53,7 +54,7 @@ test_that("java_env_set both mode sets session and writes .Rprofile", {
     quiet = TRUE
   )
 
-  expect_true(session_set)
+  expect_true(state$session_set)
   expect_true(file.exists(file.path(proj_dir, ".Rprofile")))
 })
 

@@ -68,12 +68,13 @@ test_that("java_check_compatibility fails when current < required with type=min"
 
 # Test when rJava not loaded but requireNamespace succeeds
 test_that("java_check_compatibility tries jinit when rJava available", {
-  jinit_called <- FALSE
+  state <- new.env(parent = emptyenv())
+  state$jinit_called <- FALSE
 
   local_mocked_bindings(
     java_check_current_rjava_version = function() {
       # First call returns NULL, second returns version
-      if (jinit_called) "21" else NULL
+      if (state$jinit_called) "21" else NULL
     },
     .package = "rJavaEnv"
   )
@@ -92,7 +93,7 @@ test_that("java_check_compatibility tries jinit when rJava available", {
   # Mock rJava::.jinit
   local_mocked_bindings(
     .jinit = function(...) {
-      jinit_called <<- TRUE
+      state$jinit_called <- TRUE
       invisible(NULL)
     },
     .package = "rJava"

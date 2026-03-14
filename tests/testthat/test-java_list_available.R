@@ -46,10 +46,10 @@ test_that("java_list_available handles 'all' platform and arch", {
 
 test_that("java_list_available memoization and force parameter work", {
   skip_on_cran()
-
-  call_count <- 0
+  state <- new.env(parent = emptyenv())
+  state$call_count <- 0
   impl_func <- function(p, a) {
-    call_count <<- call_count + 1
+    state$call_count <- state$call_count + 1
     data.frame(
       backend = "native",
       vendor = "Temurin",
@@ -76,7 +76,7 @@ test_that("java_list_available memoization and force parameter work", {
   )
 
   # Reset call count
-  call_count <- 0
+  state$call_count <- 0
 
   # First call
   java_list_available(
@@ -85,7 +85,7 @@ test_that("java_list_available memoization and force parameter work", {
     backend = "native",
     quiet = TRUE
   )
-  expect_equal(call_count, 1)
+  expect_equal(state$call_count, 1)
 
   # Second call (should be memoised)
   java_list_available(
@@ -94,7 +94,7 @@ test_that("java_list_available memoization and force parameter work", {
     backend = "native",
     quiet = TRUE
   )
-  expect_equal(call_count, 1)
+  expect_equal(state$call_count, 1)
 
   # Third call with force = TRUE
   # Note: java_list_available calls forget() on the memoised function it sees in its environment
@@ -105,5 +105,5 @@ test_that("java_list_available memoization and force parameter work", {
     force = TRUE,
     quiet = TRUE
   )
-  expect_equal(call_count, 2)
+  expect_equal(state$call_count, 2)
 })

@@ -102,6 +102,8 @@ test_that("use_java cache hit outputs messages when quiet = FALSE", {
 
 # Test use_java cache miss - triggers download path
 test_that("use_java downloads when version not in cache", {
+  state <- new.env(parent = emptyenv())
+  state$download_called <- FALSE
   cache_path <- withr::local_tempdir()
 
   local_mocked_bindings(
@@ -124,10 +126,9 @@ test_that("use_java downloads when version not in cache", {
     .package = "rJavaEnv"
   )
 
-  download_called <- FALSE
   local_mocked_bindings(
     java_download = function(...) {
-      download_called <<- TRUE
+      state$download_called <- TRUE
       file.path(cache_path, "fake-distrib.tar.gz")
     },
     .package = "rJavaEnv"
@@ -151,7 +152,7 @@ test_that("use_java downloads when version not in cache", {
     quiet = TRUE
   )
 
-  expect_true(download_called)
+  expect_true(state$download_called)
   expect_true(result)
 })
 
