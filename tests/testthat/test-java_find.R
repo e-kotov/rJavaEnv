@@ -328,15 +328,15 @@ test_that("java_find_system handles special characters in paths", {
 test_that("java_find_system calls platform_detect", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  state <- new.env(parent = emptyenv())
+  state$called <- FALSE
 
   withr::local_envvar(JAVA_HOME = "")
 
   # Mock platform_detect to track if it's called
-  called <- FALSE
-
   local_mocked_bindings(
     platform_detect = function(quiet) {
-      called <<- TRUE
+      state$called <- TRUE
       list(os = "linux", arch = "x64")
     },
     java_check_version_cmd = function(java_home, quiet = TRUE) "17",
@@ -345,21 +345,21 @@ test_that("java_find_system calls platform_detect", {
 
   result <- java_find_system(quiet = TRUE)
 
-  expect_true(called)
+  expect_true(state$called)
   expect_s3_class(result, "data.frame")
 })
 
 test_that("java_find_system passes quiet=TRUE to platform_detect", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  state <- new.env(parent = emptyenv())
+  state$quiet_passed <- NULL
 
   withr::local_envvar(JAVA_HOME = "")
 
-  quiet_passed <- NULL
-
   local_mocked_bindings(
     platform_detect = function(quiet) {
-      quiet_passed <<- quiet
+      state$quiet_passed <- quiet
       list(os = "linux", arch = "x64")
     },
     ._java_version_check_impl_original = function(java_home) {
@@ -374,20 +374,20 @@ test_that("java_find_system passes quiet=TRUE to platform_detect", {
   )
 
   java_find_system(quiet = TRUE)
-  expect_true(quiet_passed)
+  expect_true(state$quiet_passed)
 })
 
 test_that("java_find_system passes quiet=FALSE to platform_detect", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  state <- new.env(parent = emptyenv())
+  state$quiet_passed <- NULL
 
   withr::local_envvar(JAVA_HOME = "")
 
-  quiet_passed <- NULL
-
   local_mocked_bindings(
     platform_detect = function(quiet) {
-      quiet_passed <<- quiet
+      state$quiet_passed <- quiet
       list(os = "linux", arch = "x64")
     },
     ._java_version_check_impl_original = function(java_home) {
@@ -402,7 +402,7 @@ test_that("java_find_system passes quiet=FALSE to platform_detect", {
   )
 
   java_find_system(quiet = FALSE)
-  expect_false(quiet_passed)
+  expect_false(state$quiet_passed)
 })
 
 test_that("java_find_system handles platform_detect returning different OS values", {
@@ -657,11 +657,12 @@ test_that("is_rjavaenv_cache_path correctly identifies actual cache paths", {
 test_that("._java_find_system_cached returns cached result on second call", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  state <- new.env(parent = emptyenv())
+  state$call_count <- 0
 
   # Reset cache for this test
   memoise::forget(rJavaEnv:::._java_find_system_cached)
 
-  call_count <- 0
   mock_scan_result <- data.frame(
     java_home = "/mock/java",
     major_version = "21",
@@ -671,7 +672,7 @@ test_that("._java_find_system_cached returns cached result on second call", {
 
   local_mocked_bindings(
     ._java_find_system_scan_impl = function(...) {
-      call_count <<- call_count + 1
+      state$call_count <- state$call_count + 1
       mock_scan_result
     },
     .package = "rJavaEnv"
@@ -679,11 +680,11 @@ test_that("._java_find_system_cached returns cached result on second call", {
 
   # First call - should call the scan impl
   result1 <- rJavaEnv:::._java_find_system_cached()
-  expect_equal(call_count, 1)
+  expect_equal(state$call_count, 1)
 
   # Second call - should use cache
   result2 <- rJavaEnv:::._java_find_system_cached()
-  expect_equal(call_count, 1) # Still 1, used cache
+  expect_equal(state$call_count, 1) # Still 1, used cache
 
   expect_equal(result1, result2)
 })
@@ -691,11 +692,12 @@ test_that("._java_find_system_cached returns cached result on second call", {
 test_that("java_find_system respects .use_cache = FALSE", {
   skip_on_cran()
   skip_if(!identical(Sys.getenv("CI"), "true"), "Only run on CI")
+  state <- new.env(parent = emptyenv())
+  state$call_count <- 0
 
-  call_count <- 0
   local_mocked_bindings(
     ._java_find_system_scan_impl = function(...) {
-      call_count <<- call_count + 1
+      state$call_count <- state$call_count + 1
       data.frame(
         java_home = "/mock",
         version = "21",
@@ -710,5 +712,5 @@ test_that("java_find_system respects .use_cache = FALSE", {
   java_find_system(.use_cache = FALSE)
   java_find_system(.use_cache = FALSE)
 
-  expect_equal(call_count, 2)
+  expect_equal(state$call_count, 2)
 })

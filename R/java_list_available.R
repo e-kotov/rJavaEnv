@@ -103,62 +103,16 @@ java_list_available <- function(
 
 #' @keywords internal
 list_temurin_versions_impl <- function(platform, arch) {
-  # Adoptium API mapping
-  api_os <- switch(
-    platform,
-    "macos" = "mac",
-    "alpine-linux" = "alpine-linux",
-    platform
+  candidates <- tryCatch(
+    java_valid_major_versions_temurin(platform = platform, arch = arch),
+    error = function(e) character(0)
   )
 
-  # We first get available major releases
-  major_vers <- tryCatch(
-    java_valid_major_versions_temurin(),
-    error = function(e) return(NULL)
-  )
-
-  if (is.null(major_vers)) {
+  if (length(candidates) == 0) {
     return(data.frame())
   }
 
-  all_releases <- list()
-
-  for (v in major_vers) {
-    url <- sprintf(
-      "https://api.adoptium.net/v3/assets/feature_releases/%s/ga?os=%s&architecture=%s&image_type=jdk&jvm_impl=hotspot",
-      v,
-      api_os,
-      arch
-    )
-
-    data <- tryCatch(
-      read_json_url(url, max_simplify_lvl = "list"),
-      error = function(e) NULL
-    )
-
-    if (is.null(data) || length(data) == 0) {
-      next
-    }
-
-    for (rel in data) {
-      all_releases[[length(all_releases) + 1]] <- data.frame(
-        backend = "native",
-        vendor = "Temurin",
-        major = as.integer(v),
-        version = rel$version_data$semver,
-        platform = platform,
-        arch = arch,
-        identifier = rel$version_data$openjdk_version,
-        checksum_available = TRUE,
-        stringsAsFactors = FALSE
-      )
-    }
-  }
-
-  if (length(all_releases) == 0) {
-    return(data.frame())
-  }
-  do.call(rbind, all_releases)
+  temurin_probe_available_versions(platform, arch, candidates)$releases
 }
 
 #' @keywords internal

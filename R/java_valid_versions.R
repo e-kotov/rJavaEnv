@@ -55,6 +55,93 @@ java_valid_versions_fast <- function() {
   return(fallback)
 }
 
+#' @keywords internal
+#' @noRd
+temurin_candidate_versions <- function(platform, arch) {
+  fallback_cfg <- java_config("fallback_versions")$Temurin
+  platform_key <- paste(platform, arch, sep = "_")
+
+  candidates <- fallback_cfg[[platform_key]] %||% fallback_cfg$default
+  as.character(candidates)
+}
+
+#' @keywords internal
+#' @noRd
+temurin_probe_available_versions <- function(platform, arch, candidates) {
+  api_os <- switch(
+    platform,
+    "macos" = "mac",
+    "alpine-linux" = "alpine-linux",
+    platform
+  )
+
+  candidates <- unique(as.character(candidates))
+  all_releases <- list()
+  successful_requests <- 0L
+
+  for (v in candidates) {
+    url <- sprintf(
+      paste0(
+        "https://api.adoptium.net/v3/assets/latest/%s/hotspot?",
+        "os=%s&architecture=%s&image_type=jdk"
+      ),
+      v,
+      api_os,
+      arch
+    )
+
+    data <- tryCatch(
+      read_json_url(url, max_simplify_lvl = "list"),
+      error = function(e) NULL
+    )
+
+    if (is.null(data)) {
+      next
+    }
+
+    successful_requests <- successful_requests + 1L
+
+    if (length(data) == 0) {
+      next
+    }
+
+    for (rel in data) {
+      if (is.null(rel$binary$package$link)) {
+        next
+      }
+
+      all_releases[[length(all_releases) + 1L]] <- data.frame(
+        backend = "native",
+        vendor = "Temurin",
+        major = as.integer(v),
+        version = rel$version_data$semver %||% rel$release_name %||% v,
+        platform = platform,
+        arch = arch,
+        identifier = rel$version_data$openjdk_version %||% rel$release_name %||% v,
+        checksum_available = !is.null(rel$binary$package$checksum),
+        stringsAsFactors = FALSE
+      )
+    }
+  }
+
+  releases <- if (length(all_releases) > 0) {
+    do.call(rbind, all_releases)
+  } else {
+    data.frame()
+  }
+
+  list(
+    releases = releases,
+    majors = if (nrow(releases) > 0) {
+      as.character(sort(unique(releases$major)))
+    } else {
+      character(0)
+    },
+    successful_requests = successful_requests,
+    attempted_candidates = candidates
+  )
+}
+
 #' Retrieve Valid Java Versions
 #'
 #' This function retrieves a list of valid Java versions by querying an appropriate API endpoint based on the chosen distribution.
@@ -266,11 +353,70 @@ java_valid_major_versions_corretto <- function(
 #'
 #' @keywords internal
 java_valid_major_versions_temurin <- function(arch = NULL, platform = NULL) {
-  # Note: The 'available_releases' endpoint lists *all* versions, regardless of platform/arch.
-  # This serves as a quick check for valid version numbers.
-  url <- "https://api.adoptium.net/v3/info/available_releases"
-  response <- read_json_url(url)
-  as.character(response$available_releases)
+  if (is.null(platform) || is.null(arch)) {
+    plat <- platform_detect(quiet = TRUE)
+    if (is.null(platform)) {
+      platform <- plat$os
+    }
+    if (is.null(arch)) {
+      arch <- plat$arch
+    }
+  }
+
+  fallback_candidates <- temurin_candidate_versions(platform, arch)
+
+  summary_versions <- tryCatch(
+    {
+      response <- read_json_url("https://api.adoptium.net/v3/info/available_releases")
+      versions <- as.character(response$available_releases)
+      versions <- versions[
+        nzchar(versions) & grepl("^[0-9]+$", versions)
+      ]
+      if (length(versions) == 0) {
+        cli::cli_inform(
+          paste0(
+            "Temurin summary endpoint returned no usable major versions. ",
+            "Falling back to asset-backed version discovery."
+          )
+        )
+        NULL
+      } else {
+        versions
+      }
+    },
+    error = function(e) {
+      cli::cli_inform(
+        paste0(
+          "Temurin summary endpoint could not be read (",
+          e$message,
+          "). Falling back to asset-backed version discovery."
+        )
+      )
+      NULL
+    }
+  )
+
+  candidates <- summary_versions %||% fallback_candidates
+  probe <- temurin_probe_available_versions(platform, arch, candidates)
+
+  if (probe$successful_requests == 0) {
+    cli::cli_warn(
+      paste0(
+        "Temurin asset probes failed for all candidate versions on ",
+        platform,
+        "/",
+        arch,
+        ". Returning shipped fallback versions."
+      )
+    )
+    return(fallback_candidates)
+  }
+
+  if (length(probe$majors) == 0) {
+    return(character(0))
+  }
+
+  probe$majors
 }
 
 #' Get Available Online Versions of Azul Zulu

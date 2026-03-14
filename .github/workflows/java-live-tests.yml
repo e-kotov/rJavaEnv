@@ -52,6 +52,12 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - name: Log Java diagnostics
+        shell: bash
+        run: |
+          java -version || true
+          Rscript -e 'cat(Sys.getenv("JAVA_HOME"), "\n")'
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true

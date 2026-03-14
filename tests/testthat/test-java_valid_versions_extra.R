@@ -209,6 +209,127 @@ test_that("java_valid_versions saves results to session and file cache", {
   expect_true(file.exists(expected_file))
 })
 
+test_that("java_valid_major_versions_temurin filters summary versions by assets", {
+  local_mocked_bindings(
+    read_json_url = function(url, max_simplify_lvl = "data_frame") {
+      if (grepl("info/available_releases", url)) {
+        return(list(available_releases = c(8, 11, 21)))
+      }
+      if (grepl("assets/latest/8/", url)) {
+        return(list(list(
+          binary = list(package = list(link = "https://example.com/8.tar.gz")),
+          version_data = list(semver = "8.0.452+9", openjdk_version = "8.0.452")
+        )))
+      }
+      if (grepl("assets/latest/11/", url)) {
+        return(list())
+      }
+      if (grepl("assets/latest/21/", url)) {
+        return(list(list(
+          binary = list(package = list(link = "https://example.com/21.tar.gz")),
+          version_data = list(semver = "21.0.8+9", openjdk_version = "21.0.8")
+        )))
+      }
+      stop("Unexpected URL")
+    },
+    .package = "rJavaEnv"
+  )
+
+  versions <- java_valid_major_versions_temurin(platform = "linux", arch = "x64")
+
+  expect_equal(versions, c("8", "21"))
+})
+
+test_that("java_valid_major_versions_temurin falls back from empty summary", {
+  local_mocked_bindings(
+    read_json_url = function(url, max_simplify_lvl = "data_frame") {
+      if (grepl("info/available_releases", url)) {
+        return(list(available_releases = integer(0)))
+      }
+      if (grepl("assets/latest/17/", url)) {
+        return(list(list(
+          binary = list(package = list(link = "https://example.com/17.tar.gz")),
+          version_data = list(semver = "17.0.16+8", openjdk_version = "17.0.16")
+        )))
+      }
+      if (grepl("assets/latest/21/", url)) {
+        return(list(list(
+          binary = list(package = list(link = "https://example.com/21.tar.gz")),
+          version_data = list(semver = "21.0.8+9", openjdk_version = "21.0.8")
+        )))
+      }
+      list()
+    },
+    .package = "rJavaEnv"
+  )
+
+  expect_message(
+    versions <- java_valid_major_versions_temurin(platform = "linux", arch = "x64"),
+    "summary endpoint returned no usable major versions"
+  )
+
+  expect_equal(versions, c("17", "21"))
+})
+
+test_that("java_valid_major_versions_temurin handles malformed summary payload", {
+  local_mocked_bindings(
+    read_json_url = function(url, max_simplify_lvl = "data_frame") {
+      if (grepl("info/available_releases", url)) {
+        return(list(tip_version = 27))
+      }
+      if (grepl("assets/latest/25/", url)) {
+        return(list(list(
+          binary = list(package = list(link = "https://example.com/25.tar.gz")),
+          version_data = list(semver = "25.0.2+10", openjdk_version = "25.0.2")
+        )))
+      }
+      list()
+    },
+    .package = "rJavaEnv"
+  )
+
+  expect_message(
+    versions <- java_valid_major_versions_temurin(platform = "linux", arch = "x64"),
+    "summary endpoint returned no usable major versions"
+  )
+
+  expect_equal(versions, "25")
+})
+
+test_that("java_valid_major_versions_temurin uses shipped fallback when probes fail", {
+  local_mocked_bindings(
+    read_json_url = function(...) stop("Network down"),
+    .package = "rJavaEnv"
+  )
+
+  fallback <- temurin_candidate_versions("linux", "x64")
+
+  expect_warning(
+    versions <- suppressMessages(
+      java_valid_major_versions_temurin(platform = "linux", arch = "x64")
+    ),
+    "Returning shipped fallback versions"
+  )
+
+  expect_equal(versions, fallback)
+})
+
+test_that("java_valid_major_versions_temurin returns empty when probes succeed without assets", {
+  local_mocked_bindings(
+    read_json_url = function(url, max_simplify_lvl = "data_frame") {
+      if (grepl("info/available_releases", url)) {
+        return(list(available_releases = c(17, 21)))
+      }
+      list()
+    },
+    .package = "rJavaEnv"
+  )
+
+  versions <- java_valid_major_versions_temurin(platform = "linux", arch = "x64")
+
+  expect_identical(versions, character(0))
+})
+
 # Test java_valid_major_versions_corretto with explicit platform/arch
 test_that("java_valid_major_versions_corretto works with explicit parameters", {
   skip_on_cran()

@@ -5,6 +5,10 @@
 test_that("java_install succeeds with symlink on Unix-like systems", {
   # This test is for non-Windows behavior
   skip_on_os("windows")
+  state <- new.env(parent = emptyenv())
+  state$env_set_calls <- 0
+  state$symlink_calls <- 0
+  state$symlink_args <- list()
 
   local_proj_path <- withr::local_tempdir(pattern = "project")
   local_cache_path <- withr::local_tempdir(pattern = "cache")
@@ -50,19 +54,16 @@ test_that("java_install succeeds with symlink on Unix-like systems", {
     "21"
   )
 
-  env_set_calls <- 0
   local_mocked_bindings(
     java_env_set = function(...) {
-      env_set_calls <<- env_set_calls + 1
+      state$env_set_calls <- state$env_set_calls + 1
     }
   )
 
-  symlink_calls <- 0
-  symlink_args <- list()
   local_mocked_bindings(
     file.symlink = function(from, to) {
-      symlink_calls <<- symlink_calls + 1
-      symlink_args <<- list(from = from, to = to)
+      state$symlink_calls <- state$symlink_calls + 1
+      state$symlink_args <- list(from = from, to = to)
     },
     .package = "base"
   )
@@ -76,16 +77,18 @@ test_that("java_install succeeds with symlink on Unix-like systems", {
     )
   })
 
-  expect_equal(env_set_calls, 1)
-  expect_equal(symlink_calls, 1)
-  expect_equal(symlink_args$from, fake_unpacked_path)
-  expect_equal(symlink_args$to, expected_symlink_path)
+  expect_equal(state$env_set_calls, 1)
+  expect_equal(state$symlink_calls, 1)
+  expect_equal(state$symlink_args$from, fake_unpacked_path)
+  expect_equal(state$symlink_args$to, expected_symlink_path)
   expect_equal(return_val, fake_unpacked_path)
 })
 
 
 test_that("java_install falls back to file.copy when symlink fails on Unix", {
   skip_on_os("windows")
+  state <- new.env(parent = emptyenv())
+  state$copy_calls <- 0
 
   local_proj_path <- withr::local_tempdir()
   local_cache_path <- withr::local_tempdir()
@@ -109,11 +112,10 @@ test_that("java_install falls back to file.copy when symlink fails on Unix", {
     .package = "base"
   )
 
-  copy_calls <- 0
   local_mocked_bindings(
     file.copy = function(from, to, ...) {
       if (grepl(basename(local_proj_path), to, fixed = TRUE)) {
-        copy_calls <<- copy_calls + 1
+        state$copy_calls <- state$copy_calls + 1
       }
       TRUE
     },
@@ -128,7 +130,7 @@ test_that("java_install falls back to file.copy when symlink fails on Unix", {
     )
   )
 
-  expect_equal(copy_calls, 1)
+  expect_equal(state$copy_calls, 1)
 })
 test_that("java_install respects autoset_java_env = FALSE", {
   skip_on_os("windows") # Uses Linux filename, not applicable on Windows
@@ -171,6 +173,8 @@ test_that("java_install succeeds with mklink junction on Windows", {
   skip_on_os("mac")
   skip_on_os("linux")
   skip_on_os("solaris")
+  state <- new.env(parent = emptyenv())
+  state$system2_args <- list()
 
   local_proj_path <- withr::local_tempdir()
   local_cache_path <- withr::local_tempdir()
@@ -187,10 +191,9 @@ test_that("java_install succeeds with mklink junction on Windows", {
   mock_java_globals()
   local_mocked_bindings(java_env_set = function(...) TRUE)
 
-  system2_args <- list()
   local_mocked_bindings(
     system2 = function(command, args, ...) {
-      system2_args <<- list(command = command, args = args)
+      state$system2_args <- list(command = command, args = args)
       "Junction created for ... " # Simulate success message
     },
     .package = "base"
@@ -202,6 +205,6 @@ test_that("java_install succeeds with mklink junction on Windows", {
     quiet = TRUE
   )
 
-  expect_equal(system2_args$command, "cmd.exe")
-  expect_true(grepl("mklink /J", system2_args$args[2]))
+  expect_equal(state$system2_args$command, "cmd.exe")
+  expect_true(grepl("mklink /J", state$system2_args$args[2]))
 })

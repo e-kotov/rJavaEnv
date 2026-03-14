@@ -1,4 +1,6 @@
 test_that("backend argument propagates in use_java", {
+  state <- new.env(parent = emptyenv())
+  state$download_called_backend <- NULL
   local_mocked_bindings(
     java_list_installed = function(...) {
       data.frame(
@@ -17,10 +19,9 @@ test_that("backend argument propagates in use_java", {
   )
 
   # Should NOT find in cache because we ask for "native" (default) but cache has "sdkman"
-  download_called_backend <- NULL
   local_mocked_bindings(
     java_download = function(..., backend) {
-      download_called_backend <<- backend
+      state$download_called_backend <- backend
       return("mock_dist_path")
     },
     java_unpack = function(...) "mock_unpack_path",
@@ -34,20 +35,22 @@ test_that("backend argument propagates in use_java", {
     backend = "native",
     quiet = TRUE
   )
-  expect_equal(download_called_backend, "native")
+  expect_equal(state$download_called_backend, "native")
 
   # Should FIND in cache because backend matches
-  download_called_backend <- NULL
+  state$download_called_backend <- NULL
   use_java(
     version = 21,
     distribution = "Corretto",
     backend = "sdkman",
     quiet = TRUE
   )
-  expect_null(download_called_backend)
+  expect_null(state$download_called_backend)
 })
 
 test_that("backend argument propagates in java_resolve", {
+  state <- new.env(parent = emptyenv())
+  state$download_called_backend <- NULL
   local_mocked_bindings(
     java_list_installed = function(...) {
       data.frame(
@@ -67,10 +70,9 @@ test_that("backend argument propagates in java_resolve", {
   )
 
   # Should NOT find in cache
-  download_called_backend <- NULL
   local_mocked_bindings(
     java_download = function(..., backend) {
-      download_called_backend <<- backend
+      state$download_called_backend <- backend
       return("mock_dist_path")
     },
     java_unpack = function(...) "mock_unpack_path",
@@ -85,25 +87,26 @@ test_that("backend argument propagates in java_resolve", {
     backend = "native",
     quiet = TRUE
   )
-  expect_equal(download_called_backend, "native")
+  expect_equal(state$download_called_backend, "native")
 
   # Should FIND in cache
-  download_called_backend <- NULL
+  state$download_called_backend <- NULL
   res <- java_resolve(
     version = 21,
     distribution = "Corretto",
     backend = "sdkman",
     quiet = TRUE
   )
-  expect_null(download_called_backend)
+  expect_null(state$download_called_backend)
   expect_equal(res, "path/to/java")
 })
 
 test_that("backend argument propagates in java_quick_install", {
-  download_called_backend <- NULL
+  state <- new.env(parent = emptyenv())
+  state$download_called_backend <- NULL
   local_mocked_bindings(
     java_download = function(..., backend) {
-      download_called_backend <<- backend
+      state$download_called_backend <- backend
       return("mock_dist_path")
     },
     java_install = function(...) "mock_home",
@@ -119,7 +122,7 @@ test_that("backend argument propagates in java_quick_install", {
     quiet = TRUE,
     temp_dir = TRUE
   )
-  expect_equal(download_called_backend, "sdkman")
+  expect_equal(state$download_called_backend, "sdkman")
 })
 
 test_that("backend argument propagates in java_ensure", {

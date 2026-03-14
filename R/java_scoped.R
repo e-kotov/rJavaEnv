@@ -177,32 +177,7 @@ with_rjava_env <- function(
   )
 
   # 2. Define the environment variables for the subprocess
-  env_vars <- Sys.getenv() # Copy current env
-
-  # Update JAVA variables
-  env_vars["JAVA_HOME"] = java_home
-
-  # Prepend to PATH
-  java_bin <- file.path(java_home, "bin")
-  old_path <- env_vars["PATH"]
-  env_vars["PATH"] = paste(java_bin, old_path, sep = .Platform$path.sep)
-
-  # Linux specific: LD_LIBRARY_PATH for rJava
-  if (Sys.info()["sysname"] == "Linux") {
-    libjvm_path <- get_libjvm_path(java_home)
-    if (!is.null(libjvm_path)) {
-      jvm_lib_dir <- dirname(libjvm_path)
-      old_ld <- env_vars["LD_LIBRARY_PATH"]
-      if (is.na(old_ld)) {
-        old_ld <- ""
-      }
-      env_vars["LD_LIBRARY_PATH"] = paste(
-        jvm_lib_dir,
-        old_ld,
-        sep = .Platform$path.sep
-      )
-    }
-  }
+  env_vars <- java_subprocess_env(java_home, rjava = TRUE)
 
   # 3. Run in subprocess
   callr::r(

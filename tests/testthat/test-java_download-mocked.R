@@ -145,6 +145,8 @@ test_that("java_download skips download if file exists and force is FALSE", {
 
 
 test_that("java_download overwrites if file exists and force is TRUE", {
+  state <- new.env(parent = emptyenv())
+  state$curl_call_count <- 0
   local_cache_path <- withr::local_tempdir()
   dest_dir <- file.path(local_cache_path, "distrib")
   dir.create(dest_dir, recursive = TRUE)
@@ -173,10 +175,9 @@ test_that("java_download overwrites if file exists and force is TRUE", {
     }
   )
 
-  curl_call_count <- 0
   local_mocked_bindings(
     curl_download = function(url, destfile, ...) {
-      curl_call_count <<- curl_call_count + 1
+      state$curl_call_count <- state$curl_call_count + 1
       writeLines("new content", destfile)
     },
     .package = "curl"
@@ -196,6 +197,6 @@ test_that("java_download overwrites if file exists and force is TRUE", {
     force = TRUE
   )
 
-  expect_equal(curl_call_count, 1)
+  expect_equal(state$curl_call_count, 1)
   expect_equal(readLines(expected_file_path), "new content")
 })

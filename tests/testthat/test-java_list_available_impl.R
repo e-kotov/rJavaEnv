@@ -1,34 +1,47 @@
 test_that("list_temurin_versions_impl handles valid data", {
   skip_on_cran()
 
-  # Mock list of major versions
   local_mocked_bindings(
-    java_valid_major_versions_temurin = function() c(17, 21),
+    java_valid_major_versions_temurin = function(...) c(17, 21),
     read_json_url = function(url, ...) {
-      # Return simplified structure as list of lists
-      list(
-        list(
-          version_data = list(
-            semver = "17.0.9+9",
-            openjdk_version = "17.0.9+9"
+      if (grepl("assets/latest/17/", url)) {
+        return(list(
+          list(
+            binary = list(package = list(link = "https://example.com/17.0.9.tar.gz")),
+            version_data = list(
+              semver = "17.0.9+9",
+              openjdk_version = "17.0.9+9"
+            )
+          ),
+          list(
+            binary = list(package = list(link = "https://example.com/17.0.10.tar.gz")),
+            version_data = list(
+              semver = "17.0.10+1",
+              openjdk_version = "17.0.10+1"
+            )
           )
-        ),
-        list(
-          version_data = list(
-            semver = "17.0.10+1",
-            openjdk_version = "17.0.10+1"
+        ))
+      }
+      if (grepl("assets/latest/21/", url)) {
+        return(list(
+          list(
+            binary = list(package = list(link = "https://example.com/21.0.8.tar.gz")),
+            version_data = list(
+              semver = "21.0.8+9",
+              openjdk_version = "21.0.8+9"
+            )
           )
-        )
-      )
+        ))
+      }
+      stop("Unexpected URL")
     },
-    list_temurin_versions_impl = list_temurin_versions_impl
+    .package = "rJavaEnv"
   )
 
-  # Run
   res <- list_temurin_versions_impl(platform = "linux", arch = "x64")
 
   expect_s3_class(res, "data.frame")
-  expect_true(nrow(res) >= 2) # 2 versions for 17, plus whatever mocked for 21 if loop runs
+  expect_true(nrow(res) >= 3)
   expect_equal(res$vendor[1], "Temurin")
   expect_equal(res$backend[1], "native")
 })
@@ -36,7 +49,8 @@ test_that("list_temurin_versions_impl handles valid data", {
 test_that("list_temurin_versions_impl handles empty major versions", {
   skip_on_cran()
   local_mocked_bindings(
-    java_valid_major_versions_temurin = function() NULL
+    java_valid_major_versions_temurin = function(...) NULL,
+    .package = "rJavaEnv"
   )
   res <- list_temurin_versions_impl("linux", "x64")
   expect_s3_class(res, "data.frame")
@@ -46,8 +60,9 @@ test_that("list_temurin_versions_impl handles empty major versions", {
 test_that("list_temurin_versions_impl handles API error gracefully", {
   skip_on_cran()
   local_mocked_bindings(
-    java_valid_major_versions_temurin = function() c(21),
-    read_json_url = function(...) stop("API Error")
+    java_valid_major_versions_temurin = function(...) c(21),
+    read_json_url = function(...) stop("API Error"),
+    .package = "rJavaEnv"
   )
   res <- list_temurin_versions_impl("linux", "x64")
   expect_s3_class(res, "data.frame")
