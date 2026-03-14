@@ -101,6 +101,46 @@ test_that("java_subprocess_env configures Linux rJava loader variables", {
   })
 })
 
+test_that("java_subprocess_env only updates JAVA_HOME and PATH when rjava is FALSE", {
+  withr::with_envvar(c(
+    PATH = "/usr/bin",
+    LD_LIBRARY_PATH = "sentinel",
+    JAVA_LD_LIBRARY_PATH = "sentinel-java-ld"
+  ), {
+    env_vars <- rJavaEnv:::java_subprocess_env("/mock/java/home", rjava = FALSE)
+
+    expect_equal(env_vars[["JAVA_HOME"]], "/mock/java/home")
+    expect_true(grepl("/mock/java/home/bin", env_vars[["PATH"]]))
+    expect_equal(env_vars[["LD_LIBRARY_PATH"]], "sentinel")
+    expect_equal(env_vars[["JAVA_LD_LIBRARY_PATH"]], "sentinel-java-ld")
+  })
+})
+
+test_that("java_subprocess_env returns base env when libjvm cannot be resolved", {
+  local_mocked_bindings(
+    Sys.info = function() c(sysname = "Linux"),
+    .package = "base"
+  )
+
+  local_mocked_bindings(
+    get_libjvm_path = function(...) NULL,
+    .package = "rJavaEnv"
+  )
+
+  withr::with_envvar(c(
+    PATH = "/usr/bin",
+    LD_LIBRARY_PATH = NA,
+    JAVA_LD_LIBRARY_PATH = "sentinel-java-ld"
+  ), {
+    env_vars <- rJavaEnv:::java_subprocess_env("/mock/java/home", rjava = TRUE)
+
+    expect_equal(env_vars[["JAVA_HOME"]], "/mock/java/home")
+    expect_true(grepl("/mock/java/home/bin", env_vars[["PATH"]]))
+    expect_equal(env_vars[["JAVA_LD_LIBRARY_PATH"]], "sentinel-java-ld")
+    expect_false("LD_LIBRARY_PATH" %in% names(env_vars))
+  })
+})
+
 test_that("java_subprocess_env configures macOS DYLD_LIBRARY_PATH for rJava", {
   local_mocked_bindings(
     Sys.info = function() c(sysname = "Darwin"),
@@ -118,6 +158,27 @@ test_that("java_subprocess_env configures macOS DYLD_LIBRARY_PATH for rJava", {
     expect_equal(env_vars[["JAVA_HOME"]], "/mock/java/home")
     expect_true(grepl("/mock/java/home/bin", env_vars[["PATH"]]))
     expect_true(grepl("/mock/java/home/lib/server", env_vars[["DYLD_LIBRARY_PATH"]]))
+  })
+})
+
+test_that("java_subprocess_env handles missing loader path variables", {
+  local_mocked_bindings(
+    Sys.info = function() c(sysname = "Darwin"),
+    .package = "base"
+  )
+
+  local_mocked_bindings(
+    get_libjvm_path = function(...) "/mock/java/home/lib/server/libjvm.dylib",
+    .package = "rJavaEnv"
+  )
+
+  withr::with_envvar(c(PATH = "/usr/bin", DYLD_LIBRARY_PATH = NA), {
+    env_vars <- rJavaEnv:::java_subprocess_env("/mock/java/home", rjava = TRUE)
+
+    expect_equal(
+      env_vars[["DYLD_LIBRARY_PATH"]],
+      "/mock/java/home/lib/server"
+    )
   })
 })
 

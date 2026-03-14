@@ -107,3 +107,11 @@ test_that("java_version_check_rscript handles errors gracefully", {
 
   expect_true(grepl("Error", result))
 })
+
+test_that("parse_java_major_version handles valid and invalid inputs", {
+  expect_equal(rJavaEnv:::parse_java_major_version("21.0.8"), "21")
+  expect_equal(rJavaEnv:::parse_java_major_version("1.8.0_452"), "8")
+  expect_null(rJavaEnv:::parse_java_major_version(NULL))
+  expect_null(rJavaEnv:::parse_java_major_version(""))
+  expect_null(rJavaEnv:::parse_java_major_version("not-a-version"))
+})

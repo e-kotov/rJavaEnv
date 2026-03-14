@@ -86,8 +86,15 @@ java_subprocess_env <- function(java_home, rjava = FALSE) {
   checkmate::assert_logical(rjava, len = 1)
 
   env_vars <- Sys.getenv()
+  env_get <- function(name) {
+    if (name %in% names(env_vars)) {
+      env_vars[[name]]
+    } else {
+      NA_character_
+    }
+  }
   java_bin <- file.path(java_home, "bin")
-  old_path <- env_vars[["PATH"]]
+  old_path <- env_get("PATH")
 
   env_vars["JAVA_HOME"] <- java_home
   env_vars["PATH"] <- paste(java_bin, old_path, sep = .Platform$path.sep)
@@ -105,7 +112,7 @@ java_subprocess_env <- function(java_home, rjava = FALSE) {
   jvm_lib_dir <- dirname(libjvm_path)
 
   if (identical(sysname, "Linux")) {
-    old_ld <- env_vars[["LD_LIBRARY_PATH"]]
+    old_ld <- env_get("LD_LIBRARY_PATH")
     if (is.na(old_ld)) {
       old_ld <- ""
     }
@@ -116,7 +123,7 @@ java_subprocess_env <- function(java_home, rjava = FALSE) {
       jvm_lib_dir
     }
   } else if (identical(sysname, "Darwin")) {
-    old_dyld <- env_vars[["DYLD_LIBRARY_PATH"]]
+    old_dyld <- env_get("DYLD_LIBRARY_PATH")
     if (is.na(old_dyld)) {
       old_dyld <- ""
     }

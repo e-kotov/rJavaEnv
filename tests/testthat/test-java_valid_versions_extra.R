@@ -314,6 +314,22 @@ test_that("java_valid_major_versions_temurin uses shipped fallback when probes f
   expect_equal(versions, fallback)
 })
 
+test_that("java_valid_major_versions_temurin returns empty when probes succeed without assets", {
+  local_mocked_bindings(
+    read_json_url = function(url, max_simplify_lvl = "data_frame") {
+      if (grepl("info/available_releases", url)) {
+        return(list(available_releases = c(17, 21)))
+      }
+      list()
+    },
+    .package = "rJavaEnv"
+  )
+
+  versions <- java_valid_major_versions_temurin(platform = "linux", arch = "x64")
+
+  expect_identical(versions, character(0))
+})
+
 # Test java_valid_major_versions_corretto with explicit platform/arch
 test_that("java_valid_major_versions_corretto works with explicit parameters", {
   skip_on_cran()
