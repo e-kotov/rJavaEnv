@@ -107,7 +107,7 @@ java_home <- java_install(
 #> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
 #> Java NA (amazon-corretto-17.0.19.10.1-linux-x64.tar.gz) for linux x64 installed
 #> at /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17 and
-#> symlinked to /tmp/RtmpZzCBbW/rjavaenv/linux/x64/Corretto/native/NA
+#> symlinked to /tmp/Rtmp1a7JMo/rjavaenv/linux/x64/Corretto/native/NA
 
 # now manually set the JAVA_HOME and PATH environment variables in current session
 java_env_set(
@@ -136,7 +136,7 @@ java_env_set(
   java_home = java_home,
   project_path = tempdir()
 )
-#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/RtmpZzCBbW'
+#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/Rtmp1a7JMo'
 #> ℹ On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in
 #>   the current session.
 #>   To make this change permanent for installing rJava-dependent packages from
