@@ -6,7 +6,9 @@ on:
   pull_request:
     branches: [main, master]
 
-name: R-CMD-check-HTML5
+name: check-html5
+
+permissions: read-all
 
 jobs:
   R-CMD-check:
