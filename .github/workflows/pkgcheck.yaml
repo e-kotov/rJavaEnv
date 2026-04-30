@@ -8,13 +8,11 @@ concurrency:
 on:
   # Manually trigger the Action under Actions/pkgcheck
   workflow_dispatch:
-  # Run on every push to main
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  # Run after other checks
+  workflow_run:
+    workflows: ["R-CMD-check", "test-coverage.yaml", "check-html5", "render-readme"]
+    types:
+      - completed
 
 jobs:
   pkgcheck:

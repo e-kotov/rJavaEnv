@@ -474,7 +474,7 @@ java_valid_major_versions_zulu <- function(
   data <- read_json_url(url, max_simplify_lvl = "list")
 
   # Extract java_version fields (which are lists like [21, 0, 4])
-  versions <- unique(sapply(data, function(x) x$java_version[[1]]))
+  versions <- unique(vapply(data, function(x) x$java_version[[1]], FUN.VALUE = integer(1)))
   as.character(sort(versions))
 }
 

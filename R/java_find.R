@@ -183,8 +183,8 @@
 
   # Build data frame properly to ensure columns are vectors, not lists
   result_df <- data.frame(
-    java_home = sapply(result_list, `[[`, "java_home"),
-    version = sapply(result_list, `[[`, "version"),
+    java_home = vapply(result_list, `[[`, "java_home", FUN.VALUE = character(1)),
+    version = vapply(result_list, `[[`, "version", FUN.VALUE = character(1)),
     stringsAsFactors = FALSE
   )
   # Set is_default to FALSE - it will be calculated by the caller

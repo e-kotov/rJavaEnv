@@ -5,7 +5,7 @@ on:
     paths: ['README.qmd']
   workflow_dispatch:
 
-name: Render README
+name: render-readme
 
 jobs:
   render-quarto:

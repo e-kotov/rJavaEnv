@@ -40,9 +40,9 @@ test_that("java_download with temp_dir = TRUE uses temporary directory", {
     .package = "digest"
   )
 
-  # Capture the working directory before and after
-  original_wd <- getwd()
-  withr::defer(setwd(original_wd))
+  # Use local_dir to avoid explicit setwd()
+  temp_wd <- withr::local_tempdir()
+  withr::local_dir(temp_wd)
 
   result_path <- java_download(
     version = "21",

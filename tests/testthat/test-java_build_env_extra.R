@@ -65,11 +65,8 @@ test_that("java_build_env_unset informs when .Rprofile not found", {
 })
 
 test_that("java_build_env_unset uses current working directory by default", {
-  original_wd <- getwd()
-  on.exit(setwd(original_wd), add = TRUE)
-
   proj_dir <- withr::local_tempdir()
-  setwd(proj_dir)
+  withr::local_dir(proj_dir)
 
   rprof <- file.path(proj_dir, ".Rprofile")
   writeLines(
