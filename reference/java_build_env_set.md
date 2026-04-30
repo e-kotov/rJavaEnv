@@ -60,9 +60,9 @@ java_home_path <- java_install(
   project_path = tempdir(),
   autoset_java_env = FALSE # Manually set env
 )
-#> Java NA (amazon-corretto-17.0.18.9.1-linux-x64.tar.gz) for linux x64 installed
+#> Java NA (amazon-corretto-17.0.19.10.1-linux-x64.tar.gz) for linux x64 installed
 #> at /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17 and
-#> symlinked to /tmp/Rtmpq5yBHF/rjavaenv/linux/x64/Corretto/native/NA
+#> symlinked to /tmp/RtmpxSZU0P/rjavaenv/linux/x64/Corretto/native/NA
 
 # Set up the build environment in the current session
 java_build_env_set(java_home = java_home_path)

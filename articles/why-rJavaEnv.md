@@ -72,7 +72,7 @@ If we remove `xlsx` (and `xlsxjars`) as an outlier, we will see in
 
 - [`RWeka`](https://doi.org/10.32614/CRAN.package.RWeka), R interface to
   Weka. Weka itself *“is a collection of machine learning algorithms for
-  data mining tasks written in Java*” ([Hornik, Buchta, and Zeileis
+  data mining tasks written in Java*” ([Hornik et al.
   2009](#ref-rweka)). StackOverflow
   [discussions](https://stackoverflow.com/questions/40752070/issues-installing-rweka)
   related to Java version issues.
@@ -139,8 +139,9 @@ Machine Learning: R Meets Weka.” *Computational Statistics* 24 (2):
 
 Pereira, Rafael H. M., Marcus Saraiva, Daniel Herszenhut, Carlos Kaue
 Vieira Braga, and Matthew Wigginton Conway. 2021. “R5r: Rapid Realistic
-Routing on Multimodal Transport Networks with R$^{\text{5}}$ in r.”
-*Findings*, March. <https://doi.org/10.32866/001c.21262>.
+Routing on Multimodal Transport Networks with R$`^{\textrm{5}}`$ in r.”
+*Findings*, ahead of print, March.
+<https://doi.org/10.32866/001c.21262>.
 
 Premraj, Rahul. 2021. *mailR: A Utility to Send Emails from r*.
 <https://CRAN.R-project.org/package=mailR>.
@@ -148,5 +149,5 @@ Premraj, Rahul. 2021. *mailR: A Utility to Send Emails from r*.
 Urbanek, Simon. 2022. *RJDBC: Provides Access to Databases Through the
 JDBC Interface*. <https://CRAN.R-project.org/package=RJDBC>.
 
-———. 2024. *rJava: Low-Level r to Java Interface*.
+Urbanek, Simon. 2024. *rJava: Low-Level r to Java Interface*.
 <https://CRAN.R-project.org/package=rJava>.

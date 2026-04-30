@@ -104,7 +104,7 @@ changed without restarting R.
 [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is invoked (and
 Java locked) when you:
 
-- Explicitly call [`library(rJava)`](http://www.rforge.net/rJava/)
+- Explicitly call [`library(rJava)`](https://www.rforge.net/rJava/)
 
 - Load any package that imports *rJava* (which auto-loads it as a
   dependency)

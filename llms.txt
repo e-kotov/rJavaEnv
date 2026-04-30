@@ -4,8 +4,8 @@ Quickly install `Java Development Kit (JDK)` without administrative
 privileges and set environment variables in current R session or project
 to solve common issues with ‘Java’ environment management in ‘R’.
 Recommended to users of
-`Java`/[rJava](http://www.rforge.net/rJava/)-dependent `R` packages such
-as [r5r](https://github.com/ipeaGIT/r5r),
+`Java`/[rJava](https://www.rforge.net/rJava/)-dependent `R` packages
+such as [r5r](https://github.com/ipeaGIT/r5r),
 [opentripplanner](https://docs.ropensci.org/opentripplanner),
 [xlsx](https://github.com/colearendt/xlsx), `{openNLP}`, `{rWeka}`,
 [RJDBC](http://www.rforge.net/RJDBC/),
@@ -23,18 +23,18 @@ what [renv](https://rstudio.github.io/renv/) does for `R` packages,
 versions to be used across different projects, but can also be
 configured to allow multiple versions within the same project (e.g. with
 the help of [targets](https://docs.ropensci.org/targets/) package). For
-users who need to install [rJava](http://www.rforge.net/rJava/) or other
-`Java`-dependent packages from source,
+users who need to install [rJava](https://www.rforge.net/rJava/) or
+other `Java`-dependent packages from source,
 [rJavaEnv](https://github.com/e-kotov/rJavaEnv) will display a message
 with instructions on how to run `R CMD javareconf` to make the Java
 configuration permanent, but also provides a function
 [`java_build_env_set()`](https://www.ekotov.pro/rJavaEnv/reference/java_build_env_set.md)
 that sets the environment variables in the current R session temporarily
-to allow installation of [rJava](http://www.rforge.net/rJava/) from
+to allow installation of [rJava](https://www.rforge.net/rJava/) from
 source without `R CMD javareconf`. On Linux, in addition to setting
 environment variables, [rJavaEnv](https://github.com/e-kotov/rJavaEnv)
 also dynamically loads `libjvm.so` to ensure
-[rJava](http://www.rforge.net/rJava/) works correctly. See
+[rJava](https://www.rforge.net/rJava/) works correctly. See
 [documentation](https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html#note-linux)
 for more details.\*\*
 
@@ -43,6 +43,7 @@ for more details.\*\*
 Install from CRAN:
 
 ``` r
+
 install.packages('rJavaEnv')
 ```
 
@@ -51,6 +52,7 @@ Install the development version
 Install the latest release development version from **R-multiverse**:
 
 ``` r
+
 install.packages('rJavaEnv',
  repos = c('https://community.r-multiverse.org', 'https://cloud.r-project.org')
 )
@@ -60,6 +62,7 @@ You can also install the development version of `rJavaEnv` directly from
 GitHub:
 
 ``` r
+
 if (!requireNamespace("remotes", quietly = TRUE)) {
   install.packages("remotes")
 }
@@ -70,6 +73,7 @@ remotes::install_github("e-kotov/rJavaEnv", force = TRUE)
 ## Simple Example
 
 ``` r
+
 rJavaEnv::java_quick_install(version = 21)
 ```
 
@@ -105,6 +109,7 @@ and/or to prevent interruptions in non-interactive mode, you can use the
 function:
 
 ``` r
+
 rje_consent(provided = TRUE)
 ```
 
@@ -112,6 +117,7 @@ You can also specify a distribution different from the default
 “Corretto”:
 
 ``` r
+
 rJavaEnv::java_quick_install(version = 17, distribution = "Temurin")
 ```
 
@@ -121,6 +127,7 @@ Just insert this line at the top of any script that you run with
 `targets` or `callr`:
 
 ``` r
+
 rJavaEnv::use_java("21")
 ```
 
@@ -139,6 +146,7 @@ If you do not want to use `rJavaEnv` anymore, please clear the cache
 folders before removing the package:
 
 ``` r
+
 java_clear_project(delete_all = TRUE)
 java_clear_installed(delete_all = TRUE)
 java_clear_distrib(delete_all = TRUE)
@@ -148,6 +156,7 @@ Also, clear the `.Rprofile` file in the projects there you used the
 package:
 
 ``` r
+
 java_env_unset()
 ```
 
@@ -329,7 +338,7 @@ To cite package ‘rJavaEnv’ in publications use:
 
 Kotov E, Chan C (2024). *rJavaEnv: Java Environments for R Projects*.
 <doi:10.32614/CRAN.package.rJavaEnv>
-<https://doi.org/10.32614/CRAN.package.rJavaEnv>,
+<https://doi.org/10.32614/CRAN.package.rJavaEnv>.
 <https://github.com/e-kotov/rJavaEnv>.
 
 BibTeX:

@@ -46,7 +46,7 @@ java_check_version_rjava()
 #> Using current session's JAVA_HOME:
 #> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
 #> With the current session's JAVA_HOME rJava and other rJava/Java-based packages
-#> will use Java version: "17.0.18"
+#> will use Java version: "17.0.19"
 #> [1] "17"
 # }
 ```

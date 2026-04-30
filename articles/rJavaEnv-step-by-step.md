@@ -9,6 +9,7 @@ environments. Also see the [vignette on using `rJavaEnv` with the
 environments](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-targets-callr.qmd).
 
 ``` r
+
 library(rJavaEnv)
 ```
 
@@ -19,6 +20,7 @@ below you will see paths that point to a temporary directory, but in a
 real project you would see your project directory instead.
 
 ``` r
+
 project_dir <- tempdir()
 setwd(project_dir)
 ```
@@ -29,6 +31,7 @@ You can specify the cache folder location with the `rJavaEnv.cache_path`
 option.
 
 ``` r
+
 options(rJavaEnv.cache_path = "/path/to/your/desired/cache/folder")
 ```
 
@@ -41,6 +44,7 @@ manages the cache for `R` packages.
 You can view the current cache location with:
 
 ``` r
+
 getOption("rJavaEnv.cache_path")
 ```
 
@@ -59,6 +63,7 @@ default, `rJavaEnv` checks specific vendor APIs (Native backend), but it
 can also query SDKMAN.
 
 ``` r
+
 # List versions from native backends (Corretto, Temurin, Zulu)
 java_list_available()
 
@@ -72,6 +77,7 @@ To download a specific Java distribution, use the `java_download`
 function:
 
 ``` r
+
 java_17_distr <- java_download(version = 17)
 java_17_distr
 ```
@@ -115,6 +121,7 @@ For example, this line above will download the `Amazon Corretto`
 this code on aarch64 macOS or x86_64 Windows machine:
 
 ``` r
+
 java_8_linux64_distr <- java_download(
   version = 8,
   platform = "linux",
@@ -133,6 +140,7 @@ Example expected output (on a Windows machine):
     MD5 checksum verified.
 
 MD5 checksum verified.
+
 
     ## Using SDKMAN Backend
 
@@ -164,6 +172,7 @@ You can manage downloaded distributions with the `java_list` and
 `java_clear` functions.
 
 ``` r
+
 java_list_distrib()
 ```
 
@@ -175,6 +184,7 @@ Expected output (on a Windows machine):
     3 C:\\Users\\user_name\\AppData\\Local/R/cache/R/rJavaEnv/distrib/amazon-corretto-8-x64-linux-jdk.tar.gz
 
 ``` r
+
 java_clear_distrib()
 ```
 
@@ -189,6 +199,7 @@ Example expected output (on a Windows machine):
 You can also delete all downloaded distributions without consent with:
 
 ``` r
+
 java_clear_distrib(delete_all = TRUE)
 ```
 
@@ -202,6 +213,7 @@ As we have cleared all downloaded `Java` distributions, let us
 re-download a few of them:
 
 ``` r
+
 java_8_distr <- java_download(8)
 java_17_distr <- java_download(17)
 java_22_distr <- java_download(22)
@@ -212,11 +224,12 @@ one of them into the project. Installation in the context of `rJavaEnv`
 means extracting the distribution into the `installed` cache folder
 (which is in the same root cache directory as the zip archives of the
 distributions), and linking the files (via symlinks in `macOS` and
-`Linux`, and junctions in `Windows`[¹](#fn1)). If we set the
+`Linux`, and junctions in `Windows`[^1]). If we set the
 `autoset_java_env` argument to `FALSE` we will need to set the
 `JAVA_HOME` and `PATH` environment variables manually.
 
 ``` r
+
 java_install(
   java_distrib_path = java_17_distr,
   autoset_java_env = FALSE
@@ -245,6 +258,7 @@ function, passing it the path to the downloaded `Java` distribution from
 before:
 
 ``` r
+
 java_home <- java_unpack(java_distr_path = java_8_distr)
 ```
 
@@ -259,6 +273,7 @@ Let us install another downloaded `Java` distribution, this time with
 `autoset_java_env = TRUE`:
 
 ``` r
+
 java_install(
   java_distrib_path = java_8_distr,
   autoset_java_env = TRUE
@@ -277,6 +292,7 @@ Expected output (on a Windows machine):
 We can now list the `Java` versions installed in the project directory:
 
 ``` r
+
 java_list_project()
 ```
 
@@ -292,6 +308,7 @@ version is currently set as the `JAVA_HOME` environment variable, we
 would get the second installed `Java` version, which is Java 8.
 
 ``` r
+
 java_check_version_cmd()
 ```
 
@@ -310,6 +327,7 @@ To identify which path to pass to
 we can use the `java_list("project")` function again:
 
 ``` r
+
 java_list_project()
 ```
 
@@ -323,6 +341,7 @@ As we can see, the Java 17 is currently number 1 in this list, so we
 save this path:
 
 ``` r
+
 java_home_17 <- java_list_project(output = "vector")[1]
 java_home_17
 ```
@@ -336,6 +355,7 @@ Now we can reuse this path in the
 function:
 
 ``` r
+
 java_env_set(where = "both", java_home = java_home_17)
 ```
 
@@ -350,6 +370,7 @@ picked up by the `Java`/`rJava`-dependent `R` package that you are going
 to use with:
 
 ``` r
+
 java_check_version_cmd() # for pacakges that use Java via commandline, like opentripplanner
 java_check_version_rjava() # for packages that use Java via `rJava`, like r5r
 ```
@@ -372,6 +393,7 @@ If you do not want to use `rJavaEnv` anymore, please clear the cache
 folders before removing the package:
 
 ``` r
+
 java_clear_project(delete_all = TRUE)
 java_clear_installed(delete_all = TRUE)
 java_clear_distrib(delete_all = TRUE)
@@ -381,13 +403,12 @@ Also, clear the `.Rprofile` file in the projects there you used the
 package:
 
 ``` r
+
 java_env_unset()
 ```
 
-------------------------------------------------------------------------
-
-1.  In Windows, it is sometimes impossible to create junctions for files
-    and folders. In this case, the `Java` installation will have to be
-    copied into the project folder, which will take some time. This
-    behaviour is the same `renv`’s for R packages and is an operating
-    system limitation.
+[^1]: In Windows, it is sometimes impossible to create junctions for
+    files and folders. In this case, the `Java` installation will have
+    to be copied into the project folder, which will take some time.
+    This behaviour is the same `renv`’s for R packages and is an
+    operating system limitation.

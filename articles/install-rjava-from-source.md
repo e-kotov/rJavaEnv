@@ -7,6 +7,7 @@ show you how to install `rJava` packag from source if you want to or
 have to.
 
 ``` r
+
 library(rJavaEnv)
 ```
 
@@ -17,6 +18,7 @@ below you will see paths that point to a temporary directory, but in a
 real project you would see your project directory instead.
 
 ``` r
+
 project_dir <- tempdir()
 setwd(project_dir)
 ```
@@ -31,6 +33,7 @@ version, but for simplicity, let’s use shortcut functions
 Either quick install Java into current project directory:
 
 ``` r
+
 java_quick_install(version = 21)
 ```
 
@@ -46,6 +49,7 @@ java_quick_install(version = 21)
 Or you can simply do:
 
 ``` r
+
 use_java(21)
 ```
 
@@ -60,6 +64,7 @@ copying/linking the installation folder into your project directory.
 Now simply use:
 
 ``` r
+
 java_build_env_set()
 ```
 
@@ -77,19 +82,27 @@ completes, it will print out OS-specific notes. In summary,
 
 - **On Linux**, you may need to install several system dependencies. For
   Debian/Ubuntu, this can be done with:
-  `bash sudo apt-get update && sudo apt-get install -y --no-install-recommends libpcre2-dev libdeflate-dev libzstd-dev liblzma-dev libbz2-dev zlib1g-dev libicu-dev && sudo rm -rf /var/lib/apt/lists/*`
+
+  ``` bash
+  sudo apt-get update && sudo apt-get install -y --no-install-recommends libpcre2-dev libdeflate-dev libzstd-dev liblzma-dev libbz2-dev zlib1g-dev libicu-dev && sudo rm -rf /var/lib/apt/lists/*
+  ```
 
 - **On Windows**, `Rtools` is required. You can download it from
   [https://cran.r-project.org/bin/windows/Rtools/](https://cran.r-project.org/bin/windows/Rtools/).
 
 - **On macOS**, you’ll need the Xcode Command Line Tools. Install them
-  by running: `bash xcode-select --install`
+  by running:
+
+  ``` bash
+  xcode-select --install
+  ```
 
 ## 3. Install `rJava` from source
 
 Now you are ready to install `rJava` from source:
 
 ``` r
+
 install.packages("rJava", type = "source")
 ```
 
@@ -101,6 +114,7 @@ in a similar situation on `Windows` or `macOS`), you can use
 source:
 
 ``` r
+
 install.packages("rJava", type = "source", repos = "https://cloud.r-project.org")
 ```
 
@@ -109,6 +123,7 @@ you restart the R session, the build-related environment variables will
 be reset. To use your newly installed `rJava` package just do:
 
 ``` r
+
 library(rJavaEnv)
 use_java(21) # or whatever version you installed
 library(rJava)
@@ -119,25 +134,26 @@ library(rJava)
 > The order of operations above is critical. You **must** call
 > `use_java(21)` (or
 > [`java_ensure()`](https://www.ekotov.pro/rJavaEnv/reference/java_ensure.md))
-> **BEFORE** loading [`library(rJava)`](http://www.rforge.net/rJava/).
-> This is because [rJava](http://www.rforge.net/rJava/) locks to the
+> **BEFORE** loading [`library(rJava)`](https://www.rforge.net/rJava/).
+> This is because [rJava](https://www.rforge.net/rJava/) locks to the
 > `Java` version that is active when it first initializes (see [rJava
 > issues \#25](https://github.com/s-u/rJava/issues/25),
 > [\#249](https://github.com/s-u/rJava/issues/249), and
 > [\#334](https://github.com/s-u/rJava/issues/334)).
 >
-> If you load [rJava](http://www.rforge.net/rJava/) first without
+> If you load [rJava](https://www.rforge.net/rJava/) first without
 > setting the `Java` environment (or you call
 > [`library()`](https://rdrr.io/r/base/library.html) on any package that
-> depends on [rJava](http://www.rforge.net/rJava/) and imports it),
-> [rJava](http://www.rforge.net/rJava/) will use whatever system Java it
-> finds, and you cannot change it by calling
+> depends on [rJava](https://www.rforge.net/rJava/) and imports it),
+> [rJava](https://www.rforge.net/rJava/) will use whatever system Java
+> it finds, and you cannot change it by calling
 > [`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md)
 > afterwards in the same session.
 >
 > **Correct order:**
 >
 > ``` r
+>
 > library(rJavaEnv)
 > use_java(21)              # Set Java FIRST
 > library(rJava)            # Load rJava SECOND (uses Java 21)
@@ -146,6 +162,7 @@ library(rJava)
 > **Incorrect order (won’t work):**
 >
 > ``` r
+>
 > library(rJava)             # rJava loads and locks to system Java
 > library(rJavaEnv)
 > use_java(21)              # Too late! rJava is already locked

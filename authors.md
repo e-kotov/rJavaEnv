@@ -25,7 +25,7 @@ Source:
 [`inst/CITATION`](https://github.com/e-kotov/rJavaEnv/blob/main/inst/CITATION)
 
 Kotov E, Chan C (2024). *rJavaEnv: Java Environments for R Projects*.
-[doi:10.32614/CRAN.package.rJavaEnv](https://doi.org/10.32614/CRAN.package.rJavaEnv),
+[doi:10.32614/CRAN.package.rJavaEnv](https://doi.org/10.32614/CRAN.package.rJavaEnv).
 <https://github.com/e-kotov/rJavaEnv>.
 
     @Manual{rjavaenv,

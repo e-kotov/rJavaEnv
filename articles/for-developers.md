@@ -1,10 +1,10 @@
 # Using `rJavaEnv` in R Packages
 
 If you are developing an R package that involves `Java` (either via
-[rJava](http://www.rforge.net/rJava/) or through command-line `Java`
+[rJava](https://www.rforge.net/rJava/) or through command-line `Java`
 tools), you often face the “Java Hell” problem: your users might not
 have Java installed, or they might have the wrong version, or
-[rJava](http://www.rforge.net/rJava/) cannot find the `JAVA_HOME`.
+[rJava](https://www.rforge.net/rJava/) cannot find the `JAVA_HOME`.
 
 `rJavaEnv` solves this by providing a unified, reliable way to help your
 users ensure a specific Java version is present and configured
@@ -14,18 +14,18 @@ correctly.
 
 Before using `rJavaEnv`, you must categorize your package into one of
 two scenarios. This distinction is critical because
-[rJava](http://www.rforge.net/rJava/) introduces a “locking” constraint
+[rJava](https://www.rforge.net/rJava/) introduces a “locking” constraint
 that fundamentally changes how you must manage Java.
 
 **Scenario A: Command-Line Java Only** (No
-[rJava](http://www.rforge.net/rJava/) dependency) Your package calls
+[rJava](https://www.rforge.net/rJava/) dependency) Your package calls
 Java executables via [`system()`](https://rdrr.io/r/base/system.html),
 [`system2()`](https://rdrr.io/r/base/system2.html), or `processx`. You
 do **not** have `Imports: rJava` in your DESCRIPTION.
 
 **Scenario B: rJava Dependency** (Most Common) Your package has
 `Imports: rJava` or `Depends: rJava`, or executes code that uses
-[rJava](http://www.rforge.net/rJava/) functions.
+[rJava](https://www.rforge.net/rJava/) functions.
 
 ------------------------------------------------------------------------
 
@@ -54,6 +54,7 @@ for your function, and automatically cleans up afterwards.
 > packages, see Scenario B below.
 
 ``` r
+
 #' Run my Java tool (using system2)
 #' @export
 run_my_tool <- function(input_file) {
@@ -79,6 +80,7 @@ exits. 3. You don’t need to write manual
 If you prefer block-scoped execution:
 
 ``` r
+
 # With system2
 rJavaEnv::with_java_env(version = 21, {
   system2("java", "-version")
@@ -96,6 +98,7 @@ If your function calls Java multiple times (e.g., inside a loop), enable
 caching to avoid the 30-200ms overhead of version checks on each call:
 
 ``` r
+
 process_files <- function(files) {
   for (f in files) {
     rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
@@ -121,15 +124,15 @@ the user’s system Java), set `accept_system_java = FALSE` and
 If your package calls `rJava` (or imports a package that does), you face
 a strict constraint:
 
-> **The rJava Lock**: Once [rJava](http://www.rforge.net/rJava/) is
+> **The rJava Lock**: Once [rJava](https://www.rforge.net/rJava/) is
 > initialized (loaded), the Java version is **locked** for the entire R
 > session. It cannot be changed without restarting R.
 
 **Implications:** - You **cannot** set Java in your package’s `.onLoad`
 or inside your functions. By the time your package loads,
-[rJava](http://www.rforge.net/rJava/) is likely already initializing, or
-will initialize the moment you call it. - You **must** instruct users to
-set up Java **before** loading your package.
+[rJava](https://www.rforge.net/rJava/) is likely already initializing,
+or will initialize the moment you call it. - You **must** instruct users
+to set up Java **before** loading your package.
 
 #### Pattern 1: The Guard (Recommended)
 
@@ -140,6 +143,7 @@ user.
 Add a check to your `.onLoad` function using `java_check_compatibility`.
 
 ``` r
+
 # In R/zzz.R
 .onLoad <- function(libname, pkgname) {
   # Check if the active Java version is at least 21
@@ -171,6 +175,7 @@ bypasses the lock in the main session.
 not rely on objects existing in the main session (stateless execution).
 
 ``` r
+
 #' Run a heavy calculation in a Java 21 subprocess
 #' @export
 run_heavy_calc <- function(input_data) {
@@ -188,9 +193,9 @@ run_heavy_calc <- function(input_data) {
 
 #### Choosing Between `use_java` and `java_ensure`
 
-| Function                        | Behavior                                     | Best For              |
-|---------------------------------|----------------------------------------------|-----------------------|
-| `use_java(21)`                  | Sets exactly Java 21, downloads if missing   | Interactive scripts   |
+| Function | Behavior | Best For |
+|----|----|----|
+| `use_java(21)` | Sets exactly Java 21, downloads if missing | Interactive scripts |
 | `java_ensure(21, type = "min")` | Accepts any Java \>= 21, checks system first | Package setup helpers |
 
 Use `java_ensure` in package code because it’s more lenient and
@@ -219,6 +224,7 @@ In your README or vignette, provide clear instructions.
 > errors, run:
 >
 > ``` r
+>
 > library(rJavaEnv)
 > java_ensure(version = 21, type = "min")
 > # RESTART R session
@@ -232,6 +238,7 @@ call *if* they run into issues. This function can leverage
 `java_ensure(install = TRUE)` to interactively guide them.
 
 ``` r
+
 #' Install and Configure Java
 #' @export
 setup_java <- function() {
@@ -257,6 +264,7 @@ ready. To avoid performance penalties (approx. 30-200ms per check),
 - **In `.onLoad` checks**: To keep package startup fast.
 
 ``` r
+
 # Fast check using cache
 rJavaEnv::java_check_version_cmd(quiet = TRUE, .use_cache = TRUE)
 ```
@@ -270,6 +278,7 @@ If Java setup isn’t working as expected, use `quiet = FALSE` to see what
 `rJavaEnv` is checking:
 
 ``` r
+
 # See all resolution steps
 rJavaEnv::java_ensure(version = 21, quiet = FALSE)
 

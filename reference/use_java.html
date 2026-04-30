@@ -132,7 +132,7 @@ However, due to <em>rJava</em>'s path-locking behavior when <code><a href="https
 (see <a href="https://github.com/s-u/rJava/issues/25" class="external-link">https://github.com/s-u/rJava/issues/25</a>, <a href="https://github.com/s-u/rJava/issues/249" class="external-link">https://github.com/s-u/rJava/issues/249</a>, and <a href="https://github.com/s-u/rJava/issues/334" class="external-link">https://github.com/s-u/rJava/issues/334</a>),
 this function must be called <strong>BEFORE</strong> <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked. Once <code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code>
 initializes, the Java version is locked for that R session and cannot be changed without restarting R.</p>
-<p><code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked (and Java locked) when you:</p><ul><li><p>Explicitly call <code><a href="http://www.rforge.net/rJava/" class="external-link">library(rJava)</a></code></p></li>
+<p><code><a href="https://rdrr.io/pkg/rJava/man/jinit.html" class="external-link">.jinit</a></code> is invoked (and Java locked) when you:</p><ul><li><p>Explicitly call <code><a href="https://www.rforge.net/rJava/" class="external-link">library(rJava)</a></code></p></li>
 <li><p>Load any package that imports <em>rJava</em> (which auto-loads it as a dependency)</p></li>
 <li><p>Even just use IDE autocomplete with <code>rJava::</code> (this triggers initialization!)</p></li>
 <li><p>Call any <em>rJava</em>-dependent function</p></li>

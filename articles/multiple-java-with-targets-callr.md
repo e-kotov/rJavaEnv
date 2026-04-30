@@ -28,6 +28,7 @@ Let’s illustrate this with a simple example.
 First, load the package and check the valid major versions of `Java`:
 
 ``` r
+
 library(rJavaEnv)
 java_valid_versions()
 ```
@@ -45,6 +46,7 @@ checking every time that correct java was set in the current
 environment.
 
 ``` r
+
 use_java("8")
 "8" == java_check_version_cmd(quiet = TRUE)
 "8" == java_check_version_rjava(quiet = TRUE)
@@ -54,6 +56,7 @@ use_java("8")
     [1] TRUE
 
 ``` r
+
 use_java(17)
 "17" == java_check_version_cmd(quiet = TRUE)
 "17" == java_check_version_rjava(quiet = TRUE)
@@ -63,6 +66,7 @@ use_java(17)
     [1] TRUE
 
 ``` r
+
 use_java(21)
 "21" == java_check_version_cmd(quiet = TRUE)
 "21" == java_check_version_rjava(quiet = TRUE)
@@ -94,6 +98,7 @@ beginning of the scripts that you run through `targets` or `callr` like
 so:
 
 ``` r
+
 library(rJavaEnv)
 use_java("17")
 ```
@@ -101,6 +106,7 @@ use_java("17")
 Or:
 
 ``` r
+
 rJavaEnv::use_java("17")
 ```
 
@@ -112,6 +118,7 @@ If you need the runs to be instant from the first attempt, you can
 pre-download and pre-install `Java` into cache folders using:
 
 ``` r
+
 java_17_distrib <- java_download("17")
 java_unpack(java_17_distrib)
 ```

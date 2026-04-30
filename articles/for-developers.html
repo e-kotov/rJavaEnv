@@ -97,13 +97,13 @@
 
 
 
-    <p>If you are developing an R package that involves <code>Java</code> (either via <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> or through command-line <code>Java</code> tools), you often face the “Java Hell” problem: your users might not have Java installed, or they might have the wrong version, or <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> cannot find the <code>JAVA_HOME</code>.</p>
+    <p>If you are developing an R package that involves <code>Java</code> (either via <a href="https://www.rforge.net/rJava/" class="external-link">rJava</a> or through command-line <code>Java</code> tools), you often face the “Java Hell” problem: your users might not have Java installed, or they might have the wrong version, or <a href="https://www.rforge.net/rJava/" class="external-link">rJava</a> cannot find the <code>JAVA_HOME</code>.</p>
 <p><code>rJavaEnv</code> solves this by providing a unified, reliable way to help your users ensure a specific Java version is present and configured correctly.</p>
 <section class="section level2"><h2 id="the-critical-decision-does-your-package-use-rjava">The Critical Decision: Does Your Package Use rJava?<a class="anchor" aria-label="anchor" href="#the-critical-decision-does-your-package-use-rjava"></a>
 </h2>
-<p>Before using <code>rJavaEnv</code>, you must categorize your package into one of two scenarios. This distinction is critical because <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> introduces a “locking” constraint that fundamentally changes how you must manage Java.</p>
-<p><strong>Scenario A: Command-Line Java Only</strong> (No <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> dependency) Your package calls Java executables via <code><a href="https://rdrr.io/r/base/system.html" class="external-link">system()</a></code>, <code><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2()</a></code>, or <code>processx</code>. You do <strong>not</strong> have <code>Imports: rJava</code> in your DESCRIPTION.</p>
-<p><strong>Scenario B: rJava Dependency</strong> (Most Common) Your package has <code>Imports: rJava</code> or <code>Depends: rJava</code>, or executes code that uses <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> functions.</p>
+<p>Before using <code>rJavaEnv</code>, you must categorize your package into one of two scenarios. This distinction is critical because <a href="https://www.rforge.net/rJava/" class="external-link">rJava</a> introduces a “locking” constraint that fundamentally changes how you must manage Java.</p>
+<p><strong>Scenario A: Command-Line Java Only</strong> (No <a href="https://www.rforge.net/rJava/" class="external-link">rJava</a> dependency) Your package calls Java executables via <code><a href="https://rdrr.io/r/base/system.html" class="external-link">system()</a></code>, <code><a href="https://rdrr.io/r/base/system2.html" class="external-link">system2()</a></code>, or <code>processx</code>. You do <strong>not</strong> have <code>Imports: rJava</code> in your DESCRIPTION.</p>
+<p><strong>Scenario B: rJava Dependency</strong> (Most Common) Your package has <code>Imports: rJava</code> or <code>Depends: rJava</code>, or executes code that uses <a href="https://www.rforge.net/rJava/" class="external-link">rJava</a> functions.</p>
 <hr></section><section class="section level2"><h2 id="scenario-a-packages-using-command-line-java-no-rjava">Scenario A: Packages Using Command-Line Java (No rJava)<a class="anchor" aria-label="anchor" href="#scenario-a-packages-using-command-line-java-no-rjava"></a>
 </h2>
 <p>In this scenario, you have flexibility. The Java version is <strong>not</strong> locked by the R session. You can use different Java versions for different tasks or change them dynamically.</p>
@@ -163,9 +163,9 @@
 </h2>
 <p>If your package calls <code>rJava</code> (or imports a package that does), you face a strict constraint:</p>
 <blockquote>
-<p><strong>The rJava Lock</strong>: Once <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> is initialized (loaded), the Java version is <strong>locked</strong> for the entire R session. It cannot be changed without restarting R.</p>
+<p><strong>The rJava Lock</strong>: Once <a href="https://www.rforge.net/rJava/" class="external-link">rJava</a> is initialized (loaded), the Java version is <strong>locked</strong> for the entire R session. It cannot be changed without restarting R.</p>
 </blockquote>
-<p><strong>Implications:</strong> - You <strong>cannot</strong> set Java in your package’s <code>.onLoad</code> or inside your functions. By the time your package loads, <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> is likely already initializing, or will initialize the moment you call it. - You <strong>must</strong> instruct users to set up Java <strong>before</strong> loading your package.</p>
+<p><strong>Implications:</strong> - You <strong>cannot</strong> set Java in your package’s <code>.onLoad</code> or inside your functions. By the time your package loads, <a href="https://www.rforge.net/rJava/" class="external-link">rJava</a> is likely already initializing, or will initialize the moment you call it. - You <strong>must</strong> instruct users to set up Java <strong>before</strong> loading your package.</p>
 <section class="level3"><h4 id="pattern-1-the-guard-recommended">Pattern 1: The Guard (Recommended)<a class="anchor" aria-label="anchor" href="#pattern-1-the-guard-recommended"></a>
 </h4>
 <p>Since you cannot fix the environment automatically after <code>rJava</code> loads, the best practice is to <strong>detect issues immediately</strong> and instruct the user.</p>

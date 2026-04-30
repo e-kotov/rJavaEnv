@@ -194,7 +194,7 @@ mixed mode, sharing)"
 [1] TRUE</code></pre>
 <section class="level4"><h4 id="note-linux">Note for Linux users<a class="anchor" aria-label="anchor" href="#note-linux"></a>
 </h4>
-<p>On Linux, for the <a href="http://www.rforge.net/rJava/" class="external-link">rJava</a> package to work correctly, it’s not enough to just set the <code>JAVA_HOME</code> and <code>PATH</code> variables; the <code>libjvm.so</code> shared library must also be loaded. The <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> package handles this for you automatically in your current R session and also sets it in your project’s <code>.Rprofile</code> file.</p>
+<p>On Linux, for the <a href="https://www.rforge.net/rJava/" class="external-link">rJava</a> package to work correctly, it’s not enough to just set the <code>JAVA_HOME</code> and <code>PATH</code> variables; the <code>libjvm.so</code> shared library must also be loaded. The <a href="https://github.com/e-kotov/rJavaEnv" class="external-link">rJavaEnv</a> package handles this for you automatically in your current R session and also sets it in your project’s <code>.Rprofile</code> file.</p>
 <p>After you run <code><a href="../reference/java_quick_install.html">java_quick_install()</a></code> or <code><a href="../reference/java_env_set.html">java_env_set()</a></code>, rJavaEnv will also print a message with the necessary command to run in your terminal. This command, <code>R CMD javareconf</code>, tells R where to find the Java installation and configure the system accordingly.</p>
 <ul>
 <li><p>If you have administrator (sudo) rights, you can configure Java for all users on the system.</p></li>

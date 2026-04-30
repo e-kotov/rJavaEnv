@@ -18,12 +18,14 @@ environments](https://www.ekotov.pro/rJavaEnv/articles/multiple-java-with-target
 Install `rJavaEnv` from CRAN:
 
 ``` r
+
 install.packages("rJavaEnv")
 ```
 
 Or install the latest version of `rJavaEnv` from R universe:
 
 ``` r
+
 install.packages(
   'rJavaEnv',
   repos = c('https://e-kotov.r-universe.dev', 'https://cloud.r-project.org')
@@ -39,6 +41,7 @@ below you will see paths that point to a temporary directory, but in a
 real project you would see your project directory instead.
 
 ``` r
+
 project_dir <- tempdir()
 setwd(project_dir)
 ```
@@ -53,6 +56,7 @@ To quickly install `Java` JDK 21 (which is also default, if not
 specified) in your current project directory and set the environment:
 
 ``` r
+
 library(rJavaEnv)
 java_quick_install(version = 21)
 ```
@@ -96,6 +100,7 @@ To check which Java versions are available for download and
 installation, use:
 
 ``` r
+
 java_list_available()
 ```
 
@@ -103,6 +108,7 @@ You can also list versions provided by different backends (e.g., SDKMAN)
 or for other platforms:
 
 ``` r
+
 # List versions from SDKMAN
 java_list_available(backend = "sdkman")
 
@@ -121,6 +127,7 @@ For `R` packages that use `Java` via `rJava`-dependency
 following command:
 
 ``` r
+
 java_check_version_rjava()
 ```
 
@@ -135,6 +142,7 @@ For `R` packages that use `Java` from command line
 you can use the following command:
 
 ``` r
+
 java_check_version_cmd()
 ```
 
@@ -149,7 +157,7 @@ Example expected output (on a Windows machine):
 
 #### Note for Linux users
 
-On Linux, for the [rJava](http://www.rforge.net/rJava/) package to work
+On Linux, for the [rJava](https://www.rforge.net/rJava/) package to work
 correctly, it’s not enough to just set the `JAVA_HOME` and `PATH`
 variables; the `libjvm.so` shared library must also be loaded. The
 [rJavaEnv](https://github.com/e-kotov/rJavaEnv) package handles this for
@@ -178,6 +186,7 @@ Run the following code to unset the `Java` for the current working
 directory:
 
 ``` r
+
 java_env_unset()
 ```
 
@@ -190,6 +199,7 @@ Example expected output (on a Windows machine):
 The line below clears all `Java` installations in the project directory:
 
 ``` r
+
 java_clear_project(delete_all = TRUE)
 ```
 
@@ -206,6 +216,7 @@ If you do not want to use `rJavaEnv` anymore, please clear the cache
 folders before removing the package:
 
 ``` r
+
 java_clear_project(delete_all = TRUE)
 java_clear_installed(delete_all = TRUE)
 java_clear_distrib(delete_all = TRUE)
@@ -215,6 +226,7 @@ Also, clear the `.Rprofile` file in the projects there you used the
 package:
 
 ``` r
+
 java_env_unset()
 ```
 
