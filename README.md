@@ -24,7 +24,7 @@ target="_blank"><img
 src="https://cranlogs.r-pkg.org/badges/rJavaEnv?color=blue"
 alt="CRAN/METACRAN Downloads per month" /></a>
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
-<!-- [![pkgcheck](https://img.shields.io/github/actions/workflow/status/e-kotov/rJavaEnv/pkgcheck.yaml?label=pkgcheck)](https://github.com/e-kotov/rJavaEnv/actions/workflows/pkgcheck.yaml) -->
+[![pkgcheck](https://img.shields.io/github/actions/workflow/status/e-kotov/rJavaEnv/pkgcheck.yaml?label=pkgcheck)](https://github.com/e-kotov/rJavaEnv/actions/workflows/pkgcheck.yaml)
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
 
 [![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg)](https://doi.org/10.32614/CRAN.package.rJavaEnv)
