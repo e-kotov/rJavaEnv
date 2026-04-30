@@ -1,6 +1,6 @@
 
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from README.qmd. Please edit that file -->
 
 # rJavaEnv: Java Environments for R Projects <a href="https://www.ekotov.pro/rJavaEnv/"><img src="man/figures/logo.png" align="right" height="134" alt="rJavaEnv website" /></a>
 
@@ -24,7 +24,7 @@ target="_blank"><img
 src="https://cranlogs.r-pkg.org/badges/rJavaEnv?color=blue"
 alt="CRAN/METACRAN Downloads per month" /></a>
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
-[![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck)
+[![pkgcheck](https://github.com/e-kotov/rJavaEnv/actions/workflows/pkgcheck.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/pkgcheck.yaml)
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
 
 [![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg)](https://doi.org/10.32614/CRAN.package.rJavaEnv)

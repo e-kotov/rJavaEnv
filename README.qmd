@@ -3,7 +3,7 @@ format: gfm
 default-image-extension: ""
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from README.qmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -27,7 +27,7 @@ is_html <- knitr::is_html_output()
 [![CRAN/METACRAN Total downloads](https://cranlogs.r-pkg.org/badges/grand-total/rJavaEnv?color=blue)](https://CRAN.R-project.org/package=rJavaEnv){target="_blank"}
 [![CRAN/METACRAN Downloads per month](https://cranlogs.r-pkg.org/badges/rJavaEnv?color=blue)](https://CRAN.R-project.org/package=rJavaEnv){target="_blank"}
 [![R-CMD-check](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/R-CMD-check.yaml)
-[![pkgcheck](https://github.com/e-kotov/rJavaEnv/workflows/pkgcheck/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions?query=workflow%3Apkgcheck)
+[![pkgcheck](https://github.com/e-kotov/rJavaEnv/actions/workflows/pkgcheck.yaml/badge.svg)](https://github.com/e-kotov/rJavaEnv/actions/workflows/pkgcheck.yaml)
 [![codecov](https://codecov.io/github/e-kotov/rJavaEnv/graph/badge.svg?token=2UKGZVNO5V)](https://app.codecov.io/github/e-kotov/rJavaEnv)
 
 [![DOI](https://zenodo.org/badge/DOI/10.32614/CRAN.package.rJavaEnv.svg)](https://doi.org/10.32614/CRAN.package.rJavaEnv)

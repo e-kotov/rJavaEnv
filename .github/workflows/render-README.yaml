@@ -2,44 +2,40 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    paths: ['README.Rmd']
+    paths: ['README.qmd']
   workflow_dispatch:
-    paths: ['README.Rmd']
-
 
 name: Render README
 
 jobs:
-  render-rmarkdown:
+  render-quarto:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: quarto-dev/quarto-actions/setup@v2
 
       - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
 
-      - name: install rmarkdown from PPM
-        run: Rscript -e 'install.packages("rmarkdown", repos=c("https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"))'
-      
-      - name: Install devtools and the target package
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::knitr, any::rmarkdown, any::glue, local::.
+
+      - name: Render README.qmd
         run: |
-          Rscript -e 'install.packages("rJavaEnv", repos=c("https://community.r-multiverse.org", "https://packagemanager.posit.co/cran/__linux__/jammy/latest"))'
-
-
-      - name: Render README.Rmd
-        run: |
-          Rscript -e 'rmarkdown::render("README.Rmd")'
+          quarto render README.qmd
 
       - name: Commit results
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git commit -m 'Re-build README.Rmd' || echo "No changes to commit"
+          git commit -m 'Re-build README.qmd' || echo "No changes to commit"
           git push origin || echo "No changes to commit"
