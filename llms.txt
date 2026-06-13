@@ -300,6 +300,52 @@ and set the relevant path with
 at the beginning of each function that requires a certain `Java`
 version.
 
+## Recommended by
+
+`rJavaEnv` is recommended by several R packages and educational
+resources to help users easily set up their Java environment:
+
+### R Packages
+
+- **[{r5r}](https://github.com/ipeaGIT/r5r)**: Recommended in their
+  [README](https://github.com/ipeaGIT/r5r#readme) as the easiest way to
+  install JDK.
+
+- **[{rTASSEL}](https://github.com/maize-genetics/rTASSEL)**:
+  Recommended in their [installation
+  instructions](https://github.com/maize-genetics/rTASSEL#readme) to
+  automate R-to-Java setup.
+
+- **[{causalDisco}](https://github.com/disco-coders/causalDisco)**:
+  Recommended in their
+  [README](https://github.com/disco-coders/causalDisco#readme) and
+  vignettes for simpler Java configuration.
+
+- **[{photon}](https://github.com/JsLth/photon)**: Recommends `rJavaEnv`
+  dynamically in startup and warning messages when Java is missing or
+  has the wrong version.
+
+- **[{r5rgui}](https://github.com/chico2405/r5rgui-UFBA)**: Recommended
+  in their setup instructions.
+
+### Courses and Books
+
+- **[Intro to Transport Accessibility
+  Book](https://github.com/ipeaGIT/intro_access_book)** (ipeaGIT)
+
+- **[EIT Urban Mobility
+  Courses](https://github.com/rosamfelix/EITbraga)** (EITbraga,
+  PGmob360)
+
+- **[Web Scraping Course (University of
+  Innsbruck)](https://github.com/etiennebacher/innsbruck_teaching_may_2025)**
+
+- **[NICAR Transit Workshop
+  (2025)](https://github.com/invisibae/nicar_2025_transit)**
+
+- **[Tracking Access Change
+  Book](https://github.com/urbanjuhyeon/tracking-access-change)**
+
 ## Future work
 
 The future work includes:
