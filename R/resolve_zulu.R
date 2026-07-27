@@ -28,12 +28,16 @@ resolve_zulu_metadata <- function(version, platform, arch) {
   # Build API URL with required parameters
   # Zulu API supports "java_version=11" (major) or "java_version=11.0.2" (specific)
   url <- sprintf(
-    "https://api.azul.com/metadata/v1/zulu/packages/?java_version=%s&os=%s&arch=%s&archive_type=%s&java_package_type=jdk&latest=true&include_fields=sha256_hash,download_url,name,java_version",
+    "https://api.azul.com/metadata/v1/zulu/packages/?java_version=%s&os=%s&arch=%s&archive_type=%s&java_package_type=jdk&include_fields=sha256_hash,download_url,name,java_version",
     utils::URLencode(version, reserved = TRUE),
     api_os,
     api_arch,
     ext
   )
+
+  if (!is_specific) {
+    url <- paste0(url, "&latest=true")
+  }
 
   if (!is.null(lib_c) && platform == "alpine-linux") {
     url <- paste0(url, "&hw_bitness=", lib_c)
