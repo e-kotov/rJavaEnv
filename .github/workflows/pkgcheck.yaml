@@ -29,4 +29,12 @@ jobs:
       actions: read
     steps:
       - uses: actions/checkout@v4
+      - name: Grant safe directory permissions for pkgcheck container
+        run: |
+          sudo chown -R root:root .
+          git config --global --add safe.directory '*'
+          mkdir -p /home/runner/work/_temp/_github_home
+          printf "[safe]\n\tdirectory = *\n" > /home/runner/work/_temp/_github_home/.gitconfig
       - uses: ropensci-review-tools/pkgcheck-action@main
+        with:
+          ref: ''
