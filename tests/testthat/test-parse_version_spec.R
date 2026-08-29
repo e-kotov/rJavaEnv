@@ -8,8 +8,11 @@ test_that("is_sdkman_identifier detects known vendor identifiers", {
   expect_true(is_sdkman_identifier("25.0.1.fx-zulu"))
   expect_true(is_sdkman_identifier("21.0.9-tem"))
   expect_true(is_sdkman_identifier("17.0.17-librca"))
-  expect_true(is_sdkman_identifier("11.0.29-ms"))
-  expect_true(is_sdkman_identifier("8.0.472-kona"))
+  # Compound and modern format identifiers
+  expect_true(is_sdkman_identifier("21.0.12+1.1-tem"))
+  expect_true(is_sdkman_identifier("8.0.504-fx+1.1-librca"))
+  expect_true(is_sdkman_identifier("25.3.4+1.r25-graalce"))
+  expect_true(is_sdkman_identifier("17.0.20+1-sapmchn"))
 })
 
 test_that("is_sdkman_identifier rejects non-identifiers", {
@@ -23,10 +26,14 @@ test_that("is_sdkman_identifier rejects non-identifiers", {
   expect_false(is_sdkman_identifier("17.0.12"))
   expect_false(is_sdkman_identifier("11.0.29"))
 
-  # Native backend version formats (uppercase suffix)
+  # Native backend version formats (uppercase suffix or numbers after hyphen)
   expect_false(is_sdkman_identifier("21.0.9+10-LTS"))
   expect_false(is_sdkman_identifier("25.0.1+8.0.LTS"))
   expect_false(is_sdkman_identifier("17.0.9+9-LTS"))
+  expect_false(is_sdkman_identifier("1.8.0-292"))
+  expect_false(is_sdkman_identifier("8u402-b06"))
+  expect_false(is_sdkman_identifier("21.0.5+11"))
+  expect_false(is_sdkman_identifier("21.0.5"))
 
   # No hyphen
   expect_false(is_sdkman_identifier("21.0.9.8.1"))
@@ -40,6 +47,40 @@ test_that("is_sdkman_identifier handles fallback regex for unknown vendors", {
   # Should reject malformed patterns
   expect_false(is_sdkman_identifier("not-a-version"))
   expect_false(is_sdkman_identifier("ABC-vendor"))
+})
+
+test_that("sdkman_distribution_to_vendor maps distribution names to vendor codes", {
+  expect_equal(sdkman_distribution_to_vendor("Corretto"), "amzn")
+  expect_equal(sdkman_distribution_to_vendor("Temurin"), "tem")
+  expect_equal(sdkman_distribution_to_vendor("Zulu"), "zulu")
+  expect_equal(sdkman_distribution_to_vendor("Microsoft"), "ms")
+  expect_equal(sdkman_distribution_to_vendor("microsoft"), "ms")
+  expect_equal(sdkman_distribution_to_vendor("Liberica"), "librca")
+  expect_equal(sdkman_distribution_to_vendor("GraalVM CE"), "graalce")
+  expect_equal(sdkman_distribution_to_vendor("amzn"), "amzn")
+  expect_null(sdkman_distribution_to_vendor("NonExistentVendor12345"))
+})
+
+test_that("sdkman_parse_identifiers creates correct data frame", {
+  ids <- c("21.0.12-amzn", "21.0.12+1.1-tem", "8.0.504-fx+1.1-librca")
+  df <- sdkman_parse_identifiers(ids, platform = "linux", arch = "x64")
+
+  expect_s3_class(df, "data.frame")
+  expect_equal(nrow(df), 3)
+  expect_equal(df$backend, c("sdkman", "sdkman", "sdkman"))
+  expect_equal(df$vendor, c("Corretto", "Temurin", "Liberica"))
+  expect_equal(df$major, c(21L, 21L, 8L))
+  expect_equal(df$version, c("21.0.12", "21.0.12+1.1", "8.0.504-fx+1.1"))
+  expect_equal(df$platform, c("linux", "linux", "linux"))
+  expect_equal(df$arch, c("x64", "x64", "x64"))
+  expect_equal(df$identifier, ids)
+  expect_equal(df$checksum_available, c(FALSE, FALSE, FALSE))
+
+  # Empty input
+  empty_df <- sdkman_parse_identifiers(character(0), "linux", "x64")
+  expect_s3_class(empty_df, "data.frame")
+  expect_equal(nrow(empty_df), 0)
+  expect_equal(ncol(empty_df), 8)
 })
 
 test_that("sdkman_vendor_code extracts vendor suffix", {
@@ -94,4 +135,34 @@ test_that("known_sdkman_vendors returns complete list", {
   expect_true("zulu" %in% vendors)
   expect_true("open" %in% vendors)
   expect_true("graal" %in% vendors)
+})
+
+test_that("sdkman_distribution_to_vendor handles NULL config, case-insensitivity, and unknown vendors", {
+  local_mocked_bindings(
+    java_config = function(...) NULL
+  )
+  expect_null(sdkman_distribution_to_vendor("Corretto"))
+  expect_error(
+    sdkman_vendor_to_distribution("amzn"),
+    "SDKMAN configuration not found"
+  )
+
+  # Restore default config
+  local_mocked_bindings(
+    java_config = function(...) {
+      list(
+        vendor_map = list(Corretto = "amzn", Temurin = "tem"),
+        vendor_reverse_map = list(amzn = "Corretto", tem = "Temurin")
+      )
+    }
+  )
+  expect_equal(sdkman_distribution_to_vendor("CORRETTO"), "amzn")
+  expect_null(sdkman_distribution_to_vendor("UnknownVendorX"))
+})
+
+test_that("sdkman_parse_identifiers handles all-empty/whitespace vectors", {
+  empty_df <- sdkman_parse_identifiers(c("", "   ", ""), "linux", "x64")
+  expect_s3_class(empty_df, "data.frame")
+  expect_equal(nrow(empty_df), 0)
+  expect_equal(ncol(empty_df), 8)
 })

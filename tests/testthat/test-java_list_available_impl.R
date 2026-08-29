@@ -126,20 +126,55 @@ test_that("list_zulu_versions_impl handles valid data", {
   expect_equal(res$version, "21.0.1")
 })
 
-test_that("list_sdkman_versions_impl parses SDKMAN output", {
+test_that("list_sdkman_versions_impl parses CSV and resolves vendor display names", {
   skip_on_cran()
 
-  # Sample output from SDKMAN list
-  # |   | 21.0.2      | tem     |     | 21.0.2-tem          |
-  # | + | 17.0.10     | amzn    |     | 17.0.10-amzn        |
-  mock_lines <- c(
+  mock_csv <- "11.0.29-ms,17.0.17-librca,21.0.30-sapmchn,21.0.12-amzn"
+
+  local_mocked_bindings(
+    java_config = function(...) {
+      list(
+        platform_map = list(),
+        arch_map = list(),
+        vendor_reverse_map = list(
+          ms = "Microsoft",
+          librca = "Liberica",
+          sapmchn = "SAP Machine",
+          amzn = "Corretto"
+        )
+      )
+    },
+    rje_read_lines = function(url, ...) {
+      if (grepl("/versions/all", url)) {
+        return(mock_csv)
+      }
+      character(0)
+    }
+  )
+
+  res <- list_sdkman_versions_impl("linux", "x64")
+
+  expect_s3_class(res, "data.frame")
+  expect_equal(nrow(res), 4)
+  expect_equal(ncol(res), 8)
+  expect_true("Microsoft" %in% res$vendor)
+  expect_true("Liberica" %in% res$vendor)
+  expect_true("SAP Machine" %in% res$vendor)
+  expect_true("Corretto" %in% res$vendor)
+  expect_true("21.0.12-amzn" %in% res$identifier)
+})
+
+test_that("list_sdkman_versions_impl parses 4-column table fallback", {
+  skip_on_cran()
+
+  mock_4col_table <- c(
     "================================================================================",
     " Available Java Versions for Linux 64bit                                        ",
     "================================================================================",
-    " Vendor        | Use | Version      | Dist    | Status | Identifier             ",
+    " Vendor         | Use | Version            | Identifier                         ",
     "--------------------------------------------------------------------------------",
-    " Temurin       |     | 21.0.2       | tem     |        | 21.0.2-tem             ",
-    " Amazon        |  +  | 17.0.10      | amzn    |        | 17.0.10-amzn           ",
+    " Temurin        |     | 21.0.2             | 21.0.2-tem                         ",
+    " Amazon         |  +  | 17.0.10            | 17.0.10-amzn                       ",
     "================================================================================"
   )
 
@@ -148,10 +183,18 @@ test_that("list_sdkman_versions_impl parses SDKMAN output", {
       list(
         platform_map = list(),
         arch_map = list(),
-        vendor_map = list(Temurin = "tem", Corretto = "amzn")
+        vendor_reverse_map = list(tem = "Temurin", amzn = "Corretto")
       )
     },
-    rje_read_lines = function(...) mock_lines
+    rje_read_lines = function(url, ...) {
+      if (grepl("/versions/all", url)) {
+        return("") # Empty HTTP 200
+      }
+      if (grepl("/versions/list", url)) {
+        return(mock_4col_table)
+      }
+      character(0)
+    }
   )
 
   res <- list_sdkman_versions_impl("linux", "x64")
@@ -159,17 +202,33 @@ test_that("list_sdkman_versions_impl parses SDKMAN output", {
   expect_s3_class(res, "data.frame")
   expect_equal(nrow(res), 2)
   expect_true("Temurin" %in% res$vendor)
-  expect_true("Corretto" %in% res$vendor) # Mapped from amzn
-
-  # check identifier extraction
+  expect_true("Corretto" %in% res$vendor)
   expect_true("21.0.2-tem" %in% res$identifier)
 })
 
-test_that("list_sdkman_versions_impl handles empty config/error", {
+test_that("list_sdkman_versions_impl handles empty config/error by returning 8-col 0-row df", {
   skip_on_cran()
   local_mocked_bindings(
     java_config = function(...) NULL
   )
   res <- list_sdkman_versions_impl("linux", "x64")
+  expect_s3_class(res, "data.frame")
   expect_equal(nrow(res), 0)
+  expect_equal(ncol(res), 8)
+  expect_equal(
+    names(res),
+    c("backend", "vendor", "major", "version", "platform", "arch", "identifier", "checksum_available")
+  )
+
+  # Also test when sdkman_fetch_identifiers errors
+  local_mocked_bindings(
+    java_config = function(...) {
+      list(platform_map = list(), arch_map = list(), vendor_reverse_map = list())
+    },
+    sdkman_fetch_identifiers = function(...) stop("Network failure")
+  )
+  res_err <- list_sdkman_versions_impl("linux", "x64")
+  expect_s3_class(res_err, "data.frame")
+  expect_equal(nrow(res_err), 0)
+  expect_equal(ncol(res_err), 8)
 })

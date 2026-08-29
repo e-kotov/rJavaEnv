@@ -47,10 +47,16 @@ java_unpack <- function(
   arch <- parts[parts %in% architectures][1]
   platform <- parts[parts %in% platforms][1]
 
-  # Fall back to attributes if filename parsing fails
+  # Fall back to attributes or pattern matching if filename parsing fails
   if (is.na(version)) {
     version <- attr(java_distrib_path, "version")
-    if (is.null(version)) {
+    if (is.null(version) || is.na(version)) {
+      num_parts <- grep("^[0-9]+", parts, value = TRUE)
+      if (length(num_parts) > 0) {
+        version <- sub("^([0-9]+).*", "\\1", num_parts[1])
+      }
+    }
+    if (is.null(version) || is.na(version)) {
       cli::cli_abort(
         "Unable to detect Java version from filename or attributes."
       )
@@ -59,15 +65,26 @@ java_unpack <- function(
   }
   if (is.na(arch)) {
     arch <- attr(java_distrib_path, "arch")
-    if (is.null(arch)) {
+    if (is.null(arch) || is.na(arch)) {
+      arch <- parts[parts %in% architectures][1]
+    }
+    if (is.null(arch) || is.na(arch)) {
       cli::cli_abort(
         "Unable to detect architecture from filename or attributes."
       )
     }
   }
+  if (!is.na(arch) && arch == "arm64") {
+    arch <- "aarch64"
+  }
   if (is.na(platform)) {
     platform <- attr(java_distrib_path, "platform")
-    if (is.null(platform)) {
+    if (is.null(platform) || is.na(platform)) {
+      if ("macosx" %in% parts) {
+        platform <- "macos"
+      }
+    }
+    if (is.null(platform) || is.na(platform)) {
       cli::cli_abort("Unable to detect platform from filename or attributes.")
     }
   }

@@ -57,22 +57,14 @@ java_install <- function(
     force = force
   )
 
-  platforms <- c("windows", "linux", "macos")
-  architectures <- c("x64", "aarch64", "arm64")
-  # Use fast, offline-safe list for parsing filenames
-  java_versions <- java_valid_versions_fast()
-
-  # Extract information from the file name
+  # Extract path components directly from installed_path
   filename <- basename(java_distrib_path)
-  parts <- strsplit(gsub("\\.tar\\.gz|\\.zip", "", filename), "-")[[1]]
-
-  # Guess the version, architecture, and platform
-  version <- parts[vapply(parts, function(x) x %in% java_versions, logical(1))][
-    1
-  ]
-  arch <- parts[vapply(parts, function(x) x %in% architectures, logical(1))][1]
-  platform <- parts[vapply(parts, function(x) x %in% platforms, logical(1))][1]
-
+  tail5 <- utils::tail(strsplit(installed_path, "[/\\\\]")[[1]], 5)
+  platform <- tail5[1]
+  arch <- tail5[2]
+  distribution <- tail5[3]
+  backend <- tail5[4]
+  version <- tail5[5]
 
   # Create a symlink in the project directory
   project_version_path <- file.path(
@@ -92,8 +84,8 @@ java_install <- function(
   if (.Platform$OS.type == "windows") {
     try(
       {
-        if (file.exists(project_version_path)) {
-          unlink(project_version_path, recursive = TRUE)
+        if (nzchar(Sys.readlink(project_version_path)) || isTRUE(force)) {
+          unlink(project_version_path, recursive = TRUE, force = TRUE)
         }
         cmd <- sprintf(
           "mklink /J \"%s\" \"%s\"",
@@ -137,11 +129,11 @@ java_install <- function(
   } else {
     tryCatch(
       {
-        if (file.exists(project_version_path)) {
-          unlink(project_version_path, recursive = TRUE)
+        if (nzchar(Sys.readlink(project_version_path)) || isTRUE(force)) {
+          unlink(project_version_path, recursive = TRUE, force = TRUE)
         }
         file.symlink(installed_path, project_version_path)
-        link_success <- TRUE # <--- THIS IS THE ONLY CHANGE
+        link_success <- TRUE
       },
       warning = function(w) {
         if (!quiet) cli::cli_inform("Warning: {w}")

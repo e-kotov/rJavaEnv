@@ -225,9 +225,21 @@ list_zulu_versions_impl <- function(platform, arch) {
 
 #' @keywords internal
 list_sdkman_versions_impl <- function(platform, arch) {
+  empty_df <- data.frame(
+    backend = character(0),
+    vendor = character(0),
+    major = integer(0),
+    version = character(0),
+    platform = character(0),
+    arch = character(0),
+    identifier = character(0),
+    checksum_available = logical(0),
+    stringsAsFactors = FALSE
+  )
+
   cfg <- java_config("sdkman")
   if (is.null(cfg)) {
-    return(data.frame())
+    return(empty_df)
   }
 
   sdk_platform <- paste0(
@@ -235,53 +247,16 @@ list_sdkman_versions_impl <- function(platform, arch) {
     cfg$arch_map[[arch]] %||% arch
   )
 
-  versions_url <- sprintf(
-    "https://api.sdkman.io/2/candidates/java/%s/versions/list?installed=",
-    sdk_platform
+  ids <- tryCatch(
+    sdkman_fetch_identifiers(sdk_platform),
+    error = function(e) character(0)
   )
 
-  versions_text <- tryCatch(
-    rje_read_lines(versions_url, warn = FALSE),
-    error = function(e) return(data.frame())
-  )
-
-  res <- list()
-  for (line in versions_text) {
-    parts <- trimws(strsplit(line, "\\|")[[1]])
-    if (length(parts) >= 6) {
-      ver_str <- parts[3]
-      vendor_code <- parts[4]
-      id <- parts[6]
-
-      if (ver_str == "Version" || vendor_code == "Dist" || id == "Identifier") {
-        next
-      }
-
-      vendor_name <- names(cfg$vendor_map)[which(cfg$vendor_map == vendor_code)]
-      if (length(vendor_name) == 0) {
-        vendor_name <- vendor_code
-      }
-
-      major <- as.integer(gsub("^([0-9]+).*", "\\1", ver_str))
-
-      res[[length(res) + 1]] <- data.frame(
-        backend = "sdkman",
-        vendor = vendor_name,
-        major = major,
-        version = ver_str,
-        platform = platform,
-        arch = arch,
-        identifier = id,
-        checksum_available = FALSE,
-        stringsAsFactors = FALSE
-      )
-    }
+  if (length(ids) == 0) {
+    return(empty_df)
   }
 
-  if (length(res) == 0) {
-    return(data.frame())
-  }
-  do.call(rbind, res)
+  sdkman_parse_identifiers(ids, platform, arch)
 }
 
 # Memoised versions of the helper functions

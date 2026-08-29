@@ -24,7 +24,7 @@
 #' java_download(temp_dir = TRUE)
 #'
 #' # download using SDKMAN backend
-#' java_download(version = "21", backend = "sdkman", temp_dir = TRUE)
+#' try(java_download(version = "21", backend = "sdkman", temp_dir = TRUE))
 #' }
 java_download <- function(
   version = 21,
