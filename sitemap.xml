@@ -15,7 +15,6 @@
 <url><loc>https://www.ekotov.pro/rJavaEnv/index.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/news/index.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/check_rjava_initialized.html</loc></url>
-<url><loc>https://www.ekotov.pro/rJavaEnv/reference/dot-_find_extracted_dir.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/dot-_java_env_set_impl.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/dot-_java_find_system_scan_impl.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/download_java_with_checksum.html</loc></url>
@@ -79,6 +78,9 @@
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/rje_consent.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/rje_consent_check.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/rje_envvar_exists.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_distribution_to_vendor.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_fetch_identifiers.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_parse_identifiers.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_vendor_code.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_vendor_to_distribution.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/set_java_build_env_vars.html</loc></url>
