@@ -263,3 +263,46 @@ test_that("java_unpack macOS extracts from Contents/Home", {
       dir.exists(file.path(result, "bin"))
   )
 })
+
+test_that("java_unpack normalizes arm64 to aarch64 and macosx to macos", {
+  cache_path <- withr::local_tempdir()
+  withr::local_options(rJavaEnv.cache_path = cache_path)
+
+  distrib_path <- file.path(
+    cache_path,
+    "amazon-corretto-17.0.1-macosx-arm64.tar.gz"
+  )
+  file.create(distrib_path)
+
+  local_mocked_bindings(
+    untar = function(tarfile, exdir, ...) {
+      extracted_dir <- file.path(exdir, "amazon-corretto-17")
+      dir.create(extracted_dir, recursive = TRUE)
+      file.create(file.path(extracted_dir, "bin"))
+    },
+    .package = "utils"
+  )
+
+  result <- java_unpack(distrib_path, quiet = TRUE)
+  expect_true(grepl("installed/macos/aarch64/unknown/unknown/17$", result))
+})
+
+test_that("java_unpack aborts when version, arch, or platform cannot be detected", {
+  cache_path <- withr::local_tempdir()
+  withr::local_options(rJavaEnv.cache_path = cache_path)
+
+  # No version in filename or attributes
+  p1 <- file.path(cache_path, "corretto-x64-linux.tar.gz")
+  file.create(p1)
+  expect_error(java_unpack(p1, quiet = TRUE), "Unable to detect Java version")
+
+  # No arch in filename or attributes
+  p2 <- file.path(cache_path, "corretto-21-linux.tar.gz")
+  file.create(p2)
+  expect_error(java_unpack(p2, quiet = TRUE), "Unable to detect architecture")
+
+  # No platform in filename or attributes
+  p3 <- file.path(cache_path, "corretto-21-x64.tar.gz")
+  file.create(p3)
+  expect_error(java_unpack(p3, quiet = TRUE), "Unable to detect platform")
+})

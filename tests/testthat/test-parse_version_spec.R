@@ -136,3 +136,33 @@ test_that("known_sdkman_vendors returns complete list", {
   expect_true("open" %in% vendors)
   expect_true("graal" %in% vendors)
 })
+
+test_that("sdkman_distribution_to_vendor handles NULL config, case-insensitivity, and unknown vendors", {
+  local_mocked_bindings(
+    java_config = function(...) NULL
+  )
+  expect_null(sdkman_distribution_to_vendor("Corretto"))
+  expect_error(
+    sdkman_vendor_to_distribution("amzn"),
+    "SDKMAN configuration not found"
+  )
+
+  # Restore default config
+  local_mocked_bindings(
+    java_config = function(...) {
+      list(
+        vendor_map = list(Corretto = "amzn", Temurin = "tem"),
+        vendor_reverse_map = list(amzn = "Corretto", tem = "Temurin")
+      )
+    }
+  )
+  expect_equal(sdkman_distribution_to_vendor("CORRETTO"), "amzn")
+  expect_null(sdkman_distribution_to_vendor("UnknownVendorX"))
+})
+
+test_that("sdkman_parse_identifiers handles all-empty/whitespace vectors", {
+  empty_df <- sdkman_parse_identifiers(c("", "   ", ""), "linux", "x64")
+  expect_s3_class(empty_df, "data.frame")
+  expect_equal(nrow(empty_df), 0)
+  expect_equal(ncol(empty_df), 8)
+})

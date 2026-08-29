@@ -157,6 +157,7 @@ sdkman_parse_identifiers <- function(identifiers, platform, arch) {
     return(empty_df)
   }
 
+  identifiers <- trimws(identifiers)
   identifiers <- identifiers[nzchar(identifiers)]
   if (length(identifiers) == 0) {
     return(empty_df)

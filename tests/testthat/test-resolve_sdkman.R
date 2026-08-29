@@ -166,3 +166,14 @@ test_that("resolve_sdkman_metadata handles broker redirect via body", {
   res <- resolve_sdkman_metadata("21.0.2-tem", "Temurin", "linux", "x64")
   expect_equal(res$download_url, "https://body-redirect.com/file.zip")
 })
+
+test_that("resolve_sdkman_metadata errors when config is NULL", {
+  skip_on_cran()
+  local_mocked_bindings(
+    java_config = function(...) NULL
+  )
+  expect_error(
+    resolve_sdkman_metadata("21", "Corretto", "linux", "x64"),
+    "SDKMAN configuration not found"
+  )
+})

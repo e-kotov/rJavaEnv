@@ -219,4 +219,16 @@ test_that("list_sdkman_versions_impl handles empty config/error by returning 8-c
     names(res),
     c("backend", "vendor", "major", "version", "platform", "arch", "identifier", "checksum_available")
   )
+
+  # Also test when sdkman_fetch_identifiers errors
+  local_mocked_bindings(
+    java_config = function(...) {
+      list(platform_map = list(), arch_map = list(), vendor_reverse_map = list())
+    },
+    sdkman_fetch_identifiers = function(...) stop("Network failure")
+  )
+  res_err <- list_sdkman_versions_impl("linux", "x64")
+  expect_s3_class(res_err, "data.frame")
+  expect_equal(nrow(res_err), 0)
+  expect_equal(ncol(res_err), 8)
 })

@@ -266,3 +266,53 @@ test_that("java_install does not blindly delete real directories when force = FA
   # Real directory was not unlinked because force = FALSE and it is not a symlink
   expect_true(file.exists(canary_file))
 })
+
+test_that("java_install outputs message on symlink failure when quiet = FALSE", {
+  skip_on_os("windows")
+  local_proj_path <- withr::local_tempdir()
+  mock_java_globals()
+
+  local_mocked_bindings(java_env_set = function(...) TRUE)
+  local_mocked_bindings(
+    file.symlink = function(from, to) stop("Permission denied"),
+    file.copy = function(...) TRUE,
+    .package = "base"
+  )
+
+  fake_distrib_path <- "any/cache/distrib/amazon-corretto-21-aarch64-macos-jdk.tar.gz"
+
+  expect_message(
+    java_install(
+      java_distrib_path = fake_distrib_path,
+      project_path = local_proj_path,
+      quiet = FALSE
+    ),
+    "Symlink creation failed"
+  )
+})
+
+test_that("java_install handles symlink warning when quiet = FALSE", {
+  skip_on_os("windows")
+  local_proj_path <- withr::local_tempdir()
+  mock_java_globals()
+
+  local_mocked_bindings(java_env_set = function(...) TRUE)
+  local_mocked_bindings(
+    file.symlink = function(from, to) {
+      warning("symlink warning simulation")
+      TRUE
+    },
+    .package = "base"
+  )
+
+  fake_distrib_path <- "any/cache/distrib/amazon-corretto-21-aarch64-macos-jdk.tar.gz"
+
+  expect_message(
+    java_install(
+      java_distrib_path = fake_distrib_path,
+      project_path = local_proj_path,
+      quiet = FALSE
+    ),
+    "Warning:"
+  )
+})

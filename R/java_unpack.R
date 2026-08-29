@@ -67,15 +67,15 @@ java_unpack <- function(
     arch <- attr(java_distrib_path, "arch")
     if (is.null(arch) || is.na(arch)) {
       arch <- parts[parts %in% architectures][1]
-      if (!is.na(arch) && arch == "arm64") {
-        arch <- "aarch64"
-      }
     }
     if (is.null(arch) || is.na(arch)) {
       cli::cli_abort(
         "Unable to detect architecture from filename or attributes."
       )
     }
+  }
+  if (!is.na(arch) && arch == "arm64") {
+    arch <- "aarch64"
   }
   if (is.na(platform)) {
     platform <- attr(java_distrib_path, "platform")
