@@ -30,10 +30,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ISSUE_TITLE="⚠️ SDKMAN Upstream API Schema / Contract Drift Detected"
-          ISSUE_BODY="The daily SDKMAN API canary job failed. This indicates that SDKMAN changed their endpoint formats or responses.
-
-Run logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
+          ISSUE_BODY="The daily SDKMAN API canary job failed. This indicates that SDKMAN changed their endpoint formats or responses. Run logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           EXISTING_ISSUE=$(gh issue list --search "$ISSUE_TITLE" --state open --json number --jq '.[0].number')
           if [ -n "$EXISTING_ISSUE" ]; then
             gh issue comment "$EXISTING_ISSUE" --body "Canary failed again: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
