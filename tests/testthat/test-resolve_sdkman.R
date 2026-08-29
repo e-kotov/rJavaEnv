@@ -31,13 +31,60 @@ test_that("resolve_sdkman_metadata uses identifier fast-path", {
 })
 
 
-test_that("resolve_sdkman_metadata resolves version from list", {
+test_that("resolve_sdkman_metadata resolves version from CSV /versions/all endpoint", {
   skip_on_cran()
 
-  mock_lines <- c(
-    " Vendor        | Use | Version      | Dist    | Status | Identifier             ",
+  mock_csv <- "11.0.9-amzn,11.0.32-amzn,21.0.12-amzn,21.0.11.crac-zulu,21.0.12+1.1-zulu"
+
+  local_mocked_bindings(
+    java_config = function(...) {
+      list(
+        platform_map = list(),
+        arch_map = list(),
+        vendor_map = list(Corretto = "amzn", Zulu = "zulu", Temurin = "tem"),
+        vendor_reverse_map = list(amzn = "Corretto", zulu = "Zulu", tem = "Temurin")
+      )
+    },
+    rje_read_lines = function(url, ...) {
+      if (grepl("/versions/all", url)) {
+        return(mock_csv)
+      }
+      character(0)
+    },
+    rje_curl_fetch_memory = function(...) {
+      list(url = "https://d.com/file.tar.gz")
+    }
+  )
+
+  # 1. Major version 21 resolves correctly
+  res_21 <- resolve_sdkman_metadata("21", "Corretto", "linux", "x64")
+  expect_equal(res_21$semver, "21.0.12-amzn")
+
+  # 2. Integer component sorting: 11.0.32 must beat 11.0.9
+  res_11 <- resolve_sdkman_metadata("11", "Corretto", "linux", "x64")
+  expect_equal(res_11$semver, "11.0.32-amzn")
+
+  # 3. Specialised build (.crac) excluded for generic major version request
+  res_zulu <- resolve_sdkman_metadata("21", "Zulu", "linux", "x64")
+  expect_equal(res_zulu$semver, "21.0.12+1.1-zulu")
+
+  # 4. Specialised build included when explicitly requested
+  res_crac <- resolve_sdkman_metadata("21.0.11.crac", "Zulu", "linux", "x64")
+  expect_equal(res_crac$semver, "21.0.11.crac-zulu")
+})
+
+test_that("resolve_sdkman_metadata falls back to 4-column ASCII table when /versions/all is empty", {
+  skip_on_cran()
+
+  mock_4col_table <- c(
+    "================================================================================",
+    " Available Java Versions for Linux 64bit                                        ",
+    "================================================================================",
+    " Vendor         | Use | Version            | Identifier                         ",
     "--------------------------------------------------------------------------------",
-    " Temurin       |     | 21.0.2       | tem     |        | 21.0.2-tem             "
+    " Corretto       |     | 21.0.12            | 21.0.12-amzn                       ",
+    "                |     | 17.0.20            | 17.0.20-amzn                       ",
+    "================================================================================"
   )
 
   local_mocked_bindings(
@@ -45,26 +92,32 @@ test_that("resolve_sdkman_metadata resolves version from list", {
       list(
         platform_map = list(),
         arch_map = list(),
-        vendor_map = list(Temurin = "tem")
+        vendor_map = list(Corretto = "amzn"),
+        vendor_reverse_map = list(amzn = "Corretto")
       )
     },
-    rje_read_lines = function(...) mock_lines,
+    rje_read_lines = function(url, ...) {
+      if (grepl("/versions/all", url)) {
+        return("") # Empty HTTP 200 response
+      }
+      if (grepl("/versions/list", url)) {
+        return(mock_4col_table)
+      }
+      character(0)
+    },
     rje_curl_fetch_memory = function(...) {
       list(url = "https://d.com/file.tar.gz")
     }
   )
 
-  # Lookup by version number (not identifier)
-  res <- resolve_sdkman_metadata("21.0.2", "Temurin", "linux", "x64")
-
-  expect_equal(res$semver, "21.0.2-tem")
-  expect_equal(res$version, "21.0.2")
+  res <- resolve_sdkman_metadata("21", "Corretto", "linux", "x64")
+  expect_equal(res$semver, "21.0.12-amzn")
 })
 
 test_that("resolve_sdkman_metadata handles missing mapping", {
   skip_on_cran()
   local_mocked_bindings(
-    java_config = function(...) list(vendor_map = list())
+    java_config = function(...) list(vendor_map = list(), vendor_reverse_map = list())
   )
 
   expect_error(
@@ -73,16 +126,23 @@ test_that("resolve_sdkman_metadata handles missing mapping", {
   )
 })
 
-test_that("resolve_sdkman_metadata handles not found version", {
+test_that("resolve_sdkman_metadata handles not found version with classed error", {
   skip_on_cran()
   local_mocked_bindings(
-    java_config = function(...) list(vendor_map = list(Temurin = "tem")),
+    java_config = function(...) {
+      list(
+        platform_map = list(),
+        arch_map = list(),
+        vendor_map = list(Temurin = "tem"),
+        vendor_reverse_map = list(tem = "Temurin")
+      )
+    },
     rje_read_lines = function(...) character(0) # Empty output
   )
 
   expect_error(
     resolve_sdkman_metadata("99", "Temurin", "linux", "x64"),
-    "No SDKMAN identifier"
+    class = "rJavaEnv_sdkman_unavailable"
   )
 })
 

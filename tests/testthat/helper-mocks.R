@@ -54,9 +54,31 @@ mock_java_globals <- function(env = parent.frame()) {
     ) {
       filename <- basename(java_distrib_path)
       parts <- strsplit(gsub("\\.tar\\.gz|\\.zip", "", filename), "-")[[1]]
-      version <- parts[parts %in% c("8", "11", "17", "21")][1]
-      arch <- parts[parts %in% c("x64", "aarch64")][1]
       platform <- parts[parts %in% c("linux", "windows", "macos")][1]
+      arch <- parts[parts %in% c("x64", "aarch64")][1]
+      version <- parts[parts %in% c("8", "11", "17", "21")][1]
+
+      # Resolve platform, arch, version with attribute fallbacks
+      if (is.null(platform) || is.na(platform)) {
+        platform <- attr(java_distrib_path, "platform")
+        if (is.null(platform) || is.na(platform)) {
+          if ("macosx" %in% parts) platform <- "macos" else platform <- parts[parts %in% c("linux", "windows", "macos")][1]
+        }
+      }
+      if (is.null(arch) || is.na(arch)) {
+        arch <- attr(java_distrib_path, "arch")
+        if (is.null(arch) || is.na(arch)) {
+          arch <- parts[parts %in% c("x64", "aarch64", "arm64")][1]
+          if (!is.na(arch) && arch == "arm64") arch <- "aarch64"
+        }
+      }
+      if (is.null(version) || is.na(version)) {
+        version <- attr(java_distrib_path, "version")
+        if (is.null(version) || is.na(version)) {
+          num_parts <- grep("^[0-9]+", parts, value = TRUE)
+          version <- if (length(num_parts) > 0) sub("^([0-9]+).*", "\\1", num_parts[1]) else "unknown"
+        }
+      }
 
       # Resolve distribution and backend (match real function behavior)
       if (is.null(distribution)) {

@@ -208,3 +208,61 @@ test_that("java_install succeeds with mklink junction on Windows", {
   expect_equal(state$system2_args$command, "cmd.exe")
   expect_true(grepl("mklink /J", state$system2_args$args[2]))
 })
+
+test_that("java_install creates clean project paths without NA for complex filenames", {
+  skip_on_os("windows")
+  local_proj_path <- withr::local_tempdir()
+  mock_java_globals()
+
+  symlink_target <- NULL
+  local_mocked_bindings(java_env_set = function(...) TRUE)
+  local_mocked_bindings(
+    file.symlink = function(from, to) {
+      symlink_target <<- to
+      TRUE
+    },
+    .package = "base"
+  )
+
+  fake_distrib_path <- "any/cache/distrib/amazon-corretto-8.504.01.1-macosx-aarch64.tar.gz"
+
+  java_install(
+    java_distrib_path = fake_distrib_path,
+    project_path = local_proj_path,
+    quiet = TRUE
+  )
+
+  expect_false(is.null(symlink_target))
+  expect_false(grepl("/NA(/|$)", symlink_target))
+  expect_true(grepl("rjavaenv/macos/aarch64/unknown/unknown/8", symlink_target))
+})
+
+test_that("java_install does not blindly delete real directories when force = FALSE", {
+  skip_on_os("windows")
+  local_proj_path <- withr::local_tempdir()
+  mock_java_globals()
+
+  # Create a real directory at the target project path
+  target_dir <- file.path(local_proj_path, "rjavaenv", "macos", "aarch64", "unknown", "unknown", "21")
+  dir.create(target_dir, recursive = TRUE)
+  canary_file <- file.path(target_dir, "canary.txt")
+  writeLines("keep me", canary_file)
+
+  local_mocked_bindings(java_env_set = function(...) TRUE)
+  local_mocked_bindings(
+    file.symlink = function(from, to) TRUE,
+    .package = "base"
+  )
+
+  fake_distrib_path <- "any/cache/distrib/amazon-corretto-21-aarch64-macos-jdk.tar.gz"
+
+  java_install(
+    java_distrib_path = fake_distrib_path,
+    project_path = local_proj_path,
+    force = FALSE,
+    quiet = TRUE
+  )
+
+  # Real directory was not unlinked because force = FALSE and it is not a symlink
+  expect_true(file.exists(canary_file))
+})
