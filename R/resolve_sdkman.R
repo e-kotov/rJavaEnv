@@ -76,9 +76,9 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
 
   # Fast-path: if version IS an identifier, use it directly
   if (is_sdkman_identifier(version)) {
-    identifier <- version
+    candidates <- version
     # Extract vendor code from identifier for metadata purposes
-    vendor_code <- sdkman_vendor_code(identifier)
+    vendor_code <- sdkman_vendor_code(version)
   } else {
     # Map to SDKMAN platform codes
     sdk_platform <- paste0(
@@ -156,7 +156,7 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
       order,
       c(as.data.frame(padded_matrix), list(decreasing = TRUE))
     )
-    identifier <- df$identifier[ord[1]]
+    candidates <- df$identifier[ord]
   }
 
   # Recalculate sdk_platform for broker URL (needed even in fast-path)
@@ -165,22 +165,42 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
     cfg$arch_map[[arch]] %||% arch
   )
 
-  # Get redirect URL from broker
-  broker_url <- sprintf(
-    "https://api.sdkman.io/2/broker/download/java/%s/%s",
-    identifier,
-    sdk_platform
-  )
+  # SDKMAN lists some identifiers the broker cannot serve (e.g. the
+  # "+build" style ids such as 21.0.4.0+7-amzn). Try each candidate, and its
+  # legacy alias, newest first, until the broker returns a download URL.
+  max_candidates <- 5L
+  final_url <- NULL
+  identifier <- NULL
+  tried <- character(0)
+  for (candidate in utils::head(candidates, max_candidates)) {
+    for (try_id in unique(c(candidate, sdkman_legacy_identifier(candidate)))) {
+      tried <- c(tried, try_id)
+      final_url <- sdkman_broker_resolve(try_id, sdk_platform)
+      if (!is.null(final_url)) {
+        identifier <- try_id
+        break
+      }
+    }
+    if (!is.null(final_url)) break
+  }
 
-  # Follow redirect to get final URL
-  resp <- rje_curl_fetch_memory(broker_url)
+  if (is.null(final_url)) {
+    cli::cli_abort(
+      c(
+        "SDKMAN broker has no download for {distribution} {version} on {sdk_platform}.",
+        "i" = "Tried identifier{?s}: {.val {tried}}"
+      ),
+      class = "rJavaEnv_sdkman_unavailable"
+    )
+  }
 
-  # Extract final URL from response headers or body
-  final_url <- if (!is.null(resp$url) && resp$url != broker_url) {
-    resp$url
-  } else {
-    # Parse redirect from response
-    rawToChar(resp$content)
+  # Only warn when falling back to a different version, not to a legacy alias
+  if (
+    !identifier %in% c(candidates[1], sdkman_legacy_identifier(candidates[1]))
+  ) {
+    cli::cli_alert_warning(
+      "SDKMAN broker cannot serve {.val {candidates[1]}}; using {.val {identifier}} instead."
+    )
   }
 
   ext <- if (platform == "windows") "zip" else "tar.gz"
@@ -208,4 +228,89 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
     checksum_type = NULL,
     backend = "sdkman"
   )
+}
+
+#' Resolve a download URL from the SDKMAN broker
+#'
+#' Does not follow the redirect, so the JDK archive itself is not fetched.
+#'
+#' @param identifier SDKMAN identifier (e.g., "21.0.4-amzn")
+#' @param sdk_platform SDKMAN platform string (e.g., "linuxx64")
+#' @return The download URL, or NULL if the broker cannot serve the identifier
+#' @keywords internal
+sdkman_broker_resolve <- function(identifier, sdk_platform) {
+  broker_url <- sprintf(
+    "https://api.sdkman.io/2/broker/download/java/%s/%s",
+    utils::URLencode(identifier, reserved = TRUE),
+    sdk_platform
+  )
+
+  # The SDKMAN API rate-limits bursts of requests with 503 (or 429), so back
+  # off and retry before treating the identifier as unavailable.
+  for (attempt in 1:4) {
+    resp <- rje_curl_fetch_memory(
+      broker_url,
+      handle = curl::new_handle(followlocation = FALSE)
+    )
+    status <- resp$status_code %||% 200L
+    if (!status %in% c(429L, 503L) || attempt == 4L) {
+      break
+    }
+    rje_sleep(attempt)
+  }
+
+  if (status >= 400L) {
+    return(NULL)
+  }
+
+  final_url <- NULL
+  if (status >= 300L && length(resp$headers) > 0) {
+    final_url <- curl::parse_headers_list(resp$headers)[["location"]]
+  }
+  if (is.null(final_url) && !is.null(resp$url) && resp$url != broker_url) {
+    final_url <- resp$url
+  }
+  if (is.null(final_url) && length(resp$content) > 0) {
+    final_url <- trimws(rawToChar(resp$content))
+  }
+
+  if (is.null(final_url) || !grepl("^https?://", final_url)) {
+    return(NULL)
+  }
+  final_url
+}
+
+#' Map a "+build" SDKMAN identifier to its legacy broker form
+#'
+#' SDKMAN's listing uses identifiers like "21.0.4.0+7-amzn",
+#' "21.0.12+1.1-tem" or "21.0.12-fx+1.1-librca", while its broker still serves
+#' the legacy forms "21.0.4-amzn", "21.0.12-tem" and "21.0.12.fx-librca".
+#'
+#' @param identifier SDKMAN identifier
+#' @return The legacy identifier, or NULL if `identifier` has no "+build" part
+#' @keywords internal
+sdkman_legacy_identifier <- function(identifier) {
+  if (!grepl("+", identifier, fixed = TRUE)) {
+    return(NULL)
+  }
+  vendor <- sub(".*-", "", identifier)
+  base <- sub("[+].*$", "", sub("-[^-]*$", "", identifier))
+  # "21.0.12-fx" -> "21.0.12.fx"
+  base <- sub("-([a-z]+)$", ".\\1", base)
+  # "21.0.4.0" -> "21.0.4" (also before a ".fx"/".crac" suffix)
+  base <- sub(
+    "^([0-9]+[.][0-9]+[.][0-9]+)[.]0(?=$|[.][a-z])",
+    "\\1",
+    base,
+    perl = TRUE
+  )
+  paste0(base, "-", vendor)
+}
+
+#' Sleep wrapper (mockable in tests)
+#'
+#' @param seconds Number of seconds to sleep
+#' @keywords internal
+rje_sleep <- function(seconds) {
+  Sys.sleep(seconds)
 }

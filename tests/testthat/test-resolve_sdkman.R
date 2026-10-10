@@ -177,3 +177,148 @@ test_that("resolve_sdkman_metadata errors when config is NULL", {
     "SDKMAN configuration not found"
   )
 })
+
+test_that("sdkman_legacy_identifier maps '+build' ids to broker-servable ids", {
+  expect_equal(sdkman_legacy_identifier("21.0.4.0+7-amzn"), "21.0.4-amzn")
+  expect_equal(sdkman_legacy_identifier("21.0.12+1.1-tem"), "21.0.12-tem")
+  expect_equal(
+    sdkman_legacy_identifier("21.0.12-fx+1.1-librca"),
+    "21.0.12.fx-librca"
+  )
+  expect_equal(sdkman_legacy_identifier("25.0.1.0-fx+1-nik"), "25.0.1.fx-nik")
+  expect_equal(
+    sdkman_legacy_identifier("25.4.4.1+1-graalce"),
+    "25.4.4.1-graalce"
+  )
+  expect_null(sdkman_legacy_identifier("21.0.9-tem"))
+  expect_null(sdkman_legacy_identifier("21.0.11.crac-zulu"))
+})
+
+test_that("sdkman_broker_resolve reads Location, rejects errors and empty bodies", {
+  skip_on_cran()
+  hdr <- function(status, location = NULL) {
+    charToRaw(paste0(
+      "HTTP/1.1 ",
+      status,
+      " X\r\n",
+      if (!is.null(location)) paste0("Location: ", location, "\r\n"),
+      "\r\n"
+    ))
+  }
+  responses <- list(
+    "302" = list(
+      status_code = 302L,
+      url = "b",
+      headers = hdr(302, "https://x.com/a.tar.gz"),
+      content = raw(0)
+    ),
+    "404" = list(
+      status_code = 404L,
+      url = "b",
+      headers = hdr(404),
+      content = raw(0)
+    ),
+    "200empty" = list(
+      status_code = 200L,
+      url = "b",
+      headers = hdr(200),
+      content = raw(0)
+    )
+  )
+  for (case in names(responses)) {
+    local_mocked_bindings(rje_curl_fetch_memory = function(...) {
+      responses[[case]]
+    })
+    res <- sdkman_broker_resolve("21.0.4-amzn", "linuxx64")
+    if (case == "302") {
+      expect_equal(res, "https://x.com/a.tar.gz")
+    } else {
+      expect_null(res)
+    }
+  }
+})
+
+test_that("sdkman_broker_resolve retries when rate-limited", {
+  skip_on_cran()
+  calls <- 0L
+  sleeps <- numeric(0)
+  local_mocked_bindings(
+    rje_curl_fetch_memory = function(...) {
+      calls <<- calls + 1L
+      if (calls < 3L) {
+        return(list(status_code = 503L, url = "b", content = raw(0)))
+      }
+      list(
+        status_code = 302L,
+        url = "b",
+        headers = charToRaw(
+          "HTTP/1.1 302 Found\r\nLocation: https://x.com/a.zip\r\n\r\n"
+        ),
+        content = raw(0)
+      )
+    },
+    rje_sleep = function(seconds) sleeps <<- c(sleeps, seconds)
+  )
+  expect_equal(
+    sdkman_broker_resolve("21.0.4-amzn", "linuxx64"),
+    "https://x.com/a.zip"
+  )
+  expect_equal(calls, 3L)
+  expect_equal(sleeps, c(1, 2))
+})
+
+test_that("resolve_sdkman_metadata uses the legacy alias, then older versions", {
+  skip_on_cran()
+  served <- c(
+    "21.0.4-amzn" = "https://x.com/corretto-21.0.4.tar.gz",
+    "17.0.19-tem" = "https://x.com/temurin-17.0.19.tar.gz"
+  )
+  requested <- character(0)
+  local_mocked_bindings(
+    java_config = function(...) {
+      list(
+        platform_map = list(),
+        arch_map = list(),
+        vendor_map = list(Corretto = "amzn", Temurin = "tem"),
+        vendor_reverse_map = list(amzn = "Corretto", tem = "Temurin")
+      )
+    },
+    rje_read_lines = function(url, ...) {
+      "21.0.4.0+7-amzn,17.0.20+1.1-tem,17.0.19-tem"
+    },
+    sdkman_broker_resolve = function(identifier, sdk_platform) {
+      requested <<- c(requested, identifier)
+      if (identifier %in% names(served)) served[[identifier]] else NULL
+    }
+  )
+
+  # Legacy alias of the same version: no fallback warning
+  expect_no_message(
+    res <- resolve_sdkman_metadata("21", "Corretto", "linux", "x64"),
+    message = "instead"
+  )
+  expect_equal(res$semver, "21.0.4-amzn")
+  expect_equal(res$download_url, served[["21.0.4-amzn"]])
+  expect_equal(requested, c("21.0.4.0+7-amzn", "21.0.4-amzn"))
+
+  # Neither 17.0.20 form is served: fall back to 17.0.19 and say so
+  requested <- character(0)
+  expect_message(
+    res <- resolve_sdkman_metadata("17", "Temurin", "linux", "x64"),
+    "instead"
+  )
+  expect_equal(res$semver, "17.0.19-tem")
+  expect_equal(requested, c("17.0.20+1.1-tem", "17.0.20-tem", "17.0.19-tem"))
+})
+
+test_that("resolve_sdkman_metadata errors when the broker serves no candidate", {
+  skip_on_cran()
+  local_mocked_bindings(
+    java_config = function(...) list(vendor_map = list(Temurin = "tem")),
+    sdkman_broker_resolve = function(...) NULL
+  )
+  expect_error(
+    resolve_sdkman_metadata("21.0.12+1.1-tem", "Temurin", "linux", "x64"),
+    class = "rJavaEnv_sdkman_unavailable"
+  )
+})
