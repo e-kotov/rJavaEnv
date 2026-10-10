@@ -11,6 +11,7 @@ sdkman_legacy_identifier(identifier)
 }
 \value{
 The legacy identifier, or NULL if \code{identifier} has no "+build" part
+or is an early-access build
 }
 \description{
 SDKMAN's listing uses identifiers like "21.0.4.0+7-amzn",

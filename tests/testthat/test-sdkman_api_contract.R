@@ -53,3 +53,21 @@ test_that("the /versions/list fallback resolves Corretto 21 end to end", {
   expect_match(build$semver, "^21\\..*-amzn$")
   expect_match(build$download_url, "^https?://")
 })
+
+test_that("the broker redirect is read, not followed", {
+  sdkman_contract_skip()
+
+  # Following the redirect would download the whole JDK archive into memory
+  statuses <- integer(0)
+  local_mocked_bindings(
+    rje_curl_fetch_memory = function(url, handle) {
+      resp <- curl::curl_fetch_memory(url, handle = handle)
+      statuses <<- c(statuses, resp$status_code)
+      resp
+    }
+  )
+
+  url <- sdkman_broker_resolve("17.0.20-tem", "linuxx64")
+  expect_match(url, "^https://")
+  expect_equal(statuses[length(statuses)], 302L)
+})

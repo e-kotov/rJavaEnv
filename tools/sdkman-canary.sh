@@ -117,36 +117,42 @@ for p in "${PLATFORMS[@]}"; do
 
   # A7: Broker can serve the newest standard 21 build per core vendor, using the
   # same "+build" -> legacy alias mapping as sdkman_legacy_identifier() in
-  # R/resolve_sdkman.R. Checked on linuxx64 only: other platforms' listings
-  # currently contain placeholder ids the broker does not serve.
-  if [ "${p}" = "linuxx64" ]; then
-    for vendor in amzn tem zulu; do
-      top_id=$(printf '%s\n' "${ENTRIES[@]}" | sed 's/[[:space:]]//g' |
-        grep -E "^21[.].*-${vendor}$" | grep -vE 'fx|crac' | sort -V | tail -n 1 || true)
-      if [ -z "${top_id}" ]; then
-        echo "FAIL A7 [${p}]: no Java 21 identifier for ${vendor}"
-        FAILED=1
-        continue
-      fi
-      legacy_id=$(echo "${top_id}" | sed -E 's/^([^+]*)[+][^-]*-([a-z]+)$/\1-\2/; s/^([0-9]+[.][0-9]+[.][0-9]+)[.]0-/\1-/')
-      served=""
-      for try_id in "${top_id}" "${legacy_id}"; do
-        sleep 1 # the API returns 503 on request bursts
-        code=$(curl -sS -o /dev/null -w '%{http_code}' -H "User-Agent: ${UA}" \
+  # R/resolve_sdkman.R. FAIL on linuxx64; WARN elsewhere, where the listings
+  # currently contain placeholder ids (e.g. 21.0.0.0-amzn) the broker rejects.
+  for vendor in amzn tem zulu; do
+    top_id=$(printf '%s\n' "${ENTRIES[@]}" | sed 's/[[:space:]]//g' |
+      grep -E "^21[.].*-${vendor}$" | grep -vE 'fx|crac' | sort -V | tail -n 1 || true)
+    if [ -z "${top_id}" ]; then
+      echo "FAIL A7 [${p}]: no Java 21 identifier for ${vendor}"
+      FAILED=1
+      continue
+    fi
+    try_ids="${top_id}"
+    if [[ "${top_id}" == *+* && "${top_id}" != *+ea* ]]; then
+      try_ids="${try_ids} $(echo "${top_id}" | sed -E 's/^([^+]*)[+][^-]*-([a-z]+)$/\1-\2/; s/^([0-9]+[.][0-9]+[.][0-9]+)[.]0-/\1-/')"
+    fi
+    served=""
+    for try_id in ${try_ids}; do
+      for attempt in 1 2 3; do
+        sleep "${attempt}" # the API returns 503 on request bursts
+        code=$(curl -sS --max-time 30 -o /dev/null -w '%{http_code}' -H "User-Agent: ${UA}" \
           "https://api.sdkman.io/2/broker/download/java/${try_id}/${p}" || true)
-        if [ "${code}" = "302" ] || [ "${code}" = "200" ]; then
-          served="${try_id}"
-          break
-        fi
+        [ "${code}" = "503" ] || [ "${code}" = "429" ] || break
       done
-      if [ -z "${served}" ]; then
-        echo "FAIL A7 [${p}]: broker serves neither ${top_id} nor ${legacy_id}"
-        FAILED=1
-      else
-        echo "ok   A7   ${p}: broker serves ${served} (listed as ${top_id})"
+      if [ "${code}" = "302" ] || [ "${code}" = "200" ]; then
+        served="${try_id}"
+        break
       fi
     done
-  fi
+    if [ -n "${served}" ]; then
+      echo "ok   A7   ${p}: broker serves ${served} (listed as ${top_id})"
+    elif [ "${p}" = "linuxx64" ]; then
+      echo "FAIL A7 [${p}]: broker serves none of: ${try_ids} (last HTTP ${code})"
+      FAILED=1
+    else
+      echo "WARN A7 [${p}]: broker serves none of: ${try_ids} (last HTTP ${code})"
+    fi
+  done
 
   # A6: Vendor check (WARN only)
   if [ "${#UNKNOWN_VENDORS[@]}" -gt 0 ]; then

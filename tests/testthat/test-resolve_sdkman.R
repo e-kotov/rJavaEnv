@@ -13,6 +13,7 @@ test_that("resolve_sdkman_metadata uses identifier fast-path", {
     # Mock curl to return the final URL
     rje_curl_fetch_memory = function(url, ...) {
       list(
+        status_code = 200L,
         url = "https://example.com/download.tar.gz",
         content = charToRaw("") # Body ignored if url present
       )
@@ -52,7 +53,7 @@ test_that("resolve_sdkman_metadata resolves version from CSV /versions/all endpo
       character(0)
     },
     rje_curl_fetch_memory = function(...) {
-      list(url = "https://d.com/file.tar.gz")
+      list(status_code = 200L, url = "https://d.com/file.tar.gz")
     }
   )
 
@@ -106,7 +107,7 @@ test_that("resolve_sdkman_metadata falls back to 4-column ASCII table when /vers
       character(0)
     },
     rje_curl_fetch_memory = function(...) {
-      list(url = "https://d.com/file.tar.gz")
+      list(status_code = 200L, url = "https://d.com/file.tar.gz")
     }
   )
 
@@ -157,6 +158,7 @@ test_that("resolve_sdkman_metadata handles broker redirect via body", {
     # but here we just pass an identifier "21-tem" which is_sdkman_identifier should match
     rje_curl_fetch_memory = function(...) {
       list(
+        status_code = 200L,
         url = NULL, # No Location header
         content = charToRaw("https://body-redirect.com/file.zip")
       )
@@ -192,6 +194,7 @@ test_that("sdkman_legacy_identifier maps '+build' ids to broker-servable ids", {
   )
   expect_null(sdkman_legacy_identifier("21.0.9-tem"))
   expect_null(sdkman_legacy_identifier("21.0.11.crac-zulu"))
+  expect_null(sdkman_legacy_identifier("28.0.0.0+ea.18-open"))
 })
 
 test_that("sdkman_broker_resolve reads Location, rejects errors and empty bodies", {
@@ -321,4 +324,113 @@ test_that("resolve_sdkman_metadata errors when the broker serves no candidate", 
     resolve_sdkman_metadata("21.0.12+1.1-tem", "Temurin", "linux", "x64"),
     class = "rJavaEnv_sdkman_unavailable"
   )
+})
+
+test_that("sdkman_broker_resolve URL-encodes identifiers", {
+  skip_on_cran()
+  seen <- list()
+  local_mocked_bindings(
+    rje_curl_fetch_memory = function(url, handle) {
+      seen <<- list(url = url)
+      list(status_code = 404L, url = url, content = raw(0))
+    }
+  )
+  expect_null(sdkman_broker_resolve("21.0.4.0+7-amzn", "linuxx64"))
+  expect_equal(
+    seen$url,
+    "https://api.sdkman.io/2/broker/download/java/21.0.4.0%2B7-amzn/linuxx64"
+  )
+})
+
+test_that("sdkman_broker_resolve aborts on persistent server or network errors", {
+  skip_on_cran()
+  for (fail in list(
+    function(...) list(status_code = 503L, url = "b", content = raw(0)),
+    function(...) stop("Could not resolve host: api.sdkman.io")
+  )) {
+    calls <- 0L
+    local_mocked_bindings(
+      rje_curl_fetch_memory = function(...) {
+        calls <<- calls + 1L
+        fail(...)
+      },
+      rje_sleep = function(seconds) NULL
+    )
+    expect_error(
+      sdkman_broker_resolve("21.0.4-amzn", "linuxx64"),
+      class = "rJavaEnv_sdkman_api_error"
+    )
+    expect_equal(calls, 4L)
+  }
+})
+
+test_that("resolve_sdkman_metadata does not fall back to older builds on API errors", {
+  skip_on_cran()
+  local_mocked_bindings(
+    java_config = function(...) {
+      list(
+        platform_map = list(),
+        arch_map = list(),
+        vendor_map = list(Temurin = "tem"),
+        vendor_reverse_map = list(tem = "Temurin")
+      )
+    },
+    rje_read_lines = function(...) "21.0.12+1.1-tem,21.0.11-tem",
+    rje_curl_fetch_memory = function(url, ...) {
+      if (grepl("21.0.11-tem", url, fixed = TRUE)) {
+        return(list(status_code = 302L, url = url, content = raw(0)))
+      }
+      list(status_code = 503L, url = url, content = raw(0))
+    },
+    rje_sleep = function(seconds) NULL
+  )
+  expect_error(
+    resolve_sdkman_metadata("21", "Temurin", "linux", "x64"),
+    class = "rJavaEnv_sdkman_api_error"
+  )
+})
+
+test_that("resolve_sdkman_metadata tries an unlisted exact version", {
+  skip_on_cran()
+  local_mocked_bindings(
+    java_config = function(...) {
+      list(
+        platform_map = list(),
+        arch_map = list(),
+        vendor_map = list(Corretto = "amzn"),
+        vendor_reverse_map = list(amzn = "Corretto")
+      )
+    },
+    rje_read_lines = function(...) "21.0.4.0+7-amzn",
+    sdkman_broker_resolve = function(identifier, sdk_platform) {
+      if (identifier == "21.0.9-amzn") "https://x.com/c-21.0.9.tar.gz"
+    }
+  )
+  res <- resolve_sdkman_metadata("21.0.9", "Corretto", "linux", "x64")
+  expect_equal(res$semver, "21.0.9-amzn")
+})
+
+test_that("java_download reuses a cached SDKMAN archive without the API", {
+  skip_on_cran()
+  cache <- withr::local_tempdir()
+  dir.create(file.path(cache, "distrib"))
+  cached <- file.path(
+    cache,
+    "distrib",
+    sdkman_filename("21", "Corretto", "linux", "x64")
+  )
+  file.create(cached)
+  local_mocked_bindings(
+    resolve_java_metadata = function(...) stop("should not query SDKMAN")
+  )
+  res <- java_download(
+    21,
+    distribution = "Corretto",
+    backend = "sdkman",
+    cache_path = cache,
+    platform = "linux",
+    arch = "x64",
+    quiet = TRUE
+  )
+  expect_equal(as.character(res), cached)
 })

@@ -133,30 +133,42 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
       }
     }
 
-    if (nrow(df) == 0) {
+    candidates <- character(0)
+    if (nrow(df) > 0) {
+      # Component-wise integer sorting (descending)
+      ver_keys <- lapply(
+        strsplit(gsub("[^0-9.]+", ".", df$version), "\\.+"),
+        function(x) {
+          nums <- as.integer(x[nzchar(x)])
+          nums[!is.na(nums)]
+        }
+      )
+      max_len <- max(vapply(ver_keys, length, integer(1)))
+      padded_matrix <- do.call(
+        rbind,
+        lapply(ver_keys, function(k) {
+          c(k, rep(0L, max_len - length(k)))
+        })
+      )
+      ord <- do.call(
+        order,
+        c(as.data.frame(padded_matrix), list(decreasing = TRUE))
+      )
+      candidates <- df$identifier[ord]
+    }
+
+    # The broker often serves exact versions the listing omits
+    # (e.g. 21.0.9-amzn), so also try the requested version directly.
+    if (is_specific) {
+      candidates <- unique(c(candidates, paste0(version, "-", vendor_code)))
+    }
+
+    if (length(candidates) == 0) {
       cli::cli_abort(
         "No SDKMAN identifier for {distribution} {version}",
         class = "rJavaEnv_sdkman_unavailable"
       )
     }
-
-    # Component-wise integer sorting (descending)
-    ver_keys <- lapply(
-      strsplit(gsub("[^0-9.]+", ".", df$version), "\\.+"),
-      function(x) {
-        nums <- as.integer(x[nzchar(x)])
-        nums[!is.na(nums)]
-      }
-    )
-    max_len <- max(vapply(ver_keys, length, integer(1)))
-    padded_matrix <- do.call(rbind, lapply(ver_keys, function(k) {
-      c(k, rep(0L, max_len - length(k)))
-    }))
-    ord <- do.call(
-      order,
-      c(as.data.frame(padded_matrix), list(decreasing = TRUE))
-    )
-    candidates <- df$identifier[ord]
   }
 
   # Recalculate sdk_platform for broker URL (needed even in fast-path)
@@ -169,26 +181,26 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
   # "+build" style ids such as 21.0.4.0+7-amzn). Try each candidate, and its
   # legacy alias, newest first, until the broker returns a download URL.
   max_candidates <- 5L
+  try_ids <- unique(unlist(lapply(
+    utils::head(candidates, max_candidates),
+    function(x) c(x, sdkman_legacy_identifier(x))
+  )))
   final_url <- NULL
   identifier <- NULL
-  tried <- character(0)
-  for (candidate in utils::head(candidates, max_candidates)) {
-    for (try_id in unique(c(candidate, sdkman_legacy_identifier(candidate)))) {
-      tried <- c(tried, try_id)
-      final_url <- sdkman_broker_resolve(try_id, sdk_platform)
-      if (!is.null(final_url)) {
-        identifier <- try_id
-        break
-      }
+  for (try_id in try_ids) {
+    final_url <- sdkman_broker_resolve(try_id, sdk_platform)
+    if (!is.null(final_url)) {
+      identifier <- try_id
+      break
     }
-    if (!is.null(final_url)) break
   }
 
   if (is.null(final_url)) {
     cli::cli_abort(
       c(
         "SDKMAN broker has no download for {distribution} {version} on {sdk_platform}.",
-        "i" = "Tried identifier{?s}: {.val {tried}}"
+        "i" = "Tried identifier{?s}: {.val {try_ids}}",
+        "i" = "Use {.code backend = \"native\"} to download from the vendor's API instead."
       ),
       class = "rJavaEnv_sdkman_unavailable"
     )
@@ -203,8 +215,6 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
     )
   }
 
-  ext <- if (platform == "windows") "zip" else "tar.gz"
-
   # Warn about missing checksum
   cli::cli_alert_warning("SDKMAN backend: checksum verification unavailable")
 
@@ -216,14 +226,7 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
     platform = platform,
     arch = arch,
     download_url = final_url,
-    filename = sprintf(
-      "%s-%s-%s-%s.%s",
-      tolower(distribution),
-      version,
-      platform,
-      arch,
-      ext
-    ),
+    filename = sdkman_filename(version, distribution, platform, arch),
     checksum = NULL, # NOT AVAILABLE
     checksum_type = NULL,
     backend = "sdkman"
@@ -246,19 +249,46 @@ sdkman_broker_resolve <- function(identifier, sdk_platform) {
   )
 
   # The SDKMAN API rate-limits bursts of requests with 503 (or 429), so back
-  # off and retry before treating the identifier as unavailable.
-  for (attempt in 1:4) {
-    resp <- rje_curl_fetch_memory(
-      broker_url,
-      handle = curl::new_handle(followlocation = FALSE)
+  # off and retry. Only a 4xx answer means the broker cannot serve the
+  # identifier; persistent server or network errors abort rather than let the
+  # caller fall back to an older build.
+  max_attempts <- 4L
+  for (attempt in seq_len(max_attempts)) {
+    resp <- tryCatch(
+      rje_curl_fetch_memory(
+        broker_url,
+        handle = curl::new_handle(
+          followlocation = FALSE,
+          connecttimeout = 15,
+          timeout = 60
+        )
+      ),
+      error = function(e) e
     )
-    status <- resp$status_code %||% 200L
-    if (!status %in% c(429L, 503L) || attempt == 4L) {
+    failed <- inherits(resp, "error") ||
+      resp$status_code == 429L ||
+      resp$status_code >= 500L
+    if (!failed) {
       break
+    }
+    if (attempt == max_attempts) {
+      cli::cli_abort(
+        c(
+          "SDKMAN API request for {.val {identifier}} failed.",
+          "x" = if (inherits(resp, "error")) {
+            conditionMessage(resp)
+          } else {
+            "HTTP status {resp$status_code}."
+          },
+          "i" = "Try again later, or use {.code backend = \"native\"}."
+        ),
+        class = "rJavaEnv_sdkman_api_error"
+      )
     }
     rje_sleep(attempt)
   }
 
+  status <- resp$status_code
   if (status >= 400L) {
     return(NULL)
   }
@@ -288,9 +318,14 @@ sdkman_broker_resolve <- function(identifier, sdk_platform) {
 #'
 #' @param identifier SDKMAN identifier
 #' @return The legacy identifier, or NULL if `identifier` has no "+build" part
+#'   or is an early-access build
 #' @keywords internal
 sdkman_legacy_identifier <- function(identifier) {
-  if (!grepl("+", identifier, fixed = TRUE)) {
+  # Early-access ids ("28.0.0.0+ea.18-open") have no known legacy mapping
+  if (
+    !grepl("+", identifier, fixed = TRUE) ||
+      grepl("+ea", identifier, fixed = TRUE)
+  ) {
     return(NULL)
   }
   vendor <- sub(".*-", "", identifier)
@@ -313,4 +348,27 @@ sdkman_legacy_identifier <- function(identifier) {
 #' @keywords internal
 rje_sleep <- function(seconds) {
   Sys.sleep(seconds)
+}
+
+#' File name of a cached SDKMAN archive
+#'
+#' Depends only on the request, not on the resolved build, so a cached archive
+#' can be found without querying the SDKMAN API.
+#'
+#' @inheritParams global_version_param
+#' @param distribution Java distribution name
+#' @param platform Platform OS
+#' @param arch Architecture
+#' @return File name
+#' @keywords internal
+sdkman_filename <- function(version, distribution, platform, arch) {
+  ext <- if (platform == "windows") "zip" else "tar.gz"
+  sprintf(
+    "%s-%s-%s-%s.%s",
+    tolower(distribution),
+    version,
+    platform,
+    arch,
+    ext
+  )
 }
