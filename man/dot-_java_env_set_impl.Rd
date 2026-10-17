@@ -9,7 +9,8 @@
   java_home,
   project_path = NULL,
   quiet = FALSE,
-  ._skip_rjava_check = FALSE
+  ._skip_rjava_check = FALSE,
+  ._load_jvm = TRUE
 )
 }
 \description{

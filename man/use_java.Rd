@@ -52,20 +52,17 @@ This is intended as a quick and easy way to use different Java versions in R scr
 
 \strong{Important for \emph{rJava} Users}: This function sets environment variables
 (JAVA_HOME, PATH) that affect both command-line Java tools and \emph{rJava} initialization.
-However, due to \emph{rJava}'s path-locking behavior when \code{\link[rJava]{.jinit}} is called
-(see \url{https://github.com/s-u/rJava/issues/25}, \url{https://github.com/s-u/rJava/issues/249}, and \url{https://github.com/s-u/rJava/issues/334}),
-this function must be called \strong{BEFORE} \code{\link[rJava]{.jinit}} is invoked. Once \code{\link[rJava]{.jinit}}
-initializes, the Java version is locked for that R session and cannot be changed without restarting R.
+Configure Java \strong{before loading rJava}, including before \code{requireNamespace("rJava")}
+or loading packages that import it. Loading the namespace can resolve and lock
+the JVM library path even before \code{.jinit()} starts the JVM. See
+\url{https://github.com/s-u/rJava/issues/334} and
+\url{https://github.com/s-u/rJava/issues/25}.
 
-\code{\link[rJava]{.jinit}} is invoked (and Java locked) when you:
-\itemize{
-\item Explicitly call \code{library(rJava)}
-\item Load any package that imports \emph{rJava} (which auto-loads it as a dependency)
-\item Even just use IDE autocomplete with \code{rJava::} (this triggers initialization!)
-\item Call any \emph{rJava}-dependent function
-}
+Once rJava has loaded, restart R before selecting another JVM, or use
+\code{with_rjava_env()} to run with a different JVM in a fresh R process.
+\code{java_check_compatibility()} does not load rJava or initialize a JVM.
+\code{java_check_version_rjava()} performs its probe in a separate R process.
 
-Once any of these happen, the Java version used by \emph{rJava} for that session is locked in.
 For command-line Java tools that don't use \emph{rJava}, this function can be called at any
 time to switch Java versions for subsequent system calls.
 }

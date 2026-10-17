@@ -13,260 +13,203 @@ format:
     code-overflow: wrap
 ---
 
-If you are developing an R package that involves `Java` (either via `{rJava}` or through command-line `Java` tools), you often face the "Java Hell" problem: your users might not have Java installed, or they might have the wrong version, or `{rJava}` cannot find the `JAVA_HOME`.
+`rJavaEnv` helps package authors find, install and select Java. Choose your
+integration according to whether Java runs as an executable, inside the R
+process through `{rJava}`, or in a separate R process.
 
-`rJavaEnv` solves this by providing a unified, reliable way to help your users ensure a specific Java version is present and configured correctly.
+# Checks must preserve the ability to select Java
 
-# The Critical Decision: Does Your Package Use rJava?
+There are two different boundaries: loading the `{rJava}` namespace can load and
+lock the JVM library path; `.jinit()` then starts the JVM. A namespace can be
+loaded without `library(rJava)`, for example by `requireNamespace("rJava")`,
+namespace imports, or IDE completion. Configure Java before any of these.
 
-Before using `rJavaEnv`, you must categorize your package into one of two scenarios. This distinction is critical because `{rJava}` introduces a "locking" constraint that fundamentally changes how you must manage Java.
+[Upstream rJava issue #334](https://github.com/s-u/rJava/issues/334) describes
+path locking before initialization. Its experimental `feature/dynamic` branch
+explores deferred loading; these examples do not assume that branch is installed.
+[Issue #25](https://github.com/s-u/rJava/issues/25) explains why restarting a JVM
+inside the same R process is not a reliable recovery strategy.
 
-**Scenario A: Command-Line Java Only** (No `{rJava}` dependency)
-Your package calls Java executables via `system()`, `system2()`, or `processx`. You do **not** have `Imports: rJava` in your DESCRIPTION.
+These checks do not load rJava or start its JVM in the calling R process:
 
-**Scenario B: rJava Dependency** (Most Common)
-Your package has `Imports: rJava` or `Depends: rJava`, or executes code that uses `{rJava}` functions.
+- `java_check_version_cmd()` checks the executable under `JAVA_HOME` and returns
+  its **major** version. It does not use an unrelated `java` earlier on `PATH`.
+- `java_find_system()` discovers system installations.
+- `java_resolve(21, install = FALSE)` finds a JDK without changing the calling
+  session's environment. Its default `install = TRUE` permits downloading.
+- `java_check_version_rjava(java_home = path)` tests rJava in a **fresh R process**.
+  It returns the major version, or `FALSE` if rJava cannot be used there.
+- `java_check_compatibility(21, action = "none")` reads an **already running**
+  rJava JVM. It returns `FALSE` when no JVM is running; that means compatibility
+  is unverified, not that it has checked and rejected a candidate installation.
+  `action = "warn"`, `"message"` or `"stop"` reports an unverified or incompatible JVM.
 
----
+`java_ensure()` and `use_java()` are setup operations. They can install Java and
+change the session environment. `install = FALSE` prevents downloads; it does
+not make `java_ensure()` read-only. Avoid setup, downloads and prompts in `.onLoad`.
 
-# Scenario A: Packages Using Command-Line Java (No rJava)
+# Command-line Java packages
 
-In this scenario, you have flexibility. The Java version is **not** locked by the R session. You can use different Java versions for different tasks or change them dynamically.
-
-However, modifying the global `JAVA_HOME` and `PATH` environment variables might accidentally affect other parts of the user's workflow. To avoid this, you should use a **scoped** approach.
-
-### Recommended Pattern: `local_java_env()`
-
-The `rJavaEnv` package provides a scoped helper that handles everything for you in one line. It ensures Java is installed, sets the environment for your function, and automatically cleans up afterwards.
-
-> [!WARNING]
-> **Do not use `local_java_env()` or `with_java_env()` if your package depends on rJava.**
-> rJava locks the JVM at initialization and cannot switch versions within a session.
-> For rJava packages, see Scenario B below.
+A package that calls `system2()` or `processx::run()` can scope its environment.
+Add `rJavaEnv` to `Imports` and use `local_java_env()` inside the wrapper:
 
 ```r
-#' Run my Java tool (using system2)
-#' @export
-run_my_tool <- function(input_file) {
-  rJavaEnv::local_java_env(version = 21)
-  system2("java", c("-jar", "tool.jar", input_file))
-} # Environment restored automatically here
-
-#' Run my Java tool (using processx)
-#' @export
-run_my_tool_px <- function(input_file) {
-  rJavaEnv::local_java_env(version = 21)
-  processx::run("java", c("-jar", "tool.jar", input_file))
+run_my_tool <- function(jar_path, input_file) {
+  rJavaEnv::local_java_env(version = 21, type = "min")
+  system2("java", c("-jar", shQuote(jar_path), shQuote(input_file)))
 }
 ```
 
-This ensures that:
-1.  Your code runs with the correct Java version.
-2.  The user's `JAVA_HOME` is restored immediately after your function exits.
-3.  You don't need to write manual `on.exit()` cleanup code.
-
-### Using `with_java_env()`
-
-If you prefer block-scoped execution:
+`JAVA_HOME` and `PATH` are restored when the function returns, including on error.
+For a block, use `with_java_env()`:
 
 ```r
-# With system2
-rJavaEnv::with_java_env(version = 21, {
+rJavaEnv::with_java_env(21, {
   system2("java", "-version")
-})
-
-# With processx
-rJavaEnv::with_java_env(version = 21, {
-  processx::run("java", c("-jar", "tool.jar", "--help"))
-})
+}, install = FALSE)
 ```
 
-### Performance: Using `.use_cache`
+These wrappers configure executables. Do not load rJava or an rJava-dependent
+package inside the scope: its JVM can remain locked after the environment is
+restored. A command-line wrapper can coexist with an already running rJava JVM;
+changing its executable does not change that JVM.
 
-If your function calls Java multiple times (e.g., inside a loop), enable caching to avoid the 30-200ms overhead of version checks on each call:
+Set `.use_cache = TRUE` for repeated checks when installations are stable.
+By default suitable system Java is accepted. `accept_system_java = FALSE`
+restricts resolution to managed installations matching the selected distribution,
+backend, platform and architecture, or installs one when `install = TRUE`.
+
+# Packages that defer loading rJava
+
+If Java is an optional feature, list `rJava` in `Suggests` and `rJavaEnv` in
+`Imports`. Do not import rJava symbols in `NAMESPACE`. This lets your package
+load even before Java is configured, and makes an exported setup helper usable.
 
 ```r
-process_files <- function(files) {
-  for (f in files) {
-    rJavaEnv::local_java_env(version = 21, .use_cache = TRUE)
-    processx::run("java", c("-jar", "processor.jar", f))
+setup_java <- function(version = 21, install = TRUE) {
+  ready <- rJavaEnv::java_ensure(version, type = "min", install = install)
+  if (!ready) stop("Java setup failed; configure Java before using this feature.")
+  invisible(TRUE)
+}
+
+run_java_feature <- function(input) {
+  # This must precede requireNamespace(), not just .jinit().
+  setup_java()
+  if (!requireNamespace("rJava", quietly = TRUE)) {
+    stop("Install the rJava package to use this feature.")
   }
+  rJava::.jinit()  # Deliberate initialization, after setup.
+  rJavaEnv::java_check_compatibility(21, type = "min", action = "stop")
+  # Your rJava operations go here.
 }
 ```
 
-### Controlling Whether to Use System Java
+If rJava is already loaded but its JVM is not running, `java_ensure()` errors
+without starting it: the library path may already be locked and cannot safely
+be inferred from `JAVA_HOME`. If its JVM is already running, a matching version
+is accepted and an incompatible version causes an error without changing the
+environment. Restart R before setup in either incompatible or unverified cases.
 
-By default, `accept_system_java = TRUE`. `rJavaEnv` will first check if a suitable Java version exists on the system. If found, it uses it without downloading anything. This is efficient and recommended.
+`check_against = "cmd"` configures command-line Java even when rJava is loaded.
+It does not establish compatibility for rJava or preload a JVM library.
 
-If you strictly require an isolated, reproducible environment (ignoring the user's system Java), set `accept_system_java = FALSE` and `install = TRUE`.
+# Packages that import rJava immediately
 
----
-
-
-# Scenario B: Packages Importing rJava
-
-If your package calls `rJava` (or imports a package that does), you face a strict constraint:
-
-> **The rJava Lock**: Once `{rJava}` is initialized (loaded), the Java version is **locked** for the entire R session. It cannot be changed without restarting R.
-
-**Implications:**
-- You **cannot** set Java in your package's `.onLoad` or inside your functions. By the time your package loads, `{rJava}` is likely already initializing, or will initialize the moment you call it.
-- You **must** instruct users to set up Java **before** loading your package.
-
-### Pattern 1: The Guard (Recommended)
-
-Since you cannot fix the environment automatically after `rJava` loads, the best practice is to **detect issues immediately** and instruct the user.
-
-Add a check to your `.onLoad` function using `java_check_compatibility`.
+If your package has `Imports: rJava` and imports its symbols, or has
+`Depends: rJava`, rJava may load before your own `.onLoad`. Your package's setup
+helper cannot rescue a failed dependency load. Document setup through
+`rJavaEnv` directly, independently of your package:
 
 ```r
-# In R/zzz.R
-.onLoad <- function(libname, pkgname) {
-  # Check if the active Java version is at least 21
-  # If not, warn the user and explain how to fix it via rJavaEnv
-  rJavaEnv::java_check_compatibility(version = 21, type = "min", action = "warn")
+# Start a fresh R session first if rJava was already loaded.
+rJavaEnv::java_ensure(21, type = "min")
+library(your_package)
+```
+
+Do **not** restart between setup and loading the package: `java_ensure()` sets
+only the current session. To configure subsequent project sessions explicitly,
+use `java_env_set(where = "project", java_home = path)` or `java_quick_install()`
+with the user's consent. Choose project persistence explicitly; package startup
+must not edit the user's profile automatically.
+
+A compatibility guard can stop an operation after your package deliberately
+initializes rJava. It does not repair a missing JVM, replace a setup step, or
+change the rJava version:
+
+```r
+run_java_feature <- function(input) {
+  rJava::.jinit()
+  rJavaEnv::java_check_compatibility(21, type = "min", action = "stop")
+  # Your rJava operations go here.
 }
 ```
 
-**What the user sees:**
-If the user is running Java 8, they immediately see:
-```text
-Warning: Java version mismatch.
-Current loaded Java: 8
-Required Java: >= 21
-! Because rJava is already initialized, you must restart R to switch versions.
-  To fix this, restart R and run:
-  rJavaEnv::use_java(21)
-  BEFORE loading this package.
-```
+# Process isolation
 
-### Pattern 2: Process Isolation (Advanced)
-
-If you want to guarantee a specific Java environment without relying on the user's setup, you can run your `rJava` code in a subprocess. This bypasses the lock in the main session.
-
-**Requirements:**
-1. Add `callr` to `Suggests`.
-2. Your function must not rely on objects existing in the main session (stateless execution).
+For conflicting Java requirements, run rJava code in a fresh process:
 
 ```r
-#' Run a heavy calculation in a Java 21 subprocess
-#' @export
 run_heavy_calc <- function(input_data) {
   rJavaEnv::with_rjava_env(
     version = 21,
     func = function(df) {
       rJava::.jinit()
-      # Process df using rJava...
-      nrow(df)  # Return actual result
+      version <- rJava::.jcall("java.lang.System", "S", "getProperty", "java.version")
+      list(version = version, rows = nrow(df))
     },
     args = list(df = input_data)
   )
 }
 ```
 
-### Choosing Between `use_java` and `java_ensure`
+Add `callr` to `Imports` if this is a required feature, or `Suggests` with a
+clear availability check for an optional feature. rJava must be installed in
+the library paths visible to the child. Return ordinary R data, not Java object
+references or other pointers into the child process. The function must load its
+own dependencies and receive its inputs through `args`.
 
-| Function | Behavior | Best For |
-|----------|----------|----------|
-| `use_java(21)` | Sets exactly Java 21, downloads if missing | Interactive scripts |
-| `java_ensure(21, type = "min")` | Accepts any Java >= 21, checks system first | Package setup helpers |
+A package that imports rJava can still use subprocess isolation once it has
+loaded successfully, but it retains the initial dependency-load requirement.
+An optional rJava dependency avoids that requirement in the parent.
 
-Use `java_ensure` in package code because it's more lenient and efficient.
+# Version requirements
 
-### Strategy: "Inform and Guide"
+`use_java(21)` selects a managed Java 21 installation. `java_ensure(21,
+type = "min")` can reuse a suitable system JDK of Java 21 or newer.
+Numeric patch requests such as `"21.0.8"` compare full runtime versions rather
+than treating every Java 21 runtime as equivalent. Exact SDKMAN identifiers
+select a managed installation by identity; `type = "min"` is unsupported for
+identifiers. The identity of an already running rJava JVM cannot be established
+from its runtime version alone, so identifier requests require a fresh setup.
 
-Your goal is to make the setup process as easy as possible for your users.
+# CI and end-to-end checks
 
-#### 1. Add rJavaEnv to Imports
+Prefer setting Java at the workflow level, before installing or loading rJava:
 
-Add `rJavaEnv` to your `DESCRIPTION`:
-```dcf
-Imports:
-    rJava,
-    rJavaEnv
-```
-
-#### 2. Document the Requirement
-
-In your README or vignette, provide clear instructions.
-
-> **Java Requirement**
-> This package requires Java 21+. If you see errors, run:
-> ```r
-> library(rJavaEnv)
-> java_ensure(version = 21, type = "min")
-> # RESTART R session
-> library(your_package)
-> ```
-
-#### 3. Optional: Provide a Setup Helper
-
-To make it even easier, you can export a setup function that users can call *if* they run into issues. This function can leverage `java_ensure(install = TRUE)` to interactively guide them.
-
-```r
-#' Install and Configure Java
-#' @export
-setup_java <- function() {
-  # Interactive check and install
-  rJavaEnv::java_ensure(version = 21, type = "min", install = TRUE)
-  
-  message("Java setup complete. Please RESTART your R session for changes to take effect.")
-}
-```
-
-
----
-
-# Performance & Caching
-
-Regardless of the scenario, `rJavaEnv` performs checks to ensure Java is ready. To avoid performance penalties (approx. 30-200ms per check), `rJavaEnv` supports session-level caching.
-
-### When to use `.use_cache = TRUE`
-
--   **Inside functions called repeatedly**: If you have a function calling `java_ensure` inside a loop, enable caching.
--   **In `.onLoad` checks**: To keep package startup fast.
-
-```r
-# Fast check using cache
-rJavaEnv::java_check_version_cmd(quiet = TRUE, .use_cache = TRUE)
-```
-
-The first call takes time (to verify the system state), but subsequent calls in the same session return in <1ms.
-
-# Debugging
-
-If Java setup isn't working as expected, use `quiet = FALSE` to see what `rJavaEnv` is checking:
-
-```r
-# See all resolution steps
-rJavaEnv::java_ensure(version = 21, quiet = FALSE)
-
-# Check what Java is currently active
-rJavaEnv::java_check_version_cmd(quiet = FALSE)
-
-# See all system Java installations
-rJavaEnv::java_find_system(quiet = FALSE)
-```
-
----
-
-# CI/CD (GitHub Actions)
-
-Ensure Java is available in your CI workflows.
-
-**Option A: Standard generic action (Recommended)**
 ```yaml
 - uses: actions/setup-java@v4
   with:
-    distribution: 'corretto'
+    distribution: temurin
     java-version: '21'
 ```
 
-**Option B: Using rJavaEnv**
-```yaml
-- name: Install Java via rJavaEnv
-  run: |
-    install.packages("rJavaEnv")
-    rJavaEnv::java_ensure(version = 21, type = "min")
-  shell: Rscript {0}
+A standalone `Rscript` step calling `java_ensure()` changes only that process;
+later workflow steps will not inherit its environment. If using rJavaEnv for CI
+setup, call it inside each R process before loading rJava, or explicitly export
+the resolved paths through GitHub Actions' environment and path files.
+
+The repository contains two minimal consumer packages under `tools/downstream`:
+a lazy consumer and an eager rJava importer. Run their installed-package tests
+from the repository root with two real JDKs:
+
+```sh
+RJE_JAVA_HOME_A=/path/to/jdk17 RJE_JAVA_HOME_B=/path/to/jdk21 \
+  Rscript --vanilla tools/test-downstream.R
 ```
+
+The runner installs this checkout and the consumers into a temporary library.
+Each scenario uses a fresh R process. It verifies probe-before-switch behavior,
+scoped cleanup on success and error, eager-import non-initialization, strict
+handling of a locked JVM, and child-process isolation. It does not download JDKs
+or modify the user's package library or cache. The dedicated GitHub Actions
+workflow supplies Java 17 and 21 on Linux, macOS and Windows.

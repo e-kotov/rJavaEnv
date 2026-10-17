@@ -65,7 +65,8 @@ java_env_set <- function(
   java_home,
   project_path = NULL,
   quiet = FALSE,
-  ._skip_rjava_check = FALSE
+  ._skip_rjava_check = FALSE,
+  ._load_jvm = TRUE
 ) {
   where <- match.arg(where)
   checkmate::assertString(java_home)
@@ -75,7 +76,8 @@ java_env_set <- function(
     java_env_set_session(
       java_home,
       quiet = quiet,
-      ._skip_rjava_check = ._skip_rjava_check
+      ._skip_rjava_check = ._skip_rjava_check,
+      ._load_jvm = ._load_jvm
     )
     if (!quiet) {
       cli::cli_alert_success(c(
@@ -102,7 +104,7 @@ java_env_set <- function(
     }
   }
 
-  if (Sys.info()["sysname"] == "Linux" && !quiet) {
+  if (._load_jvm && Sys.info()["sysname"] == "Linux" && !quiet) {
     cli::cli_inform(c(
       "i" = "On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in the current session.",
       " " = "To make this change permanent for installing rJava-dependent packages from source, you may need to reconfigure Java.",
@@ -123,13 +125,15 @@ java_env_set <- function(
 #' @param java_home The path to the desired JAVA_HOME.
 #' @inheritParams global_quiet_param
 #' @param ._skip_rjava_check Internal. If TRUE, skip the rJava initialization check.
+#' @param ._load_jvm Internal. Whether to preload the JVM library on Linux.
 #' @keywords internal
 #' @importFrom utils installed.packages
 #'
 java_env_set_session <- function(
   java_home,
   quiet = FALSE,
-  ._skip_rjava_check = FALSE
+  ._skip_rjava_check = FALSE,
+  ._load_jvm = TRUE
 ) {
   # Check if rJava is initialized and warn if so (unless caller already checked)
   if (!._skip_rjava_check) {
@@ -143,7 +147,7 @@ java_env_set_session <- function(
   Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 
   # On Linux, find and dynamically load libjvm.so
-  if (Sys.info()["sysname"] == "Linux") {
+  if (._load_jvm && Sys.info()["sysname"] == "Linux") {
     libjvm_path <- get_libjvm_path(java_home)
 
     if (!is.null(libjvm_path) && file.exists(libjvm_path)) {
@@ -466,7 +470,7 @@ java_check_version_cmd <- function(
   # Handle error case
   if (isFALSE(data)) {
     if (!quiet) {
-      cli::cli_inform(c("!" = "JAVA_HOME is not set."))
+      cli::cli_inform(c("!" = "Could not determine the Java version for the selected JAVA_HOME."))
     }
     return(FALSE)
   }
@@ -485,138 +489,45 @@ java_check_version_cmd <- function(
 
 # Original implementation (not memoised) - used when .use_cache = FALSE
 ._java_version_check_impl_original <- function(java_home = NULL) {
-  # Backup the current JAVA_HOME and PATH
-  old_java_home <- Sys.getenv("JAVA_HOME")
-  old_path <- Sys.getenv("PATH")
-
-  # Set JAVA_HOME in current session if specified
-  # Skip rJava check since this is a temporary change just to check version
-  if (!is.null(java_home)) {
-    java_env_set_session(java_home, quiet = TRUE, ._skip_rjava_check = TRUE)
-  }
-
-  # Get JAVA_HOME again and check if it's set
-  current_java_home <- Sys.getenv("JAVA_HOME")
-  if (current_java_home == "") {
-    if (!is.null(java_home)) {
-      Sys.setenv(JAVA_HOME = old_java_home)
-      Sys.setenv(PATH = old_path)
-    }
+  current_java_home <- if (is.null(java_home)) Sys.getenv("JAVA_HOME") else java_home
+  if (!nzchar(current_java_home)) {
     return(FALSE)
   }
-
-  # Get Java path - use explicit path if java_home is specified
-  if (!is.null(java_home)) {
-    # Direct check of the executable within the provided java_home
-    # This avoids Sys.which potentially picking up system shims (common on macOS)
-    # or other executables in the PATH
-
-    # Determine executable name based on OS
-    exe_name <- if (.Platform$OS.type == "windows") "java.exe" else "java"
-    java_bin_candidate <- file.path(java_home, "bin", exe_name)
-
-    if (file.exists(java_bin_candidate)) {
-      java_bin <- java_bin_candidate
-    } else {
-      # Fallback to failing if not found in the expected location
-      return(FALSE)
-    }
-  } else {
-    java_bin <- Sys.which("java")
-    if (!nzchar(java_bin)) {
-      return(FALSE)
-    }
+  # Execute this JDK directly. Do not call java_env_set_session(): on Linux that
+  # loads libjvm into the calling R process and makes a later switch unsafe.
+  exe <- if (.Platform$OS.type == "windows") "java.exe" else "java"
+  java_bin <- file.path(current_java_home, "bin", exe)
+  if (!file.exists(java_bin)) {
+    return(FALSE)
   }
-  which_java <- java_bin
-
-  # On macOS, the 'java' launcher stub dynamically loads libjvm.dylib.
-  # If another JDK (e.g., system Temurin) is in the default library search path,
-  # the launcher may load the wrong JVM library even if JAVA_HOME is set.
-  # We fix this by targeting DYLD_LIBRARY_PATH specifically for this subprocess.
-  # Note: We do NOT set DYLD_LIBRARY_PATH globally in java_env_set() because:
-  # 1. rJava's .jinit() loads libjvm.dylib directly from path, bypassing the stub.
-  # 2. Global DYLD_* vars are restricted by macOS SIP and can cause side effects.
-  if (Sys.info()[["sysname"]] == "Darwin" && !is.null(java_home)) {
-    libjvm_path <- get_libjvm_path(java_home)
+  env <- c(JAVA_HOME = current_java_home)
+  if (Sys.info()[["sysname"]] == "Darwin") {
+    libjvm_path <- get_libjvm_path(current_java_home)
     if (!is.null(libjvm_path)) {
-      lib_server <- dirname(libjvm_path)
-      old_dyld_path <- Sys.getenv("DYLD_LIBRARY_PATH", unset = NA)
-      if (is.na(old_dyld_path)) {
-        on.exit(Sys.unsetenv("DYLD_LIBRARY_PATH"), add = TRUE)
-      } else {
-        on.exit(Sys.setenv(DYLD_LIBRARY_PATH = old_dyld_path), add = TRUE)
-      }
-      Sys.setenv(DYLD_LIBRARY_PATH = lib_server)
+      env <- c(env, DYLD_LIBRARY_PATH = dirname(libjvm_path))
     }
-
-    # Also temporarily set JAVA_HOME for this check
-    saved_java_home_for_darwin <- Sys.getenv("JAVA_HOME", unset = NA)
-    if (is.na(saved_java_home_for_darwin)) {
-      on.exit(Sys.unsetenv("JAVA_HOME"), add = TRUE)
-    } else {
-      on.exit(Sys.setenv(JAVA_HOME = saved_java_home_for_darwin), add = TRUE)
-    }
-    Sys.setenv(JAVA_HOME = java_home)
   }
-
   java_ver <- tryCatch(
-    system2(
-      java_bin,
-      args = "-version",
-      stdout = TRUE,
-      stderr = TRUE,
+    withr::with_envvar(env, system2(
+      java_bin, args = "-version", stdout = TRUE, stderr = TRUE,
       timeout = 30
-    ),
+    )),
     error = function(e) NULL
   )
-
-  # Check for timeout or empty result
-  # When system2 times out, it returns character(0) with status=124
-  # When it fails in other ways, it may return NULL
-  if (is.null(java_ver) || length(java_ver) == 0) {
-    # Restore original environment
-    if (!is.null(java_home)) {
-      Sys.setenv(JAVA_HOME = old_java_home)
-      Sys.setenv(PATH = old_path)
-    }
+  if (is.null(java_ver) || length(java_ver) == 0 ||
+      !is.null(attr(java_ver, "status")) && attr(java_ver, "status") != 0) {
     return(FALSE)
   }
-
-  # Additional check for timeout status attribute
-  status_attr <- attr(java_ver, "status")
-  if (!is.null(status_attr) && status_attr == 124) {
-    # Explicit timeout detected (status 124)
-    if (!is.null(java_home)) {
-      Sys.setenv(JAVA_HOME = old_java_home)
-      Sys.setenv(PATH = old_path)
-    }
+  major <- ._java_parse_version_output(java_ver)
+  if (isFALSE(major)) {
     return(FALSE)
   }
-
-  major_java_ver <- ._java_parse_version_output(java_ver)
-
-  if (isFALSE(major_java_ver)) {
-    # Restore original environment
-    if (!is.null(java_home)) {
-      Sys.setenv(JAVA_HOME = old_java_home)
-      Sys.setenv(PATH = old_path)
-    }
-    return(FALSE)
-  }
-
-  # Restore original JAVA_HOME and PATH
-  if (!is.null(java_home)) {
-    Sys.setenv(JAVA_HOME = old_java_home)
-    Sys.setenv(PATH = old_path)
-  }
-
-  # Return structured data for printing in wrapper
-  return(list(
-    major_version = major_java_ver,
+  list(
+    major_version = major,
     java_home = current_java_home,
-    java_path = which_java,
+    java_path = java_bin,
     java_version_output = java_ver
-  ))
+  )
 }
 
 # Internal function: Does the actual work (command execution) - this gets cached

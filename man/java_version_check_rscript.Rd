@@ -7,7 +7,7 @@
 java_version_check_rscript(java_home)
 }
 \arguments{
-\item{java_home}{}
+\item{java_home}{Path to Java home directory.}
 }
 \value{
 A message with the Java version or an error message.

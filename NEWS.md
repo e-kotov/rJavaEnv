@@ -1,5 +1,19 @@
 # rJavaEnv (development version)
 
+- Compatibility probes no longer load rJava or start its JVM. A loaded but
+  uninitialized rJava namespace is treated as unverified; strict setup errors
+  before changing its environment because its library paths may already be locked.
+- Command-version checks execute the selected JDK without preloading libjvm in R
+  and restore temporary environment variables on every exit. Command-only setup
+  also avoids preloading libjvm.
+- Managed-only resolution ignores active system JDKs; numeric patch requirements
+  use full versions, and cached candidates are ordered numerically and filtered
+  by platform and architecture. System discovery also recognizes versioned
+  `JAVA_HOME_<major>` variables, including CI architecture suffixes.
+- Developer integration guidance now separates passive probes, explicit setup,
+  eager and lazy rJava dependencies, and subprocess isolation. Minimal downstream
+  consumer packages exercise these contracts in fresh processes on three platforms.
+
 - Fresh SDKMAN downloads now report the resolved identifier and respect
   `quiet = TRUE`. Cached archives are reused without resolving or reporting an
   identifier (#107).

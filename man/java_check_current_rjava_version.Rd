@@ -2,16 +2,15 @@
 % Please edit documentation in R/internal_utilities.R
 \name{java_check_current_rjava_version}
 \alias{java_check_current_rjava_version}
-\title{Check the Java version currently used by the loaded rJava package}
+\title{Read the version of an already running rJava JVM}
 \usage{
 java_check_current_rjava_version()
 }
 \value{
-A character string representing the major Java version (e.g., "17", "21", "8"),
-or \code{NULL} if \code{rJava} is not loaded or the version/property could not be retrieved.
+Full Java version string, or NULL if not already running or unreadable.
 }
 \description{
-Safely queries the \code{rJava} package (if loaded) to determine which Java version
-it is actually using.
+Does not load rJava or initialize its JVM. Loading rJava and starting its JVM
+are distinct events; a loaded but uninitialized namespace returns NULL.
 }
 \keyword{internal}

@@ -205,7 +205,7 @@ urls_test_all <- function() {
 #'
 #' @keywords internal
 #'
-#' @param java_home
+#' @param java_home Path to Java home directory.
 #'
 #' @return A message with the Java version or an error message.
 #'
@@ -397,55 +397,43 @@ rje_readline <- function(prompt = "") {
 #' @return Logical. TRUE if rJava is loaded, FALSE otherwise.
 #' @keywords internal
 check_rjava_initialized <- function(quiet = FALSE) {
-  if (any(utils::installed.packages()[, 1] == "rJava")) {
-    if ("rJava" %in% loadedNamespaces()) {
-      if (!quiet) {
-        cli::cli_alert_info(c(
-          "!" = "You have {.pkg rJava} loaded in the current session. {.pkg rJava} gets locked to the Java version that was active when it was first initialized.",
-          "i" = "{.pkg rJava} is initialized when you: (1) call {.code library(rJava)}, (2) load a package that imports {.pkg rJava}, (3) use IDE autocomplete with {.code rJava::}, or (4) call any {.pkg rJava} function.",
-          "i" = "This path-locking is a limitation of {.pkg rJava} itself. See: https://github.com/s-u/rJava/issues/25, https://github.com/s-u/rJava/issues/249, and https://github.com/s-u/rJava/issues/334",
-          " " = "Unless you restart the R session or run your code in a new R subprocess (using {.pkg targets} or {.pkg callr}), the new {.var JAVA_HOME} and {.var PATH} will not take effect."
-        ))
-      }
-      return(TRUE)
-    }
+  # Never use requireNamespace() or rJava:: here: loading alone can lock paths.
+  loaded <- "rJava" %in% loadedNamespaces()
+  if (loaded && !quiet) {
+    cli::cli_alert_info(c(
+      "!" = "You have {.pkg rJava} loaded in the current session.",
+      "i" = "Loading rJava can lock the JVM library path even before .jinit() starts the JVM.",
+      "i" = "Set Java before loading rJava. To change its JVM, restart R or use {.fn with_rjava_env}.",
+      "i" = "See https://github.com/s-u/rJava/issues/334"
+    ))
   }
-  return(FALSE)
+  loaded
 }
 
-#' Check the Java version currently used by the loaded rJava package
+#' Read the version of an already running rJava JVM
 #'
-#' @description
-#' Safely queries the `rJava` package (if loaded) to determine which Java version
-#' it is actually using.
-#'
-#' @return A character string representing the major Java version (e.g., "17", "21", "8"),
-#'   or `NULL` if `rJava` is not loaded or the version/property could not be retrieved.
+#' Does not load rJava or initialize its JVM. Loading rJava and starting its JVM
+#' are distinct events; a loaded but uninitialized namespace returns NULL.
+#' @return Full Java version string, or NULL if not already running or unreadable.
 #' @keywords internal
 java_check_current_rjava_version <- function() {
   if (!"rJava" %in% loadedNamespaces()) {
     return(NULL)
   }
-
-  # Safely call rJava to get the java.version property
-  # We use tryCatch to avoid crashing if rJava is in a weird state
-  java_ver_str <- tryCatch(
-    {
-      # Ensure JVM is initialized before calling .jcall
-      # .jinit returns 0 if already initialized, or initializes if not
-      rJava::.jinit(silent = TRUE)
-      rJava::.jcall("java.lang.System", "S", "getProperty", "java.version")
-    },
-    error = function(e) {
-      NULL
-    }
-  )
-
-  if (is.null(java_ver_str) || !nzchar(java_ver_str)) {
+  ns <- getNamespace("rJava")
+  if (!isTRUE(get0(".jniInitialized", envir = ns, inherits = FALSE))) {
     return(NULL)
   }
-
-  parse_java_major_version(java_ver_str)
+  tryCatch(
+    {
+      # The namespace and JVM already exist. .jcall() cannot start a new JVM here.
+      version <- get(".jcall", envir = ns)(
+        "java.lang.System", "S", "getProperty", "java.version"
+      )
+      if (is.null(version) || !nzchar(version)) NULL else version
+    },
+    error = function(e) NULL
+  )
 }
 
 #' Find the actual extracted directory, ignoring hidden/metadata files
