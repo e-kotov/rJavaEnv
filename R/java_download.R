@@ -83,18 +83,39 @@ java_download <- function(
     ))
   }
 
-  # Resolve metadata
-  build <- resolve_java_metadata(version, distribution, platform, arch, backend)
-
   # Prepare destination directory
   dest_dir <- file.path(cache_path, "distrib")
   if (!dir.exists(dest_dir)) {
     dir.create(dest_dir, recursive = TRUE)
   }
-  dest <- file.path(dest_dir, build$filename)
 
-  # Download and verify
-  result_path <- download_java_with_checksum(build, dest, quiet, force)
+  # SDKMAN archive names do not depend on the resolved build, so reuse a
+  # cached archive without querying the SDKMAN API
+  sdkman_cached <- if (backend == "sdkman") {
+    file.path(
+      dest_dir,
+      sdkman_filename(version, distribution, platform, arch)
+    )
+  }
+  if (!is.null(sdkman_cached) && file.exists(sdkman_cached) && !force) {
+    if (!quiet) {
+      cli::cli_inform("File already cached: {basename(sdkman_cached)}")
+    }
+    result_path <- sdkman_cached
+  } else {
+    # Resolve metadata
+    build <- resolve_java_metadata(
+      version,
+      distribution,
+      platform,
+      arch,
+      backend
+    )
+    dest <- file.path(dest_dir, build$filename)
+
+    # Download and verify
+    result_path <- download_java_with_checksum(build, dest, quiet, force)
+  }
 
   # Attach metadata attributes for downstream functions
   attr(result_path, "distribution") <- distribution
