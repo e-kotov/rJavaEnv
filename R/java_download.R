@@ -13,9 +13,12 @@
 #'
 #' @return The path to the downloaded Java distribution file.
 #' @details SDKMAN catalogues can contain older releases or identifiers that its
-#'   download broker cannot serve. The resolved identifier is printed unless
-#'   `quiet = TRUE`. Use `backend = "native"` for the current release from a
-#'   supported vendor, or request a specific version or SDKMAN identifier.
+#'   download broker cannot serve. When resolving a new SDKMAN download, the
+#'   selected identifier is printed unless `quiet = TRUE`. Cached SDKMAN archives
+#'   are reused without querying the catalogue or broker; their resolved
+#'   identifier is not stored or reported. Use `backend = "native"` for the
+#'   current release from a supported vendor, or request a specific version or
+#'   SDKMAN identifier.
 #'
 #'   Cached archive names include the backend to prevent native and SDKMAN
 #'   downloads from sharing an archive. Archives cached by earlier versions are
