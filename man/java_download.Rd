@@ -50,6 +50,17 @@ The path to the downloaded Java distribution file.
 \description{
 Download a Java distribution
 }
+\details{
+SDKMAN catalogues can contain older releases or identifiers that its
+download broker cannot serve. The resolved identifier is printed unless
+\code{quiet = TRUE}. Use \code{backend = "native"} for the current release from a
+supported vendor, or request a specific version or SDKMAN identifier.
+
+Cached archive names include the backend to prevent native and SDKMAN
+downloads from sharing an archive. Archives cached by earlier versions are
+left in place and downloaded again under the new name when needed. Existing
+installed Java environments are unchanged.
+}
 \examples{
 \donttest{
 

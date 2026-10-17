@@ -12,6 +12,15 @@
 #' @inheritParams global_sdkman_references
 #'
 #' @return The path to the downloaded Java distribution file.
+#' @details SDKMAN catalogues can contain older releases or identifiers that its
+#'   download broker cannot serve. The resolved identifier is printed unless
+#'   `quiet = TRUE`. Use `backend = "native"` for the current release from a
+#'   supported vendor, or request a specific version or SDKMAN identifier.
+#'
+#'   Cached archive names include the backend to prevent native and SDKMAN
+#'   downloads from sharing an archive. Archives cached by earlier versions are
+#'   left in place and downloaded again under the new name when needed. Existing
+#'   installed Java environments are unchanged.
 #' @export
 #'
 #' @examples
@@ -109,9 +118,15 @@ java_download <- function(
       distribution,
       platform,
       arch,
-      backend
+      backend,
+      quiet = quiet
     )
-    dest <- file.path(dest_dir, build$filename)
+    filename <- if (backend == "native") {
+      paste0("native-", build$filename)
+    } else {
+      build$filename
+    }
+    dest <- file.path(dest_dir, filename)
 
     # Download and verify
     result_path <- download_java_with_checksum(build, dest, quiet, force)

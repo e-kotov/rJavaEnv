@@ -11,7 +11,8 @@ test_that("java_download handles successful download and checksum", {
       distribution,
       platform,
       arch,
-      backend
+      backend,
+      quiet = FALSE
     ) {
       java_build(
         vendor = "Corretto",
@@ -60,7 +61,8 @@ test_that("java_download aborts on SHA256 checksum mismatch", {
       distribution,
       platform,
       arch,
-      backend
+      backend,
+      quiet = FALSE
     ) {
       java_build(
         vendor = "Corretto",
@@ -103,12 +105,12 @@ test_that("java_download skips download if file exists and force is FALSE", {
   platform <- platform_detect()$os
   arch <- platform_detect()$arch
   expected_filename <- "corretto-21-test.tar.gz"
-  expected_file_path <- file.path(dest_dir, expected_filename)
+  expected_file_path <- file.path(dest_dir, paste0("native-", expected_filename))
   file.create(expected_file_path)
 
   # Mock resolve_java_metadata to return a known build
   local_mocked_bindings(
-    resolve_java_metadata = function(version, distribution, plat, ar, backend) {
+    resolve_java_metadata = function(version, distribution, plat, ar, backend, quiet = FALSE) {
       java_build(
         vendor = "Corretto",
         version = as.character(version),
@@ -154,12 +156,12 @@ test_that("java_download overwrites if file exists and force is TRUE", {
   platform <- platform_detect()$os
   arch <- platform_detect()$arch
   expected_filename <- "corretto-21-test.tar.gz"
-  expected_file_path <- file.path(dest_dir, expected_filename)
+  expected_file_path <- file.path(dest_dir, paste0("native-", expected_filename))
   writeLines("old content", expected_file_path)
 
   # Mock resolve_java_metadata to return a known build
   local_mocked_bindings(
-    resolve_java_metadata = function(version, distribution, plat, ar, backend) {
+    resolve_java_metadata = function(version, distribution, plat, ar, backend, quiet = FALSE) {
       java_build(
         vendor = "Corretto",
         version = as.character(version),

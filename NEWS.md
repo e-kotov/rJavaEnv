@@ -1,5 +1,18 @@
 # rJavaEnv (development version)
 
+- SDKMAN downloads now report the resolved identifier and respect `quiet = TRUE`.
+  SDKMAN catalogues can lag vendor releases; use `backend = "native"` for current
+  vendor releases when a catalogue entry is stale or unavailable.
+- Downloaded archive names now include their backend, preventing native and
+  SDKMAN downloads from reusing each other's files. Older archives are left in
+  place; downloads use the new names. Installed Java environments are unchanged.
+- Plain SDKMAN patch-version requests now exclude JavaFX, CRaC and early-access
+  builds unless explicitly requested. Live redirect tests select an available
+  build instead of depending on a fixed release.
+- SDKMAN broker resolution handles rejected catalogue identifiers, reads redirect
+  URLs without downloading the archive into memory, and retries transient API
+  failures before reporting an error (#105).
+
 ## New features
 
 - Linux support. On Linux, `libjvm.so` location is automatically detected and force-loaded via `dyn.load()`. Thanks to that, `rJava` and any depenent R packages can be installed and loaded, if repositories with pre-built packages, such as `Posit Package Manager`, is used or if you build `rJava` from source, see the `java_build_env_set()` function.

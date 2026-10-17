@@ -10,12 +10,16 @@ sdkman_legacy_identifier(identifier)
 \item{identifier}{SDKMAN identifier}
 }
 \value{
-The legacy identifier, or NULL if \code{identifier} has no "+build" part
+A legacy identifier to try, or NULL if \code{identifier} has no "+build" part
 or is an early-access build
 }
 \description{
 SDKMAN's listing uses identifiers like "21.0.4.0+7-amzn",
 "21.0.12+1.1-tem" or "21.0.12-fx+1.1-librca", while its broker still serves
 the legacy forms "21.0.4-amzn", "21.0.12-tem" and "21.0.12.fx-librca".
+}
+\details{
+The broker may reject this alias too. Nonzero version components
+are preserved because removing them could select a different Java build.
 }
 \keyword{internal}

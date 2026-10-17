@@ -10,7 +10,8 @@ test_that("java_download with temp_dir = TRUE uses temporary directory", {
       distribution,
       platform,
       arch,
-      backend
+      backend,
+      quiet = FALSE
     ) {
       java_build(
         vendor = "Corretto",
@@ -80,7 +81,8 @@ test_that("java_download outputs messages when quiet = FALSE", {
       distribution,
       platform,
       arch,
-      backend
+      backend,
+      quiet = FALSE
     ) {
       java_build(
         vendor = "Corretto",
