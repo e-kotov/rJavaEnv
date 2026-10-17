@@ -111,7 +111,14 @@ java_resolve <- function(
     version = version, distribution = distribution, backend = backend,
     cache_path = cache_path, platform = platform, arch = arch, quiet = quiet
   )
-  java_unpack(java_distrib_path = dist_path, quiet = quiet)
+  home <- java_unpack(java_distrib_path = dist_path, quiet = quiet)
+  # Vendor download APIs can return a nearby release for a patch request.
+  # Verify the installed runtime before claiming that exact/minimum setup worked.
+  if (specific && !identifier &&
+      !java_version_satisfies(java_version_at_home(home), version, type)) {
+    cli::cli_abort("The installed Java runtime does not satisfy version {version} (type = '{type}').")
+  }
+  home
 }
 
 # Normalize Java's legacy 1.8.0_452 spelling for numeric comparisons.

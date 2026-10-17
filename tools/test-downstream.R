@@ -95,6 +95,9 @@ main <- function() {
   run("Eager import probes do not initialize an unstarted JVM", function(homes) {
     a <- rJavaEnv::java_check_version_cmd(homes[1], quiet = TRUE)
     b <- rJavaEnv::java_check_version_cmd(homes[2], quiet = TRUE)
+    # Exercise documented setup before importing an eager dependency. In
+    # particular, Linux may need libjvm preloaded by java_env_set().
+    rJavaEnv::java_env_set(java_home = homes[1], quiet = TRUE)
     loadNamespace("rjeeager")
     ns <- getNamespace("rJava")
     stopifnot(!get(".jniInitialized", ns))
@@ -112,6 +115,7 @@ main <- function() {
   run("Running parent JVM stays fixed while isolated child uses another JDK", function(homes) {
     a <- rJavaEnv::java_check_version_cmd(homes[1], quiet = TRUE)
     b <- rJavaEnv::java_check_version_cmd(homes[2], quiet = TRUE)
+    rJavaEnv::java_env_set(java_home = homes[1], quiet = TRUE)
     actual <- rjeeager::rjava_version()
     stopifnot(rJavaEnv::java_check_compatibility(a, type = "exact", action = "stop"))
     before <- Sys.getenv(c("JAVA_HOME", "PATH"), unset = NA)

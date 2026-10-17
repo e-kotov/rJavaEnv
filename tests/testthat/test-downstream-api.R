@@ -56,3 +56,20 @@ test_that("command checks do not change the environment when the executable is m
   expect_false(java_check_version_cmd(java_home = tempfile(), quiet = TRUE))
   expect_identical(Sys.getenv(names(before), unset = NA), before)
 })
+
+
+test_that("a backend cannot satisfy a patch request with the wrong installed runtime", {
+  withr::local_envvar(c(JAVA_HOME = NA))
+  local_mocked_bindings(
+    java_list_installed = function(...) character(),
+    rje_consent_check = function() TRUE,
+    java_download = function(...) "/archive",
+    java_unpack = function(...) "/installed",
+    java_version_at_home = function(...) "21.0.9",
+    .package = "rJavaEnv"
+  )
+  expect_error(java_resolve("21.0.8", accept_system_java = FALSE),
+    "installed Java runtime does not satisfy")
+  expect_identical(java_resolve("21.0.8", type = "min", accept_system_java = FALSE),
+    "/installed")
+})
