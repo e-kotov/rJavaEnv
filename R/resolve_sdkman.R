@@ -61,11 +61,18 @@ sdkman_fetch_identifiers <- function(sdk_platform) {
 #' @param distribution Java distribution name
 #' @param platform Platform OS
 #' @param arch Architecture
+#' @inheritParams global_quiet_param
 #'
 #' @return A java_build object with checksum=NULL
 #' @inheritParams global_sdkman_references
 #' @keywords internal
-resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
+resolve_sdkman_metadata <- function(
+  version,
+  distribution,
+  platform,
+  arch,
+  quiet = FALSE
+) {
   cfg <- java_config("sdkman")
 
   if (is.null(cfg)) {
@@ -110,9 +117,10 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
     if (nrow(df) > 0) {
       if (is_specific) {
         # Exact match or prefix match for specific version
-        v_esc <- gsub("[.]", "[.]", version)
         matches <- df$version == version |
-          grepl(paste0("^", v_esc, "([+]|-|[.]|$)"), df$version)
+          startsWith(df$version, paste0(version, "+")) |
+          startsWith(df$version, paste0(version, "-")) |
+          startsWith(df$version, paste0(version, "."))
         df <- df[matches, , drop = FALSE]
       } else {
         # Match major version
@@ -121,15 +129,12 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
           ,
           drop = FALSE
         ]
+      }
 
-        # Exclude specialised builds unless explicitly requested
-        specialised <- "(\\.fx|-fx|\\.crac|-crac|-ea$|\\+ea|-snapshot)"
-        if (!grepl(specialised, version)) {
-          standard_df <- df[!grepl(specialised, df$identifier), , drop = FALSE]
-          if (nrow(standard_df) > 0) {
-            df <- standard_df
-          }
-        }
+      # Plain major and patch requests must not select CRaC, JavaFX or EA builds.
+      specialised <- "[.-](fx|crac|ea|snapshot)([.+-]|$)|[+]ea([.+-]|$)"
+      if (!grepl(specialised, version)) {
+        df <- df[!grepl(specialised, df$identifier), , drop = FALSE]
       }
     }
 
@@ -208,15 +213,18 @@ resolve_sdkman_metadata <- function(version, distribution, platform, arch) {
 
   # Only warn when falling back to a different version, not to a legacy alias
   if (
-    !identifier %in% c(candidates[1], sdkman_legacy_identifier(candidates[1]))
+    !quiet &&
+      !identifier %in% c(candidates[1], sdkman_legacy_identifier(candidates[1]))
   ) {
     cli::cli_alert_warning(
       "SDKMAN broker cannot serve {.val {candidates[1]}}; using {.val {identifier}} instead."
     )
   }
 
-  # Warn about missing checksum
-  cli::cli_alert_warning("SDKMAN backend: checksum verification unavailable")
+  if (!quiet) {
+    cli::cli_inform("Resolved SDKMAN identifier: {.val {identifier}}")
+    cli::cli_alert_warning("SDKMAN backend: checksum verification unavailable")
+  }
 
   java_build(
     vendor = distribution,
@@ -297,9 +305,6 @@ sdkman_broker_resolve <- function(identifier, sdk_platform) {
   if (status >= 300L && length(resp$headers) > 0) {
     final_url <- curl::parse_headers_list(resp$headers)[["location"]]
   }
-  if (is.null(final_url) && !is.null(resp$url) && resp$url != broker_url) {
-    final_url <- resp$url
-  }
   if (is.null(final_url) && length(resp$content) > 0) {
     final_url <- trimws(rawToChar(resp$content))
   }
@@ -317,8 +322,10 @@ sdkman_broker_resolve <- function(identifier, sdk_platform) {
 #' the legacy forms "21.0.4-amzn", "21.0.12-tem" and "21.0.12.fx-librca".
 #'
 #' @param identifier SDKMAN identifier
-#' @return The legacy identifier, or NULL if `identifier` has no "+build" part
+#' @return A legacy identifier to try, or NULL if `identifier` has no "+build" part
 #'   or is an early-access build
+#' @details The broker may reject this alias too. Nonzero version components
+#'   are preserved because removing them could select a different Java build.
 #' @keywords internal
 sdkman_legacy_identifier <- function(identifier) {
   # Early-access ids ("28.0.0.0+ea.18-open") have no known legacy mapping
@@ -364,7 +371,7 @@ rje_sleep <- function(seconds) {
 sdkman_filename <- function(version, distribution, platform, arch) {
   ext <- if (platform == "windows") "zip" else "tar.gz"
   sprintf(
-    "%s-%s-%s-%s.%s",
+    "sdkman-%s-%s-%s-%s.%s",
     tolower(distribution),
     version,
     platform,

@@ -72,6 +72,7 @@ java_build <- function(
 #' @param platform Platform OS (e.g., "linux", "macos", "windows")
 #' @param arch Architecture (e.g., "x64", "aarch64")
 #' @param backend Download backend to use: "native" (vendor APIs) or "sdkman"
+#' @inheritParams global_quiet_param
 #'
 #' @return A java_build object containing all download metadata
 #' @keywords internal
@@ -80,11 +81,12 @@ resolve_java_metadata <- function(
   distribution = "Corretto",
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  backend = getOption("rJavaEnv.backend", "native")
+  backend = getOption("rJavaEnv.backend", "native"),
+  quiet = FALSE
 ) {
   # SDKMAN backend
   if (backend == "sdkman") {
-    return(resolve_sdkman_metadata(version, distribution, platform, arch))
+    return(resolve_sdkman_metadata(version, distribution, platform, arch, quiet))
   }
 
   # Native vendor APIs

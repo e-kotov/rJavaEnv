@@ -9,7 +9,8 @@ resolve_java_metadata(
   distribution = "Corretto",
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  backend = getOption("rJavaEnv.backend", "native")
+  backend = getOption("rJavaEnv.backend", "native"),
+  quiet = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ resolve_java_metadata(
 \item{arch}{Architecture (e.g., "x64", "aarch64")}
 
 \item{backend}{Download backend to use: "native" (vendor APIs) or "sdkman"}
+
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 A java_build object containing all download metadata

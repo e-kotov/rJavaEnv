@@ -67,7 +67,7 @@ test_that("the broker redirect is read, not followed", {
     }
   )
 
-  url <- sdkman_broker_resolve("17.0.20-tem", "linuxx64")
-  expect_match(url, "^https://")
+  build <- resolve_sdkman_metadata("21", "Corretto", "linux", "x64", quiet = TRUE)
+  expect_match(build$download_url, "^https://")
   expect_equal(statuses[length(statuses)], 302L)
 })

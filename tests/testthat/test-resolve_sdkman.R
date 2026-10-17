@@ -13,9 +13,11 @@ test_that("resolve_sdkman_metadata uses identifier fast-path", {
     # Mock curl to return the final URL
     rje_curl_fetch_memory = function(url, ...) {
       list(
-        status_code = 200L,
-        url = "https://example.com/download.tar.gz",
-        content = charToRaw("") # Body ignored if url present
+        status_code = 302L,
+        headers = charToRaw(
+          "HTTP/1.1 302 Found\r\nLocation: https://example.com/download.tar.gz\r\n\r\n"
+        ),
+        content = raw(0)
       )
     },
     # Ensure regular lookup is NOT called by making it error if called
@@ -53,7 +55,13 @@ test_that("resolve_sdkman_metadata resolves version from CSV /versions/all endpo
       character(0)
     },
     rje_curl_fetch_memory = function(...) {
-      list(status_code = 200L, url = "https://d.com/file.tar.gz")
+      list(
+        status_code = 302L,
+        headers = charToRaw(
+          "HTTP/1.1 302 Found\r\nLocation: https://d.com/file.tar.gz\r\n\r\n"
+        ),
+        content = raw(0)
+      )
     }
   )
 
@@ -107,7 +115,13 @@ test_that("resolve_sdkman_metadata falls back to 4-column ASCII table when /vers
       character(0)
     },
     rje_curl_fetch_memory = function(...) {
-      list(status_code = 200L, url = "https://d.com/file.tar.gz")
+      list(
+        status_code = 302L,
+        headers = charToRaw(
+          "HTTP/1.1 302 Found\r\nLocation: https://d.com/file.tar.gz\r\n\r\n"
+        ),
+        content = raw(0)
+      )
     }
   )
 
@@ -180,7 +194,7 @@ test_that("resolve_sdkman_metadata errors when config is NULL", {
   )
 })
 
-test_that("sdkman_legacy_identifier maps '+build' ids to broker-servable ids", {
+test_that("sdkman_legacy_identifier preserves version components in candidate aliases", {
   expect_equal(sdkman_legacy_identifier("21.0.4.0+7-amzn"), "21.0.4-amzn")
   expect_equal(sdkman_legacy_identifier("21.0.12+1.1-tem"), "21.0.12-tem")
   expect_equal(
@@ -192,6 +206,7 @@ test_that("sdkman_legacy_identifier maps '+build' ids to broker-servable ids", {
     sdkman_legacy_identifier("25.4.4.1+1-graalce"),
     "25.4.4.1-graalce"
   )
+  expect_equal(sdkman_legacy_identifier("25.0.4.1+1-tem"), "25.0.4.1-tem")
   expect_null(sdkman_legacy_identifier("21.0.9-tem"))
   expect_null(sdkman_legacy_identifier("21.0.11.crac-zulu"))
   expect_null(sdkman_legacy_identifier("28.0.0.0+ea.18-open"))
@@ -433,4 +448,109 @@ test_that("java_download reuses a cached SDKMAN archive without the API", {
     quiet = TRUE
   )
   expect_equal(as.character(res), cached)
+})
+
+test_that("plain SDKMAN patch requests exclude specialised builds", {
+  requested <- character(0)
+  local_mocked_bindings(
+    rje_read_lines = function(...) {
+      paste(
+        "21.0.12-crac+1.2-librca", "21.0.12.fx+1.3-librca",
+        "21.0.12+ea.4-librca", "21.0.12+1.1-librca", sep = ","
+      )
+    },
+    sdkman_broker_resolve = function(identifier, sdk_platform) {
+      requested <<- c(requested, identifier)
+      "https://example.com/java.tar.gz"
+    }
+  )
+  build <- resolve_sdkman_metadata("21.0.12", "Liberica", "linux", "x64", quiet = TRUE)
+  expect_equal(build$semver, "21.0.12+1.1-librca")
+  expect_equal(requested, "21.0.12+1.1-librca")
+
+  build <- resolve_sdkman_metadata("21.0.12.fx", "Liberica", "linux", "x64", quiet = TRUE)
+  expect_equal(build$semver, "21.0.12.fx+1.3-librca")
+
+  # A build number is matched literally, including its plus sign.
+  build <- resolve_sdkman_metadata("21.0.12+1.1", "Liberica", "linux", "x64", quiet = TRUE)
+  expect_equal(build$semver, "21.0.12+1.1-librca")
+})
+
+test_that("plain SDKMAN major requests never select specialised-only listings", {
+  local_mocked_bindings(
+    rje_read_lines = function(...) "21.0.12-crac+1.2-librca",
+    sdkman_broker_resolve = function(...) stop("must not request a specialised build")
+  )
+  expect_error(
+    resolve_sdkman_metadata("21", "Liberica", "linux", "x64", quiet = TRUE),
+    class = "rJavaEnv_sdkman_unavailable"
+  )
+})
+
+test_that("SDKMAN downloads report their resolved identifier and respect quiet", {
+  cache <- withr::local_tempdir()
+  local_mocked_bindings(
+    rje_read_lines = function(...) "21.0.12-tem,21.0.11-tem",
+    sdkman_broker_resolve = function(identifier, sdk_platform) {
+      if (identifier == "21.0.11-tem") "https://example.com/java.tar.gz"
+    }
+  )
+  local_mocked_bindings(
+    curl_download = function(url, destfile, ...) writeLines("archive", destfile),
+    .package = "curl"
+  )
+  expect_message(
+    java_download(
+      "21", "Temurin", "sdkman", cache, "linux", "x64"
+    ),
+    "Resolved SDKMAN identifier:.*21.0.11-tem"
+  )
+  expect_silent(java_download(
+    "21", "Temurin", "sdkman", cache, "linux", "x64",
+    quiet = TRUE, force = TRUE
+  ))
+})
+
+test_that("native and SDKMAN archives never reuse each other's cache entries", {
+  cache <- withr::local_tempdir()
+  dir.create(file.path(cache, "distrib"))
+  urls <- character(0)
+  local_mocked_bindings(
+    rje_read_lines = function(...) "21.0.12-tem",
+    sdkman_broker_resolve = function(...) "https://example.com/sdkman.tar.gz",
+    resolve_temurin_metadata = function(version, platform, arch) {
+      java_build(
+        vendor = "Temurin", version = version, platform = platform, arch = arch,
+        download_url = "https://example.com/native.tar.gz",
+        filename = "temurin-21-linux-x64.tar.gz"
+      )
+    }
+  )
+  local_mocked_bindings(
+    curl_download = function(url, destfile, ...) {
+      urls <<- c(urls, url)
+      writeLines(url, destfile)
+    },
+    .package = "curl"
+  )
+  # An older archive has ambiguous provenance and must remain unused.
+  legacy <- file.path(cache, "distrib", "temurin-21-linux-x64.tar.gz")
+  writeLines("legacy archive", legacy)
+  sdkman <- java_download("21", "Temurin", "sdkman", cache, "linux", "x64", quiet = TRUE)
+  native <- java_download("21", "Temurin", "native", cache, "linux", "x64", quiet = TRUE)
+  expect_false(identical(as.character(sdkman), as.character(native)))
+  expect_equal(readLines(sdkman), "https://example.com/sdkman.tar.gz")
+  expect_equal(readLines(native), "https://example.com/native.tar.gz")
+  expect_equal(readLines(legacy), "legacy archive")
+  expect_length(urls, 2L)
+
+  # Both new archives are cached independently, and force refreshes SDKMAN only.
+  java_download("21", "Temurin", "sdkman", cache, "linux", "x64", quiet = TRUE)
+  java_download("21", "Temurin", "native", cache, "linux", "x64", quiet = TRUE)
+  expect_length(urls, 2L)
+  java_download("21", "Temurin", "sdkman", cache, "linux", "x64", quiet = TRUE, force = TRUE)
+  expect_equal(urls, c(
+    "https://example.com/sdkman.tar.gz", "https://example.com/native.tar.gz",
+    "https://example.com/sdkman.tar.gz"
+  ))
 })

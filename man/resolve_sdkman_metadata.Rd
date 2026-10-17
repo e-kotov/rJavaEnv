@@ -4,7 +4,7 @@
 \alias{resolve_sdkman_metadata}
 \title{Resolve metadata via SDKMAN broker (NO CHECKSUM)}
 \usage{
-resolve_sdkman_metadata(version, distribution, platform, arch)
+resolve_sdkman_metadata(version, distribution, platform, arch, quiet = FALSE)
 }
 \arguments{
 \item{version}{Java version specification. Accepts:
@@ -22,6 +22,8 @@ in the \code{identifier} column of \code{\link{java_list_available}(backend = "s
 \item{platform}{Platform OS}
 
 \item{arch}{Architecture}
+
+\item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 }
 \value{
 A java_build object with checksum=NULL
