@@ -78,8 +78,12 @@
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/rje_consent.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/rje_consent_check.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/rje_envvar_exists.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/reference/rje_sleep.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_broker_resolve.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_distribution_to_vendor.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_fetch_identifiers.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_filename.html</loc></url>
+<url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_legacy_identifier.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_parse_identifiers.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_vendor_code.html</loc></url>
 <url><loc>https://www.ekotov.pro/rJavaEnv/reference/sdkman_vendor_to_distribution.html</loc></url>
