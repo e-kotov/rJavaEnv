@@ -80,8 +80,13 @@ the legacy forms "21.0.4-amzn", "21.0.12-tem" and "21.0.12.fx-librca".</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>The legacy identifier, or NULL if <code>identifier</code> has no "+build" part
+    <p>A legacy identifier to try, or NULL if <code>identifier</code> has no "+build" part
 or is an early-access build</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The broker may reject this alias too. Nonzero version components
+are preserved because removing them could select a different Java build.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -19,5 +19,10 @@ sdkman_legacy_identifier(identifier)
 
 ## Value
 
-The legacy identifier, or NULL if `identifier` has no "+build" part or
-is an early-access build
+A legacy identifier to try, or NULL if `identifier` has no "+build" part
+or is an early-access build
+
+## Details
+
+The broker may reject this alias too. Nonzero version components are
+preserved because removing them could select a different Java build.

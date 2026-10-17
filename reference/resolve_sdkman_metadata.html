@@ -64,7 +64,7 @@ provide checksums, so verification will be skipped with a warning.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">resolve_sdkman_metadata</span><span class="op">(</span><span class="va">version</span>, <span class="va">distribution</span>, <span class="va">platform</span>, <span class="va">arch</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">resolve_sdkman_metadata</span><span class="op">(</span><span class="va">version</span>, <span class="va">distribution</span>, <span class="va">platform</span>, <span class="va">arch</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -91,6 +91,10 @@ in the <code>identifier</code> column of <code><a href="java_list_available.html
 
 <dt id="arg-arch">arch<a class="anchor" aria-label="anchor" href="#arg-arch"></a></dt>
 <dd><p>Architecture</p></dd>
+
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p>A <code>logical</code> value indicating whether to suppress messages. Can be <code>TRUE</code> or <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

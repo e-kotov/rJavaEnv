@@ -2,6 +2,28 @@
 
 ## rJavaEnv (development version)
 
+- Fresh SDKMAN downloads now report the resolved identifier and respect
+  `quiet = TRUE`. Cached archives are reused without resolving or
+  reporting an identifier
+  ([\#107](https://github.com/e-kotov/rJavaEnv/issues/107)). SDKMAN
+  catalogues can lag vendor releases; use `backend = "native"` for
+  current vendor releases when a catalogue entry is stale or unavailable
+  ([\#106](https://github.com/e-kotov/rJavaEnv/issues/106)).
+- Downloaded archive names now include their backend, preventing native
+  and SDKMAN downloads from reusing each other’s files. Older archives
+  are left in place; downloads use the new names. Installed Java
+  environments are unchanged
+  ([\#107](https://github.com/e-kotov/rJavaEnv/issues/107)).
+- Plain SDKMAN major- and patch-version requests now exclude JavaFX,
+  CRaC, early-access and snapshot builds unless explicitly requested.
+  Live redirect tests select an available build instead of depending on
+  a fixed release
+  ([\#107](https://github.com/e-kotov/rJavaEnv/issues/107)).
+- SDKMAN broker resolution handles rejected catalogue identifiers, reads
+  redirect URLs without downloading the archive into memory, and retries
+  transient API failures before reporting an error
+  ([\#105](https://github.com/e-kotov/rJavaEnv/issues/105)).
+
 ### New features
 
 - Linux support. On Linux, `libjvm.so` location is automatically

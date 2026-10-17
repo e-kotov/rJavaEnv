@@ -11,7 +11,8 @@ resolve_java_metadata(
   distribution = "Corretto",
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
-  backend = getOption("rJavaEnv.backend", "native")
+  backend = getOption("rJavaEnv.backend", "native"),
+  quiet = FALSE
 )
 ```
 
@@ -36,6 +37,11 @@ resolve_java_metadata(
 - backend:
 
   Download backend to use: "native" (vendor APIs) or "sdkman"
+
+- quiet:
+
+  A `logical` value indicating whether to suppress messages. Can be
+  `TRUE` or `FALSE`.
 
 ## Value
 

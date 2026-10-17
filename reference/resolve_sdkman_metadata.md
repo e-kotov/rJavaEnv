@@ -6,7 +6,7 @@ not provide checksums, so verification will be skipped with a warning.
 ## Usage
 
 ``` r
-resolve_sdkman_metadata(version, distribution, platform, arch)
+resolve_sdkman_metadata(version, distribution, platform, arch, quiet = FALSE)
 ```
 
 ## Arguments
@@ -39,6 +39,11 @@ resolve_sdkman_metadata(version, distribution, platform, arch)
 - arch:
 
   Architecture
+
+- quiet:
+
+  A `logical` value indicating whether to suppress messages. Can be
+  `TRUE` or `FALSE`.
 
 ## Value
 
