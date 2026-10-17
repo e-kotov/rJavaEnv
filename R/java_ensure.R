@@ -18,6 +18,8 @@
 #' With `check_against = "rJava"`, an already running compatible JVM is accepted.
 #' A loaded but uninitialized rJava namespace causes an error without starting its
 #' JVM or changing environment variables. Restart R before setup in that case.
+#' Experimental rJava builds with deferred loading permit selection while their
+#' state API confirms that no JVM library has been loaded.
 #' `check_against = "cmd"` configures command-line use only.
 #'
 #' @inheritParams global_version_param
@@ -94,7 +96,7 @@ java_ensure <- function(
     # This will show the informative message if rJava is loaded and quiet = FALSE
     rjava_is_loaded <- .check_rjava_fun(quiet = quiet)
 
-    if (rjava_is_loaded) {
+    if (rjava_is_loaded && !java_rjava_can_select()) {
       curr_rjava_ver <- .rjava_ver_fun()
 
       if (!is.null(curr_rjava_ver)) {

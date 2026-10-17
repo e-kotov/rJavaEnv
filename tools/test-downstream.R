@@ -107,9 +107,14 @@ main <- function() {
     stopifnot(!rJavaEnv::java_check_compatibility(a, action = "none"))
     before <- Sys.getenv(c("JAVA_HOME", "PATH"), unset = NA)
     error <- tryCatch(rJavaEnv::java_ensure(b, install = FALSE, quiet = TRUE), error = identity)
-    stopifnot(inherits(error, "error"), grepl("Restart R", conditionMessage(error)))
+    deferred <- get("java_rjava_can_select", asNamespace("rJavaEnv"))()
+    if (deferred) {
+      stopifnot(isTRUE(error), get(".jvmState", ns)()$state == "not-loaded")
+    } else {
+      stopifnot(inherits(error, "error"), grepl("Restart R", conditionMessage(error)))
+      stopifnot(identical(before, Sys.getenv(names(before), unset = NA)))
+    }
     stopifnot(!get(".jniInitialized", ns))
-    stopifnot(identical(before, Sys.getenv(names(before), unset = NA)))
     # Command-only setup can still change the executable, without starting rJava.
     stopifnot(rJavaEnv::java_ensure(b, check_against = "cmd", install = FALSE, quiet = TRUE))
     stopifnot(!get(".jniInitialized", ns))
@@ -129,6 +134,25 @@ main <- function() {
     stopifnot(sub("[.].*", "", child) == b)
     stopifnot(identical(actual, rjeeager::rjava_version()))
     stopifnot(identical(before, Sys.getenv(names(before), unset = NA)))
+  })
+  run("Deferred rJava permits setup after eager downstream import", function(homes) {
+    b <- rJavaEnv::java_check_version_cmd(homes[2], quiet = TRUE)
+    loadNamespace("rjeeager")
+    can_select <- get("java_rjava_can_select", asNamespace("rJavaEnv"))
+    if (!can_select()) {
+      # Released rJava must continue to reject selection after namespace load.
+      error <- tryCatch(rJavaEnv::java_ensure(b, install = FALSE, quiet = TRUE), error = identity)
+      stopifnot(inherits(error, "error"))
+      return(invisible(NULL))
+    }
+    ns <- getNamespace("rJava")
+    state <- get(".jvmState", ns)
+    stopifnot(state()$state == "not-loaded", !state()$initialized)
+    stopifnot(rJavaEnv::java_ensure(b, install = FALSE, quiet = TRUE))
+    stopifnot(state()$state == "not-loaded", !state()$initialized)
+    actual <- rjeeager::rjava_version()
+    stopifnot(sub("[.].*", "", actual) == b, state()$initialized)
+    stopifnot(!can_select())
   })
   run("Managed-only resolution never accepts active system Java", function(homes) {
     a <- rJavaEnv::java_check_version_cmd(homes[1], quiet = TRUE)

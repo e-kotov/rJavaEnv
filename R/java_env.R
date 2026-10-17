@@ -147,7 +147,7 @@ java_env_set_session <- function(
   Sys.setenv(PATH = paste(new_path, old_path, sep = .Platform$path.sep))
 
   # On Linux, find and dynamically load libjvm.so
-  if (._load_jvm && Sys.info()["sysname"] == "Linux") {
+  if (._load_jvm && Sys.info()["sysname"] == "Linux" && !java_rjava_can_select()) {
     libjvm_path <- get_libjvm_path(java_home)
 
     if (!is.null(libjvm_path) && file.exists(libjvm_path)) {

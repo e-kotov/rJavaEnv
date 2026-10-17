@@ -399,7 +399,7 @@ rje_readline <- function(prompt = "") {
 check_rjava_initialized <- function(quiet = FALSE) {
   # Never use requireNamespace() or rJava:: here: loading alone can lock paths.
   loaded <- "rJava" %in% loadedNamespaces()
-  if (loaded && !quiet) {
+  if (loaded && !quiet && !java_rjava_can_select()) {
     cli::cli_alert_info(c(
       "!" = "You have {.pkg rJava} loaded in the current session.",
       "i" = "Loading rJava can lock the JVM library path even before .jinit() starts the JVM.",
@@ -466,4 +466,20 @@ java_check_current_rjava_version <- function() {
 #' @noRd
 rje_curl_fetch_memory <- function(url, handle = curl::new_handle()) {
   curl::curl_fetch_memory(url, handle = handle)
+}
+
+# Inspect only an existing namespace. Released rJava has no deferred-loader state
+# API, so missing/unknown/failed states retain the conservative lock behavior.
+java_rjava_can_select <- function() {
+  if (!"rJava" %in% loadedNamespaces()) return(FALSE)
+  # A caller may have explicitly preloaded libjvm through R before rJava.
+  paths <- vapply(getLoadedDLLs(), function(dll) dll[["path"]], character(1))
+  if (any(grepl("(^|[/\\\\])(libjvm[.](so|dylib)|jvm[.]dll)$", paths,
+                ignore.case = TRUE))) return(FALSE)
+  ns <- getNamespace("rJava")
+  state_fun <- get0(".jvmState", envir = ns, inherits = FALSE)
+  if (!is.function(state_fun)) return(FALSE)
+  state <- tryCatch(state_fun(), error = function(e) NULL)
+  is.list(state) && identical(state$state, "not-loaded") &&
+    identical(state$initialized, FALSE)
 }

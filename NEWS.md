@@ -1,5 +1,7 @@
 # rJavaEnv (development version)
 
+* Experimental deferred-loader rJava builds can be configured after namespace loading when their state confirms that no JVM library has loaded. Released rJava retains the conservative restart requirement.
+
 - Compatibility probes no longer load rJava or start its JVM. A loaded but
   uninitialized rJava namespace is treated as unverified; strict setup errors
   before changing its environment because its library paths may already be locked.

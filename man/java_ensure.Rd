@@ -116,6 +116,8 @@ Java; call it explicitly before loading rJava, rather than in \code{.onLoad}.
 With \code{check_against = "rJava"}, an already running compatible JVM is accepted.
 A loaded but uninitialized rJava namespace causes an error without starting its
 JVM or changing environment variables. Restart R before setup in that case.
+Experimental rJava builds with deferred loading permit selection while their
+state API confirms that no JVM library has been loaded.
 \code{check_against = "cmd"} configures command-line use only.
 }
 
