@@ -110,6 +110,15 @@ be inferred from `JAVA_HOME`. If its JVM is already running, a matching version
 is accepted and an incompatible version causes an error without changing the
 environment. Restart R before setup in either incompatible or unverified cases.
 
+Experimental rJava builds with deferred JVM loading are an exception:
+`java_ensure()` permits setup after namespace loading when their state API
+explicitly reports that no JVM library has loaded and no JVM is initialized.
+It also avoids preloading a JVM on Linux in that state. This supports a package
+that imports rJava and defers Java operations until after setup. The exception
+does not apply if a JVM library was already loaded, if another package has
+started Java, or if the state cannot be verified. These experimental builds
+are not required for the released-rJava patterns shown here.
+
 `check_against = "cmd"` configures command-line Java even when rJava is loaded.
 It does not establish compatibility for rJava or preload a JVM library.
 
