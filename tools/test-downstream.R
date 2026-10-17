@@ -164,6 +164,41 @@ main <- function() {
     stopifnot(inherits(error, "error"), grepl("not found", conditionMessage(error)))
     stopifnot(!"rJava" %in% loadedNamespaces())
   })
+  # The dynamic-rJava workflow supplies a native helper to reproduce a host
+  # embedding both R and Java. Released rJava has no deferred-loader query.
+  if (nzchar(Sys.getenv("RJE_JVMHOST"))) {
+    run("Externally started JVM prevents a misleading Java selection", function(homes) {
+      helper <- Sys.getenv("RJE_JVMHOST")
+      stopifnot(file.exists(helper))
+      loadNamespace("rjeeager")
+      ns <- getNamespace("rJava")
+      can_select <- get("java_rjava_can_select", asNamespace("rJavaEnv"))
+      stopifnot(can_select())
+      find_jvm <- get(".find.jvm.library", ns)
+      jvm <- normalizePath(find_jvm(homes[1])[1], winslash = "/", mustWork = TRUE)
+      boot <- file.path(system.file("java", package = "rJava"), "boot")
+      dyn.load(helper)
+      before_host <- Sys.getenv("PATH")
+      if (.Platform$OS.type == "windows") {
+        Sys.setenv(PATH = paste(dirname(dirname(jvm)), before_host, sep = ";"))
+      }
+      created <- .C("rjava_test_create_jvm", jvm,
+        paste0("-Djava.class.path=", boot), result = 0L)$result
+      Sys.setenv(PATH = before_host)
+      stopifnot(created == 0L, !get(".jniInitialized", ns))
+      stopifnot(get(".jvmState", ns)()$state == "not-loaded", !can_select())
+      before <- Sys.getenv(c("JAVA_HOME", "PATH"), unset = NA)
+      b <- rJavaEnv::java_check_version_cmd(homes[2], quiet = TRUE)
+      error <- tryCatch(rJavaEnv::java_ensure(b, install = FALSE, quiet = TRUE), error = identity)
+      stopifnot(inherits(error, "error"), !get(".jniInitialized", ns))
+      stopifnot(identical(before, Sys.getenv(names(before), unset = NA)))
+      a <- rJavaEnv::java_check_version_cmd(homes[1], quiet = TRUE)
+      actual <- rjeeager::rjava_version()
+      stopifnot(sub("[.].*", "", actual) == a)
+      stopifnot(get(".jvmState", ns)()$state == "attached")
+      stopifnot(rJavaEnv::java_ensure(a, install = FALSE, quiet = TRUE))
+    })
+  }
   cat("All downstream integration cases passed.\n")
 }
 main()

@@ -480,6 +480,12 @@ java_rjava_can_select <- function() {
   state_fun <- get0(".jvmState", envir = ns, inherits = FALSE)
   if (!is.function(state_fun)) return(FALSE)
   state <- tryCatch(state_fun(), error = function(e) NULL)
-  is.list(state) && identical(state$state, "not-loaded") &&
-    identical(state$initialized, FALSE)
+  if (!is.list(state) || !identical(state$state, "not-loaded") ||
+      !identical(state$initialized, FALSE)) return(FALSE)
+  # A native host can map/start Java outside R's DLL registry, before rJava
+  # attaches to it. Its loader state alone cannot establish freedom to select.
+  # This native query only inspects mapped libraries and existing VMs.
+  mapped_symbol <- get0("RgetMappedJVM", envir = ns, inherits = FALSE)
+  if (is.null(mapped_symbol)) return(FALSE)
+  tryCatch(is.null(.Call(mapped_symbol)), error = function(e) FALSE)
 }
