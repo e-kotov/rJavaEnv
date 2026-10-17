@@ -88,8 +88,11 @@ main <- function() {
     rjedownstream::command_version(b)
     stopifnot(is.na(Sys.getenv("JAVA_HOME", unset = NA)))
     Sys.setenv(JAVA_HOME = "")
+    # R on Windows treats setting an empty value as unsetting the variable.
+    # Preserve the observable starting state on each platform.
+    empty_home <- Sys.getenv("JAVA_HOME", unset = NA)
     rjedownstream::command_version(b)
-    stopifnot(identical(Sys.getenv("JAVA_HOME", unset = NA), ""))
+    stopifnot(identical(Sys.getenv("JAVA_HOME", unset = NA), empty_home))
     stopifnot(!"rJava" %in% loadedNamespaces())
   })
   run("Eager import probes do not initialize an unstarted JVM", function(homes) {
