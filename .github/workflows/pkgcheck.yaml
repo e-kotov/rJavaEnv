@@ -67,6 +67,8 @@ jobs:
         with:
           name: pkgcheck-reports
           if-no-files-found: ignore
+          # .pkgcheck is a hidden directory, which upload-artifact skips by default.
+          include-hidden-files: true
           path: |
             .pkgcheck/summary.md
             .pkgcheck/full.md

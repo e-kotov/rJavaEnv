@@ -1,16 +1,34 @@
-# rJavaEnv 0.3.0 (2025-04-04)
+# rJavaEnv 0.4.0
 
+This is a feature release. It adds `java_ensure()`, `java_resolve()`, scoped
+helpers for command-line and rJava use, the Temurin and Zulu distributions, a
+choice between vendor APIs and SDKMAN as download backends, and support for
+specific (patch-level) Java versions. See NEWS.md for details.
 
-## New features
+## R CMD check results
 
-- `Java` version (currently still only for `Amazon Corretto`) is now determined dynamically using the official GitHub `json` with releases, so when new `Java` version becomes available, you will not be depenent on `rJavaEnv` to be updated. As a fallback, versions up to 24 are hardcoded.
+0 errors | 0 warnings | 0 notes
 
-- Added `force` argument to `java_download()`. When set to `TRUE`, allows to overwrite the distribution file if it already exist in the cache. This save the trouble of deleting the cached file with `java_clear()` before re-downloading.
+## Test environments
 
-- Added a new function `java_valid_versions()` allows to retrieve a list of all available `Java` versions for the current automatically detected OS and CPU architecture, or user-specified platform and architecture.
+GitHub Actions:
 
-## Improvements
+* macOS (latest, aarch64), R 4.6.1
+* Windows (latest), R 4.6.1 and R 4.2.3
+* Ubuntu (latest), R-devel, R 4.6.1 and R 4.5.3
+* Ubuntu (latest), R-devel with `--as-cran` and HTML5 validation of Rd files,
+  treating NOTEs as failures
 
-- Better command line `Java` detection (thanks to Jonas Lieth)
+## Network and downloads
 
-- Test coverage is now 7.2%
+Examples that download Java are wrapped in `\donttest{}` or `\dontrun{}`.
+Tests that download Java are skipped on CRAN and run only when enabled through
+the `RUN_JAVA_DOWNLOAD_TESTS` environment variable; other download and API
+tests use mocked responses or are skipped when offline or on CRAN. Functions
+that write to the user's cache, project files or `.Rprofile` ask for consent
+first.
+
+## Reverse dependencies
+
+There is one reverse dependency on CRAN, r5r (Suggests). Its checks were not
+run for this submission.
