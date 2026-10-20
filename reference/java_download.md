@@ -112,7 +112,7 @@ java_download(version = "17", temp_dir = TRUE)
 #> You can change the platform and architecture by specifying the `platform` and
 #> `arch` arguments.
 #> File already cached: native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz
-#> [1] "/tmp/RtmplslJt6/rJavaEnv_cache/distrib/native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz"
+#> [1] "/tmp/RtmpkQQVee/rJavaEnv_cache/distrib/native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz"
 #> attr(,"distribution")
 #> [1] "Corretto"
 #> attr(,"backend")
@@ -133,7 +133,7 @@ java_download(temp_dir = TRUE)
 #> Downloading Corretto Java 21...
 #> Verifying sha256 checksum...
 #> Checksum verified.
-#> [1] "/tmp/RtmplslJt6/rJavaEnv_cache/distrib/native-amazon-corretto-21.0.12.12.1-linux-x64.tar.gz"
+#> [1] "/tmp/RtmpkQQVee/rJavaEnv_cache/distrib/native-amazon-corretto-21.0.12.12.1-linux-x64.tar.gz"
 #> attr(,"distribution")
 #> [1] "Corretto"
 #> attr(,"backend")
@@ -155,7 +155,7 @@ try(java_download(version = "21", backend = "sdkman", temp_dir = TRUE))
 #> ! SDKMAN backend: checksum verification unavailable
 #> Downloading Corretto Java 21...
 #> ! Skipping checksum (unavailable for SDKMAN)
-#> [1] "/tmp/RtmplslJt6/rJavaEnv_cache/distrib/sdkman-corretto-21-linux-x64.tar.gz"
+#> [1] "/tmp/RtmpkQQVee/rJavaEnv_cache/distrib/sdkman-corretto-21-linux-x64.tar.gz"
 #> attr(,"distribution")
 #> [1] "Corretto"
 #> attr(,"backend")
