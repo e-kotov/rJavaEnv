@@ -1,40 +1,73 @@
 name: pkgcheck
 
-# This will cancel running jobs once a new run is triggered
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref }}
-  cancel-in-progress: true
-
 on:
-  # Manually trigger the Action under Actions/pkgcheck
+  # Manually trigger the Action under Actions/pkgcheck. A dispatch uses the
+  # workflow file and commit of the selected ref.
   workflow_dispatch:
-  # Run after other checks
+  # Run after the workflows that pkgcheck's CI check reads. workflow_run always
+  # uses the default branch's workflow file, so the checkout below selects the
+  # commit that the triggering run tested.
   workflow_run:
-    workflows: ["R-CMD-check", "test-coverage.yaml", "check-html5", "render-readme"]
+    workflows: ["R-CMD-check", "test-coverage.yaml"]
     types:
       - completed
 
+# One run per tested commit; a later trigger for the same commit replaces it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_sha || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   pkgcheck:
+    # Do not run fork code from workflow_run, which executes in this
+    # repository's context.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RUN_JAVA_DOWNLOAD_TESTS: "TRUE"
       RUN_JAVA_DOWNLOAD_TESTS_QUIET: "FALSE"
       RUN_JAVA_DOWNLOAD_TESTS_QUIET_DOWNLOAD: "TRUE"
-    permissions:
-      contents: read
-      issues: write
-      pull-requests: write
-      actions: read
+      CANDIDATE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+      CANDIDATE_BRANCH: ${{ github.event.workflow_run.head_branch || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CANDIDATE_SHA }}
+          fetch-depth: 0
+      - name: Name the checked-out commit after its branch
+        run: |
+          git checkout -B "$CANDIDATE_BRANCH" "$CANDIDATE_SHA"
+          git log -1 --format='Checking %H on %D'
       - name: Grant safe directory permissions for pkgcheck container
         run: |
           sudo chown -R root:root .
           git config --global --add safe.directory '*'
           mkdir -p /home/runner/work/_temp/_github_home
           printf "[safe]\n\tdirectory = *\n" > /home/runner/work/_temp/_github_home/.gitconfig
-      - uses: ropensci-review-tools/pkgcheck-action@main
+      # The image of ropensci-review-tools/pkgcheck-action, with a local copy
+      # of its entrypoint that works around ropensci-review-tools/pkgcheck#444.
+      - name: Run pkgcheck
+        id: pkgcheck
+        uses: docker://ghcr.io/ropensci-review-tools/pkgcheck-action:latest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          ref: ''
+          entrypoint: Rscript
+          args: .github/pkgcheck/check.R
+      - name: Upload pkgcheck reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pkgcheck-reports
+          if-no-files-found: ignore
+          path: |
+            .pkgcheck/summary.md
+            .pkgcheck/full.md
+            .pkgcheck/*.html
