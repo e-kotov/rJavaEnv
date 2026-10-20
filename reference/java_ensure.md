@@ -13,8 +13,10 @@ Checks for a specific Java version in the following order:
     `install = TRUE`).
 
 This function is designed to be "lazy": it will do nothing if a valid
-Java version is already detected, making it safe to use in scripts or
-package startup code (provided `install = FALSE`).
+Java version is already detected. It changes session environment
+variables when selecting Java; call it explicitly before loading rJava,
+rather than in `.onLoad`. `install = FALSE` prevents downloads but does
+not make setup read-only.
 
 ## Usage
 
@@ -46,8 +48,10 @@ java_ensure(
   - **Major version** (e.g., `21`, `17`): Downloads the latest release
     for that major version.
 
-  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
-    exact version.
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Requests that
+    exact release. Only
+    [`java_resolve()`](https://www.ekotov.pro/rJavaEnv/reference/java_resolve.md)
+    and functions built on it check the installed runtime version.
 
   - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
     the SDKMAN backend automatically. When an identifier is detected,
@@ -176,41 +180,36 @@ Logical. `TRUE` if the requirement is met (active or set successfully),
 
 ## Additional Notes
 
-If rJava is already loaded, this function will warn you but will not
-prevent the environment variable change (which won't help rJava at that
-point).
+With `check_against = "rJava"`, an already running compatible JVM is
+accepted. A loaded but uninitialized rJava namespace causes an error
+without starting its JVM or changing environment variables. Restart R
+before setup in that case. Experimental rJava builds with deferred
+loading permit selection while their state API confirms that no JVM
+library has been loaded. `check_against = "cmd"` configures command-line
+use only.
 
 ## rJava Path-Locking
 
 **Important for *rJava* Users**: This function sets environment
 variables (JAVA_HOME, PATH) that affect both command-line Java tools and
-*rJava* initialization. However, due to *rJava*'s path-locking behavior
-when [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is called (see
-<https://github.com/s-u/rJava/issues/25>,
-<https://github.com/s-u/rJava/issues/249>, and
-<https://github.com/s-u/rJava/issues/334>), this function must be called
-**BEFORE** [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is
-invoked. Once [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html)
-initializes, the Java version is locked for that R session and cannot be
-changed without restarting R.
+*rJava* initialization. Configure Java **before loading rJava**,
+including before
+[`requireNamespace("rJava")`](https://www.rforge.net/rJava/) or loading
+packages that import it. Loading the namespace can resolve and lock the
+JVM library path even before `.jinit()` starts the JVM. See
+<https://github.com/s-u/rJava/issues/334> and
+<https://github.com/s-u/rJava/issues/25>.
 
-[`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is invoked (and
-Java locked) when you:
+Once rJava has loaded, restart R before selecting another JVM, or use
+[`with_rjava_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_rjava_env.md)
+to run with a different JVM in a fresh R process.
+[`java_check_compatibility()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_compatibility.md)
+does not load rJava or initialize a JVM.
+[`java_check_version_rjava()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_version_rjava.md)
+performs its probe in a separate R process.
 
-- Explicitly call [`library(rJava)`](https://www.rforge.net/rJava/)
-
-- Load any package that imports *rJava* (which auto-loads it as a
-  dependency)
-
-- Even just use IDE autocomplete with `rJava::` (this triggers
-  initialization!)
-
-- Call any *rJava*-dependent function
-
-Once any of these happen, the Java version used by *rJava* for that
-session is locked in. For command-line Java tools that don't use
-*rJava*, this function can be called at any time to switch Java versions
-for subsequent system calls.
+For command-line Java tools that don't use *rJava*, this function can be
+called at any time to switch Java versions for subsequent system calls.
 
 ## See also
 
@@ -226,19 +225,12 @@ use cases with `type` and `accept_system_java` parameters.
 # For end users: Ensure Java 21 is ready BEFORE loading rJava packages
 library(rJavaEnv)
 java_ensure(version = 21, type = "min")
-#> ℹ Checking system for existing Java installations...
-#> ✔ Found valid system Java 25 at /usr/lib/jvm/temurin-25-jdk-amd64
-#> ✔ Current R Session: JAVA_HOME and PATH set to /usr/lib/jvm/temurin-25-jdk-amd64
-#> ℹ On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in
-#>   the current session.
-#>   To make this change permanent for installing rJava-dependent packages from
-#>   source, you may need to reconfigure Java.
-#>   See <https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r> for
-#>   details.
-#>   If you have admin rights, run the following in your terminal:
-#>   `R CMD javareconf JAVA_HOME=/usr/lib/jvm/temurin-25-jdk-amd64`
-#>   If you do not have admin rights, run:
-#>   `R CMD javareconf JAVA_HOME=/usr/lib/jvm/temurin-25-jdk-amd64 -e`
+#> ℹ You have rJava loaded in the current session.Loading rJava can lock the JVM library path even before .jinit() starts the JVM.Set Java before loading rJava. To change its JVM, restart R or use `with_rjava_env()`.See https://github.com/s-u/rJava/issues/334
+#> Error in java_ensure(version = 21, type = "min"): rJava is loaded but its JVM version cannot be verified without
+#> initialization.
+#> ℹ Loading rJava can already lock the JVM library path, before .jinit().
+#> ℹ Restart R, then run java_ensure() BEFORE loading rJava, or use
+#>   with_rjava_env().
 # Now safe to load packages that depend on rJava
 # library(myRJavaPackage)
 

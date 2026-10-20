@@ -58,33 +58,24 @@ To use a different Java version with rJava-dependent packages, you must:
 
 **Important for *rJava* Users**: This function sets environment
 variables (JAVA_HOME, PATH) that affect both command-line Java tools and
-*rJava* initialization. However, due to *rJava*'s path-locking behavior
-when [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is called (see
-<https://github.com/s-u/rJava/issues/25>,
-<https://github.com/s-u/rJava/issues/249>, and
-<https://github.com/s-u/rJava/issues/334>), this function must be called
-**BEFORE** [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is
-invoked. Once [`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html)
-initializes, the Java version is locked for that R session and cannot be
-changed without restarting R.
+*rJava* initialization. Configure Java **before loading rJava**,
+including before
+[`requireNamespace("rJava")`](https://www.rforge.net/rJava/) or loading
+packages that import it. Loading the namespace can resolve and lock the
+JVM library path even before `.jinit()` starts the JVM. See
+<https://github.com/s-u/rJava/issues/334> and
+<https://github.com/s-u/rJava/issues/25>.
 
-[`.jinit`](https://rdrr.io/pkg/rJava/man/jinit.html) is invoked (and
-Java locked) when you:
+Once rJava has loaded, restart R before selecting another JVM, or use
+[`with_rjava_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_rjava_env.md)
+to run with a different JVM in a fresh R process.
+[`java_check_compatibility()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_compatibility.md)
+does not load rJava or initialize a JVM.
+[`java_check_version_rjava()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_version_rjava.md)
+performs its probe in a separate R process.
 
-- Explicitly call [`library(rJava)`](https://www.rforge.net/rJava/)
-
-- Load any package that imports *rJava* (which auto-loads it as a
-  dependency)
-
-- Even just use IDE autocomplete with `rJava::` (this triggers
-  initialization!)
-
-- Call any *rJava*-dependent function
-
-Once any of these happen, the Java version used by *rJava* for that
-session is locked in. For command-line Java tools that don't use
-*rJava*, this function can be called at any time to switch Java versions
-for subsequent system calls.
+For command-line Java tools that don't use *rJava*, this function can be
+called at any time to switch Java versions for subsequent system calls.
 
 ## Examples
 
@@ -108,14 +99,14 @@ java_home <- java_install(
 #> Java 17 (native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz) for linux x64
 #> installed at
 #> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17 and
-#> symlinked to /tmp/RtmpSC8mBV/rjavaenv/linux/x64/Corretto/native/17
+#> symlinked to /tmp/RtmplslJt6/rjavaenv/linux/x64/Corretto/native/17
 
 # now manually set the JAVA_HOME and PATH environment variables in current session
 java_env_set(
   where = "session",
   java_home = java_home
 )
-#> ℹ You have rJava loaded in the current session. rJava gets locked to the Java version that was active when it was first initialized.rJava is initialized when you: (1) call `library(rJava)`, (2) load a package that imports rJava, (3) use IDE autocomplete with `rJava::`, or (4) call any rJava function.This path-locking is a limitation of rJava itself. See: https://github.com/s-u/rJava/issues/25, https://github.com/s-u/rJava/issues/249, and https://github.com/s-u/rJava/issues/334Unless you restart the R session or run your code in a new R subprocess (using targets or callr), the new `JAVA_HOME` and `PATH` will not take effect.
+#> ℹ You have rJava loaded in the current session.Loading rJava can lock the JVM library path even before .jinit() starts the JVM.Set Java before loading rJava. To change its JVM, restart R or use `with_rjava_env()`.See https://github.com/s-u/rJava/issues/334
 #> ✔ Current R Session: JAVA_HOME and PATH set to /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
 #> ℹ On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in
 #>   the current session.
@@ -137,7 +128,7 @@ java_env_set(
   java_home = java_home,
   project_path = tempdir()
 )
-#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/RtmpSC8mBV'
+#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/RtmplslJt6'
 #> ℹ On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in
 #>   the current session.
 #>   To make this change permanent for installing rJava-dependent packages from

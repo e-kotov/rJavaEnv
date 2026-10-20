@@ -30,8 +30,9 @@ java_resolve(
   - **Major version** (e.g., `21`, `17`): Downloads the latest release
     for that major version.
 
-  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
-    exact version.
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Requests that
+    exact release. Only `java_resolve()` and functions built on it check
+    the installed runtime version.
 
   - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
     the SDKMAN backend automatically. When an identifier is detected,
@@ -141,6 +142,6 @@ Character string (Path to JAVA_HOME)
 # Get path to Java 21 (installing if necessary)
 path <- java_resolve(version = 21, install = TRUE)
 #> ℹ Checking system for existing Java installations...
-#> ✔ Found valid system Java 21 at /usr/lib/jvm/java-21-openjdk-amd64
+#> ✔ Found valid system Java at /usr/lib/jvm/temurin-21-jdk-amd64
 # }
 ```

@@ -1,8 +1,10 @@
 # Verify rJava Compatibility (Guard)
 
 Checks if the currently initialized `rJava` session matches the required
-Java version. Intended for use in the `.onLoad` function of packages
-that depend on `rJava`.
+Java version. Use after your package has deliberately started rJava, for
+example at the start of a Java-dependent operation. It is safe to call
+earlier, but then returns `FALSE` because compatibility has not been
+verified.
 
 ## Usage
 
@@ -43,17 +45,20 @@ Logical `TRUE` if compatible, `FALSE` otherwise.
 
 ## Details
 
-This function detects if `rJava` has already locked to a specific Java
-version (which happens upon package loading) and warns the user if that
-version does not match the requirement.
+This function reads an already running JVM without loading rJava or
+calling `.jinit()`. If no JVM is running, compatibility is unverified
+and the function returns `FALSE`, using `action` to report the result.
+For a check in a fresh subprocess, use
+[`java_check_version_rjava()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_version_rjava.md).
+A loaded rJava namespace may already have locked its library path even
+if its JVM is not running.
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-# In a package .onLoad:
-.onLoad <- function(libname, pkgname) {
-  rJavaEnv::java_check_compatibility(version = 21, action = "warn")
-}
+# After deliberately initializing rJava in a Java-dependent operation:
+rJava::.jinit()
+java_check_compatibility(version = 21, action = "stop")
 } # }
 ```

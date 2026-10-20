@@ -5,7 +5,12 @@ Set the JAVA_HOME and PATH environment variables for the current session
 ## Usage
 
 ``` r
-java_env_set_session(java_home, quiet = FALSE, ._skip_rjava_check = FALSE)
+java_env_set_session(
+  java_home,
+  quiet = FALSE,
+  ._skip_rjava_check = FALSE,
+  ._load_jvm = TRUE
+)
 ```
 
 ## Arguments
@@ -22,3 +27,7 @@ java_env_set_session(java_home, quiet = FALSE, ._skip_rjava_check = FALSE)
 - .\_skip_rjava_check:
 
   Internal. If TRUE, skip the rJava initialization check.
+
+- .\_load_jvm:
+
+  Internal. Whether to preload the JVM library on Linux.

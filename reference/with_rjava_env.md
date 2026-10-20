@@ -29,8 +29,10 @@ with_rjava_env(
   - **Major version** (e.g., `21`, `17`): Downloads the latest release
     for that major version.
 
-  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
-    exact version.
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Requests that
+    exact release. Only
+    [`java_resolve()`](https://www.ekotov.pro/rJavaEnv/reference/java_resolve.md)
+    and functions built on it check the installed runtime version.
 
   - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
     the SDKMAN backend automatically. When an identifier is detected,

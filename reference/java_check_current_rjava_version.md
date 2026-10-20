@@ -1,7 +1,8 @@
-# Check the Java version currently used by the loaded rJava package
+# Read the version of an already running rJava JVM
 
-Safely queries the `rJava` package (if loaded) to determine which Java
-version it is actually using.
+Does not load rJava or initialize its JVM. Loading rJava and starting
+its JVM are distinct events; a loaded but uninitialized namespace
+returns NULL.
 
 ## Usage
 
@@ -11,6 +12,4 @@ java_check_current_rjava_version()
 
 ## Value
 
-A character string representing the major Java version (e.g., "17",
-"21", "8"), or `NULL` if `rJava` is not loaded or the version/property
-could not be retrieved.
+Full Java version string, or NULL if not already running or unreadable.

@@ -12,6 +12,8 @@ java_version_check_rscript(java_home)
 
 - java_home:
 
+  Path to Java home directory.
+
 ## Value
 
 A message with the Java version or an error message.

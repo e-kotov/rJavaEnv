@@ -27,8 +27,10 @@ java_download(
   - **Major version** (e.g., `21`, `17`): Downloads the latest release
     for that major version.
 
-  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
-    exact version.
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Requests that
+    exact release. Only
+    [`java_resolve()`](https://www.ekotov.pro/rJavaEnv/reference/java_resolve.md)
+    and functions built on it check the installed runtime version.
 
   - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
     the SDKMAN backend automatically. When an identifier is detected,
@@ -110,7 +112,7 @@ java_download(version = "17", temp_dir = TRUE)
 #> You can change the platform and architecture by specifying the `platform` and
 #> `arch` arguments.
 #> File already cached: native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz
-#> [1] "/tmp/RtmpSC8mBV/rJavaEnv_cache/distrib/native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz"
+#> [1] "/tmp/RtmplslJt6/rJavaEnv_cache/distrib/native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz"
 #> attr(,"distribution")
 #> [1] "Corretto"
 #> attr(,"backend")
@@ -131,7 +133,7 @@ java_download(temp_dir = TRUE)
 #> Downloading Corretto Java 21...
 #> Verifying sha256 checksum...
 #> Checksum verified.
-#> [1] "/tmp/RtmpSC8mBV/rJavaEnv_cache/distrib/native-amazon-corretto-21.0.12.12.1-linux-x64.tar.gz"
+#> [1] "/tmp/RtmplslJt6/rJavaEnv_cache/distrib/native-amazon-corretto-21.0.12.12.1-linux-x64.tar.gz"
 #> attr(,"distribution")
 #> [1] "Corretto"
 #> attr(,"backend")
@@ -153,7 +155,7 @@ try(java_download(version = "21", backend = "sdkman", temp_dir = TRUE))
 #> ! SDKMAN backend: checksum verification unavailable
 #> Downloading Corretto Java 21...
 #> ! Skipping checksum (unavailable for SDKMAN)
-#> [1] "/tmp/RtmpSC8mBV/rJavaEnv_cache/distrib/sdkman-corretto-21-linux-x64.tar.gz"
+#> [1] "/tmp/RtmplslJt6/rJavaEnv_cache/distrib/sdkman-corretto-21-linux-x64.tar.gz"
 #> attr(,"distribution")
 #> [1] "Corretto"
 #> attr(,"backend")

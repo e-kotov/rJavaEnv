@@ -26,8 +26,10 @@ java_quick_install(
   - **Major version** (e.g., `21`, `17`): Downloads the latest release
     for that major version.
 
-  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the
-    exact version.
+  - **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Requests that
+    exact release. Only
+    [`java_resolve()`](https://www.ekotov.pro/rJavaEnv/reference/java_resolve.md)
+    and functions built on it check the installed runtime version.
 
   - **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses
     the SDKMAN backend automatically. When an identifier is detected,
@@ -95,9 +97,9 @@ java_quick_install(17, temp_dir = TRUE)
 #> Java distribution native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz already
 #> unpacked at
 #> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
-#> ℹ You have rJava loaded in the current session. rJava gets locked to the Java version that was active when it was first initialized.rJava is initialized when you: (1) call `library(rJava)`, (2) load a package that imports rJava, (3) use IDE autocomplete with `rJava::`, or (4) call any rJava function.This path-locking is a limitation of rJava itself. See: https://github.com/s-u/rJava/issues/25, https://github.com/s-u/rJava/issues/249, and https://github.com/s-u/rJava/issues/334Unless you restart the R session or run your code in a new R subprocess (using targets or callr), the new `JAVA_HOME` and `PATH` will not take effect.
+#> ℹ You have rJava loaded in the current session.Loading rJava can lock the JVM library path even before .jinit() starts the JVM.Set Java before loading rJava. To change its JVM, restart R or use `with_rjava_env()`.See https://github.com/s-u/rJava/issues/334
 #> ✔ Current R Session: JAVA_HOME and PATH set to /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
-#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/RtmpSC8mBV/rJavaEnv_project'
+#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/RtmplslJt6/rJavaEnv_project'
 #> ℹ On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in
 #>   the current session.
 #>   To make this change permanent for installing rJava-dependent packages from
@@ -115,6 +117,6 @@ java_quick_install(17, temp_dir = TRUE)
 #> installed at
 #> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17 and
 #> symlinked to
-#> /tmp/RtmpSC8mBV/rJavaEnv_project/rjavaenv/linux/x64/Corretto/native/17
+#> /tmp/RtmplslJt6/rJavaEnv_project/rjavaenv/linux/x64/Corretto/native/17
 # }
 ```

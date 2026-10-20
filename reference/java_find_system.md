@@ -1,8 +1,9 @@
 # Discover system-wide Java installations
 
-Scans the system for installed Java Development Kits (JDKs).
-Implementation based on CMake `FindJava.cmake` logic, rJava detection,
-and standard OS checks.
+Scans the system for installed Java Development Kits (JDKs). Includes
+`JAVA_HOME`, versioned `JAVA_HOME_<major>` variables (optionally
+suffixed with an architecture), PATH and standard OS locations.
+Discovery does not load rJava or a JVM library in the calling process.
 
 **Note**: This function only returns true system installations. Java
 installations managed by rJavaEnv (stored in the package cache) are
@@ -55,21 +56,19 @@ scan: ~209ms. Subsequent scans with `.use_cache = TRUE`: \<1ms. The
 # List all system Java installations
 java_find_system()
 #>                            java_home version is_default
-#> 1   /usr/lib/jvm/temurin-8-jdk-amd64       8      FALSE
-#> 2  /usr/lib/jvm/temurin-11-jdk-amd64      11      FALSE
-#> 3  /usr/lib/jvm/temurin-17-jdk-amd64      17      FALSE
-#> 4 /usr/lib/jvm/java-21-openjdk-amd64      21      FALSE
-#> 5  /usr/lib/jvm/temurin-21-jdk-amd64      21      FALSE
-#> 6  /usr/lib/jvm/temurin-25-jdk-amd64      25      FALSE
+#> 1  /usr/lib/jvm/temurin-11-jdk-amd64      11      FALSE
+#> 2  /usr/lib/jvm/temurin-17-jdk-amd64      17      FALSE
+#> 3  /usr/lib/jvm/temurin-21-jdk-amd64      21      FALSE
+#> 4  /usr/lib/jvm/temurin-25-jdk-amd64      25      FALSE
+#> 5 /usr/lib/jvm/java-25-openjdk-amd64      25      FALSE
 
 # Use cache for faster repeated calls if you are using it in your R package
 java_find_system(.use_cache = TRUE)
 #>                            java_home version is_default
-#> 1   /usr/lib/jvm/temurin-8-jdk-amd64       8      FALSE
-#> 2  /usr/lib/jvm/temurin-11-jdk-amd64      11      FALSE
-#> 3  /usr/lib/jvm/temurin-17-jdk-amd64      17      FALSE
-#> 4 /usr/lib/jvm/java-21-openjdk-amd64      21      FALSE
-#> 5  /usr/lib/jvm/temurin-21-jdk-amd64      21      FALSE
-#> 6  /usr/lib/jvm/temurin-25-jdk-amd64      25      FALSE
+#> 1  /usr/lib/jvm/temurin-11-jdk-amd64      11      FALSE
+#> 2  /usr/lib/jvm/temurin-17-jdk-amd64      17      FALSE
+#> 3  /usr/lib/jvm/temurin-21-jdk-amd64      21      FALSE
+#> 4  /usr/lib/jvm/temurin-25-jdk-amd64      25      FALSE
+#> 5 /usr/lib/jvm/java-25-openjdk-amd64      25      FALSE
 # }
 ```

@@ -4,8 +4,10 @@ Internal function that scans the system for installed Java Development
 Kits (JDKs) without calculating the `is_default` flag. This function is
 designed to be cached.
 
-Implementation based on CMake `FindJava.cmake` logic, rJava detection,
-and standard OS checks.
+Includes `JAVA_HOME`, versioned `JAVA_HOME_<major>` variables
+(optionally suffixed with an architecture), PATH and standard OS
+locations. Discovery does not load rJava or a JVM library in the calling
+process.
 
 **Note**: This function only returns true system installations. Java
 installations managed by rJavaEnv (stored in the package cache) are

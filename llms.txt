@@ -36,7 +36,7 @@ environment variables, [rJavaEnv](https://github.com/e-kotov/rJavaEnv)
 also dynamically loads `libjvm.so` to ensure
 [rJava](https://www.rforge.net/rJava/) works correctly. See
 [documentation](https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html#note-linux)
-for more details.\*\*
+for more details.
 
 ## Install
 
@@ -114,12 +114,43 @@ rje_consent(provided = TRUE)
 ```
 
 You can also specify a distribution different from the default
-“Corretto”:
+“Corretto” (supported: “Corretto”, “Temurin” and “Zulu”), a specific
+version, or the SDKMAN download backend:
 
 ``` r
 
 rJavaEnv::java_quick_install(version = 17, distribution = "Temurin")
+rJavaEnv::java_quick_install(version = "21.0.9", distribution = "Zulu")
+rJavaEnv::java_quick_install(version = 21, backend = "sdkman")
 ```
+
+The default `"native"` backend downloads from vendor APIs and verifies
+SHA-256 checksums. The `"sdkman"` backend offers more builds but cannot
+verify checksums. Use
+[`java_list_available()`](https://www.ekotov.pro/rJavaEnv/reference/java_list_available.md)
+to see what can be installed.
+
+## Ensuring a Java version in scripts and packages
+
+[`java_ensure()`](https://www.ekotov.pro/rJavaEnv/reference/java_ensure.md)
+uses an already active or installed Java when it satisfies the
+requirement and downloads one only when needed:
+
+``` r
+
+rJavaEnv::java_ensure(version = 21, type = "min")
+```
+
+For rJava-dependent packages, call it before loading rJava or any
+package that imports it. For packages that call Java on the command
+line,
+[`local_java_env()`](https://www.ekotov.pro/rJavaEnv/reference/local_java_env.md)
+and
+[`with_java_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_java_env.md)
+set Java for a single function or block and restore the environment
+afterwards. See the [developer
+vignette](https://www.ekotov.pro/rJavaEnv/articles/for-developers.html)
+for integration patterns.
 
 ## Using `rJavaEnv` with `targets` and `callr`
 
@@ -176,7 +207,7 @@ The package has several core functions:
       [`opentripplanner`](https://github.com/ropensci/opentripplanner),
       that performs Java calls using command line.
 
-3.  `java_version_check_rjava()`
+3.  [`java_check_version_rjava()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_version_rjava.md)
 
     - Checks the installed `Java` version using `rJava` in a separate R
       session. For `rJava`-dependent packages such as
@@ -250,6 +281,38 @@ The package has several core functions:
       but specifically designed for setting `Java` environment variables
       for building `rJava` from source.
 
+14. [`java_ensure()`](https://www.ekotov.pro/rJavaEnv/reference/java_ensure.md)
+
+    - Makes sure that a required `Java` version (exact or minimum) is
+      active, using the current session, system installations, or the
+      `rJavaEnv` cache before downloading anything.
+
+15. [`java_resolve()`](https://www.ekotov.pro/rJavaEnv/reference/java_resolve.md)
+
+    - Finds or installs a required `Java` version and returns its
+      `JAVA_HOME` path without changing environment variables.
+
+16. [`local_java_env()`](https://www.ekotov.pro/rJavaEnv/reference/local_java_env.md),
+    [`with_java_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_java_env.md)
+    and
+    [`with_rjava_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_rjava_env.md)
+
+    - Use a `Java` version for the current scope or a block of code
+      (command-line `Java`), or run an `rJava` function in a separate R
+      process with a given `Java` version.
+
+17. [`java_check_compatibility()`](https://www.ekotov.pro/rJavaEnv/reference/java_check_compatibility.md)
+
+    - Checks whether an already running `rJava` JVM meets a version
+      requirement, without loading `rJava` or starting a JVM.
+
+18. [`java_find_system()`](https://www.ekotov.pro/rJavaEnv/reference/java_find_system.md)
+    and
+    [`java_get_home()`](https://www.ekotov.pro/rJavaEnv/reference/java_get_home.md)
+
+    - List `Java` installations found on the system, and return the
+      current `JAVA_HOME`.
+
 ------------------------------------------------------------------------
 
 See more details on all the functions in the
@@ -260,25 +323,49 @@ Vignette](https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html).
 
 ## Limitations
 
-Currently, `rJavaEnv` only supports major `Java` versions such as 8, 11,
-15 to 24 and any newer version. The download and install functions
-ignore the minor version of the `Java` distribution and just downloads
-the latest stable subversion of the specified major version. This is
-done to simplify the process and avoid the need to update the package
-every time a new minor version of `Java` is released. For most users
-this should be sufficient, but this is substandard for full
-reproducibility.
+A major version such as `21` installs the latest release of that major
+version. For reproducibility, request a specific version such as
+`"21.0.9"`.
+[`java_resolve()`](https://www.ekotov.pro/rJavaEnv/reference/java_resolve.md)
+and the functions built on it
+([`java_ensure()`](https://www.ekotov.pro/rJavaEnv/reference/java_ensure.md),
+[`local_java_env()`](https://www.ekotov.pro/rJavaEnv/reference/local_java_env.md),
+[`with_java_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_java_env.md)
+and
+[`with_rjava_env()`](https://www.ekotov.pro/rJavaEnv/reference/with_rjava_env.md))
+then check the full runtime version of active, system, cached and newly
+installed `Java`, and do not use a release that does not match. If no
+matching release can be installed,
+[`java_ensure()`](https://www.ekotov.pro/rJavaEnv/reference/java_ensure.md)
+returns `FALSE` and the others report an error. The convenience helpers
+[`java_quick_install()`](https://www.ekotov.pro/rJavaEnv/reference/java_quick_install.md)
+and
+[`use_java()`](https://www.ekotov.pro/rJavaEnv/reference/use_java.md),
+like
+[`java_download()`](https://www.ekotov.pro/rJavaEnv/reference/java_download.md)
+and
+[`java_install()`](https://www.ekotov.pro/rJavaEnv/reference/java_install.md),
+request the release from the vendor backend but do not check the
+installed runtime, and the native Zulu backend may return another
+release of the same major version. SDKMAN catalogues can lag behind
+vendor releases.
 
 The main limitation is that if you want to switch to another `Java`
-environment, you will most likely have to restart the current R session
-and set the `JAVA_HOME` and `PATH` environment variables to the desired
-`Java` environment using
+environment for `rJava`, you will most likely have to restart the
+current R session and set the `JAVA_HOME` and `PATH` environment
+variables to the desired `Java` environment using
 [`rJavaEnv::java_env_set()`](https://www.ekotov.pro/rJavaEnv/reference/java_env_set.md).
 This cannot be done dynamically within the same R session due to the way
 Java is initialized in R, particularly with the `rJava`-dependent
-packages such as [`r5r`](https://github.com/ipeaGIT/r5r). With packages
-like [`opentripplanner`](https://github.com/ropensci/opentripplanner),
-that performs `Java` calls using command line, you can switch `Java`
+packages such as [`r5r`](https://github.com/ipeaGIT/r5r). With the
+released `rJava`, loading the `rJava` namespace (for example, by loading
+a package that imports it) can lock the JVM library path even before the
+JVM starts, so configure `Java` before that point.
+[`java_ensure()`](https://www.ekotov.pro/rJavaEnv/reference/java_ensure.md)
+refuses to change `Java` once it can no longer take effect for `rJava`.
+With packages like
+[`opentripplanner`](https://github.com/ropensci/opentripplanner), that
+performs `Java` calls using command line, you can switch `Java`
 environments dynamically within the same R session as much as you want.
 
 Therefore, if you need to use R packages that depend on different `Java`
@@ -299,6 +386,15 @@ and set the relevant path with
 [`rJavaEnv::java_env_set()`](https://www.ekotov.pro/rJavaEnv/reference/java_env_set.md)
 at the beginning of each function that requires a certain `Java`
 version.
+
+`rJavaEnv` also has experimental, optional support for `rJava` builds
+with deferred JVM loading, which are not part of released `rJava`. When
+such a build reports that no JVM has been loaded yet,
+[`java_ensure()`](https://www.ekotov.pro/rJavaEnv/reference/java_ensure.md)
+can still select `Java` after the `rJava` namespace has loaded. Nothing
+in `rJavaEnv` requires these builds; see the [developer
+vignette](https://www.ekotov.pro/rJavaEnv/articles/for-developers.html)
+for details.
 
 ## Recommended by
 
@@ -350,13 +446,10 @@ resources to help users easily set up their Java environment:
 
 The future work includes:
 
-- Add support for more `Java` distributions and versions
+- Add support for more `Java` distributions
 
 - Take care of
   [`R CMD javareconf`](https://solutions.posit.co/envs-pkgs/using-rjava/#reconfigure-r)
-
-- Possibly add support for specifying `Java` version beyond the major
-  version
 
 - Possibly allow downloading several `Java` distributions in one
   function call, e.g. different major versions of the same ‘flavour’ or
