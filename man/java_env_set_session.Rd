@@ -4,7 +4,12 @@
 \alias{java_env_set_session}
 \title{Set the JAVA_HOME and PATH environment variables for the current session}
 \usage{
-java_env_set_session(java_home, quiet = FALSE, ._skip_rjava_check = FALSE)
+java_env_set_session(
+  java_home,
+  quiet = FALSE,
+  ._skip_rjava_check = FALSE,
+  ._load_jvm = TRUE
+)
 }
 \arguments{
 \item{java_home}{The path to the desired JAVA_HOME.}
@@ -12,6 +17,8 @@ java_env_set_session(java_home, quiet = FALSE, ._skip_rjava_check = FALSE)
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 
 \item{._skip_rjava_check}{Internal. If TRUE, skip the rJava initialization check.}
+
+\item{._load_jvm}{Internal. Whether to preload the JVM library on Linux.}
 }
 \description{
 Set the JAVA_HOME and PATH environment variables for the current session

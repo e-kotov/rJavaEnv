@@ -25,7 +25,8 @@ java_ensure(
 \item{version}{Java version specification. Accepts:
 \itemize{
 \item \strong{Major version} (e.g., \code{21}, \code{17}): Downloads the latest release for that major version.
-\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Downloads the exact version.
+\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Requests that exact release.
+Only \code{java_resolve()} and functions built on it check the installed runtime version.
 \item \strong{SDKMAN identifier} (e.g., \code{"25.0.1-amzn"}, \code{"24.0.2-open"}): Uses the SDKMAN
 backend automatically. When an identifier is detected, the \code{distribution} and \code{backend}
 arguments are \strong{ignored} and derived from the identifier. Find available identifiers
@@ -107,33 +108,35 @@ Checks for a specific Java version in the following order:
 }
 
 This function is designed to be "lazy": it will do nothing if a valid Java version
-is already detected, making it safe to use in scripts or package startup code
-(provided \code{install = FALSE}).
+is already detected. It changes session environment variables when selecting
+Java; call it explicitly before loading rJava, rather than in \code{.onLoad}.
+\code{install = FALSE} prevents downloads but does not make setup read-only.
 }
 \section{Additional Notes}{
 
-If rJava is already loaded, this function will warn you but will not prevent the
-environment variable change (which won't help rJava at that point).
+With \code{check_against = "rJava"}, an already running compatible JVM is accepted.
+A loaded but uninitialized rJava namespace causes an error without starting its
+JVM or changing environment variables. Restart R before setup in that case.
+Experimental rJava builds with deferred loading permit selection while their
+state API confirms that no JVM library has been loaded.
+\code{check_against = "cmd"} configures command-line use only.
 }
 
 \section{rJava Path-Locking}{
 
 \strong{Important for \emph{rJava} Users}: This function sets environment variables
 (JAVA_HOME, PATH) that affect both command-line Java tools and \emph{rJava} initialization.
-However, due to \emph{rJava}'s path-locking behavior when \code{\link[rJava]{.jinit}} is called
-(see \url{https://github.com/s-u/rJava/issues/25}, \url{https://github.com/s-u/rJava/issues/249}, and \url{https://github.com/s-u/rJava/issues/334}),
-this function must be called \strong{BEFORE} \code{\link[rJava]{.jinit}} is invoked. Once \code{\link[rJava]{.jinit}}
-initializes, the Java version is locked for that R session and cannot be changed without restarting R.
+Configure Java \strong{before loading rJava}, including before \code{requireNamespace("rJava")}
+or loading packages that import it. Loading the namespace can resolve and lock
+the JVM library path even before \code{.jinit()} starts the JVM. See
+\url{https://github.com/s-u/rJava/issues/334} and
+\url{https://github.com/s-u/rJava/issues/25}.
 
-\code{\link[rJava]{.jinit}} is invoked (and Java locked) when you:
-\itemize{
-\item Explicitly call \code{library(rJava)}
-\item Load any package that imports \emph{rJava} (which auto-loads it as a dependency)
-\item Even just use IDE autocomplete with \code{rJava::} (this triggers initialization!)
-\item Call any \emph{rJava}-dependent function
-}
+Once rJava has loaded, restart R before selecting another JVM, or use
+\code{with_rjava_env()} to run with a different JVM in a fresh R process.
+\code{java_check_compatibility()} does not load rJava or initialize a JVM.
+\code{java_check_version_rjava()} performs its probe in a separate R process.
 
-Once any of these happen, the Java version used by \emph{rJava} for that session is locked in.
 For command-line Java tools that don't use \emph{rJava}, this function can be called at any
 time to switch Java versions for subsequent system calls.
 }

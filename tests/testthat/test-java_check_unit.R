@@ -66,85 +66,27 @@ test_that("java_check_compatibility fails when current < required with type=min"
   expect_false(result)
 })
 
-# Test when rJava not loaded but requireNamespace succeeds
-test_that("java_check_compatibility tries jinit when rJava available", {
-  state <- new.env(parent = emptyenv())
-  state$jinit_called <- FALSE
-
-  local_mocked_bindings(
-    java_check_current_rjava_version = function() {
-      # First call returns NULL, second returns version
-      if (state$jinit_called) "21" else NULL
-    },
-    .package = "rJavaEnv"
-  )
-
-  local_mocked_bindings(
-    requireNamespace = function(pkg, ...) {
-      if (pkg == "rJava") {
-        TRUE
-      } else {
-        base::requireNamespace(pkg, ...)
-      }
-    },
-    .package = "base"
-  )
-
-  # Mock rJava::.jinit
-  local_mocked_bindings(
-    .jinit = function(...) {
-      state$jinit_called <- TRUE
-      invisible(NULL)
-    },
-    .package = "rJava"
-  )
-
-  # This test may be tricky due to the internal state; skip if rJava mocking fails
-  skip_if_not_installed("rJava")
-
-  result <- tryCatch(
-    rJavaEnv::java_check_compatibility(
-      version = 21,
-      type = "exact",
-      action = "none"
-    ),
-    error = function(e) NULL
-  )
-
-  # Just verify no errors - exact behavior depends on rJava state
-  expect_true(is.null(result) || is.logical(result))
-})
-
-# Test when rJava version is NULL even after jinit
-test_that("java_check_compatibility handles null version after jinit", {
+test_that("compatibility checks do not load rJava to discover a JVM", {
   local_mocked_bindings(
     java_check_current_rjava_version = function() NULL,
     .package = "rJavaEnv"
   )
-
   local_mocked_bindings(
-    requireNamespace = function(pkg, ...) {
-      if (pkg == "rJava") TRUE else base::requireNamespace(pkg, ...)
-    },
+    requireNamespace = function(...) stop("must not load a namespace"),
     .package = "base"
   )
+  expect_false(java_check_compatibility(21, action = "none"))
+})
 
-  # Mock rJava::.jinit to do nothing
+test_that("compatibility reports an unverified JVM without initializing it", {
   local_mocked_bindings(
-    .jinit = function(...) invisible(NULL),
-    .package = "rJava"
+    java_check_current_rjava_version = function() NULL,
+    .package = "rJavaEnv"
   )
-
-  skip_if_not_installed("rJava")
-
   expect_warning(
-    result <- rJavaEnv::java_check_compatibility(
-      version = 21,
-      action = "warn"
-    ),
-    "JVM could not be detected"
+    result <- java_check_compatibility(21, action = "warn"),
+    "No running rJava JVM"
   )
-
   expect_false(result)
 })
 
@@ -165,7 +107,7 @@ test_that("java_check_compatibility stops when JVM not detected with action=stop
       version = 21,
       action = "stop"
     ),
-    "JVM could not be detected"
+    "No running rJava JVM"
   )
 })
 

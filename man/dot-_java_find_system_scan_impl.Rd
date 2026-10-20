@@ -22,8 +22,9 @@ Returns an empty data frame if no Java installations are found.
 Internal function that scans the system for installed Java Development Kits (JDKs)
 without calculating the \code{is_default} flag. This function is designed to be cached.
 
-Implementation based on CMake \code{FindJava.cmake} logic, rJava detection,
-and standard OS checks.
+Includes \code{JAVA_HOME}, versioned \verb{JAVA_HOME_<major>} variables (optionally
+suffixed with an architecture), PATH and standard OS locations. Discovery
+does not load rJava or a JVM library in the calling process.
 
 \strong{Note}: This function only returns true system installations. Java installations
 managed by rJavaEnv (stored in the package cache) are explicitly excluded, even if

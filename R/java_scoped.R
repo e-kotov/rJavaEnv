@@ -65,7 +65,7 @@ local_java_env <- function(
   )
 
   # Capture current state
-  old_java_home <- Sys.getenv("JAVA_HOME")
+  old_java_home <- Sys.getenv("JAVA_HOME", unset = NA_character_)
   old_path <- Sys.getenv("PATH")
 
   # Set new state
@@ -79,7 +79,7 @@ local_java_env <- function(
   # Schedule restoration
   withr::defer(
     {
-      if (old_java_home == "") {
+      if (is.na(old_java_home)) {
         Sys.unsetenv("JAVA_HOME")
       } else {
         Sys.setenv(JAVA_HOME = old_java_home)

@@ -1,0 +1,8 @@
+Package: rjeeager
+Title: Minimal Eager rJava Consumer for Integration Tests
+Version: 0.0.1
+Authors@R: person("Egor", "Kotov", role = c("aut", "cre"), email = "kotov.egor@gmail.com")
+Description: Exercises the boundary between importing rJava and starting its JVM.
+License: MIT
+Encoding: UTF-8
+Imports: rJava, rJavaEnv

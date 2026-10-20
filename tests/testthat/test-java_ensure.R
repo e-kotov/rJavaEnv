@@ -141,10 +141,10 @@ test_that("java_ensure handled rJava locking correctly (Strict vs Cmd modes)", {
     )
   })
 
-  # 4. rJava Locked + Unknown Version + check_against="rJava" -> Warning
+  # 4. Loaded but uninitialized rJava cannot be safely switched.
   local({
     setup_mocks()
-    expect_warning(
+    expect_error(
       java_ensure(
         21,
         check_against = "rJava",
@@ -152,7 +152,7 @@ test_that("java_ensure handled rJava locking correctly (Strict vs Cmd modes)", {
         .check_rjava_fun = function(...) TRUE,
         .rjava_ver_fun = function() NULL
       ),
-      "rJava is loaded but version could not be determined"
+      "rJava is loaded but its JVM version cannot be verified"
     )
   })
 })

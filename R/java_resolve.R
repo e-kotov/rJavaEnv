@@ -26,232 +26,146 @@ java_resolve <- function(
   arch = platform_detect()$arch,
   .use_cache = FALSE
 ) {
-  if (is.null(version)) {
-    cli::cli_abort("The {.arg version} argument is required.")
-  }
-
   type <- match.arg(type)
+  java_validate_requirement(version, type)
   version <- as.character(version)
+  identifier <- is_sdkman_identifier(version)
+  specific <- !grepl("^[0-9]+$", version)
+  if (identifier) {
+    backend <- "sdkman"
+    distribution <- sdkman_vendor_to_distribution(sdkman_vendor_code(version))
+  }
 
-  # Check if version is a specific version string (not just a major number)
-  is_specific_version <- grepl("[^0-9]", version)
-  req_ver_int <- suppressWarnings(as.integer(version))
-
-  # 1. Check Active Session (JAVA_HOME)
-  # If the current environment already satisfies the requirement, return it.
-  curr_ver_str <- java_check_version_cmd(quiet = TRUE, .use_cache = .use_cache)
-  if (!isFALSE(curr_ver_str)) {
-    curr_ver_int <- suppressWarnings(as.integer(curr_ver_str))
-
-    match_found <- FALSE
-
-    if (is_specific_version) {
-      if (type == "exact") {
-        match_found <- curr_ver_str == version
-      } else {
-        # min version check for specific version
-        match_found <- tryCatch(
-          utils::compareVersion(curr_ver_str, version) >= 0,
-          error = function(e) FALSE
-        )
-      }
+  # Check this JAVA_HOME, not an unrelated executable earlier on PATH.
+  # An SDKMAN identity cannot be established from a system JVM's version alone.
+  active_home <- Sys.getenv("JAVA_HOME")
+  if (accept_system_java && !identifier && nzchar(active_home)) {
+    active_version <- if (specific) {
+      java_version_at_home(active_home)
     } else {
-      # Major version check
-      if (!is.na(curr_ver_int) && !is.na(req_ver_int)) {
-        if (type == "exact") {
-          match_found <- curr_ver_int == req_ver_int
-        } else {
-          match_found <- curr_ver_int >= req_ver_int
-        }
-      }
+      java_check_version_cmd(java_home = active_home, quiet = TRUE, .use_cache = .use_cache)
     }
-
-    if (match_found) {
-      if (!quiet) {
-        cli::cli_alert_success(
-          "Active Java version {curr_ver_str} satisfies requirement."
-        )
-      }
-      return(Sys.getenv("JAVA_HOME"))
+    if (java_version_satisfies(active_version, version, type)) {
+      if (!quiet) cli::cli_alert_success("Active Java version {active_version} satisfies requirement.")
+      return(active_home)
     }
   }
 
-  # 2. Check System Installations
-  if (accept_system_java) {
-    if (!quiet) {
-      cli::cli_alert_info("Checking system for existing Java installations...")
-    }
+  if (accept_system_java && !identifier) {
+    if (!quiet) cli::cli_alert_info("Checking system for existing Java installations...")
     system_javas <- tryCatch(
       java_find_system(quiet = TRUE, .use_cache = .use_cache),
       error = function(e) {
-        if (!quiet) {
-          cli::cli_alert_warning("System Java search failed: {e$message}")
-        }
+        if (!quiet) cli::cli_alert_warning("System Java search failed: {e$message}")
         data.frame()
       }
     )
-
-    valid_matches <- list()
     if (nrow(system_javas) > 0) {
-      for (i in seq_len(nrow(system_javas))) {
-        jv_ver <- system_javas$version[i]
-        ver_int <- suppressWarnings(as.integer(jv_ver))
-
-        is_match <- FALSE
-
-        if (is_specific_version) {
-          if (type == "exact") {
-            is_match <- jv_ver == version
-          } else {
-            is_match <- tryCatch(
-              utils::compareVersion(jv_ver, version) >= 0,
-              error = function(e) FALSE
-            )
-          }
-        } else {
-          if (!is.na(ver_int) && !is.na(req_ver_int)) {
-            if (type == "exact") {
-              is_match <- ver_int == req_ver_int
-            } else {
-              is_match <- ver_int >= req_ver_int
-            }
-          }
-        }
-
-        if (is_match) {
-          valid_matches[[length(valid_matches) + 1]] <- list(
-            path = system_javas$java_home[i],
-            version = jv_ver
-          )
-        }
+      versions <- system_javas$version
+      if (specific) {
+        versions <- vapply(system_javas$java_home, java_version_at_home, character(1))
       }
-    }
-
-    if (length(valid_matches) > 0) {
-      # Sort descending by version (using version string comparison)
-      # Extract versions as character vector first, then convert to numeric_version
-      ver_strs <- vapply(valid_matches, function(x) x$version, character(1))
-      sorted <- valid_matches[order(
-        numeric_version(ver_strs),
-        decreasing = TRUE
-      )]
-      selected <- sorted[[1]] # Pick best match
-      if (!quiet) {
-        cli::cli_alert_success(
-          "Found valid system Java {selected$version} at {.path {selected$path}}"
-        )
+      matches <- vapply(versions, java_version_satisfies, logical(1),
+        requested = version, type = type)
+      if (any(matches)) {
+        candidates <- which(matches)
+        selected <- candidates[order(java_numeric_version(versions[candidates]), decreasing = TRUE)[1]]
+        if (!quiet) cli::cli_alert_success("Found valid system Java at {.path {system_javas$java_home[selected]}}")
+        return(system_javas$java_home[selected])
       }
-      return(selected$path)
     }
   }
 
-  # 3. Check Local Cache
-  cache_list <- java_list_installed(
-    output = "data.frame",
-    quiet = TRUE,
-    cache_path = cache_path
-  )
-  if (length(cache_list) > 0 && nrow(cache_list) > 0) {
-    # Filter by distribution and backend
-    dist_matches <- cache_list[
-      cache_list$distribution == distribution &
-        cache_list$backend == backend,
-    ]
-
-    valid_candidates <- data.frame()
-    if (nrow(dist_matches) > 0) {
-      if (is_specific_version) {
-        # Specific string matching
-        if (type == "exact") {
-          valid_candidates <- dist_matches[dist_matches$version == version, ]
-        } else {
-          # Use logic to filter version >= req
-          keep <- vapply(
-            dist_matches$version,
-            function(v) {
-              utils::compareVersion(v, version) >= 0
-            },
-            logical(1)
-          )
-          valid_candidates <- dist_matches[keep, ]
+  # Managed installations must match the requested backend and distribution.
+  cache <- java_list_installed(output = "data.frame", quiet = TRUE, cache_path = cache_path)
+  if (is.data.frame(cache) && nrow(cache) > 0) {
+    keep <- cache$distribution == distribution & cache$backend == backend
+    if ("platform" %in% names(cache)) keep <- keep & cache$platform == platform
+    if ("arch" %in% names(cache)) keep <- keep & cache$arch == arch
+    cache <- cache[which(keep), , drop = FALSE]
+    if (nrow(cache) > 0) {
+      versions <- cache$version
+      if (specific && !identifier) {
+        versions <- vapply(cache$path, java_version_at_home, character(1))
+      }
+      matches <- if (identifier) versions == version else {
+        vapply(versions, java_version_satisfies, logical(1), requested = version, type = type)
+      }
+      if (any(matches)) {
+        candidates <- which(matches)
+        selected <- if (identifier) candidates[1] else {
+          candidates[order(java_numeric_version(versions[candidates]), decreasing = TRUE)[1]]
         }
-      } else {
-        # Major version matching
-        dist_matches$ver_int <- suppressWarnings(as.integer(
-          dist_matches$version
-        ))
-        if (type == "exact") {
-          valid_candidates <- dist_matches[
-            which(dist_matches$ver_int == req_ver_int),
-          ]
-        } else {
-          valid_candidates <- dist_matches[
-            which(dist_matches$ver_int >= req_ver_int),
-          ]
-        }
+        if (!quiet) cli::cli_alert_info("Found cached Java at {.path {cache$path[selected]}}")
+        return(cache$path[selected])
       }
-    }
-
-    if (nrow(valid_candidates) > 0) {
-      # Sort candidates by version descending
-      # Helper to sort version strings safely
-      v_order <- order(
-        vapply(
-          valid_candidates$version,
-          function(v) {
-            # Try to make it a numeric version, fallback to 0 if fails
-            tryCatch(as.numeric(numeric_version(v))[1], error = function(e) 0)
-          },
-          numeric(1)
-        ),
-        decreasing = TRUE
-      )
-      valid_candidates <- valid_candidates[v_order, ]
-
-      # Also prioritize exact match if any
-      if (is_specific_version && type == "exact") {
-        # Already filtered to exact match
-      } else if (!is_specific_version && type == "exact") {
-        # Prefer exact major version (already filtered)
-      }
-
-      found_path <- valid_candidates$path[1]
-      if (!quiet) {
-        cli::cli_alert_info("Found cached Java at {.path {found_path}}")
-      }
-      return(found_path)
     }
   }
 
-  # 4. Download and Install
   if (!install) {
-    cli::cli_abort(
-      "Required Java version not found and {.arg install} is FALSE."
-    )
+    cli::cli_abort("Required Java version not found and {.arg install} is FALSE.")
   }
-
-  # Check consent before downloading (rje_consent_check handles interactive prompts)
   rje_consent_check()
-
-  if (!quiet) {
-    cli::cli_alert_info("Attempting to download and install Java {version}...")
-  }
-
-  # Reuse java_download and java_unpack logic
+  if (!quiet) cli::cli_alert_info("Attempting to download and install Java {version}...")
   dist_path <- java_download(
-    version = version,
-    distribution = distribution,
-    backend = backend,
-    cache_path = cache_path,
-    platform = platform,
-    arch = arch,
-    quiet = quiet
+    version = version, distribution = distribution, backend = backend,
+    cache_path = cache_path, platform = platform, arch = arch, quiet = quiet
   )
+  home <- java_unpack(java_distrib_path = dist_path, quiet = quiet)
+  # Vendor download APIs can return a nearby release for a patch request.
+  # Verify the installed runtime before claiming that exact/minimum setup worked.
+  if (specific && !identifier &&
+      !java_version_satisfies(java_version_at_home(home), version, type)) {
+    cli::cli_abort("The installed Java runtime does not satisfy version {version} (type = '{type}').")
+  }
+  home
+}
 
-  unpack_path <- java_unpack(
-    java_distrib_path = dist_path,
-    quiet = quiet
-  )
+# Normalize Java's legacy 1.8.0_452 spelling for numeric comparisons.
+java_numeric_version <- function(version) {
+  version <- sub("^1\\.", "", as.character(version))
+  version <- sub("[+-].*$", "", version)
+  numeric_version(gsub("_", ".", version, fixed = TRUE))
+}
 
-  return(unpack_path)
+java_validate_requirement <- function(version, type) {
+  checkmate::assert_scalar(version)
+  version <- as.character(version)
+  if (is_sdkman_identifier(version)) {
+    if (type != "exact") cli::cli_abort("SDKMAN identifiers require type = 'exact'.")
+  } else if (!grepl("^[0-9]+([._][0-9]+)*$", version)) {
+    cli::cli_abort("The {.arg version} argument must be a major version, a numeric Java version, or a SDKMAN identifier.")
+  }
+  invisible(TRUE)
+}
+
+java_version_satisfies <- function(actual, requested, type) {
+  if (is.null(actual) || isFALSE(actual) || !length(actual) ||
+      is.na(actual) || !nzchar(actual) || is_sdkman_identifier(as.character(requested))) {
+    return(FALSE)
+  }
+  if (grepl("^[0-9]+$", as.character(requested))) {
+    major <- parse_java_major_version(as.character(actual))
+    if (is.null(major)) return(FALSE)
+    if (type == "exact") return(as.integer(major) == as.integer(requested))
+    return(as.integer(major) >= as.integer(requested))
+  }
+  tryCatch({
+    if (type == "exact") java_numeric_version(actual) == java_numeric_version(requested)
+    else java_numeric_version(actual) >= java_numeric_version(requested)
+  }, error = function(e) FALSE)
+}
+
+# Full version detection stays internal; java_check_version_cmd() continues to
+# return the major version for backwards compatibility.
+java_version_at_home <- function(java_home) {
+  data <- ._java_version_check_impl_original(java_home)
+  if (isFALSE(data)) return("")
+  for (line in data$java_version_output) {
+    parts <- regmatches(line, regexec(
+      '^[[:space:]]*(openjdk|java)[[:space:]]+(version[[:space:]]+)?"?([0-9][^"[:space:]]*)', line
+    ))[[1]]
+    if (length(parts) >= 4) return(parts[4])
+  }
+  ""
 }

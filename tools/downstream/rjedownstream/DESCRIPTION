@@ -1,0 +1,10 @@
+Package: rjedownstream
+Title: Minimal Lazy Java Consumer for Integration Tests
+Version: 0.0.1
+Authors@R: person("Egor", "Kotov", role = c("aut", "cre"), email = "kotov.egor@gmail.com")
+Description: Exercises Java setup, command wrappers and isolated rJava execution
+    through the public rJavaEnv API. Loading this package does not load rJava.
+License: MIT
+Encoding: UTF-8
+Imports: rJavaEnv
+Suggests: rJava, callr

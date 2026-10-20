@@ -8,14 +8,19 @@
 #' 4. If none found, downloads and installs the version (if `install = TRUE`).
 #'
 #' This function is designed to be "lazy": it will do nothing if a valid Java version
-#' is already detected, making it safe to use in scripts or package startup code
-#' (provided `install = FALSE`).
+#' is already detected. It changes session environment variables when selecting
+#' Java; call it explicitly before loading rJava, rather than in `.onLoad`.
+#' `install = FALSE` prevents downloads but does not make setup read-only.
 #'
 #' @inheritSection rjava_path_locking_note rJava Path-Locking
 #'
 #' @section Additional Notes:
-#' If rJava is already loaded, this function will warn you but will not prevent the
-#' environment variable change (which won't help rJava at that point).
+#' With `check_against = "rJava"`, an already running compatible JVM is accepted.
+#' A loaded but uninitialized rJava namespace causes an error without starting its
+#' JVM or changing environment variables. Restart R before setup in that case.
+#' Experimental rJava builds with deferred loading permit selection while their
+#' state API confirms that no JVM library has been loaded.
+#' `check_against = "cmd"` configures command-line use only.
 #'
 #' @inheritParams global_version_param
 #' @param type Character. `"exact"` (default) checks for exact version match. `"min"` checks for version >= `version`.
@@ -83,7 +88,7 @@ java_ensure <- function(
 
   type <- match.arg(type)
   check_against <- match.arg(check_against)
-  req_ver_int <- as.integer(version)
+  java_validate_requirement(version, type)
 
   # Handling rJava Path-Locking
   if (check_against == "rJava") {
@@ -91,21 +96,11 @@ java_ensure <- function(
     # This will show the informative message if rJava is loaded and quiet = FALSE
     rjava_is_loaded <- .check_rjava_fun(quiet = quiet)
 
-    if (rjava_is_loaded) {
+    if (rjava_is_loaded && !java_rjava_can_select()) {
       curr_rjava_ver <- .rjava_ver_fun()
 
       if (!is.null(curr_rjava_ver)) {
-        curr_rjava_int <- as.integer(curr_rjava_ver)
-
-        # Check if the LOCKED rJava version satisfies the requirement
-        rjava_ok <- FALSE
-        if (!is.na(curr_rjava_int)) {
-          if (type == "exact" && curr_rjava_int == req_ver_int) {
-            rjava_ok <- TRUE
-          } else if (type == "min" && curr_rjava_int >= req_ver_int) {
-            rjava_ok <- TRUE
-          }
-        }
+        rjava_ok <- java_version_satisfies(curr_rjava_ver, version, type)
 
         if (rjava_ok) {
           if (!quiet) {
@@ -124,11 +119,11 @@ java_ensure <- function(
           ))
         }
       } else {
-        # rJava loaded but version unknown.
-        # In strict mode, we should warn even if quiet, because safety check failed.
-        cli::cli_warn(
-          "rJava is loaded but version could not be determined. Compatibility check skipped."
-        )
+        cli::cli_abort(c(
+          "rJava is loaded but its JVM version cannot be verified without initialization.",
+          "i" = "Loading rJava can already lock the JVM library path, before .jinit().",
+          "i" = "Restart R, then run java_ensure() BEFORE loading rJava, or use with_rjava_env()."
+        ))
       }
     }
   }
@@ -170,7 +165,8 @@ java_ensure <- function(
     where = "session",
     java_home = found_path,
     quiet = quiet,
-    ._skip_rjava_check = TRUE # We checked this already if check_against="rJava"
+    ._skip_rjava_check = TRUE,
+    ._load_jvm = check_against == "rJava"
   )
 
   return(invisible(TRUE))

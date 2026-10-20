@@ -28,18 +28,21 @@ Logical \code{TRUE} if compatible, \code{FALSE} otherwise.
 }
 \description{
 Checks if the currently initialized \code{rJava} session matches the required Java version.
-Intended for use in the \code{.onLoad} function of packages that depend on \code{rJava}.
+Use after your package has deliberately started rJava, for example at the
+start of a Java-dependent operation. It is safe to call earlier, but then
+returns \code{FALSE} because compatibility has not been verified.
 }
 \details{
-This function detects if \code{rJava} has already locked to a specific Java version
-(which happens upon package loading) and warns the user if that version does not
-match the requirement.
+This function reads an already running JVM without loading rJava or calling
+\code{.jinit()}. If no JVM is running, compatibility is unverified and the function
+returns \code{FALSE}, using \code{action} to report the result. For a check in a fresh
+subprocess, use \code{java_check_version_rjava()}. A loaded rJava namespace may
+already have locked its library path even if its JVM is not running.
 }
 \examples{
 \dontrun{
-# In a package .onLoad:
-.onLoad <- function(libname, pkgname) {
-  rJavaEnv::java_check_compatibility(version = 21, action = "warn")
-}
+# After deliberately initializing rJava in a Java-dependent operation:
+rJava::.jinit()
+java_check_compatibility(version = 21, action = "stop")
 }
 }

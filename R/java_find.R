@@ -4,8 +4,9 @@
 #' Internal function that scans the system for installed Java Development Kits (JDKs)
 #' without calculating the `is_default` flag. This function is designed to be cached.
 #'
-#' Implementation based on CMake `FindJava.cmake` logic, rJava detection,
-#' and standard OS checks.
+#' Includes `JAVA_HOME`, versioned `JAVA_HOME_<major>` variables (optionally
+#' suffixed with an architecture), PATH and standard OS locations. Discovery
+#' does not load rJava or a JVM library in the calling process.
 #'
 #' **Note**: This function only returns true system installations. Java installations
 #' managed by rJavaEnv (stored in the package cache) are explicitly excluded, even if
@@ -27,6 +28,12 @@
   if (nzchar(env_home)) {
     candidates <- c(candidates, env_home)
   }
+
+  # Versioned JAVA_HOME variables are also used by hosted CI JDK installers.
+  # Reading them must not load rJava or a JVM library in this process.
+  env <- Sys.getenv()
+  versioned_homes <- env[grepl("^JAVA_HOME_[0-9]+(_[A-Za-z0-9]+)?$", names(env))]
+  candidates <- c(candidates, unname(versioned_homes[nzchar(versioned_homes)]))
 
   # 2. PATH Lookup (Resolving Symlinks)
   java_bin <- Sys.which("java")
@@ -208,8 +215,9 @@
 #'
 #' @description
 #' Scans the system for installed Java Development Kits (JDKs).
-#' Implementation based on CMake `FindJava.cmake` logic, rJava detection,
-#' and standard OS checks.
+#' Includes `JAVA_HOME`, versioned `JAVA_HOME_<major>` variables (optionally
+#' suffixed with an architecture), PATH and standard OS locations. Discovery
+#' does not load rJava or a JVM library in the calling process.
 #'
 #' **Note**: This function only returns true system installations. Java installations
 #' managed by rJavaEnv (stored in the package cache) are explicitly excluded, even if

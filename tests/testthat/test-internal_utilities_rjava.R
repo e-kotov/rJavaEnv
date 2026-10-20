@@ -26,13 +26,14 @@ test_that("java_check_current_rjava_version parses version correctly", {
 
   # Mock rJava functions to return known version
   local_mocked_bindings(
-    `.jinit` = function(...) 0,
+    `.jniInitialized` = TRUE,
+    `.jinit` = function(...) stop("must not initialize"),
     `.jcall` = function(...) "17.0.2",
     .package = "rJava"
   )
 
   result <- rJavaEnv:::java_check_current_rjava_version()
-  expect_equal(result, "17")
+  expect_equal(result, "17.0.2")
 })
 
 test_that("java_check_current_rjava_version handles 1.8 style versions", {
@@ -45,13 +46,14 @@ test_that("java_check_current_rjava_version handles 1.8 style versions", {
   )
 
   local_mocked_bindings(
-    `.jinit` = function(...) 0,
+    `.jniInitialized` = TRUE,
+    `.jinit` = function(...) stop("must not initialize"),
     `.jcall` = function(...) "1.8.0_292",
     .package = "rJava"
   )
 
   result <- rJavaEnv:::java_check_current_rjava_version()
-  expect_equal(result, "8")
+  expect_equal(result, "1.8.0_292")
 })
 
 test_that("java_check_current_rjava_version returns NULL on rJava error", {
@@ -64,7 +66,8 @@ test_that("java_check_current_rjava_version returns NULL on rJava error", {
   )
 
   local_mocked_bindings(
-    `.jinit` = function(...) stop("JVM init failed"),
+    `.jniInitialized` = TRUE,
+    `.jcall` = function(...) stop("JVM call failed"),
     .package = "rJava"
   )
 

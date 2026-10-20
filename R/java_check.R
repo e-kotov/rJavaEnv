@@ -1,11 +1,15 @@
 #' Verify rJava Compatibility (Guard)
 #'
 #' Checks if the currently initialized `rJava` session matches the required Java version.
-#' Intended for use in the `.onLoad` function of packages that depend on `rJava`.
+#' Use after your package has deliberately started rJava, for example at the
+#' start of a Java-dependent operation. It is safe to call earlier, but then
+#' returns `FALSE` because compatibility has not been verified.
 #'
-#' This function detects if `rJava` has already locked to a specific Java version
-#' (which happens upon package loading) and warns the user if that version does not
-#' match the requirement.
+#' This function reads an already running JVM without loading rJava or calling
+#' `.jinit()`. If no JVM is running, compatibility is unverified and the function
+#' returns `FALSE`, using `action` to report the result. For a check in a fresh
+#' subprocess, use `java_check_version_rjava()`. A loaded rJava namespace may
+#' already have locked its library path even if its JVM is not running.
 #'
 #' @param version Integer. The required major Java version (e.g., 21).
 #' @param type Character. "min" (default) checks for `>= version`. "exact" checks for `== version`.
@@ -18,10 +22,9 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' # In a package .onLoad:
-#' .onLoad <- function(libname, pkgname) {
-#'   rJavaEnv::java_check_compatibility(version = 21, action = "warn")
-#' }
+#' # After deliberately initializing rJava in a Java-dependent operation:
+#' rJava::.jinit()
+#' java_check_compatibility(version = 21, action = "stop")
 #' }
 java_check_compatibility <- function(
   version,
@@ -30,27 +33,17 @@ java_check_compatibility <- function(
 ) {
   type <- match.arg(type)
   action <- match.arg(action)
+  java_validate_requirement(version, "exact")
+  if (!grepl("^[0-9]+$", as.character(version))) {
+    cli::cli_abort("Compatibility checks require a major Java version.")
+  }
   req_ver <- as.integer(version)
 
   # 1. Get current rJava version (safely)
   curr_ver_str <- java_check_current_rjava_version()
 
-  # If rJava isn't loaded or initialized yet, we can't check.
-  # In an 'Imports: rJava' scenario, it IS loaded, but might not be .jinit()'d.
-  # We try to initialize silently to check.
   if (is.null(curr_ver_str)) {
-    if (requireNamespace("rJava", quietly = TRUE)) {
-      tryCatch(rJava::.jinit(), error = function(e) NULL)
-      curr_ver_str <- java_check_current_rjava_version()
-    }
-  }
-
-  # If still null, rJava is broken, missing, or not initialized.
-  if (is.null(curr_ver_str)) {
-    # If rJava isn't present, we can't enforce check.
-    # Return TRUE or FALSE depending on strictness?
-    # Usually if Imports: rJava, this block is unreachable unless JVM failed.
-    msg <- "rJava is loaded but the JVM could not be detected or initialized."
+    msg <- "No running rJava JVM could be detected. This check does not load or initialize rJava."
     if (action == "stop") {
       stop(msg, call. = FALSE)
     }
@@ -63,7 +56,7 @@ java_check_compatibility <- function(
     return(invisible(FALSE))
   }
 
-  curr_ver <- as.integer(curr_ver_str)
+  curr_ver <- as.integer(parse_java_major_version(curr_ver_str))
 
   # 2. Compare
   is_compat <- FALSE
