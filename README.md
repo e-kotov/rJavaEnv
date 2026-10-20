@@ -324,10 +324,17 @@ Vignette](https://www.ekotov.pro/rJavaEnv/articles/rJavaEnv.html).
 
 A major version such as `21` installs the latest release of that major
 version. For reproducibility, request a specific version such as
-`"21.0.9"`; `rJavaEnv` then checks the full version of active, system,
-cached and newly downloaded `Java` and reports an error if the vendor
-cannot provide that release. SDKMAN catalogues can lag behind vendor
-releases.
+`"21.0.9"`. `java_resolve()` and the functions built on it
+(`java_ensure()`, `local_java_env()`, `with_java_env()` and
+`with_rjava_env()`) then check the full runtime version of active,
+system, cached and newly installed `Java`, and do not use a release that
+does not match. If no matching release can be installed, `java_ensure()`
+returns `FALSE` and the others report an error. The convenience helpers
+`java_quick_install()` and `use_java()`, like `java_download()` and
+`java_install()`, request the release from the vendor backend but do not
+check the installed runtime, and the native Zulu backend may return
+another release of the same major version. SDKMAN catalogues can lag
+behind vendor releases.
 
 The main limitation is that if you want to switch to another `Java`
 environment for `rJava`, you will most likely have to restart the

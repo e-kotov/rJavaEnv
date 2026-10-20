@@ -53,10 +53,15 @@
   SDKMAN identifier (`"25.0.1-amzn"`), which selects the SDKMAN backend.
 - `type = "exact"` or `type = "min"` selects exact or minimum matching in
   `java_ensure()`, `java_resolve()`, `local_java_env()` and `with_java_env()`.
-- Specific (patch-level) requirements are strict: system, active and cached
-  candidates are compared by their full runtime version, candidates are ordered
-  numerically, and a fresh download is verified after unpacking. Setup errors
-  if a vendor API returned a different release than requested.
+- Specific (patch-level) requirements are strict in `java_resolve()` and the
+  functions built on it (`java_ensure()`, `local_java_env()`, `with_java_env()`
+  and `with_rjava_env()`): system, active and cached candidates are compared by
+  their full runtime version, candidates are ordered numerically, and a fresh
+  download is verified after unpacking. If a vendor API returned a different
+  release than requested, `java_ensure()` returns `FALSE` and the others
+  error. `java_quick_install()`, `use_java()`, `java_download()` and
+  `java_install()` do not check the installed runtime, and the native Zulu
+  backend may return another release of the requested major version.
 - `accept_system_java = FALSE` ignores system and active JDKs and uses only
   managed installations, filtered by distribution, backend, platform and
   architecture.

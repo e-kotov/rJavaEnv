@@ -22,7 +22,8 @@ java_resolve(
 \item{version}{Java version specification. Accepts:
 \itemize{
 \item \strong{Major version} (e.g., \code{21}, \code{17}): Downloads the latest release for that major version.
-\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Downloads the exact version.
+\item \strong{Specific version} (e.g., \code{"21.0.9"}, \code{"11.0.29"}): Requests that exact release.
+Only \code{java_resolve()} and functions built on it check the installed runtime version.
 \item \strong{SDKMAN identifier} (e.g., \code{"25.0.1-amzn"}, \code{"24.0.2-open"}): Uses the SDKMAN
 backend automatically. When an identifier is detected, the \code{distribution} and \code{backend}
 arguments are \strong{ignored} and derived from the identifier. Find available identifiers

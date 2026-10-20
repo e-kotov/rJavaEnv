@@ -185,8 +185,11 @@ An optional rJava dependency avoids that requirement in the parent.
 
 `use_java(21)` selects a managed Java 21 installation. `java_ensure(21,
 type = "min")` can reuse a suitable system JDK of Java 21 or newer.
-Numeric patch requests such as `"21.0.8"` compare full runtime versions rather
-than treating every Java 21 runtime as equivalent. Exact SDKMAN identifiers
+In `java_resolve()` and the functions built on it (`java_ensure()`,
+`local_java_env()`, `with_java_env()` and `with_rjava_env()`), numeric patch
+requests such as `"21.0.8"` compare full runtime versions rather than treating
+every Java 21 runtime as equivalent. `use_java()` and `java_quick_install()` do
+not check the installed runtime. Exact SDKMAN identifiers
 select a managed installation by identity; `type = "min"` is unsupported for
 identifiers. The identity of an already running rJava JVM cannot be established
 from its runtime version alone, so identifier requests require a fresh setup.

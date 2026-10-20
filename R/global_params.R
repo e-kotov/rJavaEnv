@@ -78,7 +78,8 @@ global_use_cache_param <- function(.use_cache) {
 #' @param version Java version specification. Accepts:
 #'   \itemize{
 #'     \item **Major version** (e.g., `21`, `17`): Downloads the latest release for that major version.
-#'     \item **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Downloads the exact version.
+#'     \item **Specific version** (e.g., `"21.0.9"`, `"11.0.29"`): Requests that exact release.
+#'       Only `java_resolve()` and functions built on it check the installed runtime version.
 #'     \item **SDKMAN identifier** (e.g., `"25.0.1-amzn"`, `"24.0.2-open"`): Uses the SDKMAN
 #'       backend automatically. When an identifier is detected, the `distribution` and `backend`
 #'       arguments are **ignored** and derived from the identifier. Find available identifiers
