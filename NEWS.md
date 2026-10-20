@@ -1,64 +1,155 @@
-# rJavaEnv (development version)
+# rJavaEnv 0.4.0
 
-* Experimental deferred-loader rJava builds can be configured after namespace loading when their state confirms that no JVM library has loaded. Released rJava retains the conservative restart requirement.
+## Breaking and behaviour changes
 
-- Compatibility probes no longer load rJava or start its JVM. A loaded but
-  uninitialized rJava namespace is treated as unverified; strict setup errors
-  before changing its environment because its library paths may already be locked.
-- Command-version checks execute the selected JDK without preloading libjvm in R
-  and restore temporary environment variables on every exit. Command-only setup
-  also avoids preloading libjvm.
-- Managed-only resolution ignores active system JDKs; numeric patch requirements
-  use full versions, and cached candidates are ordered numerically and filtered
-  by platform and architecture. System discovery also recognizes versioned
-  `JAVA_HOME_<major>` variables, including CI architecture suffixes.
-- Developer integration guidance now separates passive probes, explicit setup,
-  eager and lazy rJava dependencies, and subprocess isolation. Minimal downstream
-  consumer packages exercise these contracts in fresh processes on three platforms.
-
-- Fresh SDKMAN downloads now report the resolved identifier and respect
-  `quiet = TRUE`. Cached archives are reused without resolving or reporting an
-  identifier (#107).
-  SDKMAN catalogues can lag vendor releases; use `backend = "native"` for current
-  vendor releases when a catalogue entry is stale or unavailable (#106).
+- Installed Java environments and project links now use the layout
+  `<platform>/<arch>/<distribution>/<backend>/<version>`, so different vendors
+  and backends of the same version can coexist. Environments in the 0.3.0 layout
+  (`<platform>/<arch>/<version>`) are still listed, and existing project
+  `.Rprofile` settings keep pointing to them.
 - Downloaded archive names now include their backend, preventing native and
   SDKMAN downloads from reusing each other's files. Older archives are left in
-  place; downloads use the new names. Installed Java environments are unchanged
-  (#107).
-- Plain SDKMAN major- and patch-version requests now exclude JavaFX, CRaC,
-  early-access and snapshot builds unless explicitly requested. Live redirect
-  tests select an available build instead of depending on a fixed release (#107).
-- SDKMAN broker resolution handles rejected catalogue identifiers, reads redirect
-  URLs without downloading the archive into memory, and retries transient API
-  failures before reporting an error (#105).
+  place and are not reused (#107).
+- Setup now protects rJava's JVM selection. With the released rJava, a loaded
+  but uninitialized rJava namespace is treated as unverified: `java_ensure()`
+  errors before changing environment variables, because the namespace may
+  already have locked its JVM library path. Restart R before setup in that case
+  (see rJava issues [#334](https://github.com/s-u/rJava/issues/334) and
+  [#25](https://github.com/s-u/rJava/issues/25)).
+- Compatibility probes no longer load rJava or start its JVM in the calling
+  process: `java_check_version_rjava()` runs in a separate R process, and
+  command-version checks execute the selected JDK without preloading libjvm and
+  restore temporary environment variables on every exit.
+- Dependencies: `jsonlite` was replaced by `RcppSimdJson`, and `digest`,
+  `memoise`, `rlang`, `withr` and `yaml` were added to Imports. `callr` is a new
+  suggested package, needed by `with_rjava_env()`.
 
 ## New features
 
-- Linux support. On Linux, `libjvm.so` location is automatically detected and force-loaded via `dyn.load()`. Thanks to that, `rJava` and any depenent R packages can be installed and loaded, if repositories with pre-built packages, such as `Posit Package Manager`, is used or if you build `rJava` from source, see the `java_build_env_set()` function.
+### Ensure and resolve Java
 
-- New function `java_build_env_set()` that sets the environment (either temporarily in the current session or in `./.Rprofile` file of the current working directory) to build `rJava` from source on `macOS`, `Linux` and `Windows` platforms. It uses the current value of `JAVA_HOME` environment variable by default, so that it is more convenient to use after `java_quick_install()` or `use_java()` commands. After running `java_build_env_set()`, users can install `rJava` from source with `install.packages("rJava", type = "source")` without any additional configuration. However, users will still need some system dependencies, e.g. on Linux they will need: libpcre2-dev, libdeflate-dev, libzstd-dev, liblzma-dev, libbz2-dev, zlib1g-dev, libicu-dev. A system message with a suggested `apt-get` command is printed. On Windows, `Rtools` must be installed. On `macOS`, `Xcode Command Line Tools` must be installed. See the new vignette `Install 'rJava' from source` for more details.
+- New `java_ensure()` checks the active session, then system installations,
+  then `rJavaEnv`'s cache, and downloads only when nothing suitable is found. It
+  does nothing when a valid Java is already active. `check_against = "rJava"`
+  (default) refuses to select Java that rJava could no longer use;
+  `check_against = "cmd"` configures command-line Java only (#92).
+- New `java_resolve()` finds or installs a Java and returns its `JAVA_HOME`
+  without changing environment variables.
+- New scoped helpers: `local_java_env()` and `with_java_env()` set `JAVA_HOME`
+  and `PATH` for command-line Java and restore them on exit; `with_rjava_env()`
+  runs a function in a fresh R process with the requested Java for rJava (#92).
+- New `java_check_compatibility()` reports whether an already running rJava JVM
+  meets a version requirement, without loading rJava or calling `.jinit()`.
+- New `java_find_system()` lists Java installations from `JAVA_HOME`, `PATH`,
+  versioned `JAVA_HOME_<major>` variables (including CI architecture suffixes)
+  and platform-specific locations.
+- New `java_get_home()`, a shortcut for `Sys.getenv("JAVA_HOME")` (#85).
+- `java_quick_install()` now invisibly returns the path to `JAVA_HOME`.
 
-- New function `java_get_home()` to get currently set `JAVA_HOME`. This is just a shortcut to `Sys.getenv("JAVA_HOME")`, as it is faster to type and can be even faster then used with autocomplete.
+### Version requirements
 
-## Performance Improvements
+- `version` accepts a major version (`21`), a specific numeric version
+  (`"21.0.9"`, `"11.0.29"`, or legacy spellings such as `"1.8.0_452"`), or an
+  SDKMAN identifier (`"25.0.1-amzn"`), which selects the SDKMAN backend.
+- `type = "exact"` or `type = "min"` selects exact or minimum matching in
+  `java_ensure()`, `java_resolve()`, `local_java_env()` and `with_java_env()`.
+- Specific (patch-level) requirements are strict: system, active and cached
+  candidates are compared by their full runtime version, candidates are ordered
+  numerically, and a fresh download is verified after unpacking. Setup errors
+  if a vendor API returned a different release than requested.
+- `accept_system_java = FALSE` ignores system and active JDKs and uses only
+  managed installations, filtered by distribution, backend, platform and
+  architecture.
+- `java_valid_versions()` falls back to a dynamic range of major versions when
+  vendor APIs are unreachable, so new Java releases do not require a package
+  update.
 
-- **Automatic caching for version checks**: `java_check_version_cmd()` and `java_find_system()` are now memoised within the R session.
-  - First call to `java_check_version_cmd()`: ~37ms
-  - Subsequent calls: <1ms (123x faster)
-  - Cache correctly handles version switching via `use_java()` by using JAVA_HOME as key
-  - No manual caching needed in downstream packages - completely transparent
+### Distributions and download backends
 
-- Added `memoise` package dependency for session-scoped caching
+- Eclipse Temurin and Azul Zulu are supported in addition to Amazon Corretto.
+- New `backend` argument (`"native"` or `"sdkman"`), also settable with
+  `options(rJavaEnv.backend = ...)`. The native backend uses vendor APIs and
+  verifies SHA-256 checksums. The SDKMAN backend covers more builds but cannot
+  verify checksums and warns about it (#98).
+- New `java_list_available()` lists installable versions from the native
+  backend, SDKMAN, or both, for the current or a given platform and
+  architecture.
+- `java_unpack()` and `java_install()` gain `distribution`, `backend` and
+  `force` arguments (#86).
+- The cache management functions `java_list_project()`, `java_list_installed()`,
+  `java_list_distrib()`, `java_clear_project()`, `java_clear_installed()` and
+  `java_clear_distrib()` are now exported.
 
-## Improvements
+### Linux and building rJava from source
 
-- Download progress printing in `java_download()` respects the `quiet` argument now (internally passing the value to `curl::curl_download()`).
+- On Linux, `libjvm.so` is located and loaded with `dyn.load()` when Java is
+  set, so rJava and dependent packages load with the selected Java. Command-only
+  setup (`check_against = "cmd"`) does not preload it.
+- New `java_build_env_set()` and `java_build_env_unset()` set, in the session
+  or the project `.Rprofile`, the variables needed to install rJava from source
+  on macOS, Linux and Windows without `R CMD javareconf`. System requirements
+  still apply; see the new vignette "Install 'rJava' from source".
 
-- More robust Java version detection in `java_check_version_cmd()`.
+### rJava: released behaviour and experimental deferred loading
 
-- `java_quick_install()` now also invisibly returns the path to `JAVA_HOME`.
+- With released rJava, configure Java before loading the rJava namespace. Once
+  rJava has loaded, restart R before selecting another JVM, or use
+  `with_rjava_env()` for a separate process. All documented patterns rely only
+  on released rJava.
+- Experimental, optional: rJava builds with deferred JVM loading (explored in
+  rJava's `feature/dynamic` branch) expose a JVM state API. When that state
+  confirms that no JVM library is loaded, no JVM is initialized, and no native
+  host has already mapped a JVM, `java_ensure()` permits setup after the
+  namespace has loaded and skips the Linux libjvm preload. If the state is
+  missing, unknown or reports a loaded JVM, the released-rJava behaviour
+  applies. rJavaEnv does not require these builds.
 
-- Added `{rlang}` as a dependency, as `{cli}` uses it anyway for the functions that we use in `{rJavaEnv}`, but does not declare it as a dependency. Therefore this previously might have caused annoyances to the users, as after installing `{rJavaEnv}` they could not use any of the functions until they installed `{rlang}` manually.
+## Performance
+
+- Version checks and system scans can be memoised within the session with
+  `.use_cache = TRUE` in `java_check_version_cmd()`, `java_check_version_rjava()`,
+  `java_find_system()`, `java_ensure()`, `java_resolve()` and
+  `local_java_env()`. Caching is opt-in; the default `.use_cache = FALSE`
+  always performs a fresh check. Version-check caches are keyed by the
+  effective `JAVA_HOME`.
+
+## Bug fixes and minor improvements
+
+- More robust Java home and version detection: symlinks are resolved, ANSI
+  output is cleaned, versions without a minor component are parsed, and
+  `Rscript` is located more reliably (#82, #95).
+- macOS no longer picks up the `/usr/bin/java` stubs as a Java installation
+  (#96).
+- `java_check_version_rjava()` works on Linux after installing Java (#100, #101).
+- Live Java checks are isolated in subprocesses, and Temurin version discovery
+  uses release assets (#103).
+- Zulu requests for a specific version no longer combine the version filter
+  with `latest=true` in the API query.
+- SDKMAN support adapts to upstream API schema changes and fixes path
+  resolution (#104). Broker resolution handles rejected catalogue identifiers,
+  reads redirect URLs without downloading the archive into memory, and retries
+  transient API failures (#105).
+- Plain SDKMAN major- and patch-version requests exclude JavaFX, CRaC,
+  early-access and snapshot builds unless requested explicitly. Fresh SDKMAN
+  downloads report the resolved identifier and respect `quiet = TRUE`; cached
+  archives are reused without resolving an identifier (#107). SDKMAN catalogues
+  can lag vendor releases; use `backend = "native"` when an entry is stale or
+  unavailable (#106).
+- Download progress in `java_download()` respects `quiet`.
+- `java_check_version_cmd()` and `java_check_version_rjava()` document that they
+  return `FALSE` when Java cannot be found or checked.
+- `{rlang}` is declared as a dependency, so functions work right after
+  installation.
+
+## Documentation and testing
+
+- New developer vignette on integrating `rJavaEnv` into packages: passive
+  probes, explicit setup, eager and lazy rJava dependencies, and subprocess
+  isolation.
+- Minimal downstream consumer packages exercise these contracts in fresh R
+  processes on Linux, macOS and Windows in continuous integration.
+- Live download tests, SDKMAN contract tests and a daily SDKMAN API canary run
+  on a schedule.
 
 # rJavaEnv 0.3.0
 
