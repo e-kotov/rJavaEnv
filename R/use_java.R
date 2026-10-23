@@ -76,15 +76,17 @@ use_java <- function(
   )
   found_path <- NULL
 
-  if (length(cache_list) > 0 && nrow(cache_list) > 0) {
-    # Look for exact match on version, platform, arch, distribution, AND backend
-    match <- cache_list[
-      cache_list$version == version &
-        cache_list$platform == platform &
-        cache_list$arch == arch &
-        cache_list$distribution == distribution &
-        cache_list$backend == backend,
-    ]
+  # Match on platform, arch, distribution and backend (including legacy
+  # pre-0.4.0 Corretto installs), then on version
+  match <- java_installed_matching(
+    cache_list,
+    distribution = distribution,
+    backend = backend,
+    platform = platform,
+    arch = arch
+  )
+  if (nrow(match) > 0) {
+    match <- match[match$version == version, , drop = FALSE]
     if (nrow(match) > 0) {
       found_path <- match$path[1]
     }
@@ -114,9 +116,18 @@ use_java <- function(
   # Only check strictly for simple major version numbers (e.g. "21")
   # If validation fails, we assume it might be a specific version string and let java_download handle it (or fail later)
 
+  # A matching archive in the distrib cache is proof enough (and works offline)
   is_specific <- grepl("[^0-9]", version)
+  archive_cached <- backend == "native" &&
+    !is.null(find_cached_native_distrib(
+      file.path(cache_path, "distrib"),
+      version,
+      distribution,
+      platform,
+      arch
+    ))
 
-  if (!is_specific) {
+  if (!is_specific && !archive_cached) {
     checkmate::assert_choice(
       version,
       java_valid_versions(
