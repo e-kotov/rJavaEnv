@@ -69,7 +69,15 @@ java_urls_load <- function() {
 #' @return Parsed JSON object
 #' @keywords internal
 read_json_url <- function(url, max_simplify_lvl = "data_frame") {
-  content <- rawToChar(rje_curl_fetch_memory(url)$content)
+  response <- rje_curl_fetch_memory(url)
+  if (isTRUE(response$status_code >= 500L)) {
+    rlang::abort(
+      sprintf("HTTP %d from %s", response$status_code, url),
+      class = "rJavaEnv_network_error",
+      call = NULL
+    )
+  }
+  content <- rawToChar(response$content)
   RcppSimdJson::fparse(content, max_simplify_lvl = max_simplify_lvl)
 }
 
@@ -459,13 +467,32 @@ java_check_current_rjava_version <- function() {
 
 #' Wrapper for curl::curl_fetch_memory for testability
 #'
+#' Requests that get no response at all (offline, DNS, proxy, timeout) fail
+#' with class `rJavaEnv_network_error`, see `network_error_class()`.
+#'
 #' @param url URL to fetch
 #' @param handle curl handle
 #' @return Response object
 #' @keywords internal
 #' @noRd
 rje_curl_fetch_memory <- function(url, handle = curl::new_handle()) {
-  curl::curl_fetch_memory(url, handle = handle)
+  tryCatch(
+    curl::curl_fetch_memory(url, handle = handle),
+    error = function(e) {
+      rlang::abort(conditionMessage(e), class = "rJavaEnv_network_error", call = NULL)
+    }
+  )
+}
+
+#' Keep the network error class when re-raising an error
+#'
+#' @param e A condition.
+#' @return `"rJavaEnv_network_error"` if `e` is a network error (the server
+#'   could not be reached, or answered with a server error), otherwise `NULL`.
+#' @keywords internal
+#' @noRd
+network_error_class <- function(e) {
+  if (inherits(e, "rJavaEnv_network_error")) "rJavaEnv_network_error"
 }
 
 # Inspect only an existing namespace. Released rJava has no deferred-loader state

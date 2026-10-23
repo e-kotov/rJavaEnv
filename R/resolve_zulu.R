@@ -46,7 +46,9 @@ resolve_zulu_metadata <- function(version, platform, arch) {
   # Query API
   data <- tryCatch(
     read_json_url(url, max_simplify_lvl = "list"),
-    error = function(e) cli::cli_abort("Azul API error: {e$message}")
+    error = function(e) {
+      cli::cli_abort("Azul API error: {e$message}", class = network_error_class(e))
+    }
   )
 
   if (length(data) == 0) {

@@ -64,7 +64,10 @@ resolve_temurin_metadata <- function(version, platform, arch) {
           "Temurin version {version} not found for {platform}/{arch}. Please check the version string or use java_list_available()."
         )
       }
-      cli::cli_abort("Adoptium API error or version not found: {msg}")
+      cli::cli_abort(
+        "Adoptium API error or version not found: {msg}",
+        class = network_error_class(e)
+      )
     }
   )
 

@@ -4,12 +4,18 @@
 
 - Installed Java environments and project links now use the layout
   `<platform>/<arch>/<distribution>/<backend>/<version>`, so different vendors
-  and backends of the same version can coexist. Environments in the 0.3.0 layout
-  (`<platform>/<arch>/<version>`) are still listed, and existing project
-  `.Rprofile` settings keep pointing to them.
+  and backends of the same version can coexist. Java installed by 0.3.0
+  (`<platform>/<arch>/<version>`) is reused where it is for Corretto requests by
+  `use_java()`, `java_quick_install()`, `java_resolve()` and `java_ensure()`, so
+  upgrading does not download installed Java again, and existing project
+  `.Rprofile` settings keep pointing to it. To start fresh instead, run
+  `java_clear("installed", delete_all = TRUE)` and
+  `java_clear("distrib", delete_all = TRUE)`, then re-run `java_quick_install()`
+  (or `java_env_unset()`) in projects whose `.Rprofile` points to the removed
+  Java.
 - Downloaded archive names now include their backend, preventing native and
   SDKMAN downloads from reusing each other's files. Older archives are left in
-  place and are not reused (#107).
+  place and are only used when the vendor API cannot be reached (#107).
 - Setup now protects rJava's JVM selection. With the released rJava, a loaded
   but uninitialized rJava namespace is treated as unverified: `java_ensure()`
   errors before changing environment variables, because the namespace may
@@ -141,6 +147,16 @@
   can lag vendor releases; use `backend = "native"` when an entry is stale or
   unavailable (#106).
 - Download progress in `java_download()` respects `quiet`.
+- Cached Java works offline. When a vendor API cannot be reached (no network,
+  DNS or proxy failure, or a server error), `java_download()` reuses a matching
+  archive from the cache (the newest cached Corretto build of the requested
+  version) instead of failing; other errors, such as an unavailable version,
+  are reported as before. `use_java()` skips its online version check when the
+  archive is cached.
+  `java_quick_install()` links an already installed Java instead of downloading
+  it again.
+- `java_clear_distrib()` also deletes the `.md5` file of an archive removed by
+  number.
 - `java_check_version_cmd()` and `java_check_version_rjava()` document that they
   return `FALSE` when Java cannot be found or checked.
 - `{rlang}` is declared as a dependency, so functions work right after

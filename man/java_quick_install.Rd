@@ -46,7 +46,7 @@ Defaults to "native". Can also be set globally via \code{options(rJavaEnv.backen
 Invisibly returns the path to the Java home directory. If quiet is set to \code{FALSE}, also prints a message indicating that Java was installed and set in the current working/project directory.
 }
 \description{
-Download and install and set Java in current working/project directory
+Downloads, unpacks and links Java into the project, then sets \code{JAVA_HOME} and \code{PATH}. If the requested Java is already installed in the cache (including installs made by rJavaEnv 0.3.0), it is linked into the project without downloading it again.
 }
 \examples{
 \donttest{
