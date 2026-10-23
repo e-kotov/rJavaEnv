@@ -116,6 +116,37 @@ java_list_installed <- function(
   }
 }
 
+#' Select installed Java entries usable for a request
+#'
+#' Keeps entries for the requested platform, architecture, distribution and
+#' backend. Installations made before rJavaEnv 0.4.0 used the legacy
+#' `platform/arch/version` layout and are listed with distribution and backend
+#' `"unknown"`; those versions could only install Corretto through the native
+#' backend, so they also satisfy Corretto/native requests. Exact matches come
+#' first.
+#'
+#' @param cache Output of `java_list_installed(output = "data.frame")`.
+#' @inheritParams java_download
+#' @return A data frame (possibly with zero rows).
+#' @keywords internal
+#' @noRd
+java_installed_matching <- function(cache, distribution, backend, platform, arch) {
+  if (!is.data.frame(cache) || nrow(cache) == 0) {
+    return(data.frame())
+  }
+  same_target <- rep(TRUE, nrow(cache))
+  if ("platform" %in% names(cache)) same_target <- same_target & cache$platform == platform
+  if ("arch" %in% names(cache)) same_target <- same_target & cache$arch == arch
+
+  exact <- same_target & cache$distribution == distribution & cache$backend == backend
+  legacy <- same_target &
+    distribution == "Corretto" & backend == "native" &
+    cache$distribution == "unknown" & cache$backend == "unknown" &
+    basename(dirname(cache$path)) == cache$arch
+
+  cache[c(which(exact), which(legacy & !exact)), , drop = FALSE]
+}
+
 #' Clear the Java installations cache folder
 #'
 #' @inheritParams java_download

@@ -116,23 +116,44 @@ java_download <- function(
     result_path <- sdkman_cached
   } else {
     # Resolve metadata
-    build <- resolve_java_metadata(
-      version,
-      distribution,
-      platform,
-      arch,
-      backend,
-      quiet = quiet
+    build <- tryCatch(
+      resolve_java_metadata(
+        version,
+        distribution,
+        platform,
+        arch,
+        backend,
+        quiet = quiet
+      ),
+      error = function(e) e
     )
-    filename <- if (backend == "native") {
-      paste0("native-", build$filename)
-    } else {
-      build$filename
-    }
-    dest <- file.path(dest_dir, filename)
 
-    # Download and verify
-    result_path <- download_java_with_checksum(build, dest, quiet, force)
+    if (inherits(build, "error")) {
+      # Offline (or vendor API down): fall back to a matching archive that was
+      # downloaded earlier, otherwise report the original error
+      cached <- if (backend == "native" && !force) {
+        find_cached_native_distrib(dest_dir, version, distribution, platform, arch)
+      }
+      if (is.null(cached)) {
+        stop(build)
+      }
+      if (!quiet) {
+        cli::cli_alert_warning(
+          "Could not resolve {distribution} Java {version} online ({conditionMessage(build)}). Using cached archive {.file {basename(cached)}}."
+        )
+      }
+      result_path <- cached
+    } else {
+      filename <- if (backend == "native") {
+        paste0("native-", build$filename)
+      } else {
+        build$filename
+      }
+      dest <- file.path(dest_dir, filename)
+
+      # Download and verify
+      result_path <- download_java_with_checksum(build, dest, quiet, force)
+    }
   }
 
   # Attach metadata attributes for downstream functions
@@ -206,6 +227,61 @@ download_java_with_checksum <- function(build, dest, quiet, force) {
   }
 
   dest
+}
+
+#' Find a previously downloaded native archive without network access
+#'
+#' Temurin and Zulu archive names depend only on the request. Corretto archive
+#' names carry the full build (e.g. `amazon-corretto-21.0.9.10.1-linux-x64`),
+#' so the newest cached build of the requested version is used. Archives saved
+#' by rJavaEnv < 0.4.0 (`amazon-corretto-21-x64-linux-jdk.tar.gz`) are also
+#' recognised for major-version requests.
+#'
+#' @param dest_dir The `distrib` folder of the cache.
+#' @inheritParams java_download
+#' @return Path to the cached archive, or `NULL` if none matches.
+#' @keywords internal
+#' @noRd
+find_cached_native_distrib <- function(dest_dir, version, distribution, platform, arch) {
+  files <- list.files(dest_dir)
+  if (length(files) == 0) {
+    return(NULL)
+  }
+  version <- as.character(version)
+  ext <- get_java_archive_extension(platform)
+
+  if (distribution %in% c("Temurin", "Zulu")) {
+    filename <- sprintf(
+      "native-%s-%s-%s-%s.%s",
+      tolower(distribution), version, platform, arch, ext
+    )
+    return(if (filename %in% files) file.path(dest_dir, filename))
+  }
+  if (distribution != "Corretto") {
+    return(NULL)
+  }
+
+  escape <- function(x) gsub("([.+])", "\\\\\\1", x)
+  corretto_platform <- if (platform == "macos") "macosx" else platform
+  pattern <- sprintf(
+    "^native-amazon-corretto-([0-9][0-9.]*[0-9])-%s-%s(-jdk)?\\.%s$",
+    escape(corretto_platform), escape(arch), escape(ext)
+  )
+  hits <- grep(pattern, files, value = TRUE)
+  builds <- sub(pattern, "\\1", hits)
+  keep <- builds == version | startsWith(builds, paste0(version, "."))
+  hits <- hits[keep]
+  builds <- builds[keep]
+  if (length(hits) > 0) {
+    newest <- order(numeric_version(builds), decreasing = TRUE)[1]
+    return(file.path(dest_dir, hits[newest]))
+  }
+
+  legacy <- sprintf("amazon-corretto-%s-%s-%s-jdk.%s", version, arch, platform, ext)
+  if (grepl("^[0-9]+$", version) && legacy %in% files) {
+    return(file.path(dest_dir, legacy))
+  }
+  NULL
 }
 
 #' Get extension for platform

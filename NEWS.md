@@ -1,3 +1,19 @@
+# rJavaEnv (development version)
+
+## Bug fixes
+
+- Java that is already cached now works offline. `use_java()`, `java_resolve()`,
+  `java_ensure()`, `local_java_env()`, `with_java_env()` and
+  `java_quick_install()` no longer fail when the vendor API cannot be reached:
+  - Installations in the 0.3.0 layout (`<platform>/<arch>/<version>`) are
+    recognised as Corretto installs from the native backend, as they were
+    always made that way.
+  - When download metadata cannot be resolved, `java_download()` reuses a
+    matching archive from the `distrib` cache (the newest cached Corretto build
+    of the requested version, including archives saved by 0.3.0), instead of
+    erroring.
+  - `use_java()` skips the online version check when the archive is cached.
+
 # rJavaEnv 0.4.0
 
 ## Breaking and behaviour changes

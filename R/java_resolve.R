@@ -79,10 +79,7 @@ java_resolve <- function(
   # Managed installations must match the requested backend and distribution.
   cache <- java_list_installed(output = "data.frame", quiet = TRUE, cache_path = cache_path)
   if (is.data.frame(cache) && nrow(cache) > 0) {
-    keep <- cache$distribution == distribution & cache$backend == backend
-    if ("platform" %in% names(cache)) keep <- keep & cache$platform == platform
-    if ("arch" %in% names(cache)) keep <- keep & cache$arch == arch
-    cache <- cache[which(keep), , drop = FALSE]
+    cache <- java_installed_matching(cache, distribution, backend, platform, arch)
     if (nrow(cache) > 0) {
       versions <- cache$version
       if (specific && !identifier) {
