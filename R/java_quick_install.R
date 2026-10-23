@@ -1,5 +1,8 @@
 #' Download and install and set Java in current working/project directory
 #'
+#' @description
+#' Downloads, unpacks and links Java into the project, then sets `JAVA_HOME` and `PATH`. If the requested Java is already installed in the cache (including installs made by rJavaEnv 0.3.0), it is linked into the project without downloading it again.
+#'
 #' @inheritParams java_download
 #' @inheritParams java_install
 #' @inheritParams global_backend_param
@@ -40,6 +43,33 @@ java_quick_install <- function(
     }
   } else {
     cache_path <- getOption("rJavaEnv.cache_path")
+  }
+
+  # Reuse an installed Java (including legacy pre-0.4.0 Corretto installs)
+  # instead of downloading and unpacking it again
+  version <- as.character(version)
+  if (is_sdkman_identifier(version)) {
+    backend <- "sdkman"
+    distribution <- sdkman_vendor_to_distribution(sdkman_vendor_code(version))
+  }
+  found <- java_find_installed(version, distribution, backend, platform, arch, cache_path)
+  if (!is.null(found)) {
+    legacy <- found$distribution == "unknown"
+    layout <- utils::tail(
+      strsplit(found$path, "[/\\\\]")[[1]],
+      if (legacy) 3 else 5
+    )
+    if (!quiet) {
+      cli::cli_inform("Java {version} found in cache, skipping download.")
+    }
+    return(invisible(java_link_project(
+      installed_path = found$path,
+      layout = layout,
+      project_path = project_path %||% getwd(),
+      autoset_java_env = TRUE,
+      quiet = quiet,
+      source = "cached"
+    )))
   }
 
   java_distrib_path <- java_download(

@@ -69,30 +69,11 @@ use_java <- function(
 
   # 1. Check if specific version is already in installed cache
   # This prevents java_download (and its network checks) from running if we have it.
-  cache_list <- java_list_installed(
-    output = "data.frame",
-    quiet = TRUE,
-    cache_path = cache_path
-  )
-  found_path <- NULL
+  # Legacy pre-0.4.0 Corretto installs count too.
+  found <- java_find_installed(version, distribution, backend, platform, arch, cache_path)
 
-  # Match on platform, arch, distribution and backend (including legacy
-  # pre-0.4.0 Corretto installs), then on version
-  match <- java_installed_matching(
-    cache_list,
-    distribution = distribution,
-    backend = backend,
-    platform = platform,
-    arch = arch
-  )
-  if (nrow(match) > 0) {
-    match <- match[match$version == version, , drop = FALSE]
-    if (nrow(match) > 0) {
-      found_path <- match$path[1]
-    }
-  }
-
-  if (!is.null(found_path)) {
+  if (!is.null(found)) {
+    found_path <- found$path
     if (!quiet) {
       cli::cli_alert_info(
         "Version {version} found in cache. Setting environment..."

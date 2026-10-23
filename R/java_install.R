@@ -57,24 +57,49 @@ java_install <- function(
     force = force
   )
 
-  # Extract path components directly from installed_path
-  filename <- basename(java_distrib_path)
-  tail5 <- utils::tail(strsplit(installed_path, "[/\\\\]")[[1]], 5)
-  platform <- tail5[1]
-  arch <- tail5[2]
-  distribution <- tail5[3]
-  backend <- tail5[4]
-  version <- tail5[5]
+  java_link_project(
+    installed_path = installed_path,
+    layout = utils::tail(strsplit(installed_path, "[/\\\\]")[[1]], 5),
+    project_path = project_path,
+    autoset_java_env = autoset_java_env,
+    quiet = quiet,
+    force = force,
+    source = basename(java_distrib_path)
+  )
+}
 
-  # Create a symlink in the project directory
-  project_version_path <- file.path(
-    project_path,
-    "rjavaenv",
-    platform,
-    arch,
-    distribution,
-    backend,
-    version
+#' Link a cached Java installation into a project
+#'
+#' Creates `<project>/rjavaenv/<layout>` as a symlink (junction on Windows, or a
+#' copy if linking fails) to `installed_path`, and optionally writes `JAVA_HOME`
+#' to the project's `.Rprofile`.
+#'
+#' @param installed_path Path to the installed Java home in the cache.
+#' @param layout The cache path components below `installed/`:
+#'   `platform/arch/distribution/backend/version`, or `platform/arch/version`
+#'   for installs made before rJavaEnv 0.4.0.
+#' @param source Label for the final message (archive name or cache path).
+#' @inheritParams java_install
+#' @return `installed_path`.
+#' @keywords internal
+#' @noRd
+java_link_project <- function(
+  installed_path,
+  layout,
+  project_path,
+  autoset_java_env = TRUE,
+  quiet = FALSE,
+  force = FALSE,
+  source = basename(installed_path)
+) {
+  platform <- layout[1]
+  arch <- layout[2]
+  version <- layout[length(layout)]
+
+  # Create a symlink in the project directory, mirroring the cache layout
+  project_version_path <- do.call(
+    file.path,
+    as.list(c(project_path, "rjavaenv", layout))
   )
   if (!dir.exists(dirname(project_version_path))) {
     dir.create(dirname(project_version_path), recursive = TRUE)
@@ -170,7 +195,7 @@ java_install <- function(
 
   if (!quiet) {
     cli::cli_inform(
-      "Java {version} ({filename}) for {platform} {arch} installed at {.path {installed_path}} and symlinked to {.path {project_version_path}}",
+      "Java {version} ({source}) for {platform} {arch} installed at {.path {installed_path}} and symlinked to {.path {project_version_path}}",
       .envir = environment()
     )
   }

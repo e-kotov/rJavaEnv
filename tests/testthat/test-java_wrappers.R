@@ -4,6 +4,7 @@ test_that("java_quick_install executes flow correctly", {
   # Setup temp directories
   local_cache <- withr::local_tempdir()
   local_proj <- withr::local_tempdir()
+  withr::local_options(rJavaEnv.cache_path = local_cache)
 
   # Mock dependencies to prevent actual download/install
   local_mocked_bindings(

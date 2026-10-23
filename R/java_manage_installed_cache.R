@@ -147,6 +147,30 @@ java_installed_matching <- function(cache, distribution, backend, platform, arch
   cache[c(which(exact), which(legacy & !exact)), , drop = FALSE]
 }
 
+#' Find an installed Java for an exact version request
+#'
+#' Looks up `version` (matched against the installation folder name) among the
+#' installs usable for the request, see `java_installed_matching()`.
+#'
+#' @inheritParams java_download
+#' @return A one-row data frame from `java_list_installed()`, or `NULL`.
+#' @keywords internal
+#' @noRd
+java_find_installed <- function(version, distribution, backend, platform, arch, cache_path) {
+  # An empty cache is the expected case here, not worth an alert
+  cache <- suppressMessages(java_list_installed(
+    output = "data.frame",
+    quiet = TRUE,
+    cache_path = cache_path
+  ))
+  match <- java_installed_matching(cache, distribution, backend, platform, arch)
+  match <- match[match$version == as.character(version), , drop = FALSE]
+  if (nrow(match) == 0) {
+    return(NULL)
+  }
+  match[1, , drop = FALSE]
+}
+
 #' Clear the Java installations cache folder
 #'
 #' @inheritParams java_download

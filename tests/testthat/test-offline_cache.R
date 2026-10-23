@@ -187,3 +187,56 @@ test_that("find_cached_native_distrib never matches an unsupported distribution"
 
   expect_null(find_cached_native_distrib(dest_dir, "21", "InvalidDistro", "linux", "x64"))
 })
+
+test_that("java_quick_install links a cached install without downloading", {
+  cache_path <- withr::local_tempdir()
+  project_path <- withr::local_tempdir()
+  legacy <- make_java_home(cache_path, "installed", "linux", "x64", "21")
+  current <- make_java_home(cache_path, "installed", "linux", "x64", "Corretto", "native", "17")
+
+  env_home <- NULL
+  local_mocked_bindings(
+    java_download = function(...) stop("network used"),
+    java_env_set = function(java_home, ...) env_home <<- java_home
+  )
+  withr::local_options(rJavaEnv.cache_path = cache_path)
+
+  # Pre-0.4.0 install: the project link mirrors the legacy layout
+  expect_equal(
+    java_quick_install(21, project_path = project_path, platform = "linux", arch = "x64", quiet = TRUE),
+    legacy
+  )
+  expect_equal(env_home, legacy)
+  expect_true(dir.exists(file.path(project_path, "rjavaenv", "linux", "x64", "21", "bin")))
+
+  expect_equal(
+    java_quick_install(17, project_path = project_path, platform = "linux", arch = "x64", quiet = TRUE),
+    current
+  )
+  expect_equal(env_home, current)
+  expect_true(dir.exists(file.path(project_path, "rjavaenv", "linux", "x64", "Corretto", "native", "17", "bin")))
+
+  links <- java_list_project(project_path = project_path)
+  expect_setequal(links$version, c("21", "17"))
+})
+
+test_that("java_quick_install downloads when nothing matching is installed", {
+  cache_path <- withr::local_tempdir()
+  make_java_home(cache_path, "installed", "linux", "x64", "Temurin", "native", "21")
+
+  downloaded <- NULL
+  local_mocked_bindings(
+    java_download = function(version, distribution, ...) {
+      downloaded <<- c(version, distribution)
+      "archive.tar.gz"
+    },
+    java_install = function(...) "java-home"
+  )
+  withr::local_options(rJavaEnv.cache_path = cache_path)
+
+  expect_equal(
+    java_quick_install(21, project_path = withr::local_tempdir(), platform = "linux", arch = "x64", quiet = TRUE),
+    "java-home"
+  )
+  expect_equal(downloaded, c("21", "Corretto"))
+})
