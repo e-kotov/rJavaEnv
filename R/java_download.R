@@ -22,8 +22,15 @@
 #'
 #'   Cached archive names include the backend to prevent native and SDKMAN
 #'   downloads from sharing an archive. Archives cached by earlier versions are
-#'   left in place and downloaded again under the new name when needed. Existing
-#'   installed Java environments are unchanged.
+#'   left in place; while the vendor API can be reached, a fresh archive is
+#'   downloaded under the new name. Existing installed Java environments are
+#'   unchanged.
+#'
+#'   If the vendor API cannot be reached (offline, DNS or proxy failure, or a
+#'   server error), a matching archive already in the cache is used instead,
+#'   including archives saved by rJavaEnv 0.3.0. For Corretto, the newest cached
+#'   build of the requested version is used. Other errors, such as an
+#'   unavailable version, are reported as before.
 #' @export
 #'
 #' @examples
@@ -125,7 +132,9 @@ java_download <- function(
         backend,
         quiet = quiet
       ),
-      error = function(e) e
+      # Only when the vendor API cannot be reached, never for answers like
+      # "version not found"
+      rJavaEnv_network_error = function(e) e
     )
 
     if (inherits(build, "error")) {
@@ -139,7 +148,7 @@ java_download <- function(
       }
       if (!quiet) {
         cli::cli_alert_warning(
-          "Could not resolve {distribution} Java {version} online ({conditionMessage(build)}). Using cached archive {.file {basename(cached)}}."
+          "Could not reach the {distribution} download service ({conditionMessage(build)}). Using cached archive {.file {basename(cached)}}."
         )
       }
       result_path <- cached

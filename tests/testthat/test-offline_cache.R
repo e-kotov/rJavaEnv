@@ -1,12 +1,19 @@
 # Cached Java must be usable without network access
 
 offline_metadata <- function(...) {
-  stop("Corretto index download error: Could not resolve host: corretto.github.io")
+  rlang::abort(
+    "Corretto index download error: Could not resolve host: corretto.github.io",
+    class = "rJavaEnv_network_error"
+  )
 }
 
-make_java_home <- function(...) {
+# A fake Java home whose release file names the vendor (NULL: no release file)
+make_java_home <- function(..., vendor = "Corretto") {
   path <- file.path(...)
   dir.create(file.path(path, "bin"), recursive = TRUE)
+  if (!is.null(vendor)) {
+    writeLines(sprintf('IMPLEMENTOR_VERSION="%s-21.0.1"', vendor), file.path(path, "release"))
+  }
   path
 }
 
@@ -24,7 +31,7 @@ test_that("java_installed_matching keeps exact matches first and legacy Corretto
   corretto <- java_installed_matching(cache, "Corretto", "native", "linux", "x64")
   expect_equal(corretto$path, c(exact, legacy))
 
-  # Legacy installs were always Corretto via the native backend
+  # Legacy installs only count as Corretto/native
   temurin <- java_installed_matching(cache, "Temurin", "native", "linux", "x64")
   expect_equal(temurin$version, "21")
   expect_equal(temurin$distribution, "Temurin")
@@ -32,6 +39,23 @@ test_that("java_installed_matching keeps exact matches first and legacy Corretto
   expect_equal(nrow(sdkman), 0)
 
   expect_equal(nrow(java_installed_matching(character(0), "Corretto", "native", "linux", "x64")), 0)
+})
+
+test_that("legacy installs are reused only if the JDK identifies as Corretto", {
+  cache_path <- withr::local_tempdir()
+  installed <- file.path(cache_path, "installed", "linux", "x64")
+  corretto8 <- make_java_home(installed, "8", vendor = NULL)
+  file.create(file.path(corretto8, "version.txt"))
+  make_java_home(installed, "21", vendor = "Temurin")
+  make_java_home(installed, "17", vendor = NULL)
+
+  cache <- java_list_installed(cache_path = cache_path)
+  corretto <- java_installed_matching(cache, "Corretto", "native", "linux", "x64")
+  expect_equal(corretto$path, corretto8)
+
+  expect_true(java_home_is_corretto(corretto8))
+  expect_false(java_home_is_corretto(file.path(installed, "21")))
+  expect_false(java_home_is_corretto(file.path(installed, "17")))
 })
 
 test_that("use_java uses a legacy-layout install without network access", {
@@ -155,14 +179,64 @@ test_that("java_download falls back to a cached archive when metadata cannot be 
   )
 })
 
+test_that("java_download does not use the cache for errors other than network failures", {
+  cache_path <- withr::local_tempdir()
+  dir.create(file.path(cache_path, "distrib"))
+  file.create(file.path(cache_path, "distrib", "native-amazon-corretto-21.0.9.10.1-linux-x64.tar.gz"))
+
+  local_mocked_bindings(
+    resolve_java_metadata = function(...) {
+      cli::cli_abort("Specific version 21.0.9 not available via Corretto native backend.")
+    }
+  )
+
+  expect_error(
+    java_download("21.0.9", cache_path = cache_path, platform = "linux", arch = "x64", quiet = TRUE),
+    "not available"
+  )
+})
+
+test_that("unreachable URLs and server errors are network errors, kept by the resolvers", {
+  local_mocked_bindings(
+    curl_fetch_memory = function(...) stop("Could not resolve host: example.com"),
+    .package = "curl"
+  )
+  expect_error(rje_curl_fetch_memory("https://example.com"), class = "rJavaEnv_network_error")
+  expect_error(
+    resolve_corretto_metadata("21", "linux", "x64"),
+    "Corretto index download error",
+    class = "rJavaEnv_network_error"
+  )
+  expect_error(resolve_zulu_metadata("21", "linux", "x64"), class = "rJavaEnv_network_error")
+  expect_error(resolve_temurin_metadata("21", "linux", "x64"), class = "rJavaEnv_network_error")
+
+  local_mocked_bindings(
+    rje_curl_fetch_memory = function(...) list(status_code = 503L, content = raw(0))
+  )
+  expect_error(read_json_url("https://example.com"), "HTTP 503", class = "rJavaEnv_network_error")
+
+  # A server that answers, but not with usable JSON, is not a network error
+  local_mocked_bindings(
+    rje_curl_fetch_memory = function(...) list(status_code = 404L, content = charToRaw("Not found"))
+  )
+  err <- tryCatch(resolve_corretto_metadata("21", "linux", "x64"), error = identity)
+  expect_false(inherits(err, "rJavaEnv_network_error"))
+})
+
 test_that("use_java skips online version validation when the archive is cached", {
   cache_path <- withr::local_tempdir()
   dir.create(file.path(cache_path, "distrib"))
   file.create(file.path(cache_path, "distrib", "native-temurin-21-linux-x64.tar.gz"))
 
+  # Offline, java_valid_versions() falls back to a shipped list rather than
+  # failing (Temurin with a warning), so check it is not called at all
+  validated <- FALSE
   unpacked <- NULL
   local_mocked_bindings(
-    java_valid_versions = function(...) stop("network used"),
+    java_valid_versions = function(...) {
+      validated <<- TRUE
+      "21"
+    },
     resolve_java_metadata = offline_metadata,
     java_unpack = function(java_distrib_path, ...) {
       unpacked <<- java_distrib_path
@@ -179,6 +253,7 @@ test_that("use_java skips online version validation when the archive is cached",
     arch = "x64"
   ))
   expect_equal(basename(unpacked), "native-temurin-21-linux-x64.tar.gz")
+  expect_false(validated)
 })
 
 test_that("find_cached_native_distrib never matches an unsupported distribution", {
@@ -218,6 +293,20 @@ test_that("java_quick_install links a cached install without downloading", {
 
   links <- java_list_project(project_path = project_path)
   expect_setequal(links$version, c("21", "17"))
+
+  # The link layout follows the install's folders, not the distribution label
+  unknown <- make_java_home(cache_path, "installed", "linux", "x64", "unknown", "unknown", "11")
+  java_quick_install(
+    11,
+    distribution = "unknown",
+    backend = "unknown",
+    project_path = project_path,
+    platform = "linux",
+    arch = "x64",
+    quiet = TRUE
+  )
+  expect_equal(env_home, unknown)
+  expect_true(dir.exists(file.path(project_path, "rjavaenv", "linux", "x64", "unknown", "unknown", "11", "bin")))
 })
 
 test_that("java_quick_install downloads when nothing matching is installed", {

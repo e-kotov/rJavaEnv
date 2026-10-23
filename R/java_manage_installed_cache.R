@@ -121,9 +121,10 @@ java_list_installed <- function(
 #' Keeps entries for the requested platform, architecture, distribution and
 #' backend. Installations made before rJavaEnv 0.4.0 used the legacy
 #' `platform/arch/version` layout and are listed with distribution and backend
-#' `"unknown"`; those versions could only install Corretto through the native
-#' backend, so they also satisfy Corretto/native requests. Exact matches come
-#' first.
+#' `"unknown"`. Those versions only downloaded Corretto, but their
+#' `java_unpack()` accepted any archive, so a legacy install satisfies a
+#' Corretto/native request only if the JDK identifies itself as Corretto.
+#' Exact matches come first.
 #'
 #' @param cache Output of `java_list_installed(output = "data.frame")`.
 #' @inheritParams java_download
@@ -143,8 +144,25 @@ java_installed_matching <- function(cache, distribution, backend, platform, arch
     distribution == "Corretto" & backend == "native" &
     cache$distribution == "unknown" & cache$backend == "unknown" &
     basename(dirname(cache$path)) == cache$arch
+  legacy <- which(legacy & !exact)
+  legacy <- legacy[vapply(cache$path[legacy], java_home_is_corretto, logical(1))]
 
-  cache[c(which(exact), which(legacy & !exact)), , drop = FALSE]
+  cache[c(which(exact), legacy), , drop = FALSE]
+}
+
+#' Check whether a Java home is an Amazon Corretto build
+#'
+#' @param java_home Path to a Java home.
+#' @return `TRUE` if the `release` file names Corretto, or (Corretto 8, which
+#'   has no `release` file) the Corretto-specific `version.txt` is present.
+#' @keywords internal
+#' @noRd
+java_home_is_corretto <- function(java_home) {
+  release <- file.path(java_home, "release")
+  if (file.exists(release)) {
+    return(any(grepl("Corretto", readLines(release, warn = FALSE), fixed = TRUE)))
+  }
+  file.exists(file.path(java_home, "version.txt"))
 }
 
 #' Find an installed Java for an exact version request

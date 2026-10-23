@@ -54,11 +54,12 @@ java_quick_install <- function(
   }
   found <- java_find_installed(version, distribution, backend, platform, arch, cache_path)
   if (!is.null(found)) {
-    legacy <- found$distribution == "unknown"
-    layout <- utils::tail(
-      strsplit(found$path, "[/\\\\]")[[1]],
-      if (legacy) 3 else 5
-    )
+    # Link layout mirrors the install's folders below installed/ (3 or 5 levels)
+    installed_root <- file.path(cache_path, "installed")
+    layout <- strsplit(
+      substring(found$path, nchar(installed_root) + 2L),
+      "[/\\\\]"
+    )[[1]]
     if (!quiet) {
       cli::cli_inform("Java {version} found in cache, skipping download.")
     }
