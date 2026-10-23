@@ -180,3 +180,10 @@ test_that("use_java skips online version validation when the archive is cached",
   ))
   expect_equal(basename(unpacked), "native-temurin-21-linux-x64.tar.gz")
 })
+
+test_that("find_cached_native_distrib never matches an unsupported distribution", {
+  dest_dir <- withr::local_tempdir()
+  file.create(file.path(dest_dir, "native-amazon-corretto-21.0.13.0.10-linux-x64.tar.gz"))
+
+  expect_null(find_cached_native_distrib(dest_dir, "21", "InvalidDistro", "linux", "x64"))
+})
