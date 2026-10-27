@@ -44,10 +44,13 @@ test_that("java_installed_matching keeps exact matches first and legacy Corretto
 test_that("legacy installs are reused only if the JDK identifies as Corretto", {
   cache_path <- withr::local_tempdir()
   installed <- file.path(cache_path, "installed", "linux", "x64")
+  # Corretto 8 on Linux/macOS: no release file, but version.txt and commitId.txt
   corretto8 <- make_java_home(installed, "8", vendor = NULL)
-  file.create(file.path(corretto8, "version.txt"))
+  file.create(file.path(corretto8, c("version.txt", "commitId.txt")))
   make_java_home(installed, "21", vendor = "Temurin")
   make_java_home(installed, "17", vendor = NULL)
+  only_version_txt <- make_java_home(installed, "11", vendor = NULL)
+  file.create(file.path(only_version_txt, "version.txt"))
 
   cache <- java_list_installed(cache_path = cache_path)
   corretto <- java_installed_matching(cache, "Corretto", "native", "linux", "x64")
@@ -56,6 +59,14 @@ test_that("legacy installs are reused only if the JDK identifies as Corretto", {
   expect_true(java_home_is_corretto(corretto8))
   expect_false(java_home_is_corretto(file.path(installed, "21")))
   expect_false(java_home_is_corretto(file.path(installed, "17")))
+  expect_false(java_home_is_corretto(only_version_txt))
+
+  # Corretto 8 on Windows: a release file that does not name the vendor
+  windows8 <- make_java_home(withr::local_tempdir(), "8", vendor = NULL)
+  writeLines(c('JAVA_VERSION="1.8.0_512"', 'OS_NAME="Windows"'), file.path(windows8, "release"))
+  expect_false(java_home_is_corretto(windows8))
+  file.create(file.path(windows8, c("version.txt", "commitId.txt")))
+  expect_true(java_home_is_corretto(windows8))
 })
 
 test_that("use_java uses a legacy-layout install without network access", {

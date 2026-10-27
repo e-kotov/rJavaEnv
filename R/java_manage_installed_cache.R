@@ -153,16 +153,19 @@ java_installed_matching <- function(cache, distribution, backend, platform, arch
 #' Check whether a Java home is an Amazon Corretto build
 #'
 #' @param java_home Path to a Java home.
-#' @return `TRUE` if the `release` file names Corretto, or (Corretto 8, which
-#'   has no `release` file) the Corretto-specific `version.txt` is present.
+#' @return `TRUE` if the `release` file names Corretto or, for Corretto 8 (whose
+#'   `release` file is missing on Linux and macOS and does not name the vendor
+#'   on Windows), the Corretto-specific `version.txt` and `commitId.txt` are
+#'   both present.
 #' @keywords internal
 #' @noRd
 java_home_is_corretto <- function(java_home) {
   release <- file.path(java_home, "release")
-  if (file.exists(release)) {
-    return(any(grepl("Corretto", readLines(release, warn = FALSE), fixed = TRUE)))
+  if (file.exists(release) &&
+      any(grepl("Corretto", readLines(release, warn = FALSE), fixed = TRUE))) {
+    return(TRUE)
   }
-  file.exists(file.path(java_home, "version.txt"))
+  all(file.exists(file.path(java_home, c("version.txt", "commitId.txt"))))
 }
 
 #' Find an installed Java for an exact version request
