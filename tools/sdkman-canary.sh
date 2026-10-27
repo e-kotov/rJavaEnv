@@ -136,7 +136,7 @@ for p in "${PLATFORMS[@]}"; do
       for attempt in 1 2 3; do
         sleep "${attempt}" # the API returns 503 on request bursts
         code=$(curl -sS --max-time 30 -o /dev/null -w '%{http_code}' -H "User-Agent: ${UA}" \
-          "https://api.sdkman.io/2/broker/download/java/${try_id}/${p}" || true)
+          "https://broker.sdkman.io/download/java/${try_id}/${p}" || true)
         [ "${code}" = "503" ] || [ "${code}" = "429" ] || break
       done
       if [ "${code}" = "302" ] || [ "${code}" = "200" ]; then

@@ -133,7 +133,7 @@
 - SDKMAN support adapts to upstream API schema changes and fixes path
   resolution (#104). Broker resolution handles rejected catalogue identifiers,
   reads redirect URLs without downloading the archive into memory, and retries
-  transient API failures (#105).
+  transient API failures (#105). SDKMAN download broker URL updated to `https://broker.sdkman.io/download/java` to fix 404 errors on new releases (#112).
 - Plain SDKMAN major- and patch-version requests exclude JavaFX, CRaC,
   early-access and snapshot builds unless requested explicitly. Fresh SDKMAN
   downloads report the resolved identifier and respect `quiet = TRUE`; cached

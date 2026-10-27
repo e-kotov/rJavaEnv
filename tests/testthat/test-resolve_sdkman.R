@@ -353,7 +353,7 @@ test_that("sdkman_broker_resolve URL-encodes identifiers", {
   expect_null(sdkman_broker_resolve("21.0.4.0+7-amzn", "linuxx64"))
   expect_equal(
     seen$url,
-    "https://api.sdkman.io/2/broker/download/java/21.0.4.0%2B7-amzn/linuxx64"
+    "https://broker.sdkman.io/download/java/21.0.4.0%2B7-amzn/linuxx64"
   )
 })
 

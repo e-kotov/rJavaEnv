@@ -251,7 +251,7 @@ resolve_sdkman_metadata <- function(
 #' @keywords internal
 sdkman_broker_resolve <- function(identifier, sdk_platform) {
   broker_url <- sprintf(
-    "https://api.sdkman.io/2/broker/download/java/%s/%s",
+    "https://broker.sdkman.io/download/java/%s/%s",
     utils::URLencode(identifier, reserved = TRUE),
     sdk_platform
   )
