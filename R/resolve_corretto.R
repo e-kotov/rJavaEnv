@@ -18,7 +18,10 @@ resolve_corretto_metadata <- function(version, platform, arch) {
   index <- tryCatch(
     read_json_url(index_url, max_simplify_lvl = "list"),
     error = function(e) {
-      cli::cli_abort("Corretto index download error: {e$message}")
+      cli::cli_abort(
+        "Corretto index download error: {e$message}",
+        class = network_error_class(e)
+      )
     }
   )
 

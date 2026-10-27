@@ -112,7 +112,7 @@ java_clear_distrib <- function(
         cli::cli_inform("No distributions were cleared.")
       } else {
         unlink(distributions[choice], recursive = TRUE)
-        md5_file <- paste0(distributions[choice], "md5")
+        md5_file <- paste0(distributions[choice], ".md5")
         if (file.exists(md5_file)) {
           unlink(md5_file)
         }

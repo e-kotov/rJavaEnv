@@ -69,28 +69,11 @@ use_java <- function(
 
   # 1. Check if specific version is already in installed cache
   # This prevents java_download (and its network checks) from running if we have it.
-  cache_list <- java_list_installed(
-    output = "data.frame",
-    quiet = TRUE,
-    cache_path = cache_path
-  )
-  found_path <- NULL
+  # Legacy pre-0.4.0 Corretto installs count too.
+  found <- java_find_installed(version, distribution, backend, platform, arch, cache_path)
 
-  if (length(cache_list) > 0 && nrow(cache_list) > 0) {
-    # Look for exact match on version, platform, arch, distribution, AND backend
-    match <- cache_list[
-      cache_list$version == version &
-        cache_list$platform == platform &
-        cache_list$arch == arch &
-        cache_list$distribution == distribution &
-        cache_list$backend == backend,
-    ]
-    if (nrow(match) > 0) {
-      found_path <- match$path[1]
-    }
-  }
-
-  if (!is.null(found_path)) {
+  if (!is.null(found)) {
+    found_path <- found$path
     if (!quiet) {
       cli::cli_alert_info(
         "Version {version} found in cache. Setting environment..."
@@ -114,9 +97,18 @@ use_java <- function(
   # Only check strictly for simple major version numbers (e.g. "21")
   # If validation fails, we assume it might be a specific version string and let java_download handle it (or fail later)
 
+  # A matching archive in the distrib cache is proof enough (and works offline)
   is_specific <- grepl("[^0-9]", version)
+  archive_cached <- backend == "native" &&
+    !is.null(find_cached_native_distrib(
+      file.path(cache_path, "distrib"),
+      version,
+      distribution,
+      platform,
+      arch
+    ))
 
-  if (!is_specific) {
+  if (!is_specific && !archive_cached) {
     checkmate::assert_choice(
       version,
       java_valid_versions(

@@ -279,5 +279,5 @@ test_that("java_clear_distrib deletes md5 file with distribution", {
   )
 
   expect_false(file.exists(distrib_file))
-  # Note: the implementation looks for "distribmd5" not ".md5" - this test documents actual behavior
+  expect_false(file.exists(md5_file))
 })
