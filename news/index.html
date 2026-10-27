@@ -51,7 +51,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/e-kotov/rJavaEnv/blob/v0.4.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/e-kotov/rJavaEnv/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -122,6 +122,7 @@
 <li>Live Java checks are isolated in subprocesses, and Temurin version discovery uses release assets (<a href="https://github.com/e-kotov/rJavaEnv/issues/103" class="external-link">#103</a>).</li>
 <li>Zulu requests for a specific version no longer combine the version filter with <code>latest=true</code> in the API query.</li>
 <li>SDKMAN support adapts to upstream API schema changes and fixes path resolution (<a href="https://github.com/e-kotov/rJavaEnv/issues/104" class="external-link">#104</a>). Broker resolution handles rejected catalogue identifiers, reads redirect URLs without downloading the archive into memory, and retries transient API failures (<a href="https://github.com/e-kotov/rJavaEnv/issues/105" class="external-link">#105</a>).</li>
+<li>SDKMAN download broker URL updated to <code>https://broker.sdkman.io/download/java</code> to fix 404 errors on new releases (<a href="https://github.com/e-kotov/rJavaEnv/issues/112" class="external-link">#112</a>).</li>
 <li>Plain SDKMAN major- and patch-version requests exclude JavaFX, CRaC, early-access and snapshot builds unless requested explicitly. Fresh SDKMAN downloads report the resolved identifier and respect <code>quiet = TRUE</code>; cached archives are reused without resolving an identifier (<a href="https://github.com/e-kotov/rJavaEnv/issues/107" class="external-link">#107</a>). SDKMAN catalogues can lag vendor releases; use <code>backend = "native"</code> when an entry is stale or unavailable (<a href="https://github.com/e-kotov/rJavaEnv/issues/106" class="external-link">#106</a>).</li>
 <li>Download progress in <code><a href="../reference/java_download.html">java_download()</a></code> respects <code>quiet</code>.</li>
 <li>

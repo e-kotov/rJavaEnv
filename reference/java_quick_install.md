@@ -93,13 +93,13 @@ java_quick_install(17, temp_dir = TRUE)
 #> Detected architecture: x64
 #> You can change the platform and architecture by specifying the `platform` and
 #> `arch` arguments.
-#> File already cached: native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz
-#> Java distribution native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz already
+#> File already cached: native-amazon-corretto-17.0.21.0.11-linux-x64.tar.gz
+#> Java distribution native-amazon-corretto-17.0.21.0.11-linux-x64.tar.gz already
 #> unpacked at
 #> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
 #> ℹ You have rJava loaded in the current session.Loading rJava can lock the JVM library path even before .jinit() starts the JVM.Set Java before loading rJava. To change its JVM, restart R or use `with_rjava_env()`.See https://github.com/s-u/rJava/issues/334
 #> ✔ Current R Session: JAVA_HOME and PATH set to /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
-#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/RtmpkQQVee/rJavaEnv_project'
+#> ✔ Current R Project/Working Directory: JAVA_HOME and PATH set to '/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17' in .Rprofile at '/tmp/Rtmp7ZJxYe/rJavaEnv_project'
 #> ℹ On Linux, for rJava to work correctly, `libjvm.so` was dynamically loaded in
 #>   the current session.
 #>   To make this change permanent for installing rJava-dependent packages from
@@ -113,10 +113,10 @@ java_quick_install(17, temp_dir = TRUE)
 #>   `R CMD javareconf
 #>   JAVA_HOME=/home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17
 #>   -e`
-#> Java 17 (native-amazon-corretto-17.0.20.12.1-linux-x64.tar.gz) for linux x64
+#> Java 17 (native-amazon-corretto-17.0.21.0.11-linux-x64.tar.gz) for linux x64
 #> installed at
 #> /home/runner/.cache/R/rJavaEnv/installed/linux/x64/Corretto/native/17 and
 #> symlinked to
-#> /tmp/RtmpkQQVee/rJavaEnv_project/rjavaenv/linux/x64/Corretto/native/17
+#> /tmp/Rtmp7ZJxYe/rJavaEnv_project/rjavaenv/linux/x64/Corretto/native/17
 # }
 ```

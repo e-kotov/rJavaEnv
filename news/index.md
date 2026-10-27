@@ -215,6 +215,9 @@
   redirect URLs without downloading the archive into memory, and retries
   transient API failures
   ([\#105](https://github.com/e-kotov/rJavaEnv/issues/105)).
+- SDKMAN download broker URL updated to
+  `https://broker.sdkman.io/download/java` to fix 404 errors on new
+  releases ([\#112](https://github.com/e-kotov/rJavaEnv/issues/112)).
 - Plain SDKMAN major- and patch-version requests exclude JavaFX, CRaC,
   early-access and snapshot builds unless requested explicitly. Fresh
   SDKMAN downloads report the resolved identifier and respect
