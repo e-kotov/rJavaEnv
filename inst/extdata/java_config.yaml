@@ -25,7 +25,7 @@ endpoints:
   # SDKMAN (No checksums available)
   SDKMAN:
     candidates_url: "https://api.sdkman.io/2/candidates/java"
-    broker_url: "https://api.sdkman.io/2/broker/download/java"
+    broker_url: "https://broker.sdkman.io/download/java"
 
 # SDKMAN Mapping (for backend="sdkman")
 sdkman:

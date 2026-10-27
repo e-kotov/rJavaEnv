@@ -99,7 +99,7 @@ for p in "${PLATFORMS[@]}"; do
         gsub(/^[ \t]+|[ \t]+$/, "", $i);
         if ($i != "") v = $i;
       }
-      if (v != "" && v != "Identifier" && v ~ /^[0-9].*-[a-z]{2,}$/) {
+      if (v != "" && v != "Identifier" && v ~ /^[0-9].*-[a-z][a-z]+$/) {
         print v;
       }
     }
@@ -117,8 +117,7 @@ for p in "${PLATFORMS[@]}"; do
 
   # A7: Broker can serve the newest standard 21 build per core vendor, using the
   # same "+build" -> legacy alias mapping as sdkman_legacy_identifier() in
-  # R/resolve_sdkman.R. FAIL on linuxx64; WARN elsewhere, where the listings
-  # currently contain placeholder ids (e.g. 21.0.0.0-amzn) the broker rejects.
+  # R/resolve_sdkman.R. FAIL on linuxx64; WARN for any broker miss on other platforms.
   for vendor in amzn tem zulu; do
     top_id=$(printf '%s\n' "${ENTRIES[@]}" | sed 's/[[:space:]]//g' |
       grep -E "^21[.].*-${vendor}$" | grep -vE 'fx|crac' | sort -V | tail -n 1 || true)
@@ -136,7 +135,7 @@ for p in "${PLATFORMS[@]}"; do
       for attempt in 1 2 3; do
         sleep "${attempt}" # the API returns 503 on request bursts
         code=$(curl -sS --max-time 30 -o /dev/null -w '%{http_code}' -H "User-Agent: ${UA}" \
-          "https://api.sdkman.io/2/broker/download/java/${try_id}/${p}" || true)
+          "https://broker.sdkman.io/download/java/${try_id}/${p}" || true)
         [ "${code}" = "503" ] || [ "${code}" = "429" ] || break
       done
       if [ "${code}" = "302" ] || [ "${code}" = "200" ]; then
