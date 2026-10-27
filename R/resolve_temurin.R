@@ -45,7 +45,8 @@ resolve_temurin_metadata <- function(version, platform, arch) {
     read_json_url(url, max_simplify_lvl = "list"),
     # If specifically requested version fails, try variations
     error = function(e) {
-      if (is_specific) {
+      network <- inherits(e, "rJavaEnv_network_error")
+      if (is_specific && !network) {
         # Try replacing .0.LTS with -LTS (common Temurin discrepancy)
         if (grepl("\\.0\\.LTS$", version)) {
           alt_version <- sub("\\.0\\.LTS$", "-LTS", version)
@@ -59,7 +60,8 @@ resolve_temurin_metadata <- function(version, platform, arch) {
         }
       }
       msg <- e$message
-      if (grepl("EMPTY: no JSON found", msg) || grepl("404", msg)) {
+      # Adoptium answers an unknown version with an empty 404
+      if (!network && (grepl("EMPTY: no JSON found", msg) || grepl("404", msg))) {
         cli::cli_abort(
           "Temurin version {version} not found for {platform}/{arch}. Please check the version string or use java_list_available()."
         )

@@ -1,12 +1,13 @@
 #' Download and install and set Java in current working/project directory
 #'
 #' @description
-#' Downloads, unpacks and links Java into the project, then sets `JAVA_HOME` and `PATH`. If the requested Java is already installed in the cache (including installs made by rJavaEnv 0.3.0), it is linked into the project without downloading it again.
+#' Downloads, unpacks and links Java into the project, then sets `JAVA_HOME` and `PATH`. If the requested Java is already installed in the cache (including Corretto installs made by rJavaEnv 0.3.0), it is linked into the project without downloading it again. Use `force = TRUE` to download and install the current release instead.
 #'
 #' @inheritParams java_download
 #' @inheritParams java_install
 #' @inheritParams global_backend_param
 #' @inheritParams global_quiet_param
+#' @param force A logical. Whether to download and install Java again even if it is already in the cache, replacing the cached archive and installation. Defaults to `FALSE`.
 #' @return Invisibly returns the path to the Java home directory. If quiet is set to `FALSE`, also prints a message indicating that Java was installed and set in the current working/project directory.
 #' @export
 #'
@@ -24,7 +25,8 @@ java_quick_install <- function(
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
   quiet = FALSE,
-  temp_dir = FALSE
+  temp_dir = FALSE,
+  force = FALSE
 ) {
   rje_consent_check()
 
@@ -52,14 +54,15 @@ java_quick_install <- function(
     backend <- "sdkman"
     distribution <- sdkman_vendor_to_distribution(sdkman_vendor_code(version))
   }
-  found <- java_find_installed(version, distribution, backend, platform, arch, cache_path)
+  found <- if (!force) {
+    java_find_installed(version, distribution, backend, platform, arch, cache_path)
+  }
   if (!is.null(found)) {
-    # Link layout mirrors the install's folders below installed/ (3 or 5 levels)
-    installed_root <- file.path(cache_path, "installed")
-    layout <- strsplit(
-      substring(found$path, nchar(installed_root) + 2L),
-      "[/\\\\]"
-    )[[1]]
+    # Link layout mirrors the install's folders below installed/:
+    # platform/arch/version (pre-0.4.0) or platform/arch/distribution/backend/version
+    parts <- strsplit(found$path, "[/\\\\]")[[1]]
+    legacy <- parts[length(parts) - 1L] == found$arch
+    layout <- utils::tail(parts, if (legacy) 3L else 5L)
     if (!quiet) {
       cli::cli_inform("Java {version} found in cache, skipping download.")
     }
@@ -80,14 +83,17 @@ java_quick_install <- function(
     cache_path = cache_path,
     platform = platform,
     arch = arch,
-    quiet = quiet
+    quiet = quiet,
+    force = force
   )
 
   java_home <- java_install(
     java_distrib_path,
     project_path = project_path,
     autoset_java_env = TRUE,
-    quiet = quiet
+    quiet = quiet,
+    force = force,
+    cache_path = cache_path
   )
   return(invisible(java_home))
 }

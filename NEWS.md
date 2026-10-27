@@ -149,14 +149,30 @@
   can lag vendor releases; use `backend = "native"` when an entry is stale or
   unavailable (#106).
 - Download progress in `java_download()` respects `quiet`.
-- Cached Java works offline. When a vendor API cannot be reached (no network,
-  DNS or proxy failure, or a server error), `java_download()` reuses a matching
-  archive from the cache (the newest cached Corretto build of the requested
-  version) instead of failing; other errors, such as an unavailable version,
-  are reported as before. `use_java()` skips its online version check when the
-  archive is cached.
-  `java_quick_install()` links an already installed Java instead of downloading
-  it again.
+- Cached Java works offline. When a vendor API or download server cannot be
+  reached (no network, DNS or proxy failure, a proxy or firewall refusing the
+  request, rate limiting, or a server error), `java_download()` reuses a
+  matching archive from the cache (the newest cached Corretto build of the
+  requested version) instead of failing; other errors, such as an unavailable
+  version or a checksum mismatch, are reported as before. Archives saved by
+  0.3.0 are checked against their saved MD5 checksum first. `use_java()` skips
+  its online version check when the archive is cached. Vendor API requests
+  give up after 30 seconds without a connection or 60 seconds without data
+  instead of waiting indefinitely.
+- `java_quick_install()` links an already installed Java instead of downloading
+  it again. Its new `force` argument downloads and installs the current release
+  instead.
+- `java_install()` and `java_unpack()` gain a `cache_path` argument. `use_java()`,
+  `java_resolve()` and `java_quick_install()` now unpack into the cache they
+  were given (including `temp_dir = TRUE`) instead of always the
+  `rJavaEnv.cache_path` option.
+- A specific Corretto version only matches whole version components: `"11.0.2"`
+  no longer matches build `11.0.29`.
+- Alpine Linux (`platform = "alpine-linux"`) works with Corretto and Zulu
+  listings and Corretto downloads, and Alpine installs no longer share a cache
+  folder with glibc Linux installs.
+- `java_list_installed()` and `java_list_project()` find Java when the cache or
+  project path starts with `~`.
 - `java_clear_distrib()` also deletes the `.md5` file of an archive removed by
   number.
 - `java_check_version_cmd()` and `java_check_version_rjava()` document that they

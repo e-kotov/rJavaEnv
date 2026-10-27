@@ -12,7 +12,8 @@ java_quick_install(
   platform = platform_detect()$os,
   arch = platform_detect()$arch,
   quiet = FALSE,
-  temp_dir = FALSE
+  temp_dir = FALSE,
+  force = FALSE
 )
 }
 \arguments{
@@ -41,12 +42,14 @@ Defaults to "native". Can also be set globally via \code{options(rJavaEnv.backen
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 
 \item{temp_dir}{A logical. Whether the file should be saved in a temporary directory. Defaults to \code{FALSE}.}
+
+\item{force}{A logical. Whether to download and install Java again even if it is already in the cache, replacing the cached archive and installation. Defaults to \code{FALSE}.}
 }
 \value{
 Invisibly returns the path to the Java home directory. If quiet is set to \code{FALSE}, also prints a message indicating that Java was installed and set in the current working/project directory.
 }
 \description{
-Downloads, unpacks and links Java into the project, then sets \code{JAVA_HOME} and \code{PATH}. If the requested Java is already installed in the cache (including installs made by rJavaEnv 0.3.0), it is linked into the project without downloading it again.
+Downloads, unpacks and links Java into the project, then sets \code{JAVA_HOME} and \code{PATH}. If the requested Java is already installed in the cache (including Corretto installs made by rJavaEnv 0.3.0), it is linked into the project without downloading it again. Use \code{force = TRUE} to download and install the current release instead.
 }
 \examples{
 \donttest{

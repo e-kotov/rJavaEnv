@@ -26,11 +26,13 @@
 #'   downloaded under the new name. Existing installed Java environments are
 #'   unchanged.
 #'
-#'   If the vendor API cannot be reached (offline, DNS or proxy failure, or a
-#'   server error), a matching archive already in the cache is used instead,
-#'   including archives saved by rJavaEnv 0.3.0. For Corretto, the newest cached
-#'   build of the requested version is used. Other errors, such as an
-#'   unavailable version, are reported as before.
+#'   If the vendor API or download server cannot be reached (offline, DNS or
+#'   proxy failure, a proxy or firewall refusing the request, rate limiting, or
+#'   a server error), a matching archive already in the cache is used instead.
+#'   For Corretto, the newest cached build of the requested version is used;
+#'   for major-version requests this includes archives saved by rJavaEnv 0.3.0
+#'   that match their saved MD5 checksum. Other errors, such as an unavailable
+#'   version or a checksum mismatch, are reported as before.
 #' @export
 #'
 #' @examples
@@ -122,46 +124,49 @@ java_download <- function(
     }
     result_path <- sdkman_cached
   } else {
-    # Resolve metadata
-    build <- tryCatch(
-      resolve_java_metadata(
-        version,
-        distribution,
-        platform,
-        arch,
-        backend,
-        quiet = quiet
-      ),
-      # Only when the vendor API cannot be reached, never for answers like
-      # "version not found"
+    # Resolve metadata, then download. Network failures (the vendor API or
+    # download server cannot be reached) are returned, never answers like
+    # "version not found" or a checksum mismatch.
+    result_path <- tryCatch(
+      {
+        build <- resolve_java_metadata(
+          version,
+          distribution,
+          platform,
+          arch,
+          backend,
+          quiet = quiet
+        )
+        filename <- if (backend == "native") {
+          paste0("native-", build$filename)
+        } else {
+          build$filename
+        }
+        download_java_with_checksum(
+          build,
+          file.path(dest_dir, filename),
+          quiet,
+          force
+        )
+      },
       rJavaEnv_network_error = function(e) e
     )
 
-    if (inherits(build, "error")) {
-      # Offline (or vendor API down): fall back to a matching archive that was
+    if (inherits(result_path, "error")) {
+      # Offline (or vendor down): fall back to a matching archive that was
       # downloaded earlier, otherwise report the original error
       cached <- if (backend == "native" && !force) {
         find_cached_native_distrib(dest_dir, version, distribution, platform, arch)
       }
       if (is.null(cached)) {
-        stop(build)
+        stop(result_path)
       }
       if (!quiet) {
         cli::cli_alert_warning(
-          "Could not reach the {distribution} download service ({conditionMessage(build)}). Using cached archive {.file {basename(cached)}}."
+          "Could not reach the {distribution} download service ({conditionMessage(result_path)}). Using cached archive {.file {basename(cached)}}."
         )
       }
       result_path <- cached
-    } else {
-      filename <- if (backend == "native") {
-        paste0("native-", build$filename)
-      } else {
-        build$filename
-      }
-      dest <- file.path(dest_dir, filename)
-
-      # Download and verify
-      result_path <- download_java_with_checksum(build, dest, quiet, force)
     }
   }
 
@@ -207,7 +212,10 @@ download_java_with_checksum <- function(build, dest, quiet, force) {
   if (!quiet) {
     cli::cli_inform("Downloading {build$vendor} Java {build$major}...")
   }
-  curl::curl_download(build$download_url, dest, quiet = quiet)
+  tryCatch(
+    curl::curl_download(build$download_url, dest, quiet = quiet),
+    error = abort_network_error
+  )
 
   # Verify checksum if available
   if (!is.null(build$checksum) && !is.null(build$checksum_type)) {
@@ -244,7 +252,8 @@ download_java_with_checksum <- function(build, dest, quiet, force) {
 #' names carry the full build (e.g. `amazon-corretto-21.0.9.10.1-linux-x64`),
 #' so the newest cached build of the requested version is used. Archives saved
 #' by rJavaEnv < 0.4.0 (`amazon-corretto-21-x64-linux-jdk.tar.gz`) are also
-#' recognised for major-version requests.
+#' recognised for major-version requests, unless they fail the MD5 checksum
+#' saved next to them.
 #'
 #' @param dest_dir The `distrib` folder of the cache.
 #' @inheritParams java_download
@@ -278,7 +287,7 @@ find_cached_native_distrib <- function(dest_dir, version, distribution, platform
   )
   hits <- grep(pattern, files, value = TRUE)
   builds <- sub(pattern, "\\1", hits)
-  keep <- builds == version | startsWith(builds, paste0(version, "."))
+  keep <- corretto_version_matches(builds, version)
   hits <- hits[keep]
   builds <- builds[keep]
   if (length(hits) > 0) {
@@ -286,9 +295,20 @@ find_cached_native_distrib <- function(dest_dir, version, distribution, platform
     return(file.path(dest_dir, hits[newest]))
   }
 
-  legacy <- sprintf("amazon-corretto-%s-%s-%s-jdk.%s", version, arch, platform, ext)
+  # rJavaEnv < 0.4.0 named archives after the corretto.aws "latest" URL and
+  # saved its MD5 checksum next to them
+  legacy_platform <- if (platform == "alpine-linux") "alpine" else platform
+  legacy <- sprintf("amazon-corretto-%s-%s-%s-jdk.%s", version, arch, legacy_platform, ext)
   if (grepl("^[0-9]+$", version) && legacy %in% files) {
-    return(file.path(dest_dir, legacy))
+    legacy <- file.path(dest_dir, legacy)
+    md5_file <- paste0(legacy, ".md5")
+    if (!file.exists(md5_file) ||
+        identical(
+          tolower(unname(tools::md5sum(legacy))),
+          tolower(trimws(readLines(md5_file, n = 1L, warn = FALSE)))
+        )) {
+      return(legacy)
+    }
   }
   NULL
 }

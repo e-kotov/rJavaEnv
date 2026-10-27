@@ -70,7 +70,7 @@ java_urls_load <- function() {
 #' @keywords internal
 read_json_url <- function(url, max_simplify_lvl = "data_frame") {
   response <- rje_curl_fetch_memory(url)
-  if (isTRUE(response$status_code >= 500L)) {
+  if (isTRUE(http_status_unreachable(response$status_code))) {
     rlang::abort(
       sprintf("HTTP %d from %s", response$status_code, url),
       class = "rJavaEnv_network_error",
@@ -465,22 +465,59 @@ java_check_current_rjava_version <- function() {
   return(extracted_dirs[1])
 }
 
+#' HTTP statuses that mean the service cannot be used right now
+#'
+#' Server errors, rate limits, timeouts, and proxies or firewalls that refuse
+#' the request or require authentication. Other statuses (such as 404) are an
+#' answer about the request itself.
+#'
+#' @param status HTTP status code.
+#' @return Logical.
+#' @keywords internal
+#' @noRd
+http_status_unreachable <- function(status) {
+  status >= 500L | status %in% c(401L, 403L, 407L, 408L, 429L)
+}
+
+#' Re-raise a curl failure as a network error
+#'
+#' Keeps the message and curl's own condition classes (e.g.
+#' `curl_error_couldnt_resolve_host`).
+#'
+#' @param e A condition raised by curl.
+#' @keywords internal
+#' @noRd
+abort_network_error <- function(e) {
+  rlang::abort(
+    conditionMessage(e),
+    class = c("rJavaEnv_network_error", grep("^curl_error", class(e), value = TRUE)),
+    call = NULL
+  )
+}
+
 #' Wrapper for curl::curl_fetch_memory for testability
 #'
 #' Requests that get no response at all (offline, DNS, proxy, timeout) fail
-#' with class `rJavaEnv_network_error`, see `network_error_class()`.
+#' with class `rJavaEnv_network_error`, see `network_error_class()`. The
+#' default handle gives up on a connection that cannot be opened within 30
+#' seconds or that stalls for 60 seconds.
 #'
 #' @param url URL to fetch
 #' @param handle curl handle
 #' @return Response object
 #' @keywords internal
 #' @noRd
-rje_curl_fetch_memory <- function(url, handle = curl::new_handle()) {
+rje_curl_fetch_memory <- function(
+  url,
+  handle = curl::new_handle(
+    connecttimeout = 30,
+    low_speed_limit = 1,
+    low_speed_time = 60
+  )
+) {
   tryCatch(
     curl::curl_fetch_memory(url, handle = handle),
-    error = function(e) {
-      rlang::abort(conditionMessage(e), class = "rJavaEnv_network_error", call = NULL)
-    }
+    error = abort_network_error
   )
 }
 
@@ -488,7 +525,8 @@ rje_curl_fetch_memory <- function(url, handle = curl::new_handle()) {
 #'
 #' @param e A condition.
 #' @return `"rJavaEnv_network_error"` if `e` is a network error (the server
-#'   could not be reached, or answered with a server error), otherwise `NULL`.
+#'   could not be reached, or answered with a status from
+#'   `http_status_unreachable()`), otherwise `NULL`.
 #' @keywords internal
 #' @noRd
 network_error_class <- function(e) {

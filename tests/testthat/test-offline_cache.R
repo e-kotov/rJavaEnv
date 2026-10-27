@@ -340,3 +340,147 @@ test_that("java_quick_install downloads when nothing matching is installed", {
   )
   expect_equal(downloaded, c("21", "Corretto"))
 })
+
+test_that("responses that refuse or throttle the request are network errors", {
+  for (status in c(401L, 403L, 407L, 408L, 429L, 500L, 503L)) {
+    local_mocked_bindings(
+      rje_curl_fetch_memory = function(...) {
+        list(status_code = status, content = charToRaw("<html>Access denied</html>"))
+      }
+    )
+    expect_error(read_json_url("https://example.com"), "HTTP", class = "rJavaEnv_network_error")
+  }
+
+  # An answer about the request itself is parsed as before
+  for (status in c(400L, 404L)) {
+    local_mocked_bindings(
+      rje_curl_fetch_memory = function(...) list(status_code = status, content = charToRaw("[]"))
+    )
+    expect_equal(length(read_json_url("https://example.com", max_simplify_lvl = "list")), 0)
+  }
+})
+
+test_that("curl failures keep curl's condition class", {
+  local_mocked_bindings(
+    curl_fetch_memory = function(...) {
+      rlang::abort("Could not resolve host", class = "curl_error_couldnt_resolve_host")
+    },
+    .package = "curl"
+  )
+  expect_error(
+    rje_curl_fetch_memory("https://example.com"),
+    class = "curl_error_couldnt_resolve_host"
+  )
+  expect_error(rje_curl_fetch_memory("https://example.com"), class = "rJavaEnv_network_error")
+})
+
+test_that("Temurin keeps network errors for versions that look like a 404", {
+  calls <- 0L
+  local_mocked_bindings(
+    rje_curl_fetch_memory = function(url, ...) {
+      calls <<- calls + 1L
+      list(status_code = 503L, content = raw(0))
+    }
+  )
+  # 8u404 puts "404" into the URL of the error message
+  expect_error(
+    resolve_temurin_metadata("8.0.404+7", "linux", "x64"),
+    "Adoptium API error",
+    class = "rJavaEnv_network_error"
+  )
+  # No retry with the alternative LTS spelling when the API is unreachable
+  calls <- 0L
+  expect_error(
+    resolve_temurin_metadata("21.0.5+11.0.LTS", "linux", "x64"),
+    class = "rJavaEnv_network_error"
+  )
+  expect_equal(calls, 1L)
+})
+
+test_that("java_download falls back when the archive download fails", {
+  cache_path <- withr::local_tempdir()
+  dir.create(file.path(cache_path, "distrib"))
+  archive <- file.path(cache_path, "distrib", "native-amazon-corretto-21.0.9.10.1-linux-x64.tar.gz")
+  file.create(archive)
+
+  # The index names a newer build that is not cached yet
+  local_mocked_bindings(
+    resolve_java_metadata = function(...) {
+      java_build(
+        vendor = "Corretto", version = "21", major = NULL, semver = "21.0.13.0.11",
+        platform = "linux", arch = "x64",
+        download_url = "https://corretto.aws/downloads/latest/amazon-corretto-21-x64-linux-jdk.tar.gz",
+        filename = "amazon-corretto-21.0.13.0.11-linux-x64.tar.gz",
+        checksum = "abc", checksum_type = "sha256", backend = "native"
+      )
+    }
+  )
+  local_mocked_bindings(
+    curl_download = function(...) stop("Failed to connect to corretto.aws port 443"),
+    .package = "curl"
+  )
+  expect_message(
+    result <- java_download(21, cache_path = cache_path, platform = "linux", arch = "x64"),
+    "Using cached archive"
+  )
+  expect_equal(as.character(result), archive)
+
+  # A checksum mismatch is never covered up by a cached archive
+  local_mocked_bindings(
+    curl_download = function(url, destfile, ...) writeLines("tampered", destfile),
+    .package = "curl"
+  )
+  expect_error(
+    java_download(21, cache_path = cache_path, platform = "linux", arch = "x64", quiet = TRUE),
+    "checksum mismatch"
+  )
+})
+
+test_that("pre-0.4.0 archives are used only if they match their saved MD5", {
+  dest_dir <- withr::local_tempdir()
+  archive <- file.path(dest_dir, "amazon-corretto-21-x64-linux-jdk.tar.gz")
+  writeLines("archive", archive)
+  find <- function() find_cached_native_distrib(dest_dir, "21", "Corretto", "linux", "x64")
+
+  # No checksum saved: nothing to check against
+  expect_equal(find(), archive)
+
+  cat(toupper(unname(tools::md5sum(archive))), file = paste0(archive, ".md5"))
+  expect_equal(find(), archive)
+
+  cat("0123456789abcdef0123456789abcdef", file = paste0(archive, ".md5"))
+  expect_null(find())
+})
+
+test_that("java_quick_install(force = TRUE) downloads and reinstalls", {
+  cache_path <- withr::local_tempdir()
+  make_java_home(cache_path, "installed", "linux", "x64", "Corretto", "native", "21")
+
+  args <- list()
+  local_mocked_bindings(
+    java_download = function(...) {
+      args$download <<- list(...)
+      "archive.tar.gz"
+    },
+    java_install = function(...) {
+      args$install <<- list(...)
+      "java-home"
+    }
+  )
+  withr::local_options(rJavaEnv.cache_path = cache_path)
+
+  expect_equal(
+    java_quick_install(
+      21,
+      project_path = withr::local_tempdir(),
+      platform = "linux",
+      arch = "x64",
+      quiet = TRUE,
+      force = TRUE
+    ),
+    "java-home"
+  )
+  expect_true(args$download$force)
+  expect_true(args$install$force)
+  expect_equal(args$install$cache_path, cache_path)
+})

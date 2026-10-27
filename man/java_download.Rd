@@ -66,11 +66,13 @@ left in place; while the vendor API can be reached, a fresh archive is
 downloaded under the new name. Existing installed Java environments are
 unchanged.
 
-If the vendor API cannot be reached (offline, DNS or proxy failure, or a
-server error), a matching archive already in the cache is used instead,
-including archives saved by rJavaEnv 0.3.0. For Corretto, the newest cached
-build of the requested version is used. Other errors, such as an
-unavailable version, are reported as before.
+If the vendor API or download server cannot be reached (offline, DNS or
+proxy failure, a proxy or firewall refusing the request, rate limiting, or
+a server error), a matching archive already in the cache is used instead.
+For Corretto, the newest cached build of the requested version is used;
+for major-version requests this includes archives saved by rJavaEnv 0.3.0
+that match their saved MD5 checksum. Other errors, such as an unavailable
+version or a checksum mismatch, are reported as before.
 }
 \examples{
 \donttest{
