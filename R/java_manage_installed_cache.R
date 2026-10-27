@@ -16,7 +16,8 @@ java_list_installed <- function(
   cache_path = getOption("rJavaEnv.cache_path")
 ) {
   output <- match.arg(output)
-  installed_cache_path <- file.path(cache_path, "installed")
+  # list.dirs() returns "~" expanded, so expand it here too for the depth count
+  installed_cache_path <- path.expand(file.path(cache_path, "installed"))
 
   if (!dir.exists(installed_cache_path)) {
     cli::cli_alert_danger("No Java distributions have been installed yet.")

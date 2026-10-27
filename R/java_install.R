@@ -9,6 +9,7 @@
 #' @param backend The download backend used (e.g., "native", "sdkman"). If NULL, uses attributes from java_distrib_path or defaults to "unknown".
 #' @param autoset_java_env A `logical` indicating whether to set the `JAVA_HOME` and `PATH` environment variables to the installed Java directory. Defaults to `TRUE`.
 #' @param force A logical. Whether to overwrite an existing installation. Defaults to `FALSE`.
+#' @inheritParams java_unpack
 #' @inheritParams java_download
 #' @inheritParams global_quiet_param
 #' @return The path to the installed Java directory.
@@ -30,7 +31,8 @@ java_install <- function(
   backend = NULL,
   autoset_java_env = TRUE,
   quiet = FALSE,
-  force = FALSE
+  force = FALSE,
+  cache_path = getOption("rJavaEnv.cache_path")
 ) {
   rje_consent_check()
 
@@ -54,7 +56,8 @@ java_install <- function(
     distribution = distribution,
     backend = backend,
     quiet = quiet,
-    force = force
+    force = force,
+    cache_path = cache_path
   )
 
   java_link_project(

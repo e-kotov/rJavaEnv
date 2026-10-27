@@ -128,7 +128,7 @@ list_corretto_versions_impl <- function(platform, arch) {
     "linux" = "linux",
     "macos" = "macos",
     "windows" = "windows",
-    "alpine-linux" = "alpine-linux",
+    "alpine-linux" = "alpine",
     NULL
   )
   if (is.null(platform_key)) {
@@ -180,12 +180,12 @@ list_zulu_versions_impl <- function(platform, arch) {
     "linux" = "linux",
     "macos" = "macos",
     "windows" = "windows",
-    "alpine-linux" = "linux",
+    # Azul lists musl builds as their own OS
+    "alpine-linux" = "linux-musl",
     platform
   )
   zulu_arch <- arch
   zulu_ext <- if (platform == "windows") "zip" else "tar.gz"
-  zulu_hw <- if (platform == "alpine_linux") "musl" else NULL
 
   url <- sprintf(
     "https://api.azul.com/metadata/v1/zulu/packages/?os=%s&arch=%s&archive_type=%s&java_package_type=jdk&release_status=ga&page_size=100",
@@ -193,9 +193,6 @@ list_zulu_versions_impl <- function(platform, arch) {
     zulu_arch,
     zulu_ext
   )
-  if (!is.null(zulu_hw)) {
-    url <- paste0(url, "&hw_bitness=", zulu_hw)
-  }
 
   data <- tryCatch(
     read_json_url(url, max_simplify_lvl = "list"),

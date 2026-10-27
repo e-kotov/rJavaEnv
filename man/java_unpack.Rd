@@ -9,7 +9,8 @@ java_unpack(
   distribution = NULL,
   backend = NULL,
   quiet = FALSE,
-  force = FALSE
+  force = FALSE,
+  cache_path = getOption("rJavaEnv.cache_path")
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ java_unpack(
 \item{quiet}{A \code{logical} value indicating whether to suppress messages. Can be \code{TRUE} or \code{FALSE}.}
 
 \item{force}{A logical. Whether to overwrite an existing installation. Defaults to \code{FALSE}.}
+
+\item{cache_path}{The cache directory to unpack into (Java is placed under its \code{installed} folder). Defaults to the \code{rJavaEnv.cache_path} option.}
 }
 \value{
 A \code{character} vector containing of length 1 containing the path to the unpacked Java directory.

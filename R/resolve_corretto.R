@@ -31,7 +31,8 @@ resolve_corretto_metadata <- function(version, platform, arch) {
     "linux" = "linux",
     "macos" = "macos",
     "windows" = "windows",
-    "alpine-linux" = "alpine-linux",
+    # The Corretto index lists Alpine builds under "alpine"
+    "alpine-linux" = "alpine",
     cli::cli_abort("Unsupported platform for Corretto: {platform}")
   )
 
@@ -88,9 +89,9 @@ resolve_corretto_metadata <- function(version, platform, arch) {
     # If user requested "11.0.2", and we found "11.0.29...", that's a mismatch.
     # But if user requested "11.0.29" and we found "11.0.29.7.1", is that a match?
     # Usually yes.
-    # Let's check for prefix match or exact match.
+    # Match whole version components: "11.0.2" must not match "11.0.29".
 
-    if (!startsWith(found_version, version)) {
+    if (!corretto_version_matches(found_version, version)) {
       cli::cli_abort(
         "Specific version {version} not available via Corretto native backend. Found latest: {found_version}. Please use 'sdkman' backend or specify major version only."
       )
@@ -123,4 +124,16 @@ resolve_corretto_metadata <- function(version, platform, arch) {
     checksum_type = "sha256",
     backend = "native"
   )
+}
+
+#' Check a Corretto build against a requested version
+#'
+#' @param build Corretto build version (e.g. `"21.0.9.10.1"`).
+#' @param version Requested version (e.g. `"21"` or `"21.0.9"`).
+#' @return Logical: `TRUE` if `version` equals `build` or is a prefix of it
+#'   ending at a component boundary.
+#' @keywords internal
+#' @noRd
+corretto_version_matches <- function(build, version) {
+  build == version | startsWith(build, paste0(version, "."))
 }

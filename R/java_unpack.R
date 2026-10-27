@@ -8,6 +8,7 @@
 #' @param distribution The Java distribution name (e.g., "Corretto", "Temurin"). If NULL, attempts to read from attributes on java_distrib_path, otherwise defaults to "unknown".
 #' @param backend The download backend used (e.g., "native", "sdkman"). If NULL, attempts to read from attributes on java_distrib_path, otherwise defaults to "unknown".
 #' @param force A logical. Whether to overwrite an existing installation. Defaults to `FALSE`.
+#' @param cache_path The cache directory to unpack into (Java is placed under its `installed` folder). Defaults to the `rJavaEnv.cache_path` option.
 #' @inheritParams global_quiet_param
 #' @return A `character` vector containing of length 1 containing the path to the unpacked Java directory.
 #' @export
@@ -31,7 +32,8 @@ java_unpack <- function(
   distribution = NULL,
   backend = NULL,
   quiet = FALSE,
-  force = FALSE
+  force = FALSE,
+  cache_path = getOption("rJavaEnv.cache_path")
 ) {
   platforms <- c("windows", "linux", "macos")
   architectures <- c("x64", "aarch64", "arm64")
@@ -46,6 +48,11 @@ java_unpack <- function(
   version <- parts[parts %in% java_versions][1]
   arch <- parts[parts %in% architectures][1]
   platform <- parts[parts %in% platforms][1]
+  # Alpine (musl) archives are named "...-alpine-linux-..."; keep them apart
+  # from glibc Linux installs
+  if (identical(platform, "linux") && "alpine" %in% parts) {
+    platform <- "alpine-linux"
+  }
 
   # Fall back to attributes or pattern matching if filename parsing fails
   if (is.na(version)) {
@@ -106,7 +113,6 @@ java_unpack <- function(
   }
 
   # Create the installation path in the package cache (new structure)
-  cache_path <- getOption("rJavaEnv.cache_path")
   installed_path <- file.path(
     cache_path,
     "installed",

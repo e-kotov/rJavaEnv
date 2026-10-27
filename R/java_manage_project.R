@@ -21,7 +21,8 @@ java_list_project <- function(
   project_path <- ifelse(is.null(project_path), getwd(), project_path)
 
   output <- match.arg(output)
-  java_symlink_dir <- file.path(project_path, "rjavaenv")
+  # list.dirs() returns "~" expanded, so expand it here too for the depth count
+  java_symlink_dir <- path.expand(file.path(project_path, "rjavaenv"))
 
   if (!dir.exists(java_symlink_dir)) {
     cli::cli_alert_danger("No Java has been installed in the project.")

@@ -108,7 +108,7 @@ java_resolve <- function(
     version = version, distribution = distribution, backend = backend,
     cache_path = cache_path, platform = platform, arch = arch, quiet = quiet
   )
-  home <- java_unpack(java_distrib_path = dist_path, quiet = quiet)
+  home <- java_unpack(java_distrib_path = dist_path, quiet = quiet, cache_path = cache_path)
   # Vendor download APIs can return a nearby release for a patch request.
   # Verify the installed runtime before claiming that exact/minimum setup worked.
   if (specific && !identifier &&

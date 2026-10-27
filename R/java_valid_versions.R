@@ -331,7 +331,9 @@ java_valid_major_versions_corretto <- function(
         availableVersionsUrl,
         max_simplify_lvl = "list"
       )
-      eligible <- json_data[[platform]][[arch]][[imageType]]
+      # The Corretto index lists Alpine builds under "alpine"
+      index_platform <- if (platform == "alpine-linux") "alpine" else platform
+      eligible <- json_data[[index_platform]][[arch]][[imageType]]
       if (is.null(eligible)) {
         stop(
           "No eligible versions found for the specified platform, architecture, and image type."

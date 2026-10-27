@@ -8,6 +8,7 @@
 #' @inheritSection rjava_path_locking_note rJava Path-Locking
 #' @inheritParams global_version_param
 #' @param distribution The Java distribution to download. Defaults to "Corretto". Ignored if `version` is a SDKMAN identifier.
+#' @param cache_path The destination directory to download the Java distribution to. Defaults to a user-specific data directory.
 #' @inheritParams java_install
 #' @inheritParams java_download
 #' @inheritParams global_backend_param
@@ -132,7 +133,8 @@ use_java <- function(
 
   java_cached_install_path <- java_unpack(
     java_distrib_path = java_distrib_path,
-    quiet = quiet
+    quiet = quiet,
+    cache_path = cache_path
   )
 
   ._java_env_set_impl(
