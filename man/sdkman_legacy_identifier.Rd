@@ -16,7 +16,8 @@ or is an early-access build
 \description{
 SDKMAN's listing uses identifiers like "21.0.4.0+7-amzn",
 "21.0.12+1.1-tem" or "21.0.12-fx+1.1-librca", while its broker still serves
-the legacy forms (e.g. "21.0.13-tem", "21.0.12.fx-librca") as fallback.
+and its broker also accepts the legacy forms (e.g. "21.0.13-tem",
+"21.0.12.fx-librca"), which are tried as a fallback.
 }
 \details{
 The broker may reject this alias too. Nonzero version components

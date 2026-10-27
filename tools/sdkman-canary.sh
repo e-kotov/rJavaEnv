@@ -118,7 +118,7 @@ for p in "${PLATFORMS[@]}"; do
   # A7: Broker can serve the newest standard 21 build per core vendor, using the
   # same "+build" -> legacy alias mapping as sdkman_legacy_identifier() in
   # R/resolve_sdkman.R. FAIL on linuxx64; WARN elsewhere, where the listings
-  # currently contain placeholder ids or moving latest pointers.
+  # for any broker miss outside linuxx64.
   for vendor in amzn tem zulu; do
     top_id=$(printf '%s\n' "${ENTRIES[@]}" | sed 's/[[:space:]]//g' |
       grep -E "^21[.].*-${vendor}$" | grep -vE 'fx|crac' | sort -V | tail -n 1 || true)
