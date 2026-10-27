@@ -182,9 +182,8 @@ resolve_sdkman_metadata <- function(
     cfg$arch_map[[arch]] %||% arch
   )
 
-  # SDKMAN lists some identifiers the broker cannot serve (e.g. the
-  # "+build" style ids such as 21.0.4.0+7-amzn). Try each candidate, and its
-  # legacy alias, newest first, until the broker returns a download URL.
+  # Try each candidate identifier and its legacy alias as fallback (newest
+  # first) until the broker returns a download URL.
   max_candidates <- 5L
   try_ids <- unique(unlist(lapply(
     utils::head(candidates, max_candidates),
@@ -251,7 +250,7 @@ resolve_sdkman_metadata <- function(
 #' @keywords internal
 sdkman_broker_resolve <- function(identifier, sdk_platform) {
   broker_url <- sprintf(
-    "https://api.sdkman.io/2/broker/download/java/%s/%s",
+    "https://broker.sdkman.io/download/java/%s/%s",
     utils::URLencode(identifier, reserved = TRUE),
     sdk_platform
   )
@@ -318,8 +317,9 @@ sdkman_broker_resolve <- function(identifier, sdk_platform) {
 #' Map a "+build" SDKMAN identifier to its legacy broker form
 #'
 #' SDKMAN's listing uses identifiers like "21.0.4.0+7-amzn",
-#' "21.0.12+1.1-tem" or "21.0.12-fx+1.1-librca", while its broker still serves
-#' the legacy forms "21.0.4-amzn", "21.0.12-tem" and "21.0.12.fx-librca".
+#' "21.0.12+1.1-tem" or "21.0.12-fx+1.1-librca", and its broker also accepts
+#' the legacy forms (e.g. "21.0.13-tem", "21.0.12.fx-librca"), which are tried
+#' as a fallback.
 #'
 #' @param identifier SDKMAN identifier
 #' @return A legacy identifier to try, or NULL if `identifier` has no "+build" part

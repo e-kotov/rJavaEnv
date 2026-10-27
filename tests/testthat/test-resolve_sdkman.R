@@ -353,7 +353,7 @@ test_that("sdkman_broker_resolve URL-encodes identifiers", {
   expect_null(sdkman_broker_resolve("21.0.4.0+7-amzn", "linuxx64"))
   expect_equal(
     seen$url,
-    "https://api.sdkman.io/2/broker/download/java/21.0.4.0%2B7-amzn/linuxx64"
+    "https://broker.sdkman.io/download/java/21.0.4.0%2B7-amzn/linuxx64"
   )
 })
 
@@ -361,7 +361,7 @@ test_that("sdkman_broker_resolve aborts on persistent server or network errors",
   skip_on_cran()
   for (fail in list(
     function(...) list(status_code = 503L, url = "b", content = raw(0)),
-    function(...) stop("Could not resolve host: api.sdkman.io")
+    function(...) stop("Could not resolve host: broker.sdkman.io")
   )) {
     calls <- 0L
     local_mocked_bindings(
